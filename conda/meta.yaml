@@ -10,7 +10,7 @@ build:
   number: {{ number }}
 
 about:
-  home: https://github.com/lambda-search/karabor
+  home: https://github.com/gottingen/hercules
   license: Apache License 2
   license_family: APACHE
   license_file: LICENSE
@@ -26,7 +26,7 @@ outputs:
     build:
       #   string: "h{{ PKG_HASH }}_{{ number }}"
       run_exports:
-        - {{ pin_compatible('karabor', exact=True) }}
+        - {{ pin_compatible('hercules', exact=True) }}
     requirements:
       build:
         - clang # [osx]
@@ -75,7 +75,7 @@ outputs:
         - libtensorflow_cc
     test:
       commands:
-        - test -f $PREFIX/lib/libflare.so              # [linux]
-        - test -f $PREFIX/lib/libflare.dylib           # [osx]
+      #  - test -f $PREFIX/lib/libflare.so              # [linux]
+      #  - test -f $PREFIX/lib/libflare.dylib           # [osx]
       #  - conda inspect linkages -p $PREFIX $PKG_NAME  # [not win]
       #  - conda inspect objects -p $PREFIX $PKG_NAME   # [osx]

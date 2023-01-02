@@ -1,26 +1,14 @@
-name: karabor-dev
+name: hercules-dev
 channels:
   - conda-forge
   - defaults
-  - flare-rpc
+  - mgottingen
 dependencies:
   - gcc =8.5 # [linux]
   - gxx =8.5 # [linux]
   - sysroot_linux-64=2.17 # [linux]
-  - cmake =3.19.1
-  - make
-  - gflags =2.2.2
-  - leveldb =1.22
-  - protobuf =3.12.4 # includes Protobuf compiler, C++ headers, Python libraries
-  - openssl =1.1.1
-  - zlib
-  - gperftools=2.9.1
-  - libfaiss_ex =1.7.2
-  - libflare =0.2.71
-  - frat =0.3.5
-  - rocksdb =6.13.3
-  - boost =1.75.0
+  - melon
+  - rocksdb
   - gtest =1.11.0
   - gmock =1.11.0
   - benchmark
-  - libtensorflow_cc

@@ -1,0 +1,89 @@
+
+
+syntax = "proto2";
+package hercules;
+option cc_generic_services = true;
+
+import "google/protobuf/struct.proto";
+import "hercules/proto/plugin.proto";
+
+enum RelevanceModel {
+    REL_BM25 = 0;
+    REL_TERM_WEIGHT = 1;
+}
+
+enum SortFormulaFieldType {
+    COMMON_DATA = 0;
+    RELEVANCE = 1;
+    TIMELINESS = 2;
+    INCRWEIGHT = 3;
+    ANNMETRIC = 4;
+    DECAY_FUNCTION = 5;
+}
+
+enum DecayType {
+    kGauss = 0;
+    kExponent = 1;
+    kLinear = 2;
+}
+
+message DecayParam {
+    required DecayType decay_type = 1;
+    required double origin = 2;
+    required double offset = 3;
+    optional  double scale = 4;
+    optional double decay = 5;
+}
+
+message SortFormulaParam {
+    required SortFormulaFieldType field_type = 1;
+    required string field_name = 2;
+    required float weight = 3;
+    required DecayParam decay_param = 4;
+}
+
+message Sorter {
+    required RelevanceModel relevance_model = 1;
+    required uint32 from_pos = 2;
+    required uint32 limit_cnt = 3;
+    repeated SortFormulaParam sort_formula = 4;
+    required bool is_asc = 5;
+    optional PluginList plugin_list = 8;
+}
+
+message SimpleFormula {
+    repeated SortFormulaParam param_list = 1;  ///< 公式参数列表
+}
+
+message RelevanceScorer {
+    oneof oneof_scorer {
+        SimpleFormula simple_formula = 1;  ///< 简单公式
+        CPlusPlugin cplus_scorer = 3;  ///< c++插件
+    }
+    optional float min_relevance_score = 5;
+    optional uint32 candidate_doc_limit = 6;
+}
+
+message TopNScorer {
+    oneof oneof_scorer {
+        SimpleFormula simple_formula = 1;
+        CPlusPlugin cplus_scorer = 2;
+    }
+    optional uint32 candidate_doc_limit = 3;
+}
+
+message RoughScorer {
+        optional CPlusPlugin cplus_scorer = 1;
+}
+
+message MultiPhaseSort {
+    optional uint32 from = 1;
+    optional uint32 limit = 2;
+    optional bool is_asc = 3;
+
+    optional RelevanceModel relevance_model = 4;
+
+    optional RelevanceScorer relevance_scorer = 5;
+    optional TopNScorer topn_scorer = 6;
+    optional RoughScorer rough_scorer = 7;
+}

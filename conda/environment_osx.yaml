@@ -1,8 +1,10 @@
-name:  hercules_d
+name:  hercules-dev
 channels:
   - conda-forge
   - defaults
-  - flare-rpc
+  - mgottingen
 dependencies:
-  - libtensorflow_cc
-  - libflare
+  - melon
+  - gtest =1.11.0
+  - gmock =1.11.0
+  - benchmark

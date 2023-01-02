@@ -1,9 +1,0 @@
-syntax = "proto2";
-
-package hercules.proto;
-
-enum MemoryType {
-    MEMORY_CPU = 0;
-    MEMORY_CPU_BINDING = 1;
-    MEMORY_GPU = 2;
-}

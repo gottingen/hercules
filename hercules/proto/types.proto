@@ -1,0 +1,456 @@
+syntax = "proto2";
+package hercules;
+option cc_generic_services = true;
+
+message RouterItem {
+    required string router = 1;
+    required string table = 2;
+}
+
+message ClusterSettings {
+    optional int32 shard_allocation_after_timeout_secs = 1 [default = 60];
+    optional int32 total_shards_per_node = 2 [default = -1];
+    optional int32 index_rpc_timeout_ms = 3 [default = 10000];
+    optional int32 index_rpc_max_retry = 4 [default = 2];
+    optional int32 remove_node_after_timeout_secs = 5 [default = 600];
+    repeated RouterItem aliases = 6;
+}
+
+message ClusterSettingRequest {
+    required ClusterSettings settings = 1;
+};
+
+message ClusterSettingResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+};
+
+message ClusterStateRequest {
+    repeated string sets = 1;
+};
+
+message MasterNode {
+    required string peer_id = 1;
+    optional bool is_leader = 2;
+}
+
+enum ShardDataState {
+    SHARD_INDEX_READY = 1;
+    SHARD_INDEX_BUILDING = 2;
+    SHARD_INDEX_FAILED = 3;
+}
+
+message ShardState {
+    optional ShardDataState data_state = 1;
+    optional int64 estimate_index_mem_size = 2;
+    optional bool snapshoting = 4;
+    optional int64 last_applied_index = 5;
+    optional int64 last_applied_term = 6;
+    optional int64 faiss_id_seed = 7 [default = 1];
+    optional int64 faiss_added_items = 8;
+}
+
+message Shard {
+    required string index = 1;
+    required int32 shard_idx = 2;
+    optional bool is_leader = 3;
+    optional bool following = 4;
+    optional ShardState state = 5;
+    repeated string nodes = 6; //only leader shard contains all nodes id
+    optional string from_node = 7;
+}
+
+enum LeafNodeState {
+    LEAF_NODE_ACTIVE = 1;
+    LEAF_NODE_TEMP_UNAVAILABLE = 2;
+    LEAF_NODE_TIMEOUT = 3;
+    LEAF_NODE_INACTIVE = 4;
+    LEAF_NODE_BOOTING = 5;
+}
+message LeafNode {
+    required string peer_id = 1;
+    optional int64 last_active_ms = 2;
+    optional int64 last_state_ms = 3;
+    repeated Shard shards = 4;
+    optional LeafNodeState state = 5;
+    optional int64 used_rss_size = 6;
+    optional string set_name = 7;
+}
+
+message SetState {
+    optional int64 update_ms = 1;
+    required string set_name = 2;
+    map<string, LeafNode> nodes = 3;
+}
+
+message ClusterStateResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+    repeated MasterNode masters = 4;
+    repeated SetState state = 5;
+};
+
+message CreateSetRequest {
+    required string set_name = 1;
+}
+
+message CreateSetResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+}
+
+message RemoveSetRequest {
+    required string set_name = 1;
+}
+
+message RemoveSetResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+}
+
+message AddRouterRequest {
+    required string set_name = 1;
+    required string table = 2;
+    required string router = 3;
+};
+
+message UpdateRouterResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+};
+
+message GetRouterRequest {
+    required string set_name = 1;
+    optional string router = 2;
+};
+
+message GetRouterResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+    repeated RouterItem aliases = 4;
+};
+
+message RemoveRouterRequest {
+    required string set_name = 1;
+    required string router = 2;
+};
+
+message GroupStateRequest {
+    required string set_name = 1;
+    repeated string group = 2;
+};
+
+
+message TableShardState {
+    optional int32 shard_idx = 1;
+    optional string leader = 2;
+    repeated string node_peers = 3;
+    optional int64 allocate_start_ms = 4;
+    optional int64 allocate_stop_ms = 5;
+    optional int64 leader_ms = 6;
+    optional bool allocating = 7;
+    repeated Shard shards = 8; // only used for stat
+    optional bool creating = 9;
+    optional bool removing = 10;
+}
+
+message TableState {
+    required string index = 1;
+    required TableConf conf = 2;
+    repeated TableShardState shards = 3;
+    optional int64 size = 4;
+    optional int64 create_time = 5;
+}
+
+message GroupStateResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    repeated TableState states = 3;
+    optional string error = 4;
+};
+
+message SnapshotRule {
+    required int32 period_secs = 1;
+    required int32 changed_docs = 2;
+}
+
+enum AnnMetricType {
+    INDEX_METRIC_INNER_PRODUCT = 0; //inner product distance
+    INDEX_METRIC_L2 = 1; //european distance
+    INDEX_METRIC_COSINE = 2; //cosine distance
+    INDEX_METRIC_HAMMING = 3; //hamming distance
+}
+
+enum AnnEngineType {
+    ANN_ENGINE_FAISS_VECTOR = 0;
+    ANN_ENGINE_FAISS_BINARY = 1;
+    ANN_ENGINE_HNSWLIB = 3;
+    ANN_ENGINE_GRAPH = 4;
+}
+
+enum TermEngineStorage {
+    TERM_MEMORY = 0;
+    TERM_DISK = 1;
+}
+
+message TableConf {
+    required int32 number_of_shards = 1;
+    required int32 number_of_replicas = 2;
+    required string description = 3;
+    required int32 dimension = 4;
+    required AnnMetricType ann_metric = 5;
+    optional int32 nprobe = 6;
+    repeated SnapshotRule snapshot_rules = 8;
+    optional bool direct_map = 10;
+    optional int32 slowlog_log_slower_than = 11 [default = 1000];
+    optional AnnEngineType engine = 12 [default = ANN_ENGINE_HNSWLIB];
+    optional bool tmpfs4vector = 13;
+    optional int64 model_size = 14;
+    optional string model_cksm = 15;
+    optional int64 rebuild_rate_limiter_docs_per_sec = 16;
+    optional int64 memory_of_shards = 17; //byte
+    optional string group = 18;
+    optional int64 version = 19;
+    optional TermEngineStorage storage = 20;
+    map<string, FieldMeta> field_metas = 21;
+    map<string, string> options = 22;
+}
+
+message FieldMeta {
+    optional FieldType field_type = 1;
+}
+
+enum FieldType {
+    TYPE_STRING = 0;
+    TYPE_STRING_ARRAY = 1;
+    TYPE_UINT64 = 2;
+}
+
+message TableStateRequest {
+    required string set = 1;
+    repeated string table = 2;
+};
+
+message IndexStateResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    repeated TableState states = 3;
+    optional string error = 4;
+    optional SetState set = 5;
+};
+
+message ListSetsRequest {
+
+}
+
+message ListSetsResponse {
+    required bool success = 1;
+    repeated string sets = 3;
+    optional string error = 4;
+    optional string redirect = 2;
+};
+
+message ListTableRequest {
+    required string set_name = 3;
+}
+
+message ListTableResponse {
+    required bool success = 1;
+    repeated string sets = 3;
+    optional string error = 4;
+    optional string redirect = 2;
+};
+
+message CreateTableRequest {
+    required string table = 1;
+    required TableConf conf = 2;
+};
+
+message CreateTableResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+};
+
+message DeleteTableRequest {
+    required string set_name = 1;
+    required string table = 2;
+    optional bool force = 3;
+    optional bool without_router = 4;
+};
+
+message DeleteTableResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+};
+
+message UpdateTableRequest {
+    required string index = 1;
+    required TableConf conf = 2;
+};
+
+message UpdateTableResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+    repeated string task_ids = 4;
+};
+
+message UploadAnnModelRequest {
+    required string set_name = 1;
+    required string table = 2;
+    required int64 offset = 3;
+    required int64 size = 4;
+    required bytes content = 5;
+    required string cksm = 6;
+}
+
+message UploadAnnModelResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+}
+
+message DownloadAnnModelRequest {
+    required string index = 1;
+    required int64 offset = 2;
+    required int64 count = 3;
+}
+
+message DownloadAnnModelResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional bytes content = 3;
+    optional int64 size = 4;
+    optional string cksm = 5;
+    optional string error = 6;
+}
+
+message BuildTableRequest {
+    required string set_name = 1;
+    required string table = 2;
+    optional int32 shard_idx = 3 [default = -1];
+};
+
+message BuildTableResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+    repeated string task_ids = 4;
+};
+
+message MoveShardRequest {
+    required string set_name = 1;
+    required string table = 2;
+    required int32 shard_idx = 3;
+    required string from_node = 4;
+    required string to_node = 5;
+};
+
+message MoveShardResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+};
+
+message ResetShardRequest {
+    required string index = 1;
+    required int32 shard_idx = 2;
+    repeated string nodes = 3;
+};
+
+message ResetShardResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+};
+
+
+message MigrateRequest {
+    required string set_name = 1;
+    required string table = 2;
+    required string dest_index = 3;
+    optional int32 batch_size = 4;
+    optional int64 docs_per_second_limit = 5;
+    repeated string dest_peers = 6;
+    repeated int32 shard_idxs = 7;
+}
+message MigrateResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+    repeated string task_ids = 4;
+}
+
+message NodeInfoRequest {
+    repeated string nodes = 1;
+}
+
+message NodeInfoResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+    map<string, InfoResponse> infos = 4;
+};
+message InfoSection {
+    map<string, string> infos = 1;
+}
+
+message InfoResponse {
+    map<string, InfoSection> sections = 4;
+}
+
+message RemoveNodeRequest {
+    required string node = 1;
+}
+
+message RemoveNodeResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+};
+
+
+message TaskStateRequest {
+    repeated string tasks = 1;
+}
+
+message TaskState {
+    required string id = 1;
+    required string desc = 2;
+    required string node = 3;
+    required bool completed = 4;
+    optional bool success = 5;
+    optional string error = 6;
+    optional int64 started_ms = 7;
+    optional int64 stoped_ms = 8;
+    optional string progress = 9;
+    optional int64 latest_active_ms = 10;
+    optional int64 elapsed_ms = 11;
+}
+
+message TaskStateResponse {
+    required bool success = 1;
+    optional string error = 2;
+    repeated TaskState states = 3;
+}
+
+message DelRequest {
+    required string set_name = 1;
+    required string table = 2;
+    repeated string ids = 3;
+};
+
+message DelResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+    repeated string ids = 4;
+};
