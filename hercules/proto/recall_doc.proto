@@ -1,0 +1,75 @@
+
+syntax = "proto2";
+package hercules;
+option cc_generic_services = true;
+
+import "hercules/proto/sort.proto";
+
+message RecallDoc {
+    required string doc_id = 1;
+    required double score = 2;
+    required KvStringForward forwards = 3;
+    required PluginRetDocInfo plugin_rank_relevance_info = 4;
+    required PluginRetDocInfo plugin_rank_topn_relevance_info = 5;
+    required PluginRetDocInfo plugin_rank_rough_sort_info = 6;
+    required KvStringDocMatchInfo match_info = 7;
+    required KvStringUint32 doc_field_len = 8;
+    required bool force_keep_flag = 9;
+    required bool fake_recall_flag = 10;
+    required uint64 doc_update_time = 11;
+    repeated DocSortFieldValue score_info = 12;
+};
+
+
+message KvStringBytes {
+    map<string, bytes> values = 1;
+};
+
+message KvStringUint32 {
+    map<string, uint32> values = 1;
+};
+
+message KvStringForward {
+    map<string, RecallForward> values = 1;
+};
+
+message KvStringDocMatchInfo {
+    map<string, DocFieldMatchInfo> values = 1;
+};
+message DocFieldMatchInfo {
+    message MatchTerm {
+        required string term = 1;
+        repeated uint32 offset = 2;
+        required float doc_term_weight = 3;
+        repeated bytes payload = 4;
+    }
+    repeated MatchTerm match_terms = 1;
+};
+message DocSortFieldValue {
+    required SortFormulaFieldType field_type = 1;
+    required string field_name = 2;
+    required double value = 3;
+};
+
+message PluginRetDocInfo {
+    required double phase_score = 1;
+    required KvStringBytes ret_ext_info = 2;
+};
+
+
+message RecallForward {
+    oneof kind {
+        double double_value = 1;
+        string string_value = 2;
+        RecallForwardMapValue map_value = 3;
+        RecallForwardListValue list_value = 4;
+    }
+}
+
+message RecallForwardMapValue {
+    map<string, RecallForward> values = 1;
+}
+
+message RecallForwardListValue {
+    repeated RecallForward values = 1;
+}

@@ -1,0 +1,57 @@
+syntax = "proto2";
+package hercules;
+option cc_generic_services = true;
+
+import "hercules/proto/types.proto";
+import "hercules/proto/search.proto";
+import "hercules/proto/document.proto";
+import "hercules/proto/plugin.proto";
+
+
+service RouterService {
+    // admin interface
+    rpc cluster_setting (ClusterSettingRequest) returns (ClusterSettingResponse);
+    rpc get_cluster_state (ClusterStateRequest) returns (ClusterStateResponse);
+    rpc list_sets (ListSetsRequest) returns (ListSetsResponse);
+    rpc create_set (CreateSetRequest) returns (CreateSetResponse);
+    rpc remove_set (RemoveSetRequest) returns (RemoveSetResponse);
+
+    rpc add_router (AddRouterRequest) returns (UpdateRouterResponse);
+    rpc get_router (GetRouterRequest) returns (GetRouterResponse);
+    rpc remove_router (RemoveRouterRequest) returns (UpdateRouterResponse);
+
+    rpc get_group_state (GroupStateRequest) returns (GroupStateResponse);
+    rpc get_table_state (TableStateRequest) returns (IndexStateResponse);
+    rpc list_table (ListTableRequest) returns (ListTableResponse);
+    rpc create_table (CreateTableRequest) returns (CreateTableResponse);
+    rpc delete_table (DeleteTableRequest) returns (DeleteTableResponse);
+    rpc update_table_conf (UpdateTableRequest) returns (UpdateTableResponse);
+
+    // ann model
+    rpc save_index_model (UploadAnnModelRequest) returns (UploadAnnModelResponse);
+    rpc get_index_model (DownloadAnnModelRequest) returns (DownloadAnnModelResponse);
+    // both ann and term
+    rpc build_index (BuildTableRequest) returns (BuildTableResponse);
+
+    rpc move_shard (MoveShardRequest) returns (MoveShardResponse);
+
+    rpc reset_shard (ResetShardRequest) returns (ResetShardResponse);
+    rpc migrate_index (MigrateRequest) returns (MigrateResponse);
+
+    rpc node_info (NodeInfoRequest) returns (NodeInfoResponse);
+    rpc remove_node (RemoveNodeRequest) returns (RemoveNodeResponse);
+
+    rpc tasks (TaskStateRequest) returns (TaskStateResponse);
+
+    rpc remove (DelRequest) returns (DelResponse);
+
+    rpc search (SearchRequest) returns (SearchResponse);
+    rpc explain (ExplainQueryRequest) returns (ExplainQueryResponse);
+
+    rpc put (PutRequest) returns (PutResponse);
+    rpc get (GetRequest) returns (GetResponse);
+
+    rpc get_plugins (GetPluginsRequest) returns (GetPluginsResponse);
+
+    rpc debug (DebugRequest) returns (DebugResponse);
+};

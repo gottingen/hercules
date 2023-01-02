@@ -1,0 +1,92 @@
+
+syntax = "proto2";
+package hercules;
+option cc_generic_services = true;
+
+import "hercules/proto/query.proto";
+import "hercules/proto/sort.proto";
+import "hercules/proto/recall_doc.proto";
+
+message DebugRequest {
+    repeated string ids = 1;
+    optional bool ret_time_cost = 2;
+};
+
+message SearchRequest {
+    required string set = 1;
+    required string table = 2;
+    required Query query = 3;
+    optional Sorter sort = 4;
+    map<string, bytes> ext_info = 5;
+    optional TraceInfo trace = 6;
+    optional MultiPhaseSort multi_phase_sort = 7;
+    map<string, string> url_pairs = 8;
+    repeated string force_keep_docids = 9;
+    optional FakeRecall fake_recall = 10;
+    optional DebugRequest debug_req = 11;
+};
+
+message SearchRspStatus {
+    enum RetCode {
+        OK = 0;
+        LOSSY_RESULT = 1;
+        FATAL_INVALID_PARAM = 2;
+        FATAL_INNER_ERROR = 3;
+    };
+
+    required RetCode ret_code = 1;
+    optional string error_msg = 2;
+};
+
+message SearchResponse {
+    required SearchRspStatus status = 1;
+    repeated RecallDoc docs = 2;
+    map<string, float> term_idf = 3;
+    repeated AggregateRestrictionFieldValues restriction_values = 4;
+    map<string, bytes> plugin_rank_relevance_ext_info = 5;
+    map<string, bytes> plugin_rank_topn_relevance_ext_info = 6;
+    map<string, bytes> plugin_rank_rough_sort_ext_info = 7;
+
+    optional uint32 static_hit_count = 8;
+    optional uint32 realtime_hit_count = 9;
+    optional uint64 cache_timestamp = 10;
+    optional int32 cost_ms = 11;
+    optional string index_shard_name = 12;
+    optional DebugResponse debug_rsp = 13;
+};
+
+message AggregateRestrictionFieldValues {
+    required string restriction_field = 1;
+    repeated string value_list = 2;
+};
+
+
+message DebugResponse {
+    repeated string debug_msg = 1;
+    optional string time_msg = 2;
+};
+
+message FakeRecall {
+    repeated string ids = 1;
+    optional RepeatBoolQuery filter_condition = 2;
+}
+
+message TraceInfo {
+    optional string strategy = 1;
+}
+
+message ExplainQueryRequest {
+    required string set_name = 1;
+    required string index_db = 2;
+    required string doc_id = 3;
+    required Query struct_query = 4;
+    map<string, bytes> ext_info = 5;
+    optional MultiPhaseSort multi_phase_sort = 6;
+    optional TraceInfo trace = 7;
+}
+
+message ExplainQueryResponse {
+    required SearchRspStatus status = 1;
+    required bool is_doc_match = 2;
+    required string explain_desc = 3;
+}

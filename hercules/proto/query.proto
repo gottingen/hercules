@@ -1,0 +1,87 @@
+syntax = "proto2";
+package hercules;
+option cc_generic_services = true;
+
+import "google/protobuf/struct.proto";
+
+message AnnSearchParam {
+    required string key = 1;
+    required string value = 2;
+}
+
+message AnnSearchQueryVector {
+    required string field_name = 1;
+    repeated float value = 2;
+}
+
+message AnnSearchQuery {
+    required AnnSearchQueryVector query = 1;
+    oneof condition {
+        uint32 top_k = 2;
+        float range_search_radius = 4;
+    }
+    map<string, string> search_params = 3;
+}
+
+
+enum BoolOperationType {
+    SHOULD = 0;
+    MUST = 1;
+    MUSTNOT = 2;
+    FILTER = 3;
+};
+
+message BoolQuery {
+    required BoolOperationType op_type = 1;
+
+    oneof oneof_query {
+                        Term term = 2;
+                        ValueEqual value_equal = 3;
+                        ValueRange value_range = 4;
+                        RepeatBoolQuery sub_query = 5;
+                        BloomFilterQuery bloom_filter_query = 6;
+                        DocIdInList docid_in_list = 7;
+                        AnnSearchQuery ann_search_query = 8;
+    }
+};
+
+message Term {
+    required string field_name = 1;
+    required bool is_bitset = 2 [default = false];
+    required string term = 3;
+    optional float weight = 4;
+    optional float idf = 5;
+}
+
+message ValueEqual {
+    required bool is_equal = 1;
+    required string field_name = 2;
+    optional google.protobuf.Value value = 3;
+};
+
+message ValueRange {
+    required string field_name = 1;
+    required google.protobuf.Value min_value = 2;
+    required google.protobuf.Value max_value = 3;
+}
+
+message BloomFilterQuery {
+    required string field_name = 1;
+    required string value_type = 2;
+    required string bloom_filter_id = 3;
+    required bytes mem_block = 4;
+}
+
+message DocIdInList {
+    repeated string doc_ids = 1;
+}
+
+message RepeatBoolQuery {
+    repeated BoolQuery query_list = 1;
+}
+
+/// Query
+message Query {
+    required string raw_query = 1;
+    required RepeatBoolQuery query = 2;
+}

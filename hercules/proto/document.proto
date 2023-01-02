@@ -1,0 +1,87 @@
+
+
+
+
+
+syntax = "proto2";
+package hercules;
+option cc_generic_services = true;
+import "google/protobuf/struct.proto";
+
+
+message ForwardDataField {
+    oneof data {
+        google.protobuf.Value value = 1;
+        bytes bytes_value = 2;
+    }
+}
+
+message Document {
+    required string global_id = 1;
+    repeated InvertedTerm inverted_info = 2;
+    map<string, FieldInfo> field_info = 3;
+    repeated RestrictionInfo restriction_info = 4;
+    repeated google.protobuf.Value forward_list = 5;
+    map<string, ForwardDataField> forward_data = 6;
+    repeated ForwardDataField forward_list_v2 = 7;
+    map<string, VectorField> vector_field_info = 8 ;
+}
+
+message FieldInfo {
+    required uint32 field_len = 1;
+}
+
+message InvertedTerm {
+    required string term = 1;
+    repeated InvertedTermField field = 2;
+    required double score = 3;
+}
+
+message InvertedTermField {
+    required string field_name = 1;
+    repeated uint32 offset = 2;
+    required double score = 3;
+    repeated bytes payload = 4;
+    repeated uint32 multi_value_index = 5;
+    optional bytes doc_term_payload = 6;
+}
+
+message RestrictionInfo {
+    required string field = 1;
+    repeated string value = 2;
+}
+
+message VectorField {
+    repeated float value = 1;
+}
+
+message PutRequest {
+    required string set_name = 1;
+    required string table = 2;
+    repeated Document docs = 3;
+    optional bool add_index = 4 [default = true];
+    optional int32 timeout = 5 [default = 10000];
+};
+
+
+message PutResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+    repeated string ids = 4;
+    optional int64 size = 5;
+};
+
+message GetRequest {
+    required string set_name = 1;
+    required string table = 2;
+    repeated string ids = 3;
+    optional bool with_vector = 4 [default = true];
+};
+
+message GetResponse {
+    required bool success = 1;
+    optional string redirect = 2;
+    optional string error = 3;
+    repeated Document docs = 4;
+};

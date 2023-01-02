@@ -76,7 +76,7 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 endif ()
 
 
-include(require_flare)
+include(require_melon)
 include(require_openssl)
 include(require_gflags)
 find_package(TensorFlow)
@@ -89,22 +89,25 @@ set(DYNAMIC_LIB
         ${LEVELDB_LIB}
         ${OPENSSL_CRYPTO_LIBRARY}
         ${OPENSSL_SSL_LIBRARY}
-        ${FLARE_LIB}
+        ${MELON_LIB}
         dl
         )
 
 include(CompileProto)
 
 set(PROTO_FILES
-        hercules/proto/data_type.proto
-        hercules/proto/memory_type.proto
-        hercules/proto/error_code.proto
-        hercules/proto/parameter_type.proto
-        hercules/proto/model_config.proto
+        hercules/proto/document.proto
+        hercules/proto/plugin.proto
+        hercules/proto/query.proto
+        hercules/proto/recall_doc.proto
+        hercules/proto/router.proto
+        hercules/proto/search.proto
+        hercules/proto/sort.proto
+        hercules/proto/types.proto
         )
 find_package(Protobuf REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIR})
-file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/output/include/karabor)
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/output/include/hercules)
 set(PROTOC_FLAGS ${PROTOC_FLAGS} -I${PROTOBUF_INCLUDE_DIR} -I${CMAKE_SOURCE_DIR})
 compile_proto(PROTO_HDRS PROTO_SRCS ${PROJECT_BINARY_DIR}
         ${PROJECT_BINARY_DIR}/output/include
