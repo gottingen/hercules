@@ -1,0 +1,24 @@
+
+
+/****************************************************************
+ * Copyright (c) 2023, liyinbin
+ * All rights reserved.
+ * Author by liyinbin (jeff.li) lijippy@163.com
+ *****************************************************************/
+
+syntax = "proto2";
+package hercules;
+option cc_generic_services = true;
+
+enum QueryType {
+    QT_EMPTY_QUERY = 0;
+    QT_BOOST_QUERY = 1;
+    QT_BOOLEAN_QUERY = 2;
+    QT_TERM_QUERY = 3;
+    QT_BLOOM_FILTER_QUERY = 4;
+    QT_DOUBLE_EQ_QUERY = 5;
+    QT_STRING_QE_QUERY = 6;
+    QT_DOUBLE_RANGE_QUERY = 7;
+    QT_STRING_RANGE_QUERY = 8;
+    QT_ANN_QUERY = 9;
+}

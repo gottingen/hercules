@@ -95,8 +95,14 @@ set(DYNAMIC_LIB
 
 include(CompileProto)
 
+set(ENGINE_PROTO_FILES
+        hercules/engine/proto/error_code.proto
+        hercules/engine/proto/document.proto
+        hercules/engine/proto/query_type.proto
+        hercules/engine/proto/types.proto
+)
+
 set(PROTO_FILES
-        hercules/proto/document.proto
         hercules/proto/plugin.proto
         hercules/proto/query.proto
         hercules/proto/recall_doc.proto
@@ -114,10 +120,23 @@ compile_proto(PROTO_HDRS PROTO_SRCS ${PROJECT_BINARY_DIR}
         ${PROJECT_SOURCE_DIR}
         "${PROTO_FILES}")
 
+compile_proto(ENGINE_PROTO_HDRS ENGINE_PROTO_SRCS ${PROJECT_BINARY_DIR}
+        ${PROJECT_BINARY_DIR}/output/include
+        ${PROJECT_SOURCE_DIR}
+        "${ENGINE_PROTO_FILES}")
+
 carbin_cc_library(
         NAMESPACE hercules
         NAME proto
         SOURCES ${PROTO_SRCS}
+        PUBLIC_LINKED_TARGETS ${CARBIN_SYS_DYLINK} ${DYNAMIC_LIB}
+        PRIVATE_COMPILE_OPTIONS ${CARBIN_DEFAULT_COPTS}
+)
+
+carbin_cc_library(
+        NAMESPACE hercules
+        NAME engine_proto
+        SOURCES ${ENGINE_PROTO_SRCS}
         PUBLIC_LINKED_TARGETS ${CARBIN_SYS_DYLINK} ${DYNAMIC_LIB}
         PRIVATE_COMPILE_OPTIONS ${CARBIN_DEFAULT_COPTS}
 )

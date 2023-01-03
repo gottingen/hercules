@@ -1,0 +1,18 @@
+
+
+/****************************************************************
+ * Copyright (c) 2023, liyinbin
+ * All rights reserved.
+ * Author by liyinbin (jeff.li) lijippy@163.com
+ *****************************************************************/
+
+syntax = "proto2";
+package hercules;
+option cc_generic_services = true;
+
+enum  RelevanceType {
+    RT_NONE = 0;
+    RT_BM25_OFFLINE = 1;
+    RT_BM25_ONLINE = 2;
+    RT_DOC_TERM_WEIGHT = 3;
+};

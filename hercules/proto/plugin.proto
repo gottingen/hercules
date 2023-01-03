@@ -1,6 +1,12 @@
 
 
 
+/****************************************************************
+ * Copyright (c) 2023, liyinbin
+ * All rights reserved.
+ * Author by liyinbin (jeff.li) lijippy@163.com
+ *****************************************************************/
+
 syntax = "proto2";
 package hercules;
 option cc_generic_services = true;

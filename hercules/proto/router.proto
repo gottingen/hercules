@@ -1,10 +1,16 @@
+
+/****************************************************************
+ * Copyright (c) 2023, liyinbin
+ * All rights reserved.
+ * Author by liyinbin (jeff.li) lijippy@163.com
+ *****************************************************************/
+
 syntax = "proto2";
 package hercules;
 option cc_generic_services = true;
 
 import "hercules/proto/types.proto";
 import "hercules/proto/search.proto";
-import "hercules/proto/document.proto";
 import "hercules/proto/plugin.proto";
 
 
@@ -21,7 +27,7 @@ service RouterService {
     rpc remove_router (RemoveRouterRequest) returns (UpdateRouterResponse);
 
     rpc get_group_state (GroupStateRequest) returns (GroupStateResponse);
-    rpc get_table_state (TableStateRequest) returns (IndexStateResponse);
+    rpc get_table_state (TableStateRequest) returns (TableStateResponse);
     rpc list_table (ListTableRequest) returns (ListTableResponse);
     rpc create_table (CreateTableRequest) returns (CreateTableResponse);
     rpc delete_table (DeleteTableRequest) returns (DeleteTableResponse);

@@ -1,10 +1,12 @@
 
-
-
-
+/****************************************************************
+ * Copyright (c) 2023, liyinbin
+ * All rights reserved.
+ * Author by liyinbin (jeff.li) lijippy@163.com
+ *****************************************************************/
 
 syntax = "proto2";
-package hercules;
+package hercules.proto;
 option cc_generic_services = true;
 import "google/protobuf/struct.proto";
 
@@ -54,34 +56,3 @@ message RestrictionInfo {
 message VectorField {
     repeated float value = 1;
 }
-
-message PutRequest {
-    required string set_name = 1;
-    required string table = 2;
-    repeated Document docs = 3;
-    optional bool add_index = 4 [default = true];
-    optional int32 timeout = 5 [default = 10000];
-};
-
-
-message PutResponse {
-    required bool success = 1;
-    optional string redirect = 2;
-    optional string error = 3;
-    repeated string ids = 4;
-    optional int64 size = 5;
-};
-
-message GetRequest {
-    required string set_name = 1;
-    required string table = 2;
-    repeated string ids = 3;
-    optional bool with_vector = 4 [default = true];
-};
-
-message GetResponse {
-    required bool success = 1;
-    optional string redirect = 2;
-    optional string error = 3;
-    repeated Document docs = 4;
-};

@@ -18,7 +18,7 @@ carbin_cc_library(
         NAME engine
         SOURCES ${HERCULES_ENGINE_SRC}
         PUBLIC_LINKED_TARGETS ${CAEBIN_SYS_DYLINK} ${DYNAMIC_LIB}
-        PRIVATE_LINKED_TARGETS hercules::proto
+        PRIVATE_LINKED_TARGETS hercules::engine_proto
         PRIVATE_COMPILE_OPTIONS ${CARBIN_DEFAULT_COPTS}
         PUBLIC
         SHARED

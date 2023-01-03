@@ -1,0 +1,20 @@
+
+
+/****************************************************************
+ * Copyright (c) 2023, liyinbin
+ * All rights reserved.
+ * Author by liyinbin (jeff.li) lijippy@163.com
+ *****************************************************************/
+
+syntax = "proto2";
+package hercules.proto;
+
+enum ErrorCode {
+    EC_OK = 0;
+    EC_UPSERT_DOC_FAIL = 800;  //!<skip system error and http error code
+    EC_NO_SUPPORT_UPSERT = 801;
+    EC_DOC_INVALID = 802;
+    EC_OVERFLOW_CAPACITY = 803;
+    EC_INDEX_INIT_FAIL = 804;
+    EC_UNKNOWN = 805;
+}

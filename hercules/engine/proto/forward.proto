@@ -1,0 +1,25 @@
+
+/****************************************************************
+ * Copyright (c) 2023, liyinbin
+ * All rights reserved.
+ * Author by liyinbin (jeff.li) lijippy@163.com
+ *****************************************************************/
+
+syntax = "proto2";
+package hercules.proto;
+
+enum ForwardFieldType {
+    kForwardFieldTypeUint8 = 0;
+    kForwardFieldTypeInt8 = 1;
+    kForwardFieldTypeUint16 = 2;
+    kForwardFieldTypeInt16 = 3;
+    kForwardFieldTypeUint32 = 4;
+    kForwardFieldTypeInt32 = 5;
+    kForwardFieldTypeUint64 = 6;
+    kForwardFieldTypeInt64 = 7;
+    kForwardFieldTypeFloat = 8;
+    kForwardFieldTypeDouble = 9;
+    kForwardFieldTypeString = 10;
+    kForwardFieldTypeKvStringDouble = 11;
+    kForwardFieldTypeListString = 12;
+}
