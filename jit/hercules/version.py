@@ -1,4 +1,4 @@
-__version__         = "0.1.0"
+__version__         = "0.1.7"
 HERCULES_VERSION       = "0.1.1"
 HERCULES_VERSION_MAJOR = 0
 HERCULES_VERSION_MINOR = 1
