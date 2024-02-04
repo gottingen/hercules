@@ -1,0 +1,154 @@
+#
+# Copyright 2023 EA Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+def _format_error(ret: str):
+	raise ValueError(f"invalid format specifier: {ret}")
+
+@extend
+class int:
+    def __format__(self, format_spec: str) -> str:
+        err = False
+        ret = _C.seq_str_int(self, format_spec, __ptr__(err))
+        if format_spec and err:
+            _format_error(ret)
+        return ret
+
+@extend
+class Int:
+    def __format__(self, format_spec: str) -> str:
+        err = False
+        ret = _C.seq_str_int(self.__int__(), format_spec, __ptr__(err))
+        if format_spec and err:
+            _format_error(ret)
+        return ret
+
+@extend
+class UInt:
+    def __format__(self, format_spec: str) -> str:
+        err = False
+        ret = _C.seq_str_uint(self.__int__(), format_spec, __ptr__(err))
+        if format_spec and err:
+            _format_error(ret)
+        return ret
+
+@extend
+class float:
+    def __format__(self, format_spec: str) -> str:
+        err = False
+        ret = _C.seq_str_float(self, format_spec, __ptr__(err))
+        if format_spec and err:
+            _format_error(ret)
+        return ret if ret != "-nan" else "nan"
+
+@extend
+class str:
+    def __format__(self, format_spec: str) -> str:
+        err = False
+        ret = _C.seq_str_str(self, format_spec, __ptr__(err))
+        if format_spec and err:
+            _format_error(ret)
+        return ret
+
+@extend
+class Ptr:
+    def __format__(self, format_spec: str) -> str:
+        err = False
+        ret = _C.seq_str_ptr(self.as_byte(), format_spec, __ptr__(err))
+        if format_spec and err:
+            _format_error(ret)
+        return ret
+
+def _divmod_10(dividend, N: Static[int]):
+    T = type(dividend)
+    zero, one = T(0), T(1)
+    neg = dividend < zero
+    dvd = dividend.__abs__()
+
+    remainder = 0
+    quotient = zero
+
+    # Euclidean division
+    for bit_idx in range(N - 1, -1, -1):
+        mask = int((dvd & (one << T(bit_idx))) != zero)
+        remainder = (remainder << 1) + mask
+        if remainder >= 10:
+            quotient = (quotient << one) + one
+            remainder -= 10
+        else:
+            quotient = quotient << one
+
+    if neg:
+        quotient = -quotient
+        remainder = -remainder
+
+    return quotient, remainder
+
+@extend
+class Int:
+    def __str__(self) -> str:
+        if N <= 64:
+            return str(int(self))
+
+        if not self:
+            return '0'
+
+        s = _strbuf()
+        d = self
+
+        if d >= Int[N](0):
+            while True:
+                d, m = _divmod_10(d, N)
+                b = byte(48 + m)  # 48 == ord('0')
+                s.append(str(__ptr__(b), 1))
+                if not d:
+                    break
+        else:
+            while True:
+                d, m = _divmod_10(d, N)
+                b = byte(48 - m)  # 48 == ord('0')
+                s.append(str(__ptr__(b), 1))
+
+                if not d:
+                    break
+            s.append('-')
+
+        s.reverse()
+        return s.__str__()
+
+@extend
+class UInt:
+    def __str__(self) -> str:
+        if N <= 64:
+            return self.__format__("")
+
+        s = _strbuf()
+        d = self
+
+        while True:
+            d, m = _divmod_10(d, N)
+            b = byte(48 + int(m))  # 48 == ord('0')
+            s.append(str(__ptr__(b), 1))
+            if not d:
+                break
+
+        s.reverse()
+        return s.__str__()
+
+@extend
+class __magic__:
+    def repr_partial(slf) -> str:
+        h = slf.__class__.__name__
+        return f"partial({h})"

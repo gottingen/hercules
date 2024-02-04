@@ -1,0 +1,13 @@
+name: hs-dev
+channels:
+  - conda-forge
+  - mgottingen
+  - defaults
+dependencies:
+  - ea-llvm
+  - turbo
+  - ea-gtest
+  - ea-backtrace
+  - ea-re2
+  - ea-zlib
+  - ea-xz

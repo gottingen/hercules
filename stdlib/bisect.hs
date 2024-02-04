@@ -1,0 +1,145 @@
+#
+# Copyright 2023 EA Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Pats of this file: (c) 2022 Python Software Foundation. All right reserved.
+# License:
+#    1. This LICENSE AGREEMENT is between the Python Software Foundation ("PSF"), and
+#    the Individual or Organization ("Licensee") accessing and otherwise using Python
+#    3.10.2 software in source or binary form and its associated documentation.
+#
+#    2. Subject to the terms and conditions of this License Agreement, PSF hereby
+#    grants Licensee a nonexclusive, royalty-free, world-wide license to reproduce,
+#    analyze, test, perform and/or display publicly, prepare derivative works,
+#    distribute, and otherwise use Python 3.10.2 alone or in any derivative
+#    version, provided, however, that PSF's License Agreement and PSF's notice of
+#    copyright, i.e., "Copyright © 2001-2022 Python Software Foundation; All Rights
+#    Reserved" are retained in Python 3.10.2 alone or in any derivative version
+#    prepared by Licensee.
+#
+#    3. In the event Licensee prepares a derivative work that is based on or
+#    incorporates Python 3.10.2 or any part thereof, and wants to make the
+#    derivative work available to others as provided herein, then Licensee hereby
+#    agrees to include in any such work a brief summary of the changes made to Python
+#    3.10.2.
+#
+#    4. PSF is making Python 3.10.2 available to Licensee on an "AS IS" basis.
+#    PSF MAKES NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED.  BY WAY OF
+#    EXAMPLE, BUT NOT LIMITATION, PSF MAKES NO AND DISCLAIMS ANY REPRESENTATION OR
+#    WARRANTY OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE
+#    USE OF PYTHON 3.10.2 WILL NOT INFRINGE ANY THIRD PARTY RIGHTS.
+#
+#    5. PSF SHALL NOT BE LIABLE TO LICENSEE OR ANY OTHER USERS OF PYTHON 3.10.2
+#    FOR ANY INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES OR LOSS AS A RESULT OF
+#    MODIFYING, DISTRIBUTING, OR OTHERWISE USING PYTHON 3.10.2, OR ANY DERIVATIVE
+#    THEREOF, EVEN IF ADVISED OF THE POSSIBILITY THEREOF.
+#
+#    6. This License Agreement will automatically terminate upon a material breach of
+#    its terms and conditions.
+#
+#    7. Nothing in this License Agreement shall be deemed to create any relationship
+#    of agency, partnership, or joint venture between PSF and Licensee.  This License
+#    Agreement does not grant permission to use PSF trademarks or trade name in a
+#    trademark sense to endorse or promote products or services of Licensee, or any
+#    third party.
+#
+#    8. By copying, installing or otherwise using Python 3.10.2, Licensee agrees
+#    to be bound by the terms and conditions of this License Agreement.
+
+def bisect_left(
+    a: List[T], x: S, lo: int = 0, hi: Optional[int] = None, T: type, S: type
+) -> int:
+    """
+    Return the index where to insert item x in list a, assuming a is sorted.
+
+    The return value i is such that all e in a[:i] have e < x, and all e in
+    a[i:] have e >= x.  So if x already appears in the list, a.insert(x) will
+    insert just before the leftmost x already there.
+
+    Optional args lo (default 0) and hi (default len(a)) bound the
+    slice of a to be searched.
+
+    Default values: lo=0, hi=None
+    """
+    if lo < 0:
+        raise ValueError("lo must be non-negative")
+    hi: int = len(a) if hi is None else hi
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if a[mid] < x:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo
+
+def bisect_right(
+    a: List[T], x: S, lo: int = 0, hi: Optional[int] = None, T: type, S: type
+) -> int:
+    """
+    Return the index where to insert item x in list a, assuming a is sorted.
+
+    The return value i is such that all e in a[:i] have e <= x, and all e in
+    a[i:] have e > x.  So if x already appears in the list, a.insert(x) will
+    insert just after the rightmost x already there.
+
+    Optional args lo (default 0) and hi (default len(a)) bound the
+    slice of a to be searched.
+
+    Default values: lo=0, hi=None
+    """
+    if lo < 0:
+        raise ValueError("lo must be non-negative")
+    hi: int = len(a) if hi is None else hi
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if x < a[mid]:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+def insort_left(
+    a: List[T], x: S, lo: int = 0, hi: Optional[int] = None, T: type, S: type
+):
+    """
+    Insert item x in list a, and keep it sorted assuming a is sorted.
+
+    If x is already in a, insert it to the left of the leftmost x.
+
+    Default values: lo=0, hi=None
+    For now seq will use len(a) instead of None
+    """
+    lo = bisect_left(a, x, lo, hi)
+    a.insert(lo, x)
+
+def insort_right(
+    a: List[T], x: S, lo: int = 0, hi: Optional[int] = None, T: type, S: type
+):
+    """
+    Insert item x in list a, and keep it sorted assuming a is sorted.
+
+    If x is already in a, insert it to the right of the rightmost x.
+
+    Default values: lo=0, hi=None
+    For now seq will use len(a) instead of None
+    """
+    lo = bisect_right(a, x, lo, hi)
+
+    if lo == len(a):
+        a.append(x)
+    else:
+        a.insert(lo, x)
+
+bisect = bisect_right
+insort = insort_right

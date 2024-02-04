@@ -1,0 +1,16 @@
+CONDA_BUILD_SYSROOT:   # [osx and x86_64]
+  - /opt/MacOSX10.15.sdk        # [osx and x86_64]
+
+MACOSX_SDK_VERSION:  # [osx and x86_64]
+  - "10.15"  # [osx and x86_64]
+
+MACOSX_DEPLOYMENT_TARGET:  # [osx and x86_64]
+  - "10.15"  # [osx and x86_64]
+python:
+  - 3.6
+  - 3.7
+  - 3.8
+channel_sources:
+  - mgottingen
+  - conda-forge
+  - default

@@ -1,0 +1,433 @@
+#
+# Copyright 2023 EA Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+from internal.attributes import commutative, associative, distributive
+from internal.types.complex import complex
+
+@extend
+class int:
+    @pure
+    @llvm
+    def __new__() -> int:
+        ret i64 0
+
+    def __new__(s: str, base: int) -> int:
+        return int._from_str(s, base)
+
+    def __new__(what) -> int:
+        # do not overload! (needed to avoid pyobj conversion)
+        if isinstance(what, str) or isinstance(what, Optional[str]):
+            return int._from_str(what, 10)
+        else:
+            return what.__int__()
+
+    def __int__(self) -> int:
+        return self
+
+    @pure
+    @llvm
+    def __float__(self) -> float:
+        %tmp = sitofp i64 %self to double
+        ret double %tmp
+
+    def __complex__(self) -> complex:
+        return complex(float(self), 0.0)
+
+    def __index__(self) -> int:
+        return self
+
+    def __repr__(self) -> str:
+        return self.__format__("")
+
+    def __copy__(self) -> int:
+        return self
+
+    def __deepcopy__(self) -> int:
+        return self
+
+    def __hash__(self) -> int:
+        return self
+
+    @pure
+    @llvm
+    def __bool__(self) -> bool:
+        %0 = icmp ne i64 %self, 0
+        %1 = zext i1 %0 to i8
+        ret i8 %1
+
+    def __pos__(self) -> int:
+        return self
+
+    def __neg__(self) -> int:
+        return 0 - self
+
+    @pure
+    @llvm
+    def __abs__(self) -> int:
+        declare i64 @llvm.abs.i64(i64, i1)
+        %0 = call i64 @llvm.abs.i64(i64 %self, i1 false)
+        ret i64 %0
+
+    @pure
+    @llvm
+    def __lshift__(self, other: int) -> int:
+        %0 = shl i64 %self, %other
+        ret i64 %0
+
+    @pure
+    @llvm
+    def __rshift__(self, other: int) -> int:
+        %0 = ashr i64 %self, %other
+        ret i64 %0
+
+    @pure
+    @commutative
+    @llvm
+    def __add__(self, other: float) -> float:
+        %0 = sitofp i64 %self to double
+        %1 = fadd double %0, %other
+        ret double %1
+
+    @pure
+    @commutative
+    @associative
+    @llvm
+    def __add__(self, b: int) -> int:
+        %tmp = add i64 %self, %b
+        ret i64 %tmp
+
+    @pure
+    @llvm
+    def __sub__(self, other: float) -> float:
+        %0 = sitofp i64 %self to double
+        %1 = fsub double %0, %other
+        ret double %1
+
+    @pure
+    @llvm
+    def __sub__(self, b: int) -> int:
+        %tmp = sub i64 %self, %b
+        ret i64 %tmp
+
+    @pure
+    @commutative
+    @llvm
+    def __mul__(self, other: float) -> float:
+        %0 = sitofp i64 %self to double
+        %1 = fmul double %0, %other
+        ret double %1
+
+    @pure
+    @commutative
+    @associative
+    @distributive
+    @llvm
+    def __mul__(self, b: int) -> int:
+        %tmp = mul i64 %self, %b
+        ret i64 %tmp
+
+    @pure
+    @llvm
+    def __floordiv__(self, other: float) -> float:
+        declare double @llvm.floor.f64(double)
+        %0 = sitofp i64 %self to double
+        %1 = fdiv double %0, %other
+        %2 = call double @llvm.floor.f64(double %1)
+        ret double %2
+
+    @pure
+    @llvm
+    def __floordiv__(self, b: int) -> int:
+        %tmp = sdiv i64 %self, %b
+        ret i64 %tmp
+
+    @pure
+    @llvm
+    def __truediv__(self, other: float) -> float:
+        %0 = sitofp i64 %self to double
+        %1 = fdiv double %0, %other
+        ret double %1
+
+    @pure
+    @llvm
+    def __truediv__(self, other: int) -> float:
+        %0 = sitofp i64 %self to double
+        %1 = sitofp i64 %other to double
+        %2 = fdiv double %0, %1
+        ret double %2
+
+    @pure
+    @llvm
+    def __mod__(self, other: float) -> float:
+        %0 = sitofp i64 %self to double
+        %1 = frem double %0, %other
+        ret double %1
+
+    @pure
+    @llvm
+    def __mod__(a: int, b: int) -> int:
+        %tmp = srem i64 %a, %b
+        ret i64 %tmp
+
+    def __divmod__(self, other: float) -> Tuple[float, float]:
+        return float(self).__divmod__(other)
+
+    def __divmod__(self, other: int) -> Tuple[int, int]:
+        d = self // other
+        m = self - d * other
+        if m and ((other ^ m) < 0):
+            m += other
+            d -= 1
+        return (d, m)
+
+    @pure
+    @llvm
+    def __invert__(a: int) -> int:
+        %tmp = xor i64 %a, -1
+        ret i64 %tmp
+
+    @pure
+    @commutative
+    @associative
+    @llvm
+    def __and__(a: int, b: int) -> int:
+        %tmp = and i64 %a, %b
+        ret i64 %tmp
+
+    @pure
+    @commutative
+    @associative
+    @llvm
+    def __or__(a: int, b: int) -> int:
+        %tmp = or i64 %a, %b
+        ret i64 %tmp
+
+    @pure
+    @commutative
+    @associative
+    @llvm
+    def __xor__(a: int, b: int) -> int:
+        %tmp = xor i64 %a, %b
+        ret i64 %tmp
+
+    @pure
+    @llvm
+    def __bitreverse__(a: int) -> int:
+        declare i64 @llvm.bitreverse.i64(i64 %a)
+        %tmp = call i64 @llvm.bitreverse.i64(i64 %a)
+        ret i64 %tmp
+
+    @pure
+    @llvm
+    def __bswap__(a: int) -> int:
+        declare i64 @llvm.bswap.i64(i64 %a)
+        %tmp = call i64 @llvm.bswap.i64(i64 %a)
+        ret i64 %tmp
+
+    @pure
+    @llvm
+    def __ctpop__(a: int) -> int:
+        declare i64 @llvm.ctpop.i64(i64 %a)
+        %tmp = call i64 @llvm.ctpop.i64(i64 %a)
+        ret i64 %tmp
+
+    @pure
+    @llvm
+    def __ctlz__(a: int) -> int:
+        declare i64 @llvm.ctlz.i64(i64 %a, i1 %is_zero_undef)
+        %tmp = call i64 @llvm.ctlz.i64(i64 %a, i1 false)
+        ret i64 %tmp
+
+    @pure
+    @llvm
+    def __cttz__(a: int) -> int:
+        declare i64 @llvm.cttz.i64(i64 %a, i1 %is_zero_undef)
+        %tmp = call i64 @llvm.cttz.i64(i64 %a, i1 false)
+        ret i64 %tmp
+
+    @pure
+    @llvm
+    def __eq__(self, b: float) -> bool:
+        %0 = sitofp i64 %self to double
+        %1 = fcmp oeq double %0, %b
+        %2 = zext i1 %1 to i8
+        ret i8 %2
+
+    @pure
+    @llvm
+    def __eq__(a: int, b: int) -> bool:
+        %tmp = icmp eq i64 %a, %b
+        %res = zext i1 %tmp to i8
+        ret i8 %res
+
+    @pure
+    @llvm
+    def __ne__(self, b: float) -> bool:
+        %0 = sitofp i64 %self to double
+        %1 = fcmp one double %0, %b
+        %2 = zext i1 %1 to i8
+        ret i8 %2
+
+    @pure
+    @llvm
+    def __ne__(a: int, b: int) -> bool:
+        %tmp = icmp ne i64 %a, %b
+        %res = zext i1 %tmp to i8
+        ret i8 %res
+
+    @pure
+    @llvm
+    def __lt__(self, b: float) -> bool:
+        %0 = sitofp i64 %self to double
+        %1 = fcmp olt double %0, %b
+        %2 = zext i1 %1 to i8
+        ret i8 %2
+
+    @pure
+    @llvm
+    def __lt__(a: int, b: int) -> bool:
+        %tmp = icmp slt i64 %a, %b
+        %res = zext i1 %tmp to i8
+        ret i8 %res
+
+    @pure
+    @llvm
+    def __gt__(self, b: float) -> bool:
+        %0 = sitofp i64 %self to double
+        %1 = fcmp ogt double %0, %b
+        %2 = zext i1 %1 to i8
+        ret i8 %2
+
+    @pure
+    @llvm
+    def __gt__(a: int, b: int) -> bool:
+        %tmp = icmp sgt i64 %a, %b
+        %res = zext i1 %tmp to i8
+        ret i8 %res
+
+    @pure
+    @llvm
+    def __le__(self, b: float) -> bool:
+        %0 = sitofp i64 %self to double
+        %1 = fcmp ole double %0, %b
+        %2 = zext i1 %1 to i8
+        ret i8 %2
+
+    @pure
+    @llvm
+    def __le__(a: int, b: int) -> bool:
+        %tmp = icmp sle i64 %a, %b
+        %res = zext i1 %tmp to i8
+        ret i8 %res
+
+    @pure
+    @llvm
+    def __ge__(self, b: float) -> bool:
+        %0 = sitofp i64 %self to double
+        %1 = fcmp oge double %0, %b
+        %2 = zext i1 %1 to i8
+        ret i8 %2
+
+    @pure
+    @llvm
+    def __ge__(a: int, b: int) -> bool:
+        %tmp = icmp sge i64 %a, %b
+        %res = zext i1 %tmp to i8
+        ret i8 %res
+
+    def __pow__(self, exp: float) -> float:
+        return float(self) ** exp
+
+    def __pow__(self, exp: int) -> int:
+        if exp < 0:
+            return 0
+        result = 1
+        while True:
+            if exp & 1:
+                result *= self
+            exp >>= 1
+            if not exp:
+                break
+            self *= self
+        return result
+
+    def popcnt(self) -> int:
+        return Int[64](self).popcnt()
+
+    @nocapture
+    @llvm
+    def __atomic_xchg__(d: Ptr[int], b: int) -> None:
+        %tmp = atomicrmw xchg ptr %d, i64 %b seq_cst
+        ret {} {}
+
+    @nocapture
+    @llvm
+    def __atomic_add__(d: Ptr[int], b: int) -> int:
+        %tmp = atomicrmw add ptr %d, i64 %b seq_cst
+        ret i64 %tmp
+
+    @nocapture
+    @llvm
+    def __atomic_sub__(d: Ptr[int], b: int) -> int:
+        %tmp = atomicrmw sub ptr %d, i64 %b seq_cst
+        ret i64 %tmp
+
+    @nocapture
+    @llvm
+    def __atomic_and__(d: Ptr[int], b: int) -> int:
+        %tmp = atomicrmw and ptr %d, i64 %b seq_cst
+        ret i64 %tmp
+
+    @nocapture
+    @llvm
+    def __atomic_nand__(d: Ptr[int], b: int) -> int:
+        %tmp = atomicrmw nand ptr %d, i64 %b seq_cst
+        ret i64 %tmp
+
+    @nocapture
+    @llvm
+    def __atomic_or__(d: Ptr[int], b: int) -> int:
+        %tmp = atomicrmw or ptr %d, i64 %b seq_cst
+        ret i64 %tmp
+
+    @nocapture
+    @llvm
+    def __atomic_xor__(d: Ptr[int], b: int) -> int:
+        %tmp = atomicrmw xor ptr %d, i64 %b seq_cst
+        ret i64 %tmp
+
+    @nocapture
+    @llvm
+    def __atomic_min__(d: Ptr[int], b: int) -> int:
+        %tmp = atomicrmw min ptr %d, i64 %b seq_cst
+        ret i64 %tmp
+
+    @nocapture
+    @llvm
+    def __atomic_max__(d: Ptr[int], b: int) -> int:
+        %tmp = atomicrmw max ptr %d, i64 %b seq_cst
+        ret i64 %tmp
+
+    def __match__(self, obj: int) -> bool:
+        return self == obj
+
+    @property
+    def real(self) -> int:
+        return self
+
+    @property
+    def imag(self) -> int:
+        return 0

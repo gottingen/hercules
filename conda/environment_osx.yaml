@@ -1,0 +1,8 @@
+name: turbo-dev
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - gtest
+  - gmock
+  - benchmark

@@ -1,0 +1,1100 @@
+import math
+import cmath
+
+INF = float("inf")
+NAN = float("nan")
+
+
+def float_identical(x, y):
+    if math.isnan(x) or math.isnan(y):
+        if math.isnan(x) and math.isnan(y):
+            return True
+    elif x == y:
+        if x != 0.0:
+            return True
+        # both zero; check that signs match
+        elif math.copysign(1.0, x) == math.copysign(1.0, y):
+            return True
+        else:
+            return False
+    return False
+
+
+def complex_identical(x, y):
+    return float_identical(x.real, y.real) and float_identical(x.imag, y.imag)
+
+
+###########
+# complex #
+###########
+
+ZERO_DIVISION = (
+    (1 + 1j, 0 + 0j),
+    (1 + 1j, 0.0 + 0j),
+    (1 + 1j, 0 + 0j),
+    (1.0 + 0j, 0 + 0j),
+    (1 + 0j, 0 + 0j),
+)
+
+
+def close_abs(x, y, eps=1e-9):
+    """Return true iff floats x and y "are close"."""
+    # put the one with larger magnitude second
+    if abs(x) > abs(y):
+        x, y = y, x
+    if y == 0:
+        return abs(x) < eps
+    if x == 0:
+        return abs(y) < eps
+    # check that relative difference < eps
+    return abs((x - y) / y) < eps
+
+
+def close_complex(x, y, eps=1e-9):
+    a = complex(x)
+    b = complex(y)
+    return close_abs(a.real, b.real, eps) and close_abs(a.imag, b.imag, eps)
+
+
+def check_div(x, y):
+    """Compute complex z=x*y, and check that z/x==y and z/y==x."""
+    z = x * y
+    if x != 0:
+        q = z / x
+        if not close_complex(q, y):
+            return False
+        q = z.__truediv__(x)
+        if not close_complex(q, y):
+            return False
+    if y != 0:
+        q = z / y
+        if not close_complex(q, x):
+            return False
+        q = z.__truediv__(y)
+        if not close_complex(q, x):
+            return False
+    return True
+
+
+@test
+def test_truediv():
+    from random import random
+
+    simple_real = [float(i) for i in range(-5, 6)]
+    simple_complex = [complex(x, y) for x in simple_real for y in simple_real]
+    for x in simple_complex:
+        for y in simple_complex:
+            assert check_div(x, y)
+
+    # A naive complex division algorithm (such as in 2.0) is very prone to
+    # nonsense errors for these (overflows and underflows).
+    assert check_div(complex(1e200, 1e200), 1 + 0j)
+    assert check_div(complex(1e-200, 1e-200), 1 + 0j)
+
+    # Just for fun.
+    for i in range(100):
+        check_div(complex(random(), random()), complex(random(), random()))
+
+    assert close_complex(complex.__truediv__(2 + 0j, 1 + 1j), 1 - 1j)
+
+    for denom_real, denom_imag in [(0.0, NAN), (NAN, 0.0), (NAN, NAN)]:
+        z = complex(0, 0) / complex(denom_real, denom_imag)
+        assert math.isnan(z.real)
+        assert math.isnan(z.imag)
+
+
+test_truediv()
+
+
+@test
+def test_richcompare():
+    assert not complex.__eq__(1 + 1j, 1 << 10000)
+    assert complex.__eq__(1 + 1j, 1 + 1j)
+    assert not complex.__eq__(1 + 1j, 2 + 2j)
+    assert not complex.__ne__(1 + 1j, 1 + 1j)
+    assert complex.__ne__(1 + 1j, 2 + 2j), True
+    for i in range(1, 100):
+        f = i / 100.0
+        assert complex.__eq__(f + 0j, f)
+        assert not complex.__ne__(f + 0j, f)
+        assert not complex.__eq__(complex(f, f), f)
+        assert complex.__ne__(complex(f, f), f)
+
+    import operator
+
+    assert operator.eq(1 + 1j, 1 + 1j) == True
+    assert operator.eq(1 + 1j, 2 + 2j) == False
+    assert operator.ne(1 + 1j, 1 + 1j) == False
+    assert operator.ne(1 + 1j, 2 + 2j) == True
+
+
+test_richcompare()
+
+
+@test
+def test_pow():
+    def pow(a, b):
+        return a ** b
+
+    assert close_complex(pow(1 + 1j, 0 + 0j), 1.0)
+    assert close_complex(pow(0 + 0j, 2 + 0j), 0.0)
+    assert close_complex(pow(1j, -1), 1 / (1j))
+    assert close_complex(pow(1j, 200), 1)
+
+    a = 3.33 + 4.43j
+    assert a ** (0j) == 1
+    assert a ** (0.0 + 0.0j) == 1
+
+    assert (3j) ** (0j) == 1
+    assert (3j) ** 0 == 1
+
+    # The following is used to exercise certain code paths
+    assert a ** 105 == a ** 105
+    assert a ** -105 == a ** -105
+    assert a ** -30 == a ** -30
+
+    assert (0.0j) ** 0 == 1
+
+
+test_pow()
+
+
+@test
+def test_conjugate():
+    assert close_complex(complex(5.3, 9.8).conjugate(), 5.3 - 9.8j)
+
+
+test_conjugate()
+
+
+@test
+def test_cabs():
+    nums = [complex(x / 3.0, y / 7.0) for x in range(-9, 9) for y in range(-9, 9)]
+    for num in nums:
+        assert close_complex((num.real ** 2 + num.imag ** 2) ** 0.5, abs(num))
+
+
+test_cabs()
+
+
+@test
+def test_negative_zero_repr_str():
+    def test(v, expected):
+        return str(v) == expected
+
+    assert test(complex(0.0, 1.0), "1j")
+    assert test(complex(-0.0, 1.0), "(-0+1j)")
+    assert test(complex(0.0, -1.0), "-1j")
+    assert test(complex(-0.0, -1.0), "(-0-1j)")
+
+    assert test(complex(0.0, 0.0), "0j")
+    assert test(complex(0.0, -0.0), "-0j")
+    assert test(complex(-0.0, 0.0), "(-0+0j)")
+    assert test(complex(-0.0, -0.0), "(-0-0j)")
+
+
+test_negative_zero_repr_str()
+
+#########
+# cmath #
+#########
+
+complex_zeros = [complex(x, y) for x in [0.0, -0.0] for y in [0.0, -0.0]]
+complex_infinities = [
+    complex(x, y)
+    for x, y in [
+        (INF, 0.0),  # 1st quadrant
+        (INF, 2.3),
+        (INF, INF),
+        (2.3, INF),
+        (0.0, INF),
+        (-0.0, INF),  # 2nd quadrant
+        (-2.3, INF),
+        (-INF, INF),
+        (-INF, 2.3),
+        (-INF, 0.0),
+        (-INF, -0.0),  # 3rd quadrant
+        (-INF, -2.3),
+        (-INF, -INF),
+        (-2.3, -INF),
+        (-0.0, -INF),
+        (0.0, -INF),  # 4th quadrant
+        (2.3, -INF),
+        (INF, -INF),
+        (INF, -2.3),
+        (INF, -0.0),
+    ]
+]
+complex_nans = [
+    complex(x, y)
+    for x, y in [
+        (NAN, -INF),
+        (NAN, -2.3),
+        (NAN, -0.0),
+        (NAN, 0.0),
+        (NAN, 2.3),
+        (NAN, INF),
+        (-INF, NAN),
+        (-2.3, NAN),
+        (-0.0, NAN),
+        (0.0, NAN),
+        (2.3, NAN),
+        (INF, NAN),
+    ]
+]
+
+
+@llvm
+@pure
+def small() -> float:
+    ret double 4.940660e-323
+
+
+def almost_equal(a, b, rel_err=2e-15, abs_err=small()):
+    if math.isnan(a):
+        if math.isnan(b):
+            return True
+        return False
+
+    if math.isinf(a):
+        if a == b:
+            return True
+        return False
+
+    if not a and not b:
+        if math.copysign(1.0, a) != math.copysign(1.0, b):
+            return False
+
+    absolute_error = abs(b - a)
+    if absolute_error <= max(abs_err, rel_err * abs(a)):
+        return True
+    return False
+
+
+@test
+def test_constants():
+    e_expected = 2.71828182845904523536
+    pi_expected = 3.14159265358979323846
+    assert math.isclose(cmath.pi, pi_expected)
+    assert math.isclose(cmath.e, e_expected)
+
+
+test_constants()
+
+
+@test
+def test_infinity_and_nan_constants():
+    assert cmath.inf.real == math.inf
+    assert cmath.inf.imag == 0.0
+    assert cmath.infj.real == 0.0
+    assert cmath.infj.imag == math.inf
+
+    assert math.isnan(cmath.nan.real)
+    assert cmath.nan.imag == 0.0
+    assert cmath.nanj.real == 0.0
+    assert math.isnan(cmath.nanj.imag)
+
+    assert str(cmath.inf) == "inf"
+    assert str(cmath.infj) == "infj"
+    assert str(cmath.nan) == "nan"
+    assert str(cmath.nanj) == "nanj"
+
+
+test_infinity_and_nan_constants()
+
+
+@test
+def test_user_object():
+    class MyComplexOS:
+        value: T
+        T: type
+
+        def __init__(self, value: T):
+            self.value = value
+
+        def __complex__(self):
+            return self.value
+
+    x = MyComplexOS(4.2)
+    assert cmath.acos(x) == cmath.acos(x.value)
+    assert cmath.acosh(x) == cmath.acosh(x.value)
+    assert cmath.asin(x) == cmath.asin(x.value)
+    assert cmath.asinh(x) == cmath.asinh(x.value)
+    assert cmath.atan(x) == cmath.atan(x.value)
+    assert cmath.atanh(x) == cmath.atanh(x.value)
+    assert cmath.cos(x) == cmath.cos(x.value)
+    assert cmath.cosh(x) == cmath.cosh(x.value)
+    assert cmath.exp(x) == cmath.exp(x.value)
+    assert cmath.log(x) == cmath.log(x.value)
+    assert cmath.log10(x) == cmath.log10(x.value)
+    assert cmath.sin(x) == cmath.sin(x.value)
+    assert cmath.sinh(x) == cmath.sinh(x.value)
+    assert cmath.sqrt(x) == cmath.sqrt(x.value)
+    assert cmath.tan(x) == cmath.tan(x.value)
+    assert cmath.tanh(x) == cmath.tanh(x.value)
+
+
+test_user_object()
+
+
+@test
+def test_input_type():
+    x = 42
+    y = float(x)
+    assert cmath.acos(x) == cmath.acos(y)
+    assert cmath.acosh(x) == cmath.acosh(y)
+    assert cmath.asin(x) == cmath.asin(y)
+    assert cmath.asinh(x) == cmath.asinh(y)
+    assert cmath.atan(x) == cmath.atan(y)
+    assert cmath.atanh(x) == cmath.atanh(y)
+    assert cmath.cos(x) == cmath.cos(y)
+    assert cmath.cosh(x) == cmath.cosh(y)
+    assert cmath.exp(x) == cmath.exp(y)
+    assert cmath.log(x) == cmath.log(y)
+    assert cmath.log10(x) == cmath.log10(y)
+    assert cmath.sin(x) == cmath.sin(y)
+    assert cmath.sinh(x) == cmath.sinh(y)
+    assert cmath.sqrt(x) == cmath.sqrt(y)
+    assert cmath.tan(x) == cmath.tan(y)
+    assert cmath.tanh(x) == cmath.tanh(y)
+
+
+test_input_type()
+
+
+@test
+def test_cmath_matches_math():
+    test_values = [0.01, 0.1, 0.2, 0.5, 0.9, 0.99]
+    unit_interval = test_values + [-x for x in test_values] + [0.0, 1.0, -1.0]
+    positive = test_values + [1.0] + [1.0 / x for x in test_values]
+    nonnegative = [0.0] + positive
+    real_line = [0.0] + positive + [-x for x in positive]
+
+    test_functions = {
+        "acos": unit_interval,
+        "asin": unit_interval,
+        "atan": real_line,
+        "cos": real_line,
+        "cosh": real_line,
+        "exp": real_line,
+        "log": positive,
+        "log10": positive,
+        "sin": real_line,
+        "sinh": real_line,
+        "sqrt": nonnegative,
+        "tan": real_line,
+        "tanh": real_line,
+    }
+
+    for v in test_functions["acos"]:
+        z = cmath.acos(v)
+        assert almost_equal(z.real, math.acos(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["asin"]:
+        z = cmath.asin(v)
+        assert almost_equal(z.real, math.asin(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["atan"]:
+        z = cmath.atan(v)
+        assert almost_equal(z.real, math.atan(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["cos"]:
+        z = cmath.cos(v)
+        assert almost_equal(z.real, math.cos(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["cosh"]:
+        z = cmath.cosh(v)
+        assert almost_equal(z.real, math.cosh(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["exp"]:
+        z = cmath.exp(v)
+        assert almost_equal(z.real, math.exp(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["log"]:
+        z = cmath.log(v)
+        assert almost_equal(z.real, math.log(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["log10"]:
+        z = cmath.log10(v)
+        assert almost_equal(z.real, math.log10(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["sin"]:
+        z = cmath.sin(v)
+        assert almost_equal(z.real, math.sin(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["sinh"]:
+        z = cmath.sinh(v)
+        assert almost_equal(z.real, math.sinh(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["sqrt"]:
+        z = cmath.sqrt(v)
+        assert almost_equal(z.real, math.sqrt(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["tan"]:
+        z = cmath.tan(v)
+        assert almost_equal(z.real, math.tan(v))
+        assert z.imag == 0.0
+
+    for v in test_functions["tanh"]:
+        z = cmath.tanh(v)
+        assert almost_equal(z.real, math.tanh(v))
+        assert z.imag == 0.0
+
+    for base in [0.5, 2.0, 10.0]:
+        for v in positive:
+            z = cmath.log(v, base)
+            s = math.log(v, base)
+            # added 'or z.real == s' since Hercules version gives -0 vs. +0 in one test
+            assert almost_equal(z.real, math.log(v, base)) or z.real == s
+            assert z.imag == 0.0
+
+
+test_cmath_matches_math()
+
+
+@test
+def test_polar():
+    def check(arg, expected):
+        got = cmath.polar(arg)
+        return all(almost_equal(e, g) for e, g in zip(expected, got))
+
+    pi = cmath.pi
+    assert check(0, (0.0, 0.0))
+    assert check(1, (1.0, 0.0))
+    assert check(-1, (1.0, pi))
+    assert check(1j, (1.0, pi / 2))
+    assert check(-3j, (3.0, -pi / 2))
+    inf = float("inf")
+    assert check(complex(inf, 0), (inf, 0.0))
+    assert check(complex(-inf, 0), (inf, pi))
+    assert check(complex(3, inf), (inf, pi / 2))
+    assert check(complex(5, -inf), (inf, -pi / 2))
+    assert check(complex(inf, inf), (inf, pi / 4))
+    assert check(complex(inf, -inf), (inf, -pi / 4))
+    assert check(complex(-inf, inf), (inf, 3 * pi / 4))
+    assert check(complex(-inf, -inf), (inf, -3 * pi / 4))
+    nan = float("nan")
+    assert check(complex(nan, 0), (nan, nan))
+    assert check(complex(0, nan), (nan, nan))
+    assert check(complex(nan, nan), (nan, nan))
+    assert check(complex(inf, nan), (inf, nan))
+    assert check(complex(-inf, nan), (inf, nan))
+    assert check(complex(nan, inf), (inf, nan))
+    assert check(complex(nan, -inf), (inf, nan))
+
+
+test_polar()
+
+
+@test
+def test_phase():
+    from cmath import phase, pi
+
+    assert almost_equal(phase(0), 0.0)
+    assert almost_equal(phase(1.0), 0.0)
+    assert almost_equal(phase(-1.0), pi)
+    assert almost_equal(phase(-1.0 + 1e-300j), pi)
+    assert almost_equal(phase(-1.0 - 1e-300j), -pi)
+    assert almost_equal(phase(1j), pi / 2)
+    assert almost_equal(phase(-1j), -pi / 2)
+
+    # zeros
+    assert phase(complex(0.0, 0.0)) == 0.0
+    assert phase(complex(0.0, -0.0)) == -0.0
+    assert phase(complex(-0.0, 0.0)) == pi
+    assert phase(complex(-0.0, -0.0)) == -pi
+
+    # infinities
+    assert almost_equal(phase(complex(-INF, -0.0)), -pi)
+    assert almost_equal(phase(complex(-INF, -2.3)), -pi)
+    assert almost_equal(phase(complex(-INF, -INF)), -0.75 * pi)
+    assert almost_equal(phase(complex(-2.3, -INF)), -pi / 2)
+    assert almost_equal(phase(complex(-0.0, -INF)), -pi / 2)
+    assert almost_equal(phase(complex(0.0, -INF)), -pi / 2)
+    assert almost_equal(phase(complex(2.3, -INF)), -pi / 2)
+    assert almost_equal(phase(complex(INF, -INF)), -pi / 4)
+    assert phase(complex(INF, -2.3)) == -0.0
+    assert phase(complex(INF, -0.0)) == -0.0
+    assert phase(complex(INF, 0.0)) == 0.0
+    assert phase(complex(INF, 2.3)) == 0.0
+    assert almost_equal(phase(complex(INF, INF)), pi / 4)
+    assert almost_equal(phase(complex(2.3, INF)), pi / 2)
+    assert almost_equal(phase(complex(0.0, INF)), pi / 2)
+    assert almost_equal(phase(complex(-0.0, INF)), pi / 2)
+    assert almost_equal(phase(complex(-2.3, INF)), pi / 2)
+    assert almost_equal(phase(complex(-INF, INF)), 0.75 * pi)
+    assert almost_equal(phase(complex(-INF, 2.3)), pi)
+    assert almost_equal(phase(complex(-INF, 0.0)), pi)
+
+    # real or imaginary part NaN
+    for z in complex_nans:
+        assert math.isnan(phase(z))
+
+
+test_phase()
+
+
+@test
+def test_abs():
+    # zeros
+    for z in complex_zeros:
+        assert abs(z) == 0.0
+
+    # infinities
+    for z in complex_infinities:
+        assert abs(z) == INF
+
+    # real or imaginary part NaN
+    assert abs(complex(NAN, -INF)) == INF
+    assert math.isnan(abs(complex(NAN, -2.3)))
+    assert math.isnan(abs(complex(NAN, -0.0)))
+    assert math.isnan(abs(complex(NAN, 0.0)))
+    assert math.isnan(abs(complex(NAN, 2.3)))
+    assert abs(complex(NAN, INF)) == INF
+    assert abs(complex(-INF, NAN)) == INF
+    assert math.isnan(abs(complex(-2.3, NAN)))
+    assert math.isnan(abs(complex(-0.0, NAN)))
+    assert math.isnan(abs(complex(0.0, NAN)))
+    assert math.isnan(abs(complex(2.3, NAN)))
+    assert abs(complex(INF, NAN)) == INF
+    assert math.isnan(abs(complex(NAN, NAN)))
+
+
+test_abs()
+
+
+def c_equal(a, b):
+    eps = 1e-7
+    if abs(a.real - b[0]) > eps or abs(a.imag - b[1]) > eps:
+        return False
+    return True
+
+
+@test
+def test_rect():
+    from cmath import rect, pi
+
+    assert c_equal(rect(0, 0), (0, 0))
+    assert c_equal(rect(1, 0), (1.0, 0))
+    assert c_equal(rect(1, -pi), (-1.0, 0))
+    assert c_equal(rect(1, pi / 2), (0, 1.0))
+    assert c_equal(rect(1, -pi / 2), (0, -1.0))
+
+
+test_rect()
+
+
+@test
+def test_isfinite():
+    real_vals = [float("-inf"), -2.3, -0.0, 0.0, 2.3, float("inf"), float("nan")]
+    for x in real_vals:
+        for y in real_vals:
+            z = complex(x, y)
+            assert cmath.isfinite(z) == (math.isfinite(x) and math.isfinite(y))
+
+
+test_isfinite()
+
+
+@test
+def test_isnan():
+    assert not cmath.isnan(1)
+    assert not cmath.isnan(1j)
+    assert not cmath.isnan(INF)
+    assert cmath.isnan(NAN)
+    assert cmath.isnan(complex(NAN, 0))
+    assert cmath.isnan(complex(0, NAN))
+    assert cmath.isnan(complex(NAN, NAN))
+    assert cmath.isnan(complex(NAN, INF))
+    assert cmath.isnan(complex(INF, NAN))
+
+
+test_isnan()
+
+
+@test
+def test_isinf():
+    assert not cmath.isinf(1)
+    assert not cmath.isinf(1j)
+    assert not cmath.isinf(NAN)
+    assert cmath.isinf(INF)
+    assert cmath.isinf(complex(INF, 0))
+    assert cmath.isinf(complex(0, INF))
+    assert cmath.isinf(complex(INF, INF))
+    assert cmath.isinf(complex(NAN, INF))
+    assert cmath.isinf(complex(INF, NAN))
+
+
+test_isinf()
+
+
+@test
+def test_tanh_sign():
+    for z in complex_zeros:
+        assert complex_identical(cmath.tanh(z), z)
+
+
+test_tanh_sign()
+
+
+@test
+def test_atan_sign():
+    for z in complex_zeros:
+        assert complex_identical(cmath.atan(z), z)
+
+
+test_atan_sign()
+
+
+@test
+def test_atanh_sign():
+    for z in complex_zeros:
+        assert complex_identical(cmath.atanh(z), z)
+
+
+test_atanh_sign()
+
+
+@test
+def test_is_close():
+    # test complex values that are close to within 12 decimal places
+    complex_examples = [
+        (1.0 + 1.0j, 1.000000000001 + 1.0j),
+        (1.0 + 1.0j, 1.0 + 1.000000000001j),
+        (-1.0 + 1.0j, -1.000000000001 + 1.0j),
+        (1.0 - 1.0j, 1.0 - 0.999999999999j),
+    ]
+
+    for a, b in complex_examples:
+        assert cmath.isclose(a, b, rel_tol=1e-12)
+        assert not cmath.isclose(a, b, rel_tol=1e-13)
+
+    # test values near zero that are near to within three decimal places
+    near_zero_examples = [
+        (0.001j, 0),
+        (0.001 + 0j, 0),
+        (0.001 + 0.001j, 0),
+        (-0.001 + 0.001j, 0),
+        (0.001 - 0.001j, 0),
+        (-0.001 - 0.001j, 0),
+    ]
+
+    for a, b in near_zero_examples:
+        assert cmath.isclose(a, b, abs_tol=1.5e-03)
+        assert not cmath.isclose(a, b, abs_tol=0.5e-03)
+
+    assert cmath.isclose(0.001 - 0.001j, 0.001 + 0.001j, abs_tol=2e-03)
+    assert not cmath.isclose(0.001 - 0.001j, 0.001 + 0.001j, abs_tol=1e-03)
+
+
+test_is_close()
+
+
+@test
+def test_cmath_testcases():
+    def check(exp, got, flags):
+        def close(a, b):
+            if math.isnan(a):
+                return math.isnan(b)
+            elif math.isnan(b):
+                return math.isnan(a)
+            return math.isclose(a, b, rel_tol=1e-10, abs_tol=1e-15)
+
+        x1 = exp.real
+        y1 = exp.imag
+
+        x2 = got.real
+        y2 = got.imag
+
+        if "ignore-real-sign" in flags:
+            x1 = math.fabs(x1)
+            x2 = math.fabs(x2)
+
+        if "ignore-imag-sign" in flags:
+            y1 = math.fabs(y1)
+            y2 = math.fabs(y2)
+
+        return close(x1, x2) and close(y1, y2)
+
+    def run_test(test):
+        v = test.split()
+        if not v:
+            return True
+        name = v[0]
+        func = v[1]
+        inp = complex(float(v[2]), float(v[3]))
+        exp = complex(float(v[5]), float(v[6]))
+        flags = v[7:]
+
+        got = complex()
+        if func == "rect":
+            got = cmath.rect(inp.real, inp.imag)
+        elif func == "polar":
+            got = complex(*cmath.polar(inp))
+        elif func == "exp":
+            got = cmath.exp(inp)
+        elif func == "log":
+            got = cmath.log(inp)
+        elif func == "log10":
+            got = cmath.log10(inp)
+        elif func == "sqrt":
+            got = cmath.sqrt(inp)
+        elif func == "acos":
+            got = cmath.acos(inp)
+        elif func == "asin":
+            got = cmath.asin(inp)
+        elif func == "atan":
+            got = cmath.atan(inp)
+        elif func == "cos":
+            got = cmath.cos(inp)
+        elif func == "sin":
+            got = cmath.sin(inp)
+        elif func == "tan":
+            got = cmath.tan(inp)
+        elif func == "acosh":
+            got = cmath.acosh(inp)
+        elif func == "asinh":
+            got = cmath.asinh(inp)
+        elif func == "atanh":
+            got = cmath.atanh(inp)
+        elif func == "cosh":
+            got = cmath.cosh(inp)
+        elif func == "sinh":
+            got = cmath.sinh(inp)
+        elif func == "tanh":
+            got = cmath.tanh(inp)
+        else:
+            assert False, f"ERROR: unknown function: {func}"
+
+        if not check(exp, got, flags):
+            print(f"{name} {func} {inp=} {got=} {exp=} {flags=}")
+            return False
+        return True
+
+    tests = []
+    with open("test/stdlib/cmath_testcases.txt") as f:
+        for line in f:
+            line = line.strip()
+            if not line.startswith("--"):
+                tests.append(line)
+
+    for test in tests:
+        assert run_test(test)
+
+
+test_cmath_testcases()
+
+
+@test
+def test_complex_bool():
+    z = complex(0, 0)
+    assert not bool(z)
+    z = complex(1, 0)
+    assert bool(z)
+    z = complex(0, -1)
+    assert bool(z)
+    z = complex(1, -1)
+    assert bool(z)
+
+
+test_complex_bool()
+
+
+@test
+def test_complex64():
+    c64 = complex64
+    z = c64(.5 + .5j)
+    assert c64() == z * 0
+    assert z + 1 == c64(1.5, .5)
+    assert bool(z) == True
+    assert bool(0 * z) == False
+    assert +z == z
+    assert -z == c64(-.5 - .5j)
+    assert abs(z) == float32(0.7071067811865476)
+    assert z + 1 == c64(1.5 + .5j)
+    assert 1j + z == c64(.5 + 1.5j)
+    assert z * 2 == c64(1 + 1j)
+    assert 2j * z == c64(-1 + 1j)
+    assert z / .5 == c64(1 + 1j)
+    assert 1j / z == c64(1 + 1j)
+    assert z ** 2 == c64(.5j)
+    y = 1j ** z
+    assert math.isclose(float(y.real), 0.32239694194483454)
+    assert math.isclose(float(y.imag), 0.32239694194483454)
+    assert z != -z
+    assert z != 0
+    assert z.real == float32(.5)
+    assert (z + 1j).imag == float32(1.5)
+    assert z.conjugate() == c64(.5 - .5j)
+    assert z.__copy__() == z
+    assert hash(z)
+    assert c64(complex(z)) == z
+
+    z = c64(1.5, 2.5)
+    assert z.real == f32(1.5)
+    assert z.imag == f32(2.5)
+    z = c64(3.5)
+    assert z.real == f32(3.5)
+    assert z.imag == f32(0.0)
+    z = c64(f32(4.5), f32(5.5))
+    assert z.real == f32(4.5)
+    assert z.imag == f32(5.5)
+    z = c64(f32(6.5))
+    assert z.real == f32(6.5)
+    assert z.imag == f32(0.0)
+
+    z = c64(0, 0)
+    assert not bool(z)
+    z = c64(1, 0)
+    assert bool(z)
+    z = c64(0, -1)
+    assert bool(z)
+    z = c64(1, -1)
+    assert bool(z)
+
+
+test_complex64()
+
+
+def test_complex_from_string():
+    # for tests when string is not zero-terminated
+    def f(s):
+        return complex(s[1:-1])
+
+    def g(s):
+        return complex(' ' * 50 + s[1:-1] + ' ' * 50)
+
+    assert complex("1") == 1+0j
+    assert complex("1j") == 1j
+    assert complex("-1") == -1
+    assert complex("+1") == +1
+    assert complex("(1+2j)") == 1+2j
+    assert complex("(1.3+2.2j)") == 1.3+2.2j
+    assert complex("3.14+1J") == 3.14+1j
+    assert complex(" ( +3.14-6J )") == 3.14-6j
+    assert complex(" ( +3.14-J )") == 3.14-1j
+    assert complex(" ( +3.14+j )") == 3.14+1j
+    assert complex("J") == 1j
+    assert complex("( j )") == 1j
+    assert complex("+J") == 1j
+    assert complex("( -j)") == -1j
+    assert complex('1e-500') == 0.0 + 0.0j
+    assert complex('-1e-500j') == 0.0 - 0.0j
+    assert complex('-1e-500+1e-500j') == -0.0 + 0.0j
+    assert complex('1-1j') == 1.0 - 1j
+    assert complex('1J') == 1j
+
+    assert f("x1x") == 1+0j
+    assert f("x1jx") == 1j
+    assert f("x-1x") == -1
+    assert f("x+1x") == +1
+    assert f("x(1+2j)x") == 1+2j
+    assert f("x(1.3+2.2j)x") == 1.3+2.2j
+    assert f("x3.14+1Jx") == 3.14+1j
+    assert f("x ( +3.14-6J )x") == 3.14-6j
+    assert f("x ( +3.14-J )x") == 3.14-1j
+    assert f("x ( +3.14+j )x") == 3.14+1j
+    assert f("xJx") == 1j
+    assert f("x( j )x") == 1j
+    assert f("x+Jx") == 1j
+    assert f("x( -j)x") == -1j
+    assert f('x1e-500x') == 0.0 + 0.0j
+    assert f('x-1e-500jx') == 0.0 - 0.0j
+    assert f('x-1e-500+1e-500jx') == -0.0 + 0.0j
+    assert f('x1-1jx') == 1.0 - 1j
+    assert f('x1Jx') == 1j
+
+    assert g("x1x") == 1+0j
+    assert g("x1jx") == 1j
+    assert g("x-1x") == -1
+    assert g("x+1x") == +1
+    assert g("x(1+2j)x") == 1+2j
+    assert g("x(1.3+2.2j)x") == 1.3+2.2j
+    assert g("x3.14+1Jx") == 3.14+1j
+    assert g("x ( +3.14-6J )x") == 3.14-6j
+    assert g("x ( +3.14-J )x") == 3.14-1j
+    assert g("x ( +3.14+j )x") == 3.14+1j
+    assert g("xJx") == 1j
+    assert g("x( j )x") == 1j
+    assert g("x+Jx") == 1j
+    assert g("x( -j)x") == -1j
+    assert g('x1e-500x') == 0.0 + 0.0j
+    assert g('x-1e-500jx') == 0.0 - 0.0j
+    assert g('x-1e-500+1e-500jx') == -0.0 + 0.0j
+    assert g('x1-1jx') == 1.0 - 1j
+    assert g('x1Jx') == 1j
+
+    try:
+        complex("\0")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("3\09")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("1+")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("1+1j+1j")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("--")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("(1+2j")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("1+2j)")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("1+(2j)")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("(1+2j)123")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("x")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("1j+2")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("1e1ej")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("1e++1ej")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex(")1+2j(")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        complex("")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        f(" 1+2j")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        f("1..1j")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        f("1.11.1j")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        f("1e1.1j")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        f("   ")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        f("   J")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        g(" 1+2j")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        g("1..1j")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        g("1.11.1j")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        g("1e1.1j")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        g("   ")
+        assert False
+    except ValueError:
+        pass
+
+    try:
+        g("   J")
+        assert False
+    except ValueError:
+        pass
+
+test_complex_from_string()
