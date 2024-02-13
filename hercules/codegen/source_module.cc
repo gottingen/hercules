@@ -31,7 +31,7 @@
 #include <hercules/runtime/file_util.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace codegen {
 
 using namespace runtime;
@@ -47,8 +47,8 @@ class SourceModuleNode : public runtime::ModuleNode {
   }
 
   NativeFunction GetFunction(const String& name, const ObjectPtr<Object>& sptr_to_self) final {
-    MXLOG(FATAL) << "Source module cannot execute, to get executable module"
-                 << " build MATXScript with \'" << fmt_ << "\' runtime support";
+    HSLOG(FATAL) << "Source module cannot execute, to get executable module"
+                 << " build Hercules with \'" << fmt_ << "\' runtime support";
     return NativeFunction();
   }
 
@@ -98,10 +98,10 @@ class CSourceModuleNode : public runtime::ModuleNode {
     String fmt = FileUtil::GetFileFormat(file_name, format);
     String meta_file = FileUtil::GetMetaFilePath(file_name);
     if (fmt == "cc") {
-      MXCHECK_NE(code_.length(), 0);
+      HSCHECK_NE(code_.length(), 0);
       FileUtil::SaveBinaryToFile(file_name, code_);
     } else {
-      MXCHECK_EQ(fmt, fmt_) << "Can only save to format=" << fmt_;
+      HSCHECK_EQ(fmt, fmt_) << "Can only save to format=" << fmt_;
     }
   }
 
@@ -120,12 +120,12 @@ runtime::Module CSourceModuleCreate(const String& code,
   return runtime::Module(n);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SourceModuleCreate").set_body_typed(SourceModuleCreate);
+HERCULES_REGISTER_GLOBAL("runtime.SourceModuleCreate").set_body_typed(SourceModuleCreate);
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.CSourceModuleCreate")
+HERCULES_REGISTER_GLOBAL("runtime.CSourceModuleCreate")
     .set_body_typed([](String code, String fmt, String symbol, Array<StringRef> const_vars) {
       return CSourceModuleCreate(code, fmt, symbol, const_vars);
     });
 
 }  // namespace codegen
-}  // namespace matxscript
+}  // namespace hercules

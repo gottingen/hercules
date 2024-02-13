@@ -27,7 +27,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class RegexNode;
@@ -106,4 +106,4 @@ struct type_index_traits<Regex> {
 }  // namespace TypeIndex
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

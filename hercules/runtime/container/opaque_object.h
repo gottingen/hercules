@@ -22,7 +22,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class OpaqueObjectNode;
@@ -35,7 +35,7 @@ class OpaqueObject : public ObjectRef {
   static constexpr bool _type_is_nullable = false;  // disable nullptr for performance
 
  public:
-  explicit OpaqueObject(::matxscript::runtime::ObjectPtr<::matxscript::runtime::Object> n) noexcept
+  explicit OpaqueObject(::hercules::runtime::ObjectPtr<::hercules::runtime::Object> n) noexcept
       : ObjectRef(std::move(n)) {
   }
   OpaqueObject(const OpaqueObject& other) noexcept = default;
@@ -66,17 +66,17 @@ struct type_index_traits<OpaqueObject> {
 }  // namespace TypeIndex
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE OpaqueObject Any::As<OpaqueObject>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeOpaqueObject);
+HERCULES_ALWAYS_INLINE OpaqueObject Any::As<OpaqueObject>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeOpaqueObject);
   return OpaqueObject(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE OpaqueObject Any::AsNoCheck<OpaqueObject>() const {
+HERCULES_ALWAYS_INLINE OpaqueObject Any::AsNoCheck<OpaqueObject>() const {
   return OpaqueObject(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 std::ostream& operator<<(std::ostream& os, OpaqueObject const& n);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

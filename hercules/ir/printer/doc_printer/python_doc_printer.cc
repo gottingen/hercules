@@ -31,7 +31,7 @@
 
 #include "./base_doc_printer.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -134,9 +134,9 @@ ExprPrecedence GetExprPrecedence(const ExprDoc& doc) {
 
   if (const auto* op_doc = doc.as<OperationDocNode>()) {
     size_t kind = static_cast<int>(op_doc->kind);
-    MXCHECK_LT(kind, op_kind_precedence.size()) << "ValueError: Invalid operation: " << kind;
+    HSCHECK_LT(kind, op_kind_precedence.size()) << "ValueError: Invalid operation: " << kind;
     ExprPrecedence precedence = op_kind_precedence[kind];
-    MXCHECK(precedence != ExprPrecedence::kUnkown)
+    HSCHECK(precedence != ExprPrecedence::kUnkown)
         << "Precedence for operator " << static_cast<int>(op_doc->kind) << " is unknown";
     return precedence;
   }
@@ -144,7 +144,7 @@ ExprPrecedence GetExprPrecedence(const ExprDoc& doc) {
   if (it != doc_type_precedence.end()) {
     return it->second;
   }
-  MXCHECK(false) << "Precedence for doc type " << doc->GetTypeKey() << " is unknown";
+  HSCHECK(false) << "Precedence for doc type " << doc->GetTypeKey() << " is unknown";
   throw;
 }
 
@@ -277,7 +277,7 @@ class PythonDocPrinter : public DocPrinter {
     if (stmt->comment.defined()) {
       StringRef comment = stmt->comment.value();
       bool has_newline = std::find(comment.begin(), comment.end(), '\n') != comment.end();
-      MXCHECK(!has_newline) << "ValueError: the comment string of " << stmt->GetTypeKey()
+      HSCHECK(!has_newline) << "ValueError: the comment string of " << stmt->GetTypeKey()
                             << " cannot have newline.";
       size_t start_pos = output_.tellp();
       output_ << "  # " << comment;
@@ -351,7 +351,7 @@ void PythonDocPrinter::PrintTypedDoc(const LiteralDoc& doc) {
   } else if (const auto* string_obj = value.as<StringNode>()) {
     output_ << "\"" << runtime::BytesEscape(string_obj->data_container) << "\"";
   } else {
-    MXLOG(FATAL) << "TypeError: Unsupported literal value type: " << value->GetTypeKey();
+    HSLOG(FATAL) << "TypeError: Unsupported literal value type: " << value->GetTypeKey();
   }
 }
 
@@ -417,9 +417,9 @@ const std::string OperatorToString(OperationDocNode::Kind operation_kind) {
   }();
 
   auto op_index = static_cast<int>(operation_kind);
-  MXCHECK_LT(op_index, op_kind2str.size());
+  HSCHECK_LT(op_index, op_kind2str.size());
   const std::string str = op_kind2str[op_index];
-  MXCHECK(!str.empty()) << "OperationDocNode::Kind " << static_cast<int>(operation_kind)
+  HSCHECK(!str.empty()) << "OperationDocNode::Kind " << static_cast<int>(operation_kind)
                         << " cannot be converted to operator token in Python directly.";
   return str;
 }
@@ -428,7 +428,7 @@ void PythonDocPrinter::PrintTypedDoc(const OperationDoc& doc) {
   using OpKind = OperationDocNode::Kind;
   if (doc->kind < OpKind::kUnaryEnd) {
     // Unary Operators
-    MXCHECK_EQ(doc->operands.size(), 1);
+    HSCHECK_EQ(doc->operands.size(), 1);
     output_ << OperatorToString(doc->kind);
     PrintChildExpr(doc->operands[0], doc);
   } else if (doc->kind == OpKind::kPow) {
@@ -436,18 +436,18 @@ void PythonDocPrinter::PrintTypedDoc(const OperationDoc& doc) {
     // It's right-associative and binds less tightly than unary operator on its right.
     // https://docs.python.org/3/reference/expressions.html#the-power-operator
     // https://docs.python.org/3/reference/expressions.html#operator-precedence
-    MXCHECK_EQ(doc->operands.size(), 2);
+    HSCHECK_EQ(doc->operands.size(), 2);
     PrintChildExprConservatively(doc->operands[0], doc);
     output_ << " ** ";
     PrintChildExpr(doc->operands[1], ExprPrecedence::kUnary);
   } else if (doc->kind < OpKind::kBinaryEnd) {
     // Binary Operator
-    MXCHECK_EQ(doc->operands.size(), 2);
+    HSCHECK_EQ(doc->operands.size(), 2);
     PrintChildExpr(doc->operands[0], doc);
     output_ << " " << OperatorToString(doc->kind) << " ";
     PrintChildExprConservatively(doc->operands[1], doc);
   } else if (doc->kind == OpKind::kIfThenElse) {
-    MXCHECK_EQ(doc->operands.size(), 3)
+    HSCHECK_EQ(doc->operands.size(), 3)
         << "ValueError: IfThenElse requires 3 operands, but got " << doc->operands.size();
     PrintChildExpr(doc->operands[1], doc);
     output_ << " if ";
@@ -455,7 +455,7 @@ void PythonDocPrinter::PrintTypedDoc(const OperationDoc& doc) {
     output_ << " else ";
     PrintChildExprConservatively(doc->operands[2], doc);
   } else {
-    MXLOG(FATAL) << "Unknown OperationDocNode::Kind " << static_cast<int>(doc->kind);
+    HSLOG(FATAL) << "Unknown OperationDocNode::Kind " << static_cast<int>(doc->kind);
     throw;
   }
 }
@@ -477,7 +477,7 @@ void PythonDocPrinter::PrintTypedDoc(const CallDoc& doc) {
   }
 
   // Print keyword args
-  MXCHECK_EQ(doc->kwargs_keys.size(), doc->kwargs_values.size())
+  HSCHECK_EQ(doc->kwargs_keys.size(), doc->kwargs_values.size())
       << "CallDoc should have equal number of elements in kwargs_keys and kwargs_values.";
   for (size_t i = 0; i < doc->kwargs_keys.size(); i++) {
     if (is_first) {
@@ -525,7 +525,7 @@ void PythonDocPrinter::PrintTypedDoc(const TupleDoc& doc) {
 }
 
 void PythonDocPrinter::PrintTypedDoc(const DictDoc& doc) {
-  MXCHECK_EQ(doc->keys.size(), doc->values.size())
+  HSCHECK_EQ(doc->keys.size(), doc->values.size())
       << "DictDoc should have equal number of elements in keys and values.";
   output_ << "{";
   size_t idx = 0;
@@ -780,7 +780,7 @@ void PythonDocPrinter::PrintTypedDoc(const ReturnDoc& doc) {
 
 void PythonDocPrinter::PrintTypedDoc(const FunctionDoc& doc) {
   for (const AssignDoc& arg_doc : doc->args) {
-    MXCHECK(arg_doc->comment == nullptr) << "Function arg cannot have comment attached to them.";
+    HSCHECK(arg_doc->comment == nullptr) << "Function arg cannot have comment attached to them.";
   }
 
   PrintDecorators(doc->decorators);
@@ -838,7 +838,7 @@ void PythonDocPrinter::PrintTypedDoc(const DocStringDoc& doc) {
 
 void PythonDocPrinter::PrintTypedDoc(const ModuleDoc& doc) {
   // TODO: introduce ImportStmtDoc and ImportFromStmtDoc
-  output_ << "import matx";
+  output_ << "import hvm";
   if (doc->comment.defined()) {
     PrintBlockComment(doc->comment.value());
   }
@@ -865,8 +865,8 @@ StringRef DocToPythonScript(Doc doc, const PrinterConfig& cfg) {
   return StringRef(result.substr(0, last_space));
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.DocToPythonScript").set_body_typed(DocToPythonScript);
+HERCULES_REGISTER_GLOBAL("ir.printer.DocToPythonScript").set_body_typed(DocToPythonScript);
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

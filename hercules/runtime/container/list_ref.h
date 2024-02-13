@@ -31,7 +31,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class ListNode;
@@ -347,13 +347,13 @@ struct type_index_traits<List> {
 }  // namespace TypeIndex
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE List Any::As<List>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeList);
+HERCULES_ALWAYS_INLINE List Any::As<List>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeList);
   return List(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE List Any::AsNoCheck<List>() const {
+HERCULES_ALWAYS_INLINE List Any::AsNoCheck<List>() const {
   return List(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
@@ -363,4 +363,4 @@ bool IsConvertible<List>(const Object* node);
 std::ostream& operator<<(std::ostream& os, List const& n);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

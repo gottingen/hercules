@@ -24,7 +24,7 @@
 #include <hercules/runtime/runtime_port.h>
 #include <hercules/runtime/singleton.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class GlobalUniqueIndex : public Singleton<GlobalUniqueIndex> {
@@ -80,4 +80,4 @@ class GlobalUniqueIndex : public Singleton<GlobalUniqueIndex> {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

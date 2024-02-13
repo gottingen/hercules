@@ -26,12 +26,12 @@
 
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace floating_point {
 
 template <class T>
-MATXSCRIPT_ALWAYS_INLINE static
+HERCULES_ALWAYS_INLINE static
     typename std::enable_if<!std::numeric_limits<T>::is_integer, bool>::type
     internal_almost_equals(T x, T y, int ulp) {
   // the machine epsilon has to be scaled to the magnitude of the values used
@@ -45,7 +45,7 @@ template <typename T1,
           typename T2,
           typename = typename std::enable_if<std::is_floating_point<T1>::value &&
                                              std::is_floating_point<T2>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE static bool AlmostEquals(const T1& lhs, const T2& rhs) {
+HERCULES_ALWAYS_INLINE static bool AlmostEquals(const T1& lhs, const T2& rhs) {
   using Float1 = typename std::remove_cv<typename std::remove_reference<T1>::type>::type;
   using Float2 = typename std::remove_cv<typename std::remove_reference<T2>::type>::type;
   using Float = typename std::conditional<(sizeof(Float1) > sizeof(Float2)), Float1, Float2>::type;
@@ -54,4 +54,4 @@ MATXSCRIPT_ALWAYS_INLINE static bool AlmostEquals(const T1& lhs, const T2& rhs) 
 
 }  // namespace floating_point
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

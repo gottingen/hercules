@@ -15,7 +15,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace serialization {
 
@@ -825,4 +825,4 @@ static inline int msgpack_pack_timestamp(msgpack_packer* x, int64_t seconds, uin
 
 }  // namespace serialization
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

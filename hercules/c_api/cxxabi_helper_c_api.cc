@@ -21,13 +21,13 @@
 #include <hercules/runtime/cxxabi_helper.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.USE_CXX11_ABI").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 0) << "[USE_CXX11_ABI] Expect 0 arguments but get " << args.size();
-  return MATXScriptAPI_USE_CXX11_ABI();
+HERCULES_REGISTER_GLOBAL("runtime.USE_CXX11_ABI").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 0) << "[USE_CXX11_ABI] Expect 0 arguments but get " << args.size();
+  return HerculesAPI_USE_CXX11_ABI();
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -39,7 +39,7 @@
 #include <hercules/runtime/demangle.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class RTValue;
@@ -50,8 +50,8 @@ class FTObjectBase;
 // When RTValue is a pod, the default is value copy, otherwise it is reference copy
 
 // macro to check type code.
-#define MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(CODE, T)                         \
-  MXCHECK_EQ(CODE, T) << "[RTValue] expected " << TypeIndex2Str(T) << " but get " \
+#define HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(CODE, T)                         \
+  HSCHECK_EQ(CODE, T) << "[RTValue] expected " << TypeIndex2Str(T) << " but get " \
                       << TypeIndex2Str(CODE)
 
 template <typename TObjectRef>
@@ -91,43 +91,43 @@ struct Any {
  public:
   // pod method
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE bool Is() const {
+  HERCULES_ALWAYS_INLINE bool Is() const {
     using TYPE = typename std::remove_cv<typename std::remove_reference<U>::type>::type;
     return Is<U>(std::is_base_of<ObjectRef, TYPE>{});
   }
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE bool Is(std::false_type) const {
+  HERCULES_ALWAYS_INLINE bool Is(std::false_type) const {
     using TYPE = typename std::remove_cv<typename std::remove_reference<U>::type>::type;
     return TypeIndex::type_index_traits<TYPE>::value == value_.code;
   }
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE bool Is(std::true_type) const {
+  HERCULES_ALWAYS_INLINE bool Is(std::true_type) const {
     using TYPE = typename std::remove_cv<typename std::remove_reference<U>::type>::type;
     return IsObjectRef<TYPE>();
   }
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE U As() const {
+  HERCULES_ALWAYS_INLINE U As() const {
     return AsDefault<U>(std::is_base_of<ObjectRef, U>{});
   }
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE U AsNoCheck() const {
+  HERCULES_ALWAYS_INLINE U AsNoCheck() const {
     return AsDefaultNoCheck<U>(std::is_base_of<ObjectRef, U>{});
   }
 
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE U AsDefault(std::true_type) const {
+  HERCULES_ALWAYS_INLINE U AsDefault(std::true_type) const {
     return AsObjectRef<U>();
   }
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE U AsDefault(std::false_type) const {
+  HERCULES_ALWAYS_INLINE U AsDefault(std::false_type) const {
     return U(*this);
   }
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE U AsDefaultNoCheck(std::true_type) const {
+  HERCULES_ALWAYS_INLINE U AsDefaultNoCheck(std::true_type) const {
     return AsObjectRefNoCheck<U>();
   }
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE U AsDefaultNoCheck(std::false_type) const {
+  HERCULES_ALWAYS_INLINE U AsDefaultNoCheck(std::false_type) const {
     return U(*this);
   }
 
@@ -136,7 +136,7 @@ struct Any {
   constexpr int is_nullptr() const noexcept {
     return value_.code == TypeIndex::kRuntimeNullptr;
   }
-  constexpr const MATXScriptAny& value() const noexcept {
+  constexpr const HerculesAny& value() const noexcept {
     return value_;
   }
   constexpr int type_code() const noexcept {
@@ -246,12 +246,12 @@ struct Any {
  protected:
   constexpr Any() noexcept : value_({0, 0, TypeIndex::kRuntimeNullptr}) {
   }
-  constexpr Any(MATXScriptAny value) noexcept : value_(value) {
+  constexpr Any(HerculesAny value) noexcept : value_(value) {
   }
-  constexpr Any(const MATXScriptAny* value) noexcept : value_(*value) {
+  constexpr Any(const HerculesAny* value) noexcept : value_(*value) {
   }
   /*! \brief The value */
-  MATXScriptAny value_;
+  HerculesAny value_;
   template <typename TObjectRef>
   friend struct ObjectView;
   friend class ArithOps;
@@ -267,48 +267,48 @@ template <>
 double Any::AsNoCheck<double>() const;
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE float Any::As<float>() const {
+HERCULES_ALWAYS_INLINE float Any::As<float>() const {
   return As<double>();
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE float Any::AsNoCheck<float>() const {
+HERCULES_ALWAYS_INLINE float Any::AsNoCheck<float>() const {
   return AsNoCheck<double>();
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE int64_t Any::As<int64_t>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeInteger);
+HERCULES_ALWAYS_INLINE int64_t Any::As<int64_t>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeInteger);
   return value_.data.v_int64;
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE int64_t Any::AsNoCheck<int64_t>() const {
+HERCULES_ALWAYS_INLINE int64_t Any::AsNoCheck<int64_t>() const {
   return value_.data.v_int64;
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE uint64_t Any::As<uint64_t>() const {
+HERCULES_ALWAYS_INLINE uint64_t Any::As<uint64_t>() const {
   return As<int64_t>();
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE uint64_t Any::AsNoCheck<uint64_t>() const {
+HERCULES_ALWAYS_INLINE uint64_t Any::AsNoCheck<uint64_t>() const {
   return AsNoCheck<int64_t>();
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE int32_t Any::As<int32_t>() const {
+HERCULES_ALWAYS_INLINE int32_t Any::As<int32_t>() const {
   return As<int64_t>();
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE int32_t Any::AsNoCheck<int32_t>() const {
+HERCULES_ALWAYS_INLINE int32_t Any::AsNoCheck<int32_t>() const {
   return AsNoCheck<int64_t>();
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE uint32_t Any::As<uint32_t>() const {
+HERCULES_ALWAYS_INLINE uint32_t Any::As<uint32_t>() const {
   return As<int64_t>();
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE uint32_t Any::AsNoCheck<uint32_t>() const {
+HERCULES_ALWAYS_INLINE uint32_t Any::AsNoCheck<uint32_t>() const {
   return AsNoCheck<int64_t>();
 }
 
@@ -318,56 +318,56 @@ template <>
 bool Any::AsNoCheck<bool>() const;
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE char Any::As<char>() const {
+HERCULES_ALWAYS_INLINE char Any::As<char>() const {
   return As<int64_t>();
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE char Any::AsNoCheck<char>() const {
+HERCULES_ALWAYS_INLINE char Any::AsNoCheck<char>() const {
   return AsNoCheck<int64_t>();
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE unsigned char Any::As<unsigned char>() const {
+HERCULES_ALWAYS_INLINE unsigned char Any::As<unsigned char>() const {
   return As<int64_t>();
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE unsigned char Any::AsNoCheck<unsigned char>() const {
+HERCULES_ALWAYS_INLINE unsigned char Any::AsNoCheck<unsigned char>() const {
   return AsNoCheck<int64_t>();
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE char32_t Any::As<char32_t>() const {
+HERCULES_ALWAYS_INLINE char32_t Any::As<char32_t>() const {
   return As<int64_t>();
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE char32_t Any::AsNoCheck<char32_t>() const {
+HERCULES_ALWAYS_INLINE char32_t Any::AsNoCheck<char32_t>() const {
   return AsNoCheck<int64_t>();
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE signed char Any::As<signed char>() const {
+HERCULES_ALWAYS_INLINE signed char Any::As<signed char>() const {
   return As<int64_t>();
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE signed char Any::AsNoCheck<signed char>() const {
+HERCULES_ALWAYS_INLINE signed char Any::AsNoCheck<signed char>() const {
   return AsNoCheck<int64_t>();
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE short int Any::As<short int>() const {
+HERCULES_ALWAYS_INLINE short int Any::As<short int>() const {
   return As<int64_t>();
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE short int Any::AsNoCheck<short int>() const {
+HERCULES_ALWAYS_INLINE short int Any::AsNoCheck<short int>() const {
   return AsNoCheck<int64_t>();
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE unsigned short int Any::As<unsigned short int>() const {
+HERCULES_ALWAYS_INLINE unsigned short int Any::As<unsigned short int>() const {
   return As<int64_t>();
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE unsigned short int Any::AsNoCheck<unsigned short int>() const {
+HERCULES_ALWAYS_INLINE unsigned short int Any::AsNoCheck<unsigned short int>() const {
   return AsNoCheck<int64_t>();
 }
 
@@ -381,11 +381,11 @@ string_view Any::As<string_view>() const;
 template <>
 string_view Any::AsNoCheck<string_view>() const;
 template <>
-MATXSCRIPT_ALWAYS_INLINE String Any::As<String>() const {
+HERCULES_ALWAYS_INLINE String Any::As<String>() const {
   return String(As<string_view>());
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE String Any::AsNoCheck<String>() const {
+HERCULES_ALWAYS_INLINE String Any::AsNoCheck<String>() const {
   return String(AsNoCheck<string_view>());
 }
 
@@ -394,11 +394,11 @@ unicode_view Any::As<unicode_view>() const;
 template <>
 unicode_view Any::AsNoCheck<unicode_view>() const;
 template <>
-MATXSCRIPT_ALWAYS_INLINE Unicode Any::As<Unicode>() const {
+HERCULES_ALWAYS_INLINE Unicode Any::As<Unicode>() const {
   return Unicode(As<unicode_view>());
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE Unicode Any::AsNoCheck<Unicode>() const {
+HERCULES_ALWAYS_INLINE Unicode Any::AsNoCheck<Unicode>() const {
   return Unicode(AsNoCheck<unicode_view>());
 }
 
@@ -407,7 +407,7 @@ DataType Any::As<DataType>() const;
 template <>
 DataType Any::AsNoCheck<DataType>() const;
 
-// RTView is only used to pass MATXValue and type_code,
+// RTView is only used to pass HVMValue and type_code,
 // and provides conversion to other types, without increasing the reference count
 class RTView : public Any {
  public:
@@ -423,9 +423,9 @@ class RTView : public Any {
   /*! \brief default constructor */
   constexpr RTView() noexcept : Any() {
   }
-  constexpr RTView(MATXScriptAny value) noexcept : Any(value) {
+  constexpr RTView(HerculesAny value) noexcept : Any(value) {
   }
-  constexpr RTView(const MATXScriptAny* value) noexcept : Any(*value) {
+  constexpr RTView(const HerculesAny* value) noexcept : Any(*value) {
   }
   RTView(RTView&& other) noexcept : Any(other.value_) {
     other.value_.code = TypeIndex::kRuntimeNullptr;
@@ -594,7 +594,7 @@ class RTValue : public Any {
   }
   // for fast copy
   struct ScalarValueFlag {};
-  constexpr RTValue(const MATXScriptAny& value, ScalarValueFlag) noexcept : Any(&value) {
+  constexpr RTValue(const HerculesAny& value, ScalarValueFlag) noexcept : Any(&value) {
   }
   RTValue(RTValue&& other) noexcept : Any(other.value_) {
     other.value_.data.v_handle = nullptr;
@@ -609,14 +609,14 @@ class RTValue : public Any {
     this->Clear();
   }
 
-  void MoveToCHost(MATXScriptAny* ret_value) noexcept;
-  static RTValue MoveFromCHost(MATXScriptAny* value) noexcept;
-  static RTValue MoveFromCHost(MATXScriptAny value) noexcept;
-  void CopyToCHost(MATXScriptAny* ret_value) const;
-  static void CopyFromCHostToCHost(const MATXScriptAny* from, MATXScriptAny* to);
-  static RTValue CopyFromCHost(const MATXScriptAny* value);
-  static RTValue CopyFromCHost(MATXScriptAny value);
-  static void DestroyCHost(MATXScriptAny* value) noexcept;
+  void MoveToCHost(HerculesAny* ret_value) noexcept;
+  static RTValue MoveFromCHost(HerculesAny* value) noexcept;
+  static RTValue MoveFromCHost(HerculesAny value) noexcept;
+  void CopyToCHost(HerculesAny* ret_value) const;
+  static void CopyFromCHostToCHost(const HerculesAny* from, HerculesAny* to);
+  static RTValue CopyFromCHost(const HerculesAny* value);
+  static RTValue CopyFromCHost(HerculesAny value);
+  static void DestroyCHost(HerculesAny* value) noexcept;
 
   template <typename TObjectRef,
             typename = typename std::enable_if<std::is_base_of<
@@ -628,7 +628,7 @@ class RTValue : public Any {
       return TObjectRef();
     }
     // TODO: more message
-    MXCHECK(IsObjectRef<TObjectRef>())
+    HSCHECK(IsObjectRef<TObjectRef>())
         << "[Any] expected: " << DemangleType(typeid(TObjectRef).name())
         << ", but get: " << type_name();
     value_.code = TypeIndex::kRuntimeNullptr;
@@ -843,7 +843,7 @@ inline TObjectRef Any::AsObjectRef() const {
   if (TObjectRef::_type_is_nullable && value_.code == TypeIndex::kRuntimeNullptr) {
     return TObjectRef{ObjectPtr<Object>(nullptr)};
   }
-  MXCHECK(IsObjectRef<TObjectRef>())
+  HSCHECK(IsObjectRef<TObjectRef>())
       << "expected: " << DemangleType(typeid(TObjectRef).name()) << ", but get: " << type_name();
   return TObjectRef(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
@@ -851,7 +851,7 @@ inline TObjectRef Any::AsObjectRef() const {
 template <typename TObjectRef>
 inline ObjectView<TObjectRef>::ObjectView(const Any& val, bool check) {
   if (check) {
-    MXCHECK(val.IsObjectRef<TObjectRef>())
+    HSCHECK(val.IsObjectRef<TObjectRef>())
         << "[RTValue] expected: " << DemangleType(typeid(TObjectRef).name())
         << ", but get: " << val.type_name();
   }
@@ -863,29 +863,29 @@ inline RTView::RTView(const RTValue& other) noexcept : RTView(other.value_) {
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE RTView Any::As<RTView>() const {
+HERCULES_ALWAYS_INLINE RTView Any::As<RTView>() const {
   return RTView{value_};
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE RTView Any::AsNoCheck<RTView>() const {
+HERCULES_ALWAYS_INLINE RTView Any::AsNoCheck<RTView>() const {
   return RTView{value_};
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE RTValue Any::As<RTValue>() const {
+HERCULES_ALWAYS_INLINE RTValue Any::As<RTValue>() const {
   return RTValue(RTView{value_});
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE RTValue Any::AsNoCheck<RTValue>() const {
+HERCULES_ALWAYS_INLINE RTValue Any::AsNoCheck<RTValue>() const {
   return RTValue(RTView{value_});
 }
 
 // TODO: remove TArgs
 class TArgs {
  public:
-  const MATXScriptAny* values;
+  const HerculesAny* values;
   int num_args;
-  TArgs(const MATXScriptAny* values, int num_args) : values(values), num_args(num_args) {
+  TArgs(const HerculesAny* values, int num_args) : values(values), num_args(num_args) {
   }
   inline int size() const {
     return num_args;
@@ -979,7 +979,7 @@ struct GenericValueConverter {
 
  public:
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE auto operator()(U&& n) {
+  HERCULES_ALWAYS_INLINE auto operator()(U&& n) {
     using TO_TYPE = typename std::remove_cv<typename std::remove_reference<To>::type>::type;
     using U_TYPE = typename std::remove_cv<typename std::remove_reference<U>::type>::type;
     constexpr int32_t cat =
@@ -993,27 +993,27 @@ struct GenericValueConverter {
 
  private:
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE auto operator()(U&& n, std::integral_constant<int32_t, DEFAULT_REL>) {
+  HERCULES_ALWAYS_INLINE auto operator()(U&& n, std::integral_constant<int32_t, DEFAULT_REL>) {
     return To(std::forward<U>(n));
   }
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE auto operator()(U&& n, std::integral_constant<int32_t, IS_SAME>) {
+  HERCULES_ALWAYS_INLINE auto operator()(U&& n, std::integral_constant<int32_t, IS_SAME>) {
     return std::forward<U>(n);
   }
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE auto operator()(U&& n, std::integral_constant<int32_t, HAS_OPERATOR>) {
+  HERCULES_ALWAYS_INLINE auto operator()(U&& n, std::integral_constant<int32_t, HAS_OPERATOR>) {
     return n.operator To();
   }
 
   template <class U>
-  MATXSCRIPT_ALWAYS_INLINE auto operator()(U&& n, std::integral_constant<int32_t, FROM_ANY>) {
+  HERCULES_ALWAYS_INLINE auto operator()(U&& n, std::integral_constant<int32_t, FROM_ANY>) {
     return n.template As<To>();
   }
   static constexpr int32_t MOVE_ANY_TO_UNICODE = 6;
   static constexpr int32_t MOVE_ANY_TO_BYTES = 7;
   static constexpr int32_t MOVE_ANY_TO_OBJECT = 8;
   static constexpr int32_t COPY_ANY_TO_OTHER = 9;
-  MATXSCRIPT_ALWAYS_INLINE auto operator()(RTValue&& n, std::integral_constant<int32_t, FROM_ANY>) {
+  HERCULES_ALWAYS_INLINE auto operator()(RTValue&& n, std::integral_constant<int32_t, FROM_ANY>) {
     using TO_TYPE = typename std::remove_cv<typename std::remove_reference<To>::type>::type;
     constexpr int32_t cat =
         std::is_same<TO_TYPE, Unicode>::value
@@ -1024,20 +1024,20 @@ struct GenericValueConverter {
                                                                  : COPY_ANY_TO_OTHER));
     return cast_any_to(std::move(n), std::integral_constant<int32_t, cat>{});
   }
-  MATXSCRIPT_ALWAYS_INLINE auto cast_any_to(RTValue&& n,
+  HERCULES_ALWAYS_INLINE auto cast_any_to(RTValue&& n,
                                             std::integral_constant<int32_t, MOVE_ANY_TO_BYTES>) {
     return n.MoveToBytes();
   }
-  MATXSCRIPT_ALWAYS_INLINE auto cast_any_to(RTValue&& n,
+  HERCULES_ALWAYS_INLINE auto cast_any_to(RTValue&& n,
                                             std::integral_constant<int32_t, MOVE_ANY_TO_UNICODE>) {
     return n.MoveToUnicode();
   }
-  MATXSCRIPT_ALWAYS_INLINE auto cast_any_to(RTValue&& n,
+  HERCULES_ALWAYS_INLINE auto cast_any_to(RTValue&& n,
                                             std::integral_constant<int32_t, MOVE_ANY_TO_OBJECT>) {
     using TO_TYPE = typename std::remove_cv<typename std::remove_reference<To>::type>::type;
     return n.template MoveToObjectRef<TO_TYPE>();
   }
-  MATXSCRIPT_ALWAYS_INLINE auto cast_any_to(RTValue&& n,
+  HERCULES_ALWAYS_INLINE auto cast_any_to(RTValue&& n,
                                             std::integral_constant<int32_t, COPY_ANY_TO_OTHER>) {
     using TO_TYPE = typename std::remove_cv<typename std::remove_reference<To>::type>::type;
     return n.template As<TO_TYPE>();
@@ -1045,37 +1045,37 @@ struct GenericValueConverter {
 };
 
 struct SmartHash {
-  typedef ::matxscript::runtime::ska::fibonacci_hash_policy
+  typedef ::hercules::runtime::ska::fibonacci_hash_policy
       hash_policy;  // for gcc492 flat_hash_map
 
   // overload
-  MATXSCRIPT_ALWAYS_INLINE std::size_t operator()(const std::string& val) const {
-    return ::matxscript::runtime::BytesHash(val.data(), val.size());
+  HERCULES_ALWAYS_INLINE std::size_t operator()(const std::string& val) const {
+    return ::hercules::runtime::BytesHash(val.data(), val.size());
   }
-  MATXSCRIPT_ALWAYS_INLINE std::size_t operator()(const char* val) const {
-    return ::matxscript::runtime::BytesHash(&val, std::char_traits<char>::length(val));
+  HERCULES_ALWAYS_INLINE std::size_t operator()(const char* val) const {
+    return ::hercules::runtime::BytesHash(&val, std::char_traits<char>::length(val));
   }
-  MATXSCRIPT_ALWAYS_INLINE std::size_t operator()(const char32_t* val) const {
+  HERCULES_ALWAYS_INLINE std::size_t operator()(const char32_t* val) const {
     auto byte_size = sizeof(char32_t) * std::char_traits<char32_t>::length(val);
-    return ::matxscript::runtime::BytesHash(&val, byte_size);
+    return ::hercules::runtime::BytesHash(&val, byte_size);
   }
-  MATXSCRIPT_ALWAYS_INLINE std::size_t operator()(::matxscript::runtime::string_view val) const {
-    return ::matxscript::runtime::BytesHash(val.data(), val.size());
+  HERCULES_ALWAYS_INLINE std::size_t operator()(::hercules::runtime::string_view val) const {
+    return ::hercules::runtime::BytesHash(val.data(), val.size());
   }
-  MATXSCRIPT_ALWAYS_INLINE std::size_t operator()(::matxscript::runtime::unicode_view val) const {
-    auto byte_size = sizeof(::matxscript::runtime::unicode_view::value_type) * val.size();
-    return ::matxscript::runtime::BytesHash(val.data(), byte_size);
+  HERCULES_ALWAYS_INLINE std::size_t operator()(::hercules::runtime::unicode_view val) const {
+    auto byte_size = sizeof(::hercules::runtime::unicode_view::value_type) * val.size();
+    return ::hercules::runtime::BytesHash(val.data(), byte_size);
   }
-  MATXSCRIPT_ALWAYS_INLINE std::size_t operator()(const ::matxscript::runtime::String& val) const {
-    return std::hash<::matxscript::runtime::String>()(val);
+  HERCULES_ALWAYS_INLINE std::size_t operator()(const ::hercules::runtime::String& val) const {
+    return std::hash<::hercules::runtime::String>()(val);
   }
-  MATXSCRIPT_ALWAYS_INLINE std::size_t operator()(const ::matxscript::runtime::Unicode& val) const {
-    return std::hash<::matxscript::runtime::Unicode>()(val);
+  HERCULES_ALWAYS_INLINE std::size_t operator()(const ::hercules::runtime::Unicode& val) const {
+    return std::hash<::hercules::runtime::Unicode>()(val);
   }
 
   // main entry
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t operator()(const T& val) const {
+  HERCULES_ALWAYS_INLINE std::size_t operator()(const T& val) const {
     using TYPE = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
     constexpr int32_t code = TypeIndex::type_index_traits<TYPE>::value;
     constexpr int32_t refine_code = code >= 0 ? 0 : code;
@@ -1093,56 +1093,56 @@ struct SmartHash {
 
   // step1: dispatch int
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t Dispatch(const T& val, _IntType) const {
-    return ::matxscript::runtime::ScalarHash<T>()(val);
+  HERCULES_ALWAYS_INLINE std::size_t Dispatch(const T& val, _IntType) const {
+    return ::hercules::runtime::ScalarHash<T>()(val);
   }
 
   // step2: dispatch float
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t Dispatch(const T& val, _FloatType) const {
-    return ::matxscript::runtime::ScalarHash<T>()(val);
+  HERCULES_ALWAYS_INLINE std::size_t Dispatch(const T& val, _FloatType) const {
+    return ::hercules::runtime::ScalarHash<T>()(val);
   }
 
   // step3: dispatch ObjectRef
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t Dispatch(const T& val, _ObjectRefType) const {
+  HERCULES_ALWAYS_INLINE std::size_t Dispatch(const T& val, _ObjectRefType) const {
     return Any::Hash(RTView(val));
   }
 
   // step4: dispatch Any
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t Dispatch(const T& val, _UnkwnownType) const {
+  HERCULES_ALWAYS_INLINE std::size_t Dispatch(const T& val, _UnkwnownType) const {
     using TYPE = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
     return DispatchAny(val, std::is_base_of<Any, TYPE>{});
   }
 
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t DispatchAny(const T& val, std::true_type) const {
+  HERCULES_ALWAYS_INLINE std::size_t DispatchAny(const T& val, std::true_type) const {
     return Any::Hash(val);
   }
 
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t DispatchAny(const T& val, std::false_type) const {
+  HERCULES_ALWAYS_INLINE std::size_t DispatchAny(const T& val, std::false_type) const {
     using TYPE = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
     return DispatchAutoCastRTView(val, typename has_auto_operator_t<TYPE, RTView>::type{});
   }
 
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t DispatchAutoCastRTView(const T& val, std::true_type) const {
+  HERCULES_ALWAYS_INLINE std::size_t DispatchAutoCastRTView(const T& val, std::true_type) const {
     return Any::Hash(val.operator RTView());
   }
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t DispatchAutoCastRTView(const T& val, std::false_type) const {
+  HERCULES_ALWAYS_INLINE std::size_t DispatchAutoCastRTView(const T& val, std::false_type) const {
     using TYPE = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
     return DispatchAutoCastRTValue(val, typename has_auto_operator_t<TYPE, RTValue>::type{});
   }
 
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t DispatchAutoCastRTValue(const T& val, std::true_type) const {
+  HERCULES_ALWAYS_INLINE std::size_t DispatchAutoCastRTValue(const T& val, std::true_type) const {
     return Any::Hash(val.operator RTValue());
   }
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t DispatchAutoCastRTValue(const T& val,
+  HERCULES_ALWAYS_INLINE std::size_t DispatchAutoCastRTValue(const T& val,
                                                                std::false_type) const {
     using TYPE = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
     return std::hash<TYPE>()(val);
@@ -1152,7 +1152,7 @@ struct SmartHash {
 struct SmartEqualTo {
   // equal main entry
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
+  HERCULES_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
     using TYPE1 = typename std::remove_cv<typename std::remove_reference<T1>::type>::type;
     using TYPE2 = typename std::remove_cv<typename std::remove_reference<T2>::type>::type;
     constexpr int32_t code1 = TypeIndex::type_index_traits<TYPE1>::value;
@@ -1166,7 +1166,7 @@ struct SmartEqualTo {
   }
 
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE bool operator()(const T& lhs, const T& rhs) {
+  HERCULES_ALWAYS_INLINE bool operator()(const T& lhs, const T& rhs) {
     return lhs == rhs;
   }
 
@@ -1182,19 +1182,19 @@ struct SmartEqualTo {
   // lhs: int
   // rhs: Any or int
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _IntType, _IntType) {
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _IntType, _IntType) {
     return lhs == rhs;
   }
   template <typename T1,
             typename T2,
             typename M,
             typename = typename std::enable_if<is_runtime_value<T2>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _IntType, M) {
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _IntType, M) {
     switch (rhs.type_code()) {
-      case ::matxscript::runtime::TypeIndex::kRuntimeInteger: {
+      case ::hercules::runtime::TypeIndex::kRuntimeInteger: {
         return lhs == rhs.value_.data.v_int64;
       } break;
-      case ::matxscript::runtime::TypeIndex::kRuntimeFloat: {
+      case ::hercules::runtime::TypeIndex::kRuntimeFloat: {
         return floating_point::AlmostEquals(static_cast<double>(lhs), rhs.value_.data.v_float64);
       } break;
       default: {
@@ -1206,12 +1206,12 @@ struct SmartEqualTo {
             typename T2,
             typename M,
             typename = typename std::enable_if<is_runtime_value<T1>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, M, _IntType) {
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, M, _IntType) {
     return Dispatch(rhs, lhs, _IntType{}, M{});
   }
 
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs,
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs,
                                                 const T2& rhs,
                                                 _FloatType,
                                                 _FloatType) {
@@ -1221,13 +1221,13 @@ struct SmartEqualTo {
             typename T2,
             typename M,
             typename = typename std::enable_if<is_runtime_value<T2>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _FloatType, M) {
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _FloatType, M) {
     switch (rhs.type_code()) {
-      case ::matxscript::runtime::TypeIndex::kRuntimeInteger: {
+      case ::hercules::runtime::TypeIndex::kRuntimeInteger: {
         return floating_point::AlmostEquals(static_cast<double>(lhs),
                                             static_cast<double>(rhs.value_.data.v_int64));
       } break;
-      case ::matxscript::runtime::TypeIndex::kRuntimeFloat: {
+      case ::hercules::runtime::TypeIndex::kRuntimeFloat: {
         return floating_point::AlmostEquals(static_cast<double>(lhs), rhs.value_.data.v_float64);
       } break;
       default: {
@@ -1239,14 +1239,14 @@ struct SmartEqualTo {
             typename T2,
             typename M,
             typename = typename std::enable_if<is_runtime_value<T1>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, M, _FloatType) {
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, M, _FloatType) {
     return Dispatch(rhs, lhs, _FloatType{}, M{});
   }
 
   // lhs: float or int
   // rhs: float or int
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs,
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs,
                                                 const T2& rhs,
                                                 _FloatType,
                                                 _IntType) {
@@ -1255,7 +1255,7 @@ struct SmartEqualTo {
   }
 
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs,
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs,
                                                 const T2& rhs,
                                                 _IntType,
                                                 _FloatType) {
@@ -1265,8 +1265,8 @@ struct SmartEqualTo {
 
   // lhs: str
   // rhs: Any or str
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const ::matxscript::runtime::string_view& lhs,
-                                                const ::matxscript::runtime::string_view& rhs,
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const ::hercules::runtime::string_view& lhs,
+                                                const ::hercules::runtime::string_view& rhs,
                                                 _StringType,
                                                 _StringType) {
     return lhs == rhs;
@@ -1275,12 +1275,12 @@ struct SmartEqualTo {
             typename T2,
             typename M,
             typename = typename std::enable_if<is_runtime_value<T2>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _StringType, M) {
-    if (rhs.value_.code != ::matxscript::runtime::TypeIndex::kRuntimeString) {
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _StringType, M) {
+    if (rhs.value_.code != ::hercules::runtime::TypeIndex::kRuntimeString) {
       return false;
     }
     return Dispatch(lhs,
-                    rhs.template AsNoCheck<::matxscript::runtime::string_view>(),
+                    rhs.template AsNoCheck<::hercules::runtime::string_view>(),
                     _StringType{},
                     _StringType{});
   }
@@ -1288,7 +1288,7 @@ struct SmartEqualTo {
             typename T2,
             typename M,
             typename = typename std::enable_if<is_runtime_value<T1>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, M, _StringType) {
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, M, _StringType) {
     return Dispatch(rhs, lhs, _StringType{}, M{});
   }
 
@@ -1296,8 +1296,8 @@ struct SmartEqualTo {
   // rhs: Any or unicode
   // lhs: str
   // rhs: Any or str
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const ::matxscript::runtime::unicode_view& lhs,
-                                                const ::matxscript::runtime::unicode_view& rhs,
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const ::hercules::runtime::unicode_view& lhs,
+                                                const ::hercules::runtime::unicode_view& rhs,
                                                 _UnicodeType,
                                                 _UnicodeType) {
     return lhs == rhs;
@@ -1306,12 +1306,12 @@ struct SmartEqualTo {
             typename T2,
             typename M,
             typename = typename std::enable_if<is_runtime_value<T2>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _UnicodeType, M) {
-    if (rhs.value_.code != ::matxscript::runtime::TypeIndex::kRuntimeUnicode) {
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _UnicodeType, M) {
+    if (rhs.value_.code != ::hercules::runtime::TypeIndex::kRuntimeUnicode) {
       return false;
     }
     return Dispatch(lhs,
-                    rhs.template AsNoCheck<::matxscript::runtime::unicode_view>(),
+                    rhs.template AsNoCheck<::hercules::runtime::unicode_view>(),
                     _UnicodeType{},
                     _UnicodeType{});
   }
@@ -1319,14 +1319,14 @@ struct SmartEqualTo {
             typename T2,
             typename M,
             typename = typename std::enable_if<is_runtime_value<T1>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, M, _UnicodeType) {
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, M, _UnicodeType) {
     return Dispatch(rhs, lhs, _UnicodeType{}, M{});
   }
 
   // lhs: ObjectRef
   // rhs: Any or ObjectRef
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs,
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs,
                                                 const T2& rhs,
                                                 _ObjectRefType,
                                                 _ObjectRefType) {
@@ -1336,7 +1336,7 @@ struct SmartEqualTo {
             typename T2,
             typename M,
             typename = typename std::enable_if<is_runtime_value<T2>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _ObjectRefType, M) {
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, _ObjectRefType, M) {
     using TYPE1 = typename std::remove_cv<typename std::remove_reference<T1>::type>::type;
     if (!rhs.template IsObjectRef<TYPE1>()) {
       return false;
@@ -1347,14 +1347,14 @@ struct SmartEqualTo {
             typename T2,
             typename M,
             typename = typename std::enable_if<is_runtime_value<T1>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, M, _ObjectRefType) {
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs, const T2& rhs, M, _ObjectRefType) {
     return Dispatch(rhs, lhs, _ObjectRefType{}, M{});
   }
 
   // lhs: Any
   // rhs: Any
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE static bool Dispatch(const T1& lhs,
+  HERCULES_ALWAYS_INLINE static bool Dispatch(const T1& lhs,
                                                 const T2& rhs,
                                                 _UnkwnownType,
                                                 _UnkwnownType) {
@@ -1362,132 +1362,132 @@ struct SmartEqualTo {
     using TYPE2 = typename std::remove_cv<typename std::remove_reference<T2>::type>::type;
     return DispatchAny(lhs, rhs, std::is_base_of<Any, TYPE1>{}, std::is_base_of<Any, TYPE2>{});
   }
-  MATXSCRIPT_ALWAYS_INLINE static bool DispatchAny(const ::matxscript::runtime::Any& lhs,
-                                                   const ::matxscript::runtime::Any& rhs,
+  HERCULES_ALWAYS_INLINE static bool DispatchAny(const ::hercules::runtime::Any& lhs,
+                                                   const ::hercules::runtime::Any& rhs,
                                                    std::true_type,
                                                    std::true_type) {
-    return ::matxscript::runtime::Any::Equal(lhs, rhs);
+    return ::hercules::runtime::Any::Equal(lhs, rhs);
   }
 
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE static bool DispatchAny(const ::matxscript::runtime::Any& lhs,
+  HERCULES_ALWAYS_INLINE static bool DispatchAny(const ::hercules::runtime::Any& lhs,
                                                    const T& rhs,
                                                    std::true_type,
                                                    std::false_type) {
     GenericValueConverter<RTView> Caster;
-    return ::matxscript::runtime::Any::Equal(lhs, Caster(rhs));
+    return ::hercules::runtime::Any::Equal(lhs, Caster(rhs));
   }
 
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE static bool DispatchAny(const T& lhs,
-                                                   const ::matxscript::runtime::Any& rhs,
+  HERCULES_ALWAYS_INLINE static bool DispatchAny(const T& lhs,
+                                                   const ::hercules::runtime::Any& rhs,
                                                    std::false_type,
                                                    std::true_type) {
     GenericValueConverter<RTView> Caster;
-    return ::matxscript::runtime::Any::Equal(Caster(lhs), rhs);
+    return ::hercules::runtime::Any::Equal(Caster(lhs), rhs);
   }
 
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE static bool DispatchAny(const T& lhs,
-                                                   const ::matxscript::runtime::Any& rhs,
+  HERCULES_ALWAYS_INLINE static bool DispatchAny(const T& lhs,
+                                                   const ::hercules::runtime::Any& rhs,
                                                    std::false_type,
                                                    std::false_type) {
     GenericValueConverter<RTView> Caster;
-    return ::matxscript::runtime::Any::Equal(Caster(lhs), Caster(rhs));
+    return ::hercules::runtime::Any::Equal(Caster(lhs), Caster(rhs));
   }
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 namespace std {
 template <>
-struct hash<::matxscript::runtime::Any> {
+struct hash<::hercules::runtime::Any> {
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t operator()(const T& val) const {
-    return ::matxscript::runtime::SmartHash()(val);
+  HERCULES_ALWAYS_INLINE std::size_t operator()(const T& val) const {
+    return ::hercules::runtime::SmartHash()(val);
   }
 };
 
 template <>
-struct equal_to<::matxscript::runtime::Any> {
+struct equal_to<::hercules::runtime::Any> {
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
-    return ::matxscript::runtime::SmartEqualTo()(lhs, rhs);
+  HERCULES_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
+    return ::hercules::runtime::SmartEqualTo()(lhs, rhs);
   }
 };
 
 template <>
-struct hash<::matxscript::runtime::RTView> {
+struct hash<::hercules::runtime::RTView> {
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t operator()(const T& val) const {
-    return ::matxscript::runtime::SmartHash()(val);
+  HERCULES_ALWAYS_INLINE std::size_t operator()(const T& val) const {
+    return ::hercules::runtime::SmartHash()(val);
   }
 };
 
 template <>
-struct equal_to<::matxscript::runtime::RTView> {
+struct equal_to<::hercules::runtime::RTView> {
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
-    return ::matxscript::runtime::SmartEqualTo()(lhs, rhs);
+  HERCULES_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
+    return ::hercules::runtime::SmartEqualTo()(lhs, rhs);
   }
 };
 
 template <>
-struct hash<::matxscript::runtime::RTValue> {
+struct hash<::hercules::runtime::RTValue> {
   template <typename T>
-  MATXSCRIPT_ALWAYS_INLINE std::size_t operator()(const T& val) const {
-    return ::matxscript::runtime::SmartHash()(val);
+  HERCULES_ALWAYS_INLINE std::size_t operator()(const T& val) const {
+    return ::hercules::runtime::SmartHash()(val);
   }
 };
 
 template <>
-struct equal_to<::matxscript::runtime::RTValue> {
+struct equal_to<::hercules::runtime::RTValue> {
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
-    return ::matxscript::runtime::SmartEqualTo()(lhs, rhs);
+  HERCULES_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
+    return ::hercules::runtime::SmartEqualTo()(lhs, rhs);
   }
 };
 
 template <>
-struct less<::matxscript::runtime::Any> {
+struct less<::hercules::runtime::Any> {
   template <
       typename T1,
       typename T2,
-      typename = typename std::enable_if<::matxscript::runtime::is_runtime_value<T1>::value>::type,
-      typename = typename std::enable_if<::matxscript::runtime::is_runtime_value<T2>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
-    return ::matxscript::runtime::Any::LessThan(
-        static_cast<const ::matxscript::runtime::Any&>(lhs),
-        static_cast<const ::matxscript::runtime::Any&>(rhs));
+      typename = typename std::enable_if<::hercules::runtime::is_runtime_value<T1>::value>::type,
+      typename = typename std::enable_if<::hercules::runtime::is_runtime_value<T2>::value>::type>
+  HERCULES_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
+    return ::hercules::runtime::Any::LessThan(
+        static_cast<const ::hercules::runtime::Any&>(lhs),
+        static_cast<const ::hercules::runtime::Any&>(rhs));
   }
 };
 
 template <>
-struct less<::matxscript::runtime::RTView> {
+struct less<::hercules::runtime::RTView> {
   template <
       typename T1,
       typename T2,
-      typename = typename std::enable_if<::matxscript::runtime::is_runtime_value<T1>::value>::type,
-      typename = typename std::enable_if<::matxscript::runtime::is_runtime_value<T2>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
-    return ::matxscript::runtime::Any::LessThan(
-        static_cast<const ::matxscript::runtime::Any&>(lhs),
-        static_cast<const ::matxscript::runtime::Any&>(rhs));
+      typename = typename std::enable_if<::hercules::runtime::is_runtime_value<T1>::value>::type,
+      typename = typename std::enable_if<::hercules::runtime::is_runtime_value<T2>::value>::type>
+  HERCULES_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
+    return ::hercules::runtime::Any::LessThan(
+        static_cast<const ::hercules::runtime::Any&>(lhs),
+        static_cast<const ::hercules::runtime::Any&>(rhs));
   }
 };
 
 template <>
-struct less<::matxscript::runtime::RTValue> {
+struct less<::hercules::runtime::RTValue> {
   template <
       typename T1,
       typename T2,
-      typename = typename std::enable_if<::matxscript::runtime::is_runtime_value<T1>::value>::type,
-      typename = typename std::enable_if<::matxscript::runtime::is_runtime_value<T2>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
-    return ::matxscript::runtime::Any::LessThan(
-        static_cast<const ::matxscript::runtime::Any&>(lhs),
-        static_cast<const ::matxscript::runtime::Any&>(rhs));
+      typename = typename std::enable_if<::hercules::runtime::is_runtime_value<T1>::value>::type,
+      typename = typename std::enable_if<::hercules::runtime::is_runtime_value<T2>::value>::type>
+  HERCULES_ALWAYS_INLINE bool operator()(const T1& lhs, const T2& rhs) const {
+    return ::hercules::runtime::Any::LessThan(
+        static_cast<const ::hercules::runtime::Any&>(lhs),
+        static_cast<const ::hercules::runtime::Any&>(rhs));
   }
 };
 

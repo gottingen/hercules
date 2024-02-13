@@ -27,7 +27,7 @@
 #include <cstring>
 #include <ostream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace {
@@ -256,4 +256,4 @@ constexpr string_view::size_type string_view::npos;
 constexpr string_view::size_type string_view::kMaxSize;
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

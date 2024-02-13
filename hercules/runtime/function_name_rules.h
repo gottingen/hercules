@@ -26,17 +26,17 @@
 #include <hercules/runtime/container/string_view.h>
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace FunctionNameRules {
-MATX_DLL String get_class_view_name(string_view class_name);
-MATX_DLL String add_wrapper_suffix(string_view function_name);
-MATX_DLL String add_packed_suffix(string_view function_name);
-MATX_DLL String add_class_prefix(string_view class_name, string_view method_name);
-MATX_DLL string_view remove_class_prefix(string_view class_name, string_view method_name);
-MATX_DLL bool is_class_method(string_view class_name, string_view method_name);
+HERCULES_DLL String get_class_view_name(string_view class_name);
+HERCULES_DLL String add_wrapper_suffix(string_view function_name);
+HERCULES_DLL String add_packed_suffix(string_view function_name);
+HERCULES_DLL String add_class_prefix(string_view class_name, string_view method_name);
+HERCULES_DLL string_view remove_class_prefix(string_view class_name, string_view method_name);
+HERCULES_DLL bool is_class_method(string_view class_name, string_view method_name);
 }  // namespace FunctionNameRules
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

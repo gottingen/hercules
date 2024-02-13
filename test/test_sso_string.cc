@@ -24,7 +24,7 @@
 #include <hercules/runtime/container/string_core.h>
 #include <hercules/runtime/container/string_view.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(StringCore, Constructor) {
@@ -119,4 +119,4 @@ TEST(StringCore, MemberFunctions) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

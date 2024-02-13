@@ -31,7 +31,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/typed_native_function.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -72,10 +72,10 @@ class IRDocsifierFunctor {
     }
     pf = LookupDispatchTable("", type_index);
     if (pf == nullptr) {
-      MXLOG(WARNING) << "ObjectFunctor calls un-registered function on type: "
+      HSLOG(WARNING) << "ObjectFunctor calls un-registered function on type: "
                      << runtime::Object::TypeIndex2Key(type_index) << " (token: " << token << ")"
                      << ". ObjectType: " << obj->GetTypeKey() << ". Object: " << obj;
-      MXCHECK(false) << "ObjectFunctor calls un-registered function on type: "
+      HSCHECK(false) << "ObjectFunctor calls un-registered function on type: "
                      << runtime::Object::TypeIndex2Key(type_index) << " (token: " << token << ")"
                      << ". ObjectType: " << obj->GetTypeKey() << ". Object: " << obj;
     }
@@ -98,7 +98,7 @@ class IRDocsifierFunctor {
     }
     runtime::NativeFunction& slot = (*table)[type_index];
     if (slot != nullptr) {
-      MXCHECK(false) << "Dispatch for type is already registered: "
+      HSCHECK(false) << "Dispatch for type is already registered: "
                      << runtime::Object::TypeIndex2Key(type_index);
     }
     slot = f;
@@ -181,4 +181,4 @@ class IRDocsifierFunctor {
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

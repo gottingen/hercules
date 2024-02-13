@@ -29,12 +29,12 @@
 #include <hercules/runtime/registry.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 using namespace runtime;
 
 TEST(IR, ListContainer) {
-  const auto* printer = ::matxscript::runtime::FunctionRegistry::Get("node.IRTextPrinter_Print");
+  const auto* printer = ::hercules::runtime::FunctionRegistry::Get("node.IRTextPrinter_Print");
   ListType list_ty;
 
   auto list_append_op = Op::Get("ir.list_append");
@@ -65,4 +65,4 @@ TEST(IR, ListContainer) {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

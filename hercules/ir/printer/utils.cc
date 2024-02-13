@@ -25,7 +25,7 @@
 #include <hercules/ir/printer/text_printer.h>
 #include <hercules/runtime/str_escape.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -45,7 +45,7 @@ ExprDoc PrintVarCreation(const ir::PrimVar& var, const ObjectPath& var_p, const 
 
   if (const auto* ptr_type = type.as<PointerTypeNode>()) {
     const auto* prim_type = ptr_type->element_type.as<PrimTypeNode>();
-    MXCHECK(prim_type);
+    HSCHECK(prim_type);
     ExprDoc element_type =
         LiteralDoc::DataType(prim_type->dtype, type_p->Attr("element_type")->Attr("dtype"));
     rhs = Dialect(d, "handle");
@@ -67,13 +67,13 @@ Doc PrintVar(const ir::PrimVar& var, const ObjectPath& var_p, const IRDocsifier&
       ExprDoc rhs = PrintVarCreation(var, var_p, d);
       opt_f.value()->stmts.push_back(AssignDoc(lhs, rhs, NullOpt));
     } else {
-      MXLOG(WARNING) << "Didn't find variable definition for: " << var->name_hint;
+      HSLOG(WARNING) << "Didn't find variable definition for: " << var->name_hint;
     }
   }
   if (Optional<ExprDoc> doc = d->GetVarDoc(var)) {
     return doc.value();
   }
-  MXLOG(FATAL) << "IndexError: Variable is not defined in the environment: " << var->name_hint;
+  HSLOG(FATAL) << "IndexError: Variable is not defined in the environment: " << var->name_hint;
   return ExprDoc{nullptr};
 }
 
@@ -92,11 +92,11 @@ StringRef GenerateUniqueName(StringRef name_hint,
 }
 
 bool AllowConciseScoping(const IRDocsifier& d) {
-  MXCHECK(!d->frames.empty());
+  HSCHECK(!d->frames.empty());
   if (const auto* f = d->frames.back().as<IRFrameNode>()) {
     return f->allow_concise_scoping;
   }
-  MXLOG(FATAL) << "NotImplementedError: fragment printing";
+  HSLOG(FATAL) << "NotImplementedError: fragment printing";
   return false;
 }
 
@@ -118,4 +118,4 @@ Doc DoConciseScoping(const Optional<ExprDoc>& lhs,
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

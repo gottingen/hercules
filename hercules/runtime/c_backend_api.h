@@ -21,8 +21,8 @@
  */
 
 /*!
- * \file matx/runtime/c_backend_api.h
- * \brief MATX runtime backend API.
+ * \file hvm/runtime/c_backend_api.h
+ * \brief HVM runtime backend API.
  *
  *  The functions defined in this header are intended to be
  *  used by compiled operators, usually user do not need to use these
@@ -44,11 +44,11 @@ extern "C" {
  * \param out_ret_value The output value of the the return value.
  * \param resource_handle Pointer to associated resource.
  *
- * \return 0 if success, -1 if failure happens, set error via MATXScriptAPISetLastError.
+ * \return 0 if success, -1 if failure happens, set error via HerculesAPISetLastError.
  */
-typedef int (*MATXScriptBackendPackedCFunc)(MATXScriptAny* args,
+typedef int (*HerculesBackendPackedCFunc)(HerculesAny* args,
                                             int num_args,
-                                            MATXScriptAny* out_ret_value,
+                                            HerculesAny* out_ret_value,
                                             void* resource_handle);
 /*!
  * \brief Backend function to register system-wide library symbol.
@@ -57,12 +57,12 @@ typedef int (*MATXScriptBackendPackedCFunc)(MATXScriptAny* args,
  * \param ptr The symbol address.
  * \return 0 when no error is thrown, -1 when failure happens
  */
-MATX_DLL int MATXScriptBackendRegisterSystemLibSymbol(const char* name, void* ptr);
+HERCULES_DLL int HerculesBackendRegisterSystemLibSymbol(const char* name, void* ptr);
 
 /*!
  * \brief A data structure that facilitates function lookup by C-string name.
  */
-typedef struct MATXScriptFuncRegistry {
+typedef struct HerculesFuncRegistry {
   /*! \brief Names of registered functions, concatenated together and separated by \0.
    * An additional \0 is present at the end of the concatenated blob to mark the end.
    *
@@ -71,9 +71,9 @@ typedef struct MATXScriptFuncRegistry {
   const char* names;
 
   /*! \brief Function pointers, in the same order as their names in `names`. */
-  const MATXScriptBackendPackedCFunc* funcs;
-} MATXScriptFuncRegistry;
+  const HerculesBackendPackedCFunc* funcs;
+} HerculesFuncRegistry;
 
 #ifdef __cplusplus
-}  // MATXSCRIPT_EXTERN_C
+}  // HERCULES_EXTERN_C
 #endif

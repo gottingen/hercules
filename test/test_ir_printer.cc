@@ -29,13 +29,13 @@
 
 #include <gtest/gtest.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 using namespace runtime;
 
 TEST(IR, Printer) {
-  const auto* printer = ::matxscript::runtime::FunctionRegistry::Get("node.IRTextPrinter_Print");
-  const auto* build_module = ::matxscript::runtime::FunctionRegistry::Get("module.build.c");
+  const auto* printer = ::hercules::runtime::FunctionRegistry::Get("node.IRTextPrinter_Print");
+  const auto* build_module = ::hercules::runtime::FunctionRegistry::Get("module.build.c");
 
   PrimExpr a(3);
   PrimExpr b(4);
@@ -65,9 +65,9 @@ TEST(IR, Printer) {
 
   IRModule mod;
   mod->Add(func);
-  ::matxscript::runtime::Module m = (*build_module)({mod}).As<Module>();
+  ::hercules::runtime::Module m = (*build_module)({mod}).As<Module>();
   std::cout << m->GetSource() << std::endl;
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -22,20 +22,20 @@
 #include <hercules/runtime/container/file_ref.h>
 #include <hercules/runtime/container/list_ref.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * File container
  *****************************************************************************/
-MATXSCRIPT_REGISTER_OBJECT_TYPE(FileNode);
+HERCULES_REGISTER_OBJECT_TYPE(FileNode);
 
 /******************************************************************************
  * FileNode functions
  *****************************************************************************/
 
 bool FileNode::HasNext() const {
-  MXCHECK(preader_ != nullptr) << "File is not opened!";
+  HSCHECK(preader_ != nullptr) << "File is not opened!";
   return !preader_->IsLastLine();
 }
 
@@ -108,7 +108,7 @@ RTValue FileNode::Read(int64_t size) const {
 String FileNode::ReadLineString() const {
   // mode_ will not be checked, it's a simple file reader in c++
   // return empty String after reaching EOF, which is same in python
-  MXCHECK(preader_ != nullptr) << "File is not opened!";
+  HSCHECK(preader_ != nullptr) << "File is not opened!";
   const char* line = nullptr;
   size_t len = 0;
   preader_->ReadLine(&line, &len);
@@ -122,8 +122,8 @@ Unicode FileNode::ReadLineUnicode() const {
 }
 
 RTValue FileNode::Next() const {
-  MXCHECK(preader_ != nullptr) << "File is not opened!";
-  MXCHECK(readable_);
+  HSCHECK(preader_ != nullptr) << "File is not opened!";
+  HSCHECK(readable_);
   if (binary_) {
     return RTValue(ReadLineString());
   } else {
@@ -132,8 +132,8 @@ RTValue FileNode::Next() const {
 }
 
 RTValue FileNode::Next(bool* has_next) const {
-  MXCHECK(preader_ != nullptr) << "File is not opened!";
-  MXCHECK(readable_);
+  HSCHECK(preader_ != nullptr) << "File is not opened!";
+  HSCHECK(readable_);
   if (binary_) {
     RTValue ret(ReadLineString());
     *has_next = !preader_->IsLastLine();
@@ -146,8 +146,8 @@ RTValue FileNode::Next(bool* has_next) const {
 }
 
 RTView FileNode::NextView(bool* has_next, RTValue* holder_or_null) const {
-  MXCHECK(preader_ != nullptr) << "File is not opened!";
-  MXCHECK(readable_);
+  HSCHECK(preader_ != nullptr) << "File is not opened!";
+  HSCHECK(readable_);
   if (binary_) {
     *holder_or_null = ReadLineString();
     *has_next = !preader_->IsLastLine();
@@ -160,8 +160,8 @@ RTView FileNode::NextView(bool* has_next, RTValue* holder_or_null) const {
 }
 
 List FileNode::ReadLines() const {
-  MXCHECK(preader_ != nullptr) << "File is not opened!";
-  MXCHECK(readable_);
+  HSCHECK(preader_ != nullptr) << "File is not opened!";
+  HSCHECK(readable_);
   List ret;
   const char* line = nullptr;
   size_t len = 0;
@@ -176,9 +176,9 @@ List FileNode::ReadLines() const {
 }
 
 void FileNode::Close() {
-  MXCHECK(preader_ != nullptr) << "File is not opened!";
+  HSCHECK(preader_ != nullptr) << "File is not opened!";
   preader_ = nullptr;
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

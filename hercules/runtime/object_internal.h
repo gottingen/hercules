@@ -27,7 +27,7 @@
 #include <hercules/runtime/module.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*!
@@ -38,7 +38,7 @@ class ObjectInternal {
   /*!
    * \brief Retain an object handle.
    */
-  static void ObjectRetain(MATXScriptObjectHandle obj) {
+  static void ObjectRetain(HerculesObjectHandle obj) {
     if (obj != nullptr) {
       static_cast<Object*>(obj)->IncRef();
     }
@@ -47,7 +47,7 @@ class ObjectInternal {
   /*!
    * \brief Free an object handle.
    */
-  static void ObjectFree(MATXScriptObjectHandle obj) {
+  static void ObjectFree(HerculesObjectHandle obj) {
     if (obj != nullptr) {
       static_cast<Object*>(obj)->DecRef();
     }
@@ -74,7 +74,7 @@ class ObjectInternal {
    * \param handle The module handle.
    * \return the corresponding module node pointer.
    */
-  static ModuleNode* GetModuleNode(MATXScriptModuleHandle handle) {
+  static ModuleNode* GetModuleNode(HerculesModuleHandle handle) {
     // NOTE: we will need to convert to Object
     // then to ModuleNode in order to get the correct
     // address translation
@@ -102,4 +102,4 @@ class ObjectInternal {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

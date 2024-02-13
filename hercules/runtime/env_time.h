@@ -21,7 +21,7 @@
 
 #include <cstdint>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class EnvTime {
@@ -58,4 +58,4 @@ class EnvTime {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

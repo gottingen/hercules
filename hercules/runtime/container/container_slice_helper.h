@@ -21,7 +21,7 @@
 
 #include <stdint.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 inline constexpr int64_t slice_index_correction(int64_t slice, int64_t len) noexcept {
@@ -34,4 +34,4 @@ inline constexpr int64_t index_correction(int64_t index, int64_t len) noexcept {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

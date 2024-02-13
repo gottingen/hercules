@@ -25,7 +25,7 @@
  * them so that we don't have to include jemalloc.h, in case the program is
  * built without jemalloc support.
  */
-#if (defined(USE_JEMALLOC) || defined(MATX_USE_JEMALLOC))
+#if (defined(USE_JEMALLOC) || defined(HVM_USE_JEMALLOC))
 // We have JEMalloc, so use it.
 // JEMalloc provides it's own implementation of
 // malloc_usable_size, and that's what we should be using.
@@ -54,13 +54,13 @@
 #include <atomic>
 #include <new>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /**
  * Determine if we are using jemalloc or not.
  */
-#if defined(USE_JEMALLOC) || defined(MATX_USE_JEMALLOC)
+#if defined(USE_JEMALLOC) || defined(HVM_USE_JEMALLOC)
 inline bool usingJEMalloc() noexcept {
   return true;
 }
@@ -69,7 +69,7 @@ inline bool usingJEMalloc() noexcept {
   return false;
 }
 
-// MATX_NO_INLINE bool usingJEMalloc() noexcept {
+// HVM_NO_INLINE bool usingJEMalloc() noexcept {
 //  // Checking for rallocx != nullptr is not sufficient; we may be in a
 //  // dlopen()ed module that depends on libjemalloc, so rallocx is resolved, but
 //  // the main program might be using a different memory allocator.
@@ -120,12 +120,12 @@ inline bool usingJEMalloc() noexcept {
 //}
 #endif
 
-MATXSCRIPT_NO_INLINE inline bool canSdallocx() noexcept {
+HERCULES_NO_INLINE inline bool canSdallocx() noexcept {
   static bool rv = usingJEMalloc();
   return rv;
 }
 
-MATXSCRIPT_NO_INLINE inline bool canNallocx() noexcept {
+HERCULES_NO_INLINE inline bool canNallocx() noexcept {
   static bool rv = usingJEMalloc();
   return rv;
 }
@@ -135,7 +135,7 @@ size_t goodMallocSize(size_t minSize) noexcept {
     return 0;
   }
 
-#if defined(USE_JEMALLOC) || defined(MATX_USE_JEMALLOC)
+#if defined(USE_JEMALLOC) || defined(HVM_USE_JEMALLOC)
   if (!canNallocx()) {
     // No nallocx - no smarts
     return minSize;
@@ -185,7 +185,7 @@ void* checkedRealloc(void* ptr, size_t size) {
 }
 
 void sizedFree(void* ptr, size_t size) {
-#if defined(USE_JEMALLOC) || defined(MATX_USE_JEMALLOC)
+#if defined(USE_JEMALLOC) || defined(HVM_USE_JEMALLOC)
   if (canSdallocx()) {
     sdallocx(ptr, size, 0);
   } else
@@ -205,7 +205,7 @@ void sizedFree(void* ptr, size_t size) {
  * jemalloc, realloc() almost always ends up doing a copy, because
  * there is little fragmentation / slack space to take advantage of.
  */
-MATXSCRIPT_MALLOC_CHECKED_MALLOC MATXSCRIPT_NO_INLINE void* smartRealloc(
+HERCULES_MALLOC_CHECKED_MALLOC HERCULES_NO_INLINE void* smartRealloc(
     void* p, const size_t currentSize, const size_t currentCapacity, const size_t newCapacity) {
   assert(p);
   assert(currentSize <= currentCapacity && currentCapacity < newCapacity);
@@ -223,4 +223,4 @@ MATXSCRIPT_MALLOC_CHECKED_MALLOC MATXSCRIPT_NO_INLINE void* smartRealloc(
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

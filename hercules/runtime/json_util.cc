@@ -26,7 +26,7 @@
 #include <hercules/rapidjson/writer.h>
 
 #include <hercules/runtime/logging.h>
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace JsonUtil {
 
@@ -36,7 +36,7 @@ namespace JsonUtil {
 bool FromString(string_view json_str, rapidjson::Document& doc) {
   constexpr unsigned flag = rapidjson::kParseNanAndInfFlag;
   if (doc.Parse<flag>(json_str.data(), json_str.size()).HasParseError()) {
-    MXTHROW << "Error(offset " << doc.GetErrorOffset()
+    HSTHROW << "Error(offset " << doc.GetErrorOffset()
             << "): " << GetParseError_En(doc.GetParseError());
     return false;
   }
@@ -46,7 +46,7 @@ bool FromString(string_view json_str, rapidjson::Document& doc) {
 bool FromFile(string_view filepath, rapidjson::Document& doc) {
   std::ifstream ifs(filepath.data(), std::ios::in | std::ios::binary);
   if (!ifs) {
-    MXTHROW << "Can't open the file. Please check " << filepath;
+    HSTHROW << "Can't open the file. Please check " << filepath;
   }
   ifs.seekg(0, std::ios::end);
   auto length = static_cast<std::size_t>(ifs.tellg());
@@ -77,7 +77,7 @@ String ToString(const rapidjson::Value* val, bool pretty, bool escape, int inden
               writer(buffer);
           writer.SetIndent(' ', indent);
           // writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
-          MXCHECK(val->Accept(writer)) << "ToString failed! val type: " << val->GetType();
+          HSCHECK(val->Accept(writer)) << "ToString failed! val type: " << val->GetType();
         } else {
           rapidjson::Writer<rapidjson::StringBuffer,
                             rapidjson::UTF8<>,
@@ -85,7 +85,7 @@ String ToString(const rapidjson::Value* val, bool pretty, bool escape, int inden
                             rapidjson::CrtAllocator,
                             flag>
               writer(buffer);
-          MXCHECK(val->Accept(writer)) << "ToString failed! val type: " << val->GetType();
+          HSCHECK(val->Accept(writer)) << "ToString failed! val type: " << val->GetType();
         }
 
       } else {
@@ -94,7 +94,7 @@ String ToString(const rapidjson::Value* val, bool pretty, bool escape, int inden
               writer(buffer);
           writer.SetIndent(' ', 2);
           // writer.SetFormatOptions(rapidjson::kFormatSingleLineArray);
-          MXCHECK(val->Accept(writer)) << "ToString failed! val type: " << val->GetType();
+          HSCHECK(val->Accept(writer)) << "ToString failed! val type: " << val->GetType();
         } else {
           rapidjson::Writer<rapidjson::StringBuffer,
                             rapidjson::UTF8<>,
@@ -102,7 +102,7 @@ String ToString(const rapidjson::Value* val, bool pretty, bool escape, int inden
                             rapidjson::CrtAllocator,
                             flag>
               writer(buffer);
-          MXCHECK(val->Accept(writer)) << "ToString failed! val type: " << val->GetType();
+          HSCHECK(val->Accept(writer)) << "ToString failed! val type: " << val->GetType();
         }
       }
       return String(buffer.GetString(), buffer.GetSize());
@@ -202,4 +202,4 @@ void Set(rapidjson::Value* obj,
 
 }  // namespace JsonUtil
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

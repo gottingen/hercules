@@ -28,7 +28,7 @@
 #include <atomic>
 #include <memory>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <typename T>
@@ -93,4 +93,4 @@ class SPSCBoundedQueue {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

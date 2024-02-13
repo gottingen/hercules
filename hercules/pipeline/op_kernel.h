@@ -17,8 +17,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-#ifndef MATXSCRIPT_RUNTIME_PIPELINE_OP_KERNEL_H
-#define MATXSCRIPT_RUNTIME_PIPELINE_OP_KERNEL_H
+#ifndef HERCULES_RUNTIME_PIPELINE_OP_KERNEL_H
+#define HERCULES_RUNTIME_PIPELINE_OP_KERNEL_H
 
 #include <functional>
 #include <tuple>
@@ -28,7 +28,7 @@
 #include <hercules/pipeline/global_unique_index.h>
 #include <hercules/runtime/native_object_registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class TXSession;
@@ -53,15 +53,15 @@ class OpKernel {
   }
 
  public:
-  MATXSCRIPT_ALWAYS_INLINE void CheckArgs(size_t arguments_size, size_t expect_size) const {
-    MXCHECK_EQ(arguments_size, expect_size) << "[" << class_name_ << "] Expect " << expect_size
+  HERCULES_ALWAYS_INLINE void CheckArgs(size_t arguments_size, size_t expect_size) const {
+    HSCHECK_EQ(arguments_size, expect_size) << "[" << class_name_ << "] Expect " << expect_size
                                             << " arguments but get " << arguments_size;
   }
 
   virtual void Init() {
   }
   virtual RTValue Process(PyArgs inputs) const {
-    MXCHECK(false) << "[" << class_name_
+    HSCHECK(false) << "[" << class_name_
                    << "] NotImplementedError: The Process method is not implemented";
     return None;
   }
@@ -122,12 +122,12 @@ inline RTValue op_kernel_call(void* self, PyArgs args) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
-#define MATX_REGISTER_NATIVE_OP(ClassName)                                              \
-  MATX_REGISTER_NATIVE_OBJECT(ClassName)                                                \
-      .SetConstructor([](::matxscript::runtime::PyArgs args) -> std::shared_ptr<void> { \
-        MXCHECK(args.size() == 1 && args[0].IsObjectRef<Dict>())                        \
+#define HVM_REGISTER_NATIVE_OP(ClassName)                                              \
+  HVM_REGISTER_NATIVE_OBJECT(ClassName)                                                \
+      .SetConstructor([](::hercules::runtime::PyArgs args) -> std::shared_ptr<void> { \
+        HSCHECK(args.size() == 1 && args[0].IsObjectRef<Dict>())                        \
             << "[NativeOp:" << #ClassName                                               \
             << "] only need one dict type arg, but get arg num: " << args.size()        \
             << ", args[0] type: " << args[0].type_name();                               \
@@ -136,4 +136,4 @@ inline RTValue op_kernel_call(void* self, PyArgs args) {
       })                                                                                \
       .RegisterFunction("__call__", op_kernel_call)
 
-#endif  // MATXSCRIPT_RUNTIME_PIPELINE_OP_KERNEL_H
+#endif  // HERCULES_RUNTIME_PIPELINE_OP_KERNEL_H

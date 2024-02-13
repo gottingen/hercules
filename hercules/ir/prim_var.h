@@ -33,7 +33,7 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -59,7 +59,7 @@ class PrimVarNode : public PrimExprNode {
    *
    * It is an optional field that provides a refined type of the variable than dtype.
    *
-   * \sa matxscript/ir/type.h for discussion of relations between runtime::DataType and Type.
+   * \sa hercules/ir/type.h for discussion of relations between runtime::DataType and Type.
    */
   Type type_annotation;
 
@@ -85,7 +85,7 @@ class PrimVarNode : public PrimExprNode {
 
   static constexpr const char* _type_key = "ir.PrimVar";
   static constexpr const uint32_t _type_child_slots = 1;
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(PrimVarNode, PrimExprNode);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(PrimVarNode, PrimExprNode);
 };
 
 /*! \brief a named variable in TIR */
@@ -98,7 +98,7 @@ class PrimVar : public PrimExpr {
    * \param name_hint variable name
    * \param dtype data type
    */
-  MATX_DLL explicit PrimVar(StringRef name_hint = "v",
+  HERCULES_DLL explicit PrimVar(StringRef name_hint = "v",
                             runtime::DataType dtype = runtime::DataType::Int(32),
                             Span span = Span());
   /*!
@@ -106,7 +106,7 @@ class PrimVar : public PrimExpr {
    * \param name_hint variable name.
    * \param type_annotation The type annotation.
    */
-  MATX_DLL explicit PrimVar(StringRef name_hint, Type type_annotation, Span span = Span());
+  HERCULES_DLL explicit PrimVar(StringRef name_hint, Type type_annotation, Span span = Span());
 
   /*!
    * \brief Get pointer to the internal value.
@@ -169,7 +169,7 @@ class PrimIterVarNode : public Object {
   static constexpr const char* _type_key = "ir.PrimIterVar";
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(PrimIterVarNode, Object);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(PrimIterVarNode, Object);
 };
 
 /*!
@@ -180,15 +180,15 @@ class PrimIterVarNode : public Object {
  */
 class PrimIterVar : public ObjectRef {
  public:
-  MATX_DLL PrimIterVar(RangeExpr dom, PrimVar var, Span span = Span());
+  HERCULES_DLL PrimIterVar(RangeExpr dom, PrimVar var, Span span = Span());
   /*!
    * \return the corresponding var in the IterVar.
    */
   inline operator PrimExpr() const;
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimIterVar, ObjectRef, PrimIterVarNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(PrimIterVarNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimIterVar, ObjectRef, PrimIterVarNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(PrimIterVarNode);
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

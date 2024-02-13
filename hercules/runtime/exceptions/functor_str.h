@@ -24,7 +24,7 @@
 #include <sstream>
 #include <string>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace builtins {
 namespace functor {
@@ -64,4 +64,4 @@ inline std::string str(double l) {
 }  // namespace functor
 }  // namespace builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

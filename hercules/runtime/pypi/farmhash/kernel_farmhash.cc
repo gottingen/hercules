@@ -28,7 +28,7 @@
 #include <iostream>
 #include "farmhash.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 uint32_t kernel_farmhash_hash32(const string_view& s) {
@@ -133,4 +133,4 @@ int64_t kernel_farmhash_fingerprint128_mod(const unicode_view& s, int64_t y) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

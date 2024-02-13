@@ -36,11 +36,11 @@
 #include <hercules/runtime/jemalloc_helper.h>
 #include <hercules/runtime/runtime_port.h>
 
-MATXSCRIPT_PUSH_WARNING
+HERCULES_PUSH_WARNING
 // Ignore shadowing warnings within this file, so includers can use -Wshadow.
-MATXSCRIPT_GNU_DISABLE_WARNING("-Wshadow")
+HERCULES_GNU_DISABLE_WARNING("-Wshadow")
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // When compiling with ASan, always heap-allocate the string even if
@@ -49,10 +49,10 @@ namespace runtime {
 // Note that this flag doesn't remove support for in-situ strings, as
 // that would break ABI-compatibility and wouldn't allow linking code
 // compiled with this flag with code compiled without.
-#ifdef MATXSCRIPT_SANITIZE_ADDRESS
-#define MATXSCRIPT_STRING_DISABLE_SSO true
+#ifdef HERCULES_SANITIZE_ADDRESS
+#define HERCULES_STRING_DISABLE_SSO true
 #else
-#define MATXSCRIPT_STRING_DISABLE_SSO false
+#define HERCULES_STRING_DISABLE_SSO false
 #endif
 
 namespace string_detail {
@@ -242,7 +242,7 @@ class string_core {
     return category_or_small_len_;
   }
 
-  static void DestroyCHost(MATXScriptAny* value) noexcept {
+  static void DestroyCHost(HerculesAny* value) noexcept {
     if (value->pad == Category::isMedium) {
       MediumBuffer::Destroy((Char*)(value->data.v_str_store.v_ml.chars));
       value->code = TypeIndex::kRuntimeNullptr;
@@ -254,7 +254,7 @@ class string_core {
     }
   }
 
-  static string_core MoveFromCHost(MATXScriptAny* value) noexcept {
+  static string_core MoveFromCHost(HerculesAny* value) noexcept {
     string_core result;
     if (value->pad == Category::isMedium) {
       result.c_ml_ = value->data.v_str_store.v_ml;
@@ -292,12 +292,12 @@ class string_core {
     assert(size == 0 || memcmp(this->data(), data, size * sizeof(Char)) == 0);
   }
 
-  void CopyTo(MATXScriptStringStorage* c_store, int32_t* category_or_small_len) const noexcept {
+  void CopyTo(HerculesStringStorage* c_store, int32_t* category_or_small_len) const noexcept {
     c_store->v_ml = c_ml_;
     *category_or_small_len = category_or_small_len_;
   }
 
-  void MoveTo(MATXScriptStringStorage* c_store, int32_t* category_or_small_len) noexcept {
+  void MoveTo(HerculesStringStorage* c_store, int32_t* category_or_small_len) noexcept {
     CopyTo(c_store, category_or_small_len);
     reset();
   }
@@ -320,7 +320,7 @@ class string_core {
         copyLarge(rhs);
         break;
       default:
-        ::matxscript::runtime::assume_unreachable();
+        ::hercules::runtime::assume_unreachable();
     }
     assert(size() == rhs.size());
     assert(memcmp(data(), rhs.data(), size() * sizeof(Char)) == 0);
@@ -337,7 +337,7 @@ class string_core {
   }
 
   string_core(const Char* const data, const size_t size) {
-    if (!MATXSCRIPT_STRING_DISABLE_SSO && size <= maxSmallSize) {
+    if (!HERCULES_STRING_DISABLE_SSO && size <= maxSmallSize) {
       initSmall(data, size);
     } else if (size <= maxMediumSize) {
       initMedium(data, size);
@@ -349,7 +349,7 @@ class string_core {
   }
 
   string_core(const size_t size, NoInit) {
-    if (!MATXSCRIPT_STRING_DISABLE_SSO && size <= maxSmallSize) {
+    if (!HERCULES_STRING_DISABLE_SSO && size <= maxSmallSize) {
       initSmallNoFill(size);
     } else if (size <= maxMediumSize) {
       initMediumNoFill(size);
@@ -361,7 +361,7 @@ class string_core {
 
   string_core(const size_t size, Char c) {
     Char* d_ptr = nullptr;
-    if (!MATXSCRIPT_STRING_DISABLE_SSO && size <= maxSmallSize) {
+    if (!HERCULES_STRING_DISABLE_SSO && size <= maxSmallSize) {
       d_ptr = initSmallNoFill(size);
     } else if (size <= maxMediumSize) {
       d_ptr = initMediumNoFill(size);
@@ -410,7 +410,7 @@ class string_core {
       case Category::isLarge:
         return mutableDataLarge();
     }
-    ::matxscript::runtime::assume_unreachable();
+    ::hercules::runtime::assume_unreachable();
     return ml_.data_;
   }
 
@@ -431,7 +431,7 @@ class string_core {
     }
   }
 
-  MATXSCRIPT_NO_INLINE
+  HERCULES_NO_INLINE
   void reserve(size_t minCapacity) {
     switch (category()) {
       case Category::isSmall:
@@ -444,7 +444,7 @@ class string_core {
         reserveLarge(minCapacity);
         break;
       default:
-        ::matxscript::runtime::assume_unreachable();
+        ::hercules::runtime::assume_unreachable();
     }
     assert(capacity() >= minCapacity);
   }
@@ -479,7 +479,7 @@ class string_core {
         return MediumBuffer::capacity(ml_.data_);
       } break;
       default:
-        ::matxscript::runtime::assume_unreachable();
+        ::hercules::runtime::assume_unreachable();
         break;
     }
     return ml_.size_;
@@ -501,7 +501,7 @@ class string_core {
     setSmallSize(0);
   }
 
-  MATXSCRIPT_NO_INLINE void destroyMediumLarge() noexcept {
+  HERCULES_NO_INLINE void destroyMediumLarge() noexcept {
     auto const c = category();
     assert(c != Category::isSmall);
     if (c == Category::isMedium) {
@@ -538,7 +538,7 @@ class string_core {
     static MediumBuffer* create(const Char* data, size_t* size) {
       const size_t effectiveSize = *size;
       auto result = create(size);
-      if (MATXSCRIPT_LIKELY(effectiveSize > 0)) {
+      if (HERCULES_LIKELY(effectiveSize > 0)) {
         string_detail::podCopy(data, data + effectiveSize, result->data_);
       }
       return result;
@@ -615,7 +615,7 @@ class string_core {
     static RefCounted* create(const Char* data, size_t* size) {
       const size_t effectiveSize = *size;
       auto result = create(size);
-      if (MATXSCRIPT_LIKELY(effectiveSize > 0)) {
+      if (HERCULES_LIKELY(effectiveSize > 0)) {
         string_detail::podCopy(data, data + effectiveSize, result->data_);
       }
       return result;
@@ -647,14 +647,14 @@ class string_core {
     size_t size_;
   };
 
-  static_assert(sizeof(MATXScriptStringMediumLarge) == sizeof(MediumLarge),
+  static_assert(sizeof(HerculesStringMediumLarge) == sizeof(MediumLarge),
                 "Corrupt memory layout for string_core.");
 
   union {
     uint8_t bytes_[sizeof(MediumLarge)];  // For accessing the last byte.
     Char small_[sizeof(MediumLarge) / sizeof(Char)];
     MediumLarge ml_;
-    MATXScriptStringMediumLarge c_ml_;
+    HerculesStringMediumLarge c_ml_;
   };
   const uint32_t zero_ = 0;            // for c_str
   int32_t category_or_small_len_ = 0;  // small: >= 0; medium : -1; large: -2
@@ -719,7 +719,7 @@ inline void string_core<Char>::copySmall(const string_core& rhs) {
 }
 
 template <class Char>
-MATXSCRIPT_NO_INLINE inline void string_core<Char>::copyMedium(const string_core& rhs) {
+HERCULES_NO_INLINE inline void string_core<Char>::copyMedium(const string_core& rhs) {
   // Medium strings are copied eagerly. Don't forget to allocate
   // one extra Char for the null terminator.
   size_t effectiveCapacity = rhs.size();
@@ -731,7 +731,7 @@ MATXSCRIPT_NO_INLINE inline void string_core<Char>::copyMedium(const string_core
 }
 
 template <class Char>
-MATXSCRIPT_NO_INLINE inline void string_core<Char>::copyLarge(const string_core& rhs) {
+HERCULES_NO_INLINE inline void string_core<Char>::copyLarge(const string_core& rhs) {
   // Large strings are just refcounted
   ml_ = rhs.ml_;
   RefCounted::incrementRefs(ml_.data_);
@@ -756,7 +756,7 @@ inline void string_core<Char>::initSmall(const Char* const data, const size_t si
   // The word-wise path reads bytes which are outside the range of
   // the string, and makes ASan unhappy, so we disable it when
   // compiling with ASan.
-#ifndef MATXSCRIPT_SANITIZE_ADDRESS
+#ifndef HERCULES_SANITIZE_ADDRESS
   if ((reinterpret_cast<size_t>(data) & (sizeof(size_t) - 1)) == 0) {
     const size_t byteSize = size * sizeof(Char);
     constexpr size_t wordWidth = sizeof(size_t);
@@ -779,7 +779,7 @@ inline void string_core<Char>::initSmall(const Char* const data, const size_t si
 }
 
 template <class Char>
-MATXSCRIPT_NO_INLINE inline void string_core<Char>::initMedium(const Char* const data,
+HERCULES_NO_INLINE inline void string_core<Char>::initMedium(const Char* const data,
                                                                const size_t size) {
   // Medium strings are allocated normally. Don't forget to
   // allocate one extra Char for the terminating null.
@@ -792,7 +792,7 @@ MATXSCRIPT_NO_INLINE inline void string_core<Char>::initMedium(const Char* const
 }
 
 template <class Char>
-MATXSCRIPT_NO_INLINE inline void string_core<Char>::initLarge(const Char* const data,
+HERCULES_NO_INLINE inline void string_core<Char>::initLarge(const Char* const data,
                                                               const size_t size) {
   // Large strings are allocated differently
   size_t effectiveCapacity = size;
@@ -810,7 +810,7 @@ inline Char* string_core<Char>::initSmallNoFill(const size_t size) {
 }
 
 template <class Char>
-MATXSCRIPT_NO_INLINE inline Char* string_core<Char>::initMediumNoFill(const size_t size) {
+HERCULES_NO_INLINE inline Char* string_core<Char>::initMediumNoFill(const size_t size) {
   // Medium strings are allocated normally. Don't forget to
   // allocate one extra Char for the terminating null.
   size_t effectiveCapacity = size;
@@ -823,7 +823,7 @@ MATXSCRIPT_NO_INLINE inline Char* string_core<Char>::initMediumNoFill(const size
 }
 
 template <class Char>
-MATXSCRIPT_NO_INLINE inline Char* string_core<Char>::initLargeNoFill(const size_t size) {
+HERCULES_NO_INLINE inline Char* string_core<Char>::initLargeNoFill(const size_t size) {
   // Large strings are allocated differently
   size_t effectiveCapacity = size;
   auto const newRC = RefCounted::create(&effectiveCapacity);
@@ -835,7 +835,7 @@ MATXSCRIPT_NO_INLINE inline Char* string_core<Char>::initLargeNoFill(const size_
 }
 
 template <class Char>
-MATXSCRIPT_NO_INLINE inline void string_core<Char>::unshare(size_t minCapacity) {
+HERCULES_NO_INLINE inline void string_core<Char>::unshare(size_t minCapacity) {
   assert(category() == Category::isLarge);
   auto cur_cap = RefCounted::capacity(ml_.data_);
   size_t effectiveCapacity = std::max(minCapacity, cur_cap);
@@ -861,7 +861,7 @@ inline Char* string_core<Char>::mutableDataLarge() {
 }
 
 template <class Char>
-MATXSCRIPT_NO_INLINE inline void string_core<Char>::reserveLarge(size_t minCapacity) {
+HERCULES_NO_INLINE inline void string_core<Char>::reserveLarge(size_t minCapacity) {
   assert(category() == Category::isLarge);
   if (RefCounted::refs(ml_.data_) > 1) {  // Ensure unique
     // We must make it unique regardless; in-place reallocation is
@@ -884,7 +884,7 @@ MATXSCRIPT_NO_INLINE inline void string_core<Char>::reserveLarge(size_t minCapac
 }
 
 template <class Char>
-MATXSCRIPT_NO_INLINE inline void string_core<Char>::reserveMedium(size_t minCapacity) {
+HERCULES_NO_INLINE inline void string_core<Char>::reserveMedium(size_t minCapacity) {
   assert(category() == Category::isMedium);
   // String is not shared
   if (minCapacity <= MediumBuffer::capacity(ml_.data_)) {
@@ -909,9 +909,9 @@ MATXSCRIPT_NO_INLINE inline void string_core<Char>::reserveMedium(size_t minCapa
 }
 
 template <class Char>
-MATXSCRIPT_NO_INLINE inline void string_core<Char>::reserveSmall(size_t minCapacity) {
+HERCULES_NO_INLINE inline void string_core<Char>::reserveSmall(size_t minCapacity) {
   assert(category() == Category::isSmall);
-  if ((!MATXSCRIPT_STRING_DISABLE_SSO) && minCapacity <= maxSmallSize) {
+  if ((!HERCULES_STRING_DISABLE_SSO) && minCapacity <= maxSmallSize) {
     // small
     // Nothing to do, everything stays put
   } else if (minCapacity <= maxMediumSize) {
@@ -945,7 +945,7 @@ inline Char* string_core<Char>::expandNoinit(size_t delta, bool expGrowth /* = f
   if (category() == Category::isSmall) {
     sz = smallSize();
     newSz = sz + delta;
-    if (!MATXSCRIPT_STRING_DISABLE_SSO && MATXSCRIPT_LIKELY(newSz <= maxSmallSize)) {
+    if (!HERCULES_STRING_DISABLE_SSO && HERCULES_LIKELY(newSz <= maxSmallSize)) {
       setSmallSize(newSz);
       return small_ + sz;
     }
@@ -953,7 +953,7 @@ inline Char* string_core<Char>::expandNoinit(size_t delta, bool expGrowth /* = f
   } else {
     sz = ml_.size_;
     newSz = sz + delta;
-    if (MATXSCRIPT_UNLIKELY(newSz > capacity())) {
+    if (HERCULES_UNLIKELY(newSz > capacity())) {
       // ensures not shared
       reserve(expGrowth ? std::max(newSz, 1 + capacity() * 3 / 2) : newSz);
     }
@@ -995,7 +995,7 @@ inline void string_core<Char>::shrinkLarge(size_t delta) {
   // No need to write the terminator.
 }
 
-#undef MATXSCRIPT_STRING_DISABLE_SSO
+#undef HERCULES_STRING_DISABLE_SSO
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

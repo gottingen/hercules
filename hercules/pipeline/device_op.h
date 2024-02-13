@@ -21,7 +21,7 @@
 #include <hercules/pipeline/op_kernel.h>
 #include <unordered_map>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class DeviceOp : public OpKernel {
@@ -33,4 +33,4 @@ class DeviceOp : public OpKernel {
   int device_id_;
 };
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -22,7 +22,7 @@
  */
 #pragma once
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -38,4 +38,4 @@ extern double _Py_dg_infinity(int sign);
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

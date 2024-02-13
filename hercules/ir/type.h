@@ -21,7 +21,7 @@
  * under the License.
  */
 /*!
- * \file matx/ir/type.h
+ * \file hvm/ir/type.h
  * \brief IR/AST nodes for the unified type system in TVM.
  *
  * This file contains types that are common across IR variants.
@@ -57,7 +57,7 @@
 #include <hercules/runtime/data_type.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::Object;
@@ -117,7 +117,7 @@ class TypeNode : public Object {
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
   static constexpr const uint32_t _type_child_slots = 14;
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(TypeNode, Object);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(TypeNode, Object);
 };
 
 /*!
@@ -132,7 +132,7 @@ class Type : public ObjectRef {
   bool operator!=(const Type& other) const {
     return !operator==(other);
   }
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Type, ObjectRef, TypeNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Type, ObjectRef, TypeNode);
 };
 
 /*!
@@ -141,10 +141,10 @@ class Type : public ObjectRef {
  * \param type The input type.
  * \return The result runtime::DataType.
  *
- * \sa matxscript/ir/type.h for discussion about the relation between Type and runtime::DataType.
+ * \sa hercules/ir/type.h for discussion about the relation between Type and runtime::DataType.
  */
-MATX_DLL runtime::DataType GetRuntimeDataType(const Type& type);
-MATX_DLL bool IsRuntimeDataType(const Type& type);
+HERCULES_DLL runtime::DataType GetRuntimeDataType(const Type& type);
+HERCULES_DLL bool IsRuntimeDataType(const Type& type);
 
 /*!
  * \brief Primitive data types used in the low-level IR.
@@ -189,7 +189,7 @@ class PrimTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "PrimType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PrimTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PrimTypeNode, TypeNode);
 };
 
 /*
@@ -202,9 +202,9 @@ class PrimType : public Type {
    * \brief Constructor
    * \param dtype The corresponding dtype.
    */
-  MATX_DLL explicit PrimType(runtime::DataType dtype);
+  HERCULES_DLL explicit PrimType(runtime::DataType dtype);
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimType, Type, PrimTypeNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimType, Type, PrimTypeNode);
 };
 
 inline Type BoolType() {
@@ -241,11 +241,11 @@ class PointerTypeNode : public TypeNode {
   }
 
   runtime::Unicode GetPythonTypeName() const override {
-    return U"matx.handle(" + element_type->GetPythonTypeName() + U")";
+    return U"hvm.handle(" + element_type->GetPythonTypeName() + U")";
   }
 
   static constexpr const char* _type_key = "PointerType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PointerTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PointerTypeNode, TypeNode);
 };
 
 /*
@@ -258,9 +258,9 @@ class PointerType : public Type {
    * \brief Constructor
    * \param element_type The type of the element which the pointer points to.
    */
-  MATX_DLL explicit PointerType(Type element_type);
+  HERCULES_DLL explicit PointerType(Type element_type);
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PointerType, Type, PointerTypeNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PointerType, Type, PointerTypeNode);
 };
 
 /*! \brief Possible kinds of TypeVars. */
@@ -318,7 +318,7 @@ class TypeVarNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "TypeVar";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TypeVarNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(TypeVarNode, TypeNode);
 };
 
 /*!
@@ -333,9 +333,9 @@ class TypeVar : public Type {
    * \param kind The kind of the type var.
    * \param span The span information.
    */
-  MATX_DLL TypeVar(StringRef name_hint, TypeKind kind, Span span = Span());
+  HERCULES_DLL TypeVar(StringRef name_hint, TypeKind kind, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(TypeVar, Type, TypeVarNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(TypeVar, Type, TypeVarNode);
 };
 
 /*!
@@ -369,7 +369,7 @@ class GlobalTypeVarNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "GlobalTypeVar";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(GlobalTypeVarNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(GlobalTypeVarNode, TypeNode);
 };
 
 /*!
@@ -384,9 +384,9 @@ class GlobalTypeVar : public Type {
    * \param kind The kind of the type var.
    * \param span The span of the type.
    */
-  MATX_DLL GlobalTypeVar(StringRef name_hint, TypeKind kind, Span span = Span());
+  HERCULES_DLL GlobalTypeVar(StringRef name_hint, TypeKind kind, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(GlobalTypeVar, Type, GlobalTypeVarNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(GlobalTypeVar, Type, GlobalTypeVarNode);
 };
 
 /*!
@@ -421,7 +421,7 @@ class RangeTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "RangeType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(RangeTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(RangeTypeNode, TypeNode);
 };
 
 /*!
@@ -434,8 +434,8 @@ class RangeType : public Type {
    * \brief Constructor
    * \param span The span of the type.
    */
-  MATX_DLL explicit RangeType(Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(RangeType, Type, RangeTypeNode);
+  HERCULES_DLL explicit RangeType(Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(RangeType, Type, RangeTypeNode);
 };
 
 /*!
@@ -490,7 +490,7 @@ class TupleTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "TupleType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TupleTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(TupleTypeNode, TypeNode);
 };
 
 /*!
@@ -504,19 +504,19 @@ class TupleType : public Type {
    * \param fields Fields in the tuple.
    * \param span The span of the type.
    */
-  MATX_DLL explicit TupleType(Array<Type> fields, Span span = Span())
+  HERCULES_DLL explicit TupleType(Array<Type> fields, Span span = Span())
       : TupleType(std::move(fields), false, std::move(span)) {
   }
 
-  MATX_DLL explicit TupleType(Array<Type> fields, bool is_std_tuple, Span span = Span());
+  HERCULES_DLL explicit TupleType(Array<Type> fields, bool is_std_tuple, Span span = Span());
 
   /*!
    * \brief Create an empty tuple type that constains nothing.
    * \return A empty tuple type.
    */
-  MATX_DLL TupleType static Empty();
+  HERCULES_DLL TupleType static Empty();
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(TupleType, Type, TupleTypeNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(TupleType, Type, TupleTypeNode);
 };
 
 /*!
@@ -543,7 +543,7 @@ class TypeConstraintNode : public TypeNode {
  public:
   static constexpr const char* _type_key = "TypeConstraint";
   static constexpr const uint32_t _type_child_slots = 1;
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(TypeConstraintNode, TypeNode);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(TypeConstraintNode, TypeNode);
 };
 
 /*!
@@ -552,7 +552,7 @@ class TypeConstraintNode : public TypeNode {
  */
 class TypeConstraint : public Type {
  public:
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(TypeConstraint, Type, TypeConstraintNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(TypeConstraint, Type, TypeConstraintNode);
 };
 
 /*!
@@ -605,7 +605,7 @@ class FuncTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "FuncType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(FuncTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(FuncTypeNode, TypeNode);
 };
 
 /*!
@@ -623,13 +623,13 @@ class FuncType : public Type {
    * \param span The span information.
    * \sa FuncTypeNode for more docs about these fields.
    */
-  MATX_DLL FuncType(Array<Type> arg_types,
+  HERCULES_DLL FuncType(Array<Type> arg_types,
                     Type ret_type,
                     Array<TypeVar> type_params,
                     Array<TypeConstraint> type_constraints,
                     Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(FuncType, Type, FuncTypeNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(FuncType, Type, FuncTypeNode);
 };
 
 class ObjectTypeNode : public TypeNode {
@@ -656,7 +656,7 @@ class ObjectTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "ObjectType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ObjectTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ObjectTypeNode, TypeNode);
 };
 
 /*!
@@ -669,9 +669,9 @@ class ObjectType : public Type {
    * \brief Constructor
    * \param span The span of the type.
    */
-  MATX_DLL explicit ObjectType(bool is_view = false, Span span = Span());
+  HERCULES_DLL explicit ObjectType(bool is_view = false, Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ObjectType, Type, ObjectTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ObjectType, Type, ObjectTypeNode);
 };
 
 class StringTypeNode : public TypeNode {
@@ -706,7 +706,7 @@ class StringTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "StringType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(StringTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(StringTypeNode, TypeNode);
 };
 
 /*!
@@ -719,9 +719,9 @@ class StringType : public Type {
    * \brief Constructor
    * \param span The span of the type.
    */
-  MATX_DLL explicit StringType(bool is_view = false, Span span = Span());
+  HERCULES_DLL explicit StringType(bool is_view = false, Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(StringType, Type, StringTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(StringType, Type, StringTypeNode);
 };
 
 class UnicodeTypeNode : public TypeNode {
@@ -756,7 +756,7 @@ class UnicodeTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "UnicodeType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(UnicodeTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(UnicodeTypeNode, TypeNode);
 };
 
 class UnicodeType : public Type {
@@ -765,9 +765,9 @@ class UnicodeType : public Type {
    * \brief Constructor
    * \param span The span of the type.
    */
-  MATX_DLL explicit UnicodeType(bool is_view = false, Span span = Span());
+  HERCULES_DLL explicit UnicodeType(bool is_view = false, Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(UnicodeType, Type, UnicodeTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(UnicodeType, Type, UnicodeTypeNode);
 };
 
 class ListTypeNode : public TypeNode {
@@ -814,7 +814,7 @@ class ListTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "ListType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ListTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ListTypeNode, TypeNode);
 };
 
 /*!
@@ -828,11 +828,11 @@ class ListType : public Type {
    * \param item_type The item type of the list.
    * \param span The span of the type.
    */
-  MATX_DLL explicit ListType(bool is_full_typed = false,
+  HERCULES_DLL explicit ListType(bool is_full_typed = false,
                              Type item_type = ObjectType(),
                              Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ListType, Type, ListTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ListType, Type, ListTypeNode);
 };
 
 class DictTypeNode : public TypeNode {
@@ -887,7 +887,7 @@ class DictTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "DictType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(DictTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(DictTypeNode, TypeNode);
 };
 
 /*!
@@ -902,12 +902,12 @@ class DictType : public Type {
    * \param value_type The value type of the dict.
    * \param span The span of the type.
    */
-  MATX_DLL explicit DictType(bool is_full_typed = false,
+  HERCULES_DLL explicit DictType(bool is_full_typed = false,
                              Type key_type = ObjectType(),
                              Type value_type = ObjectType(),
                              Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(DictType, Type, DictTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(DictType, Type, DictTypeNode);
 };
 
 class SetTypeNode : public TypeNode {
@@ -955,7 +955,7 @@ class SetTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "SetType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(SetTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(SetTypeNode, TypeNode);
 };
 
 /*!
@@ -969,11 +969,11 @@ class SetType : public Type {
    * \param item_type The item type of the set.
    * \param span The span of the type.
    */
-  MATX_DLL explicit SetType(bool is_full_typed = false,
+  HERCULES_DLL explicit SetType(bool is_full_typed = false,
                             Type item_type = ObjectType(),
                             Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(SetType, Type, SetTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(SetType, Type, SetTypeNode);
 };
 
 class IteratorTypeNode : public TypeNode {
@@ -1012,7 +1012,7 @@ class IteratorTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "IteratorType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(IteratorTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(IteratorTypeNode, TypeNode);
 };
 
 /*
@@ -1026,13 +1026,13 @@ class IteratorType : public Type {
    * \param container_type The type of the container which gen the Iter.
    * \param value_type The type of the container which gen the Iter.
    */
-  MATX_DLL explicit IteratorType(Type container_type, Span span = Span());
-  MATX_DLL explicit IteratorType(Type container_type,
+  HERCULES_DLL explicit IteratorType(Type container_type, Span span = Span());
+  HERCULES_DLL explicit IteratorType(Type container_type,
                                  Type value_type,
                                  bool has_begin_end,
                                  Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(IteratorType, Type, IteratorTypeNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(IteratorType, Type, IteratorTypeNode);
 };
 
 class ExceptionTypeNode : public TypeNode {
@@ -1057,14 +1057,14 @@ class ExceptionTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "ExceptionType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ExceptionTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ExceptionTypeNode, TypeNode);
 };
 
 class ExceptionType : public Type {
  public:
-  MATX_DLL explicit ExceptionType(StringRef name, Span span = Span());
+  HERCULES_DLL explicit ExceptionType(StringRef name, Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ExceptionType, Type, ExceptionTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ExceptionType, Type, ExceptionTypeNode);
 };
 
 class FileTypeNode : public TypeNode {
@@ -1095,7 +1095,7 @@ class FileTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "FileType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(FileTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(FileTypeNode, TypeNode);
 };
 
 /*!
@@ -1108,9 +1108,9 @@ class FileType : public Type {
    * \brief Constructor
    * \param span The span of the type.
    */
-  MATX_DLL explicit FileType(bool binary_mode, Span span = Span());
+  HERCULES_DLL explicit FileType(bool binary_mode, Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(FileType, Type, FileTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(FileType, Type, FileTypeNode);
 };
 
 class TrieTypeNode : public TypeNode {
@@ -1131,13 +1131,13 @@ class TrieTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "TrieType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TrieTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(TrieTypeNode, TypeNode);
 };
 class TrieType : public Type {
  public:
-  MATX_DLL explicit TrieType(Span span = Span());
+  HERCULES_DLL explicit TrieType(Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TrieType, Type, TrieTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TrieType, Type, TrieTypeNode);
 };
 
 class UserDataTypeNode : public TypeNode {
@@ -1154,13 +1154,13 @@ class UserDataTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "UserDataType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(UserDataTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(UserDataTypeNode, TypeNode);
 };
 class UserDataType : public Type {
  public:
-  MATX_DLL explicit UserDataType(Span span = Span());
+  HERCULES_DLL explicit UserDataType(Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(UserDataType, Type, UserDataTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(UserDataType, Type, UserDataTypeNode);
 };
 
 class ShapeTypeNode : public TypeNode {
@@ -1182,14 +1182,14 @@ class ShapeTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "ir.ShapeType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ShapeTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ShapeTypeNode, TypeNode);
 };
 
 class ShapeType : public Type {
  public:
-  MATX_DLL ShapeType(int ndim, Span span = Span());
+  HERCULES_DLL ShapeType(int ndim, Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ShapeType, Type, ShapeTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ShapeType, Type, ShapeTypeNode);
 };
 
 class DynTensorTypeNode : public TypeNode {
@@ -1217,13 +1217,13 @@ class DynTensorTypeNode : public TypeNode {
   runtime::Unicode GetPythonTypeName() const override;
 
   static constexpr const char* _type_key = "DynTensorType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(DynTensorTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(DynTensorTypeNode, TypeNode);
 };
 
 class DynTensorType : public Type {
  public:
-  MATX_DLL explicit DynTensorType(int64_t ndim, runtime::DataType dtype, Span span = Span());
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(DynTensorType, Type, DynTensorTypeNode);
+  HERCULES_DLL explicit DynTensorType(int64_t ndim, runtime::DataType dtype, Span span = Span());
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(DynTensorType, Type, DynTensorTypeNode);
 };
 
 class RegexTypeNode : public TypeNode {
@@ -1244,14 +1244,14 @@ class RegexTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "RegexType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(RegexTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(RegexTypeNode, TypeNode);
 };
 
 class RegexType : public Type {
  public:
-  MATX_DLL explicit RegexType(Span span = Span());
+  HERCULES_DLL explicit RegexType(Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(RegexType, Type, RegexTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(RegexType, Type, RegexTypeNode);
 };
 
 class OpaqueObjectTypeNode : public TypeNode {
@@ -1268,14 +1268,14 @@ class OpaqueObjectTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "OpaqueObjectType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(OpaqueObjectTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(OpaqueObjectTypeNode, TypeNode);
 };
 
 class OpaqueObjectType : public Type {
  public:
-  MATX_DLL explicit OpaqueObjectType(Span span = Span());
+  HERCULES_DLL explicit OpaqueObjectType(Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(OpaqueObjectType, Type, OpaqueObjectTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(OpaqueObjectType, Type, OpaqueObjectTypeNode);
 };
 
 class RefTypeNode : public TypeNode {
@@ -1312,7 +1312,7 @@ class RefTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "RefType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(RefTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(RefTypeNode, TypeNode);
 };
 
 /*!
@@ -1326,9 +1326,9 @@ class RefType : public Type {
    * \param value The type of value in the reference.
    * \param span The span of the type.
    */
-  MATX_DLL explicit RefType(Type value, Span span = Span());
+  HERCULES_DLL explicit RefType(Type value, Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(RefType, Type, RefTypeNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(RefType, Type, RefTypeNode);
 };
 
 inline bool IsPrimType(const Type& t) {
@@ -1418,4 +1418,4 @@ bool IsTypeConvertible(const Type& from, const Type& to);
 Type InferLiftType(const Type& t1, const Type& t2);
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

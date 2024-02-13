@@ -25,7 +25,7 @@
 #include <hercules/runtime/container_private.h>
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 String NodeEntry::Name() {
@@ -48,20 +48,20 @@ NodePtr Node::FromDict(const Dict& config, Graph* g) {
   node->op = nullptr;
 
   // parse inputs
-  MXCHECK(config.contains("inputs") && config["inputs"].IsObjectRef<List>());
+  HSCHECK(config.contains("inputs") && config["inputs"].IsObjectRef<List>());
   auto& inputs = config["inputs"];
   for (const auto& input : inputs.AsObjectRef<List>()) {
-    MXCHECK(input.IsString()) << "inputs[i] must be string";
+    HSCHECK(input.IsString()) << "inputs[i] must be string";
     auto i_name = input.As<String>();
     node->inputs.push_back(std::make_shared<NodeEntry>(nullptr, 0, i_name));
     node->inputs.back()->key = i_name;
   }
 
   // parse outputs
-  MXCHECK(config.contains("outputs") && config["outputs"].IsObjectRef<List>());
+  HSCHECK(config.contains("outputs") && config["outputs"].IsObjectRef<List>());
   auto& outputs = config["outputs"];
   for (const auto& output : outputs.AsObjectRef<List>()) {
-    MXCHECK(output.IsString()) << "expect outputs[i] is bytes, but get " << output.type_name();
+    HSCHECK(output.IsString()) << "expect outputs[i] is bytes, but get " << output.type_name();
     auto o_name = output.As<String>();
     auto entry = std::make_shared<NodeEntry>(nullptr, 0, o_name);
     g->add_entry(entry);
@@ -75,10 +75,10 @@ NodePtr Node::FromDict(const Dict& config, Graph* g) {
   // parse exported
   if (config.contains("exported")) {
     auto& exported = config["exported"];
-    MXCHECK(exported.IsObjectRef<List>()) << "exported must be array type";
+    HSCHECK(exported.IsObjectRef<List>()) << "exported must be array type";
     auto exported_list = exported.AsObjectRef<List>();
     for (auto itr = exported_list.begin(); itr != exported_list.end(); ++itr) {
-      MXCHECK(itr->IsString()) << "exported[i] must be string type";
+      HSCHECK(itr->IsString()) << "exported[i] must be string type";
       String tmp = itr->As<String>();
       for (auto& entry : node->outputs) {
         if (entry.source->key == tmp) {
@@ -129,4 +129,4 @@ Dict Node::ToDict() const {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -26,7 +26,7 @@
 #include <hercules/ir/hlo_builtin.h>
 #include <hercules/ir/stmt_functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class FuseContAnyGetSetItemOptimizer : public StmtExprMutator {
@@ -37,7 +37,7 @@ class FuseContAnyGetSetItemOptimizer : public StmtExprMutator {
 
   HLOExpr VisitExpr_(const CallNode* op) override {
     if (op->op.same_as(builtin::object___setitem__())) {
-      MXCHECK(op->args.size() == 3) << "internal error";
+      HSCHECK(op->args.size() == 3) << "internal error";
       Array<BaseExpr> keys;
       keys.push_back(op->args[1]);
       auto self = FlatContCallArgs(op->args[0], keys);
@@ -54,7 +54,7 @@ class FuseContAnyGetSetItemOptimizer : public StmtExprMutator {
                     op->type_args);
       }
     } else if (op->op.same_as(builtin::object___getitem__())) {
-      MXCHECK(op->args.size() == 2) << "internal error";
+      HSCHECK(op->args.size() == 2) << "internal error";
       Array<BaseExpr> keys;
       keys.push_back(op->args[1]);
       auto self = FlatContCallArgs(op->args[0], keys);
@@ -82,11 +82,11 @@ class FuseContAnyGetSetItemOptimizer : public StmtExprMutator {
     if (!call_node->op.same_as(builtin::object___getitem__())) {
       return op;
     }
-    MXCHECK(call_node->args.size() == 2) << "internal error";
+    HSCHECK(call_node->args.size() == 2) << "internal error";
     keys.push_back(call_node->args[1]);
     return FlatContCallArgs(call_node->args[0], keys);
   }
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

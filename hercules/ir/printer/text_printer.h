@@ -20,7 +20,7 @@
  * under the License.
  */
 /*!
- * \file matxscript/ir/_base/repr_printer.h
+ * \file hercules/ir/_base/repr_printer.h
  * \brief Printer class to print repr string of each AST/IR nodes.
  */
 #pragma once
@@ -38,7 +38,7 @@
 #include <iostream>
 #include <string>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -47,7 +47,7 @@ class PrinterConfigNode : public Object {
   /*! \brief A stack that tracks the names of the binding hierarchy */
   Array<StringRef> binding_names = {};
   /*! \brief The prefix of module */
-  StringRef dialect_prefix = "matx";
+  StringRef dialect_prefix = "hvm";
   /*! \brief Ignore Type Cast */
   bool ignore_type_cast = true;
   /*! \brief Number of spaces used for indentation*/
@@ -78,14 +78,14 @@ class PrinterConfigNode : public Object {
   }
 
   static constexpr const char* _type_key = "node.PrinterConfig";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PrinterConfigNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PrinterConfigNode, Object);
 };
 
 class PrinterConfig : public ObjectRef {
  public:
   explicit PrinterConfig(Map<StringRef, ObjectRef> config_dict = Map<StringRef, ObjectRef>());
 
-  MATXSCRIPT_DEFINE_MUTABLE_NOTNULLABLE_OBJECT_REF_METHODS(PrinterConfig,
+  HERCULES_DEFINE_MUTABLE_NOTNULLABLE_OBJECT_REF_METHODS(PrinterConfig,
                                                            runtime::ObjectRef,
                                                            PrinterConfigNode);
 };
@@ -97,9 +97,9 @@ class IRTextPrinter {
   static StringRef Print(const ObjectRef& node, const Optional<PrinterConfig>& cfg);
   // Allow registration to be printer.
   using FType = runtime::NodeFunctor<StringRef(const ObjectRef&, const PrinterConfig&)>;
-  MATX_DLL static FType& vtable();
+  HERCULES_DLL static FType& vtable();
 };
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -33,7 +33,7 @@
 #include <hercules/runtime/py_args.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class KwargsNode;
@@ -121,7 +121,7 @@ struct KwargsUnpackHelper {
   }
 
   void unpack(RTView* pos_args, PyArgs original_args) const;
-  void unpack(RTView* pos_args, MATXScriptAny* original_args, int num_original_args) const;
+  void unpack(RTView* pos_args, HerculesAny* original_args, int num_original_args) const;
 
  private:
   string_view func_name_;
@@ -140,13 +140,13 @@ struct type_index_traits<Kwargs> {
 
 // iterators
 template <>
-MATXSCRIPT_ALWAYS_INLINE Kwargs Any::As<Kwargs>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeKwargs);
+HERCULES_ALWAYS_INLINE Kwargs Any::As<Kwargs>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeKwargs);
   return Kwargs(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE Kwargs Any::AsNoCheck<Kwargs>() const {
+HERCULES_ALWAYS_INLINE Kwargs Any::AsNoCheck<Kwargs>() const {
   return Kwargs(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
@@ -156,4 +156,4 @@ template <>
 bool IsConvertible<Kwargs>(const Object* node);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

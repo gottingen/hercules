@@ -28,7 +28,7 @@
 #include <hercules/runtime/generic/generic_hlo_arith_funcs.h>
 #include <hercules/runtime/py_commons/pystrtod.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // Any
@@ -54,7 +54,7 @@ double Any::As<double>() const {
       return value_.data.v_float64;
     } break;
     default: {
-      MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeFloat);
+      HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeFloat);
       return 0;
     }
   }
@@ -70,7 +70,7 @@ double Any::AsNoCheck<double>() const {
 
 template <>
 bool Any::As<bool>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeInteger);
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeInteger);
   return value_.data.v_int64 != 0;
 }
 template <>
@@ -82,7 +82,7 @@ template <>
 void* Any::As<void*>() const {
   if (value_.code == TypeIndex::kRuntimeNullptr)
     return nullptr;
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeOpaqueHandle);
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeOpaqueHandle);
   return value_.data.v_handle;
 }
 
@@ -97,7 +97,7 @@ template <>
 string_view Any::As<string_view>() const {
   if (value_.code == TypeIndex::kRuntimeNullptr)
     return {};
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeString);
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeString);
   return StringHelper::AsViewNoCheck(&value_);
 }
 template <>
@@ -111,7 +111,7 @@ template <>
 unicode_view Any::As<unicode_view>() const {
   if (value_.code == TypeIndex::kRuntimeNullptr)
     return {};
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeUnicode);
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeUnicode);
   return UnicodeHelper::AsViewNoCheck(&value_);
 }
 template <>
@@ -131,7 +131,7 @@ DataType Any::As<DataType>() const {
       return DataType(String2DLDataType(As<Unicode>().encode()));
     } break;
     default: {
-      MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeDataType);
+      HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeDataType);
       return DataType(value_.data.v_type);
     } break;
   }
@@ -273,25 +273,25 @@ Unicode RTValue::MoveToUnicodeNoCheck() {
   return Unicode::MoveFromNoCheck(&value_);
 }
 
-void RTValue::MoveToCHost(MATXScriptAny* ret_value) noexcept {
+void RTValue::MoveToCHost(HerculesAny* ret_value) noexcept {
   *ret_value = value_;
   value_.code = TypeIndex::kRuntimeNullptr;
 }
 
-RTValue RTValue::MoveFromCHost(MATXScriptAny* value) noexcept {
+RTValue RTValue::MoveFromCHost(HerculesAny* value) noexcept {
   RTValue ret;
   ret.value_ = *value;
   value->code = TypeIndex::kRuntimeNullptr;
   return ret;
 }
 
-RTValue RTValue::MoveFromCHost(MATXScriptAny value) noexcept {
+RTValue RTValue::MoveFromCHost(HerculesAny value) noexcept {
   RTValue ret;
   ret.value_ = value;
   return ret;
 }
 
-void RTValue::CopyFromCHostToCHost(const MATXScriptAny* from, MATXScriptAny* to) {
+void RTValue::CopyFromCHostToCHost(const HerculesAny* from, HerculesAny* to) {
   switch (from->code) {
     case TypeIndex::kRuntimePackedFuncHandle: {
       auto* p = new NativeFunction(*reinterpret_cast<NativeFunction*>(from->data.v_handle));
@@ -313,19 +313,19 @@ void RTValue::CopyFromCHostToCHost(const MATXScriptAny* from, MATXScriptAny* to)
   }
 }
 
-RTValue RTValue::CopyFromCHost(MATXScriptAny value) {
+RTValue RTValue::CopyFromCHost(HerculesAny value) {
   RTValue ret;
   CopyFromCHostToCHost(&value, &ret.value_);
   return ret;
 }
 
-RTValue RTValue::CopyFromCHost(const MATXScriptAny* value) {
+RTValue RTValue::CopyFromCHost(const HerculesAny* value) {
   RTValue ret;
   CopyFromCHostToCHost(value, &ret.value_);
   return ret;
 }
 
-void RTValue::DestroyCHost(MATXScriptAny* value) noexcept {
+void RTValue::DestroyCHost(HerculesAny* value) noexcept {
   switch (value->code) {
     case TypeIndex::kRuntimePackedFuncHandle: {
       delete reinterpret_cast<NativeFunction*>(value->data.v_handle);
@@ -345,7 +345,7 @@ void RTValue::DestroyCHost(MATXScriptAny* value) noexcept {
   value->code = TypeIndex::kRuntimeNullptr;
 }
 
-void RTValue::CopyToCHost(MATXScriptAny* ret_value) const {
+void RTValue::CopyToCHost(HerculesAny* ret_value) const {
   CopyFromCHostToCHost(&value_, ret_value);
 }
 
@@ -534,7 +534,7 @@ static size_t tuple_hash(TupleNode* v) {
 }  // namespace py_builtins
 
 std::size_t Any::Hash(const Any& a) {
-  const MATXScriptAny& value = a.value();
+  const HerculesAny& value = a.value();
   switch (value.code) {
     case TypeIndex::kRuntimeNullptr: {
       return 0;
@@ -559,36 +559,36 @@ std::size_t Any::Hash(const Any& a) {
       return ScalarHash<DLDataType>()(value.data.v_type);
     } break;
     case TypeIndex::kRuntimeObjectRValueRefArg: {
-      MXTHROW << "TypeError: unhashable type: 'ObjectRValueRefArg'";
+      HSTHROW << "TypeError: unhashable type: 'ObjectRValueRefArg'";
       return false;
     } break;
     case TypeIndex::kRuntimePackedFuncHandle: {
-      MXTHROW << "TypeError: unhashable type: 'PackedFunc'";
+      HSTHROW << "TypeError: unhashable type: 'PackedFunc'";
       return false;
     } break;
     case TypeIndex::kRuntimeDLTensorHandle: {
-      MXTHROW << "TypeError: unhashable type: 'DLTensorHandle'";
+      HSTHROW << "TypeError: unhashable type: 'DLTensorHandle'";
       return false;
     } break;
     case TypeIndex::kRuntimeContext: {
-      MXTHROW << "TypeError: unhashable type: 'Context'";
+      HSTHROW << "TypeError: unhashable type: 'Context'";
       return false;
     } break;
-    case TypeIndex::kMATXByteArray: {
-      MXTHROW << "TypeError: unhashable type: 'ByteArray'";
+    case TypeIndex::kHVMByteArray: {
+      HSTHROW << "TypeError: unhashable type: 'ByteArray'";
       return false;
     } break;
     case TypeIndex::kRuntimeFTList:
     case TypeIndex::kRuntimeList: {
-      MXTHROW << "TypeError: unhashable type: 'list'";
+      HSTHROW << "TypeError: unhashable type: 'list'";
     } break;
     case TypeIndex::kRuntimeFTDict:
     case TypeIndex::kRuntimeDict: {
-      MXTHROW << "TypeError: unhashable type: 'dict'";
+      HSTHROW << "TypeError: unhashable type: 'dict'";
     } break;
     case TypeIndex::kRuntimeFTSet:
     case TypeIndex::kRuntimeSet: {
-      MXTHROW << "TypeError: unhashable type: 'set'";
+      HSTHROW << "TypeError: unhashable type: 'set'";
     } break;
     case TypeIndex::kRuntimeTuple: {
       return py_builtins::tuple_hash(reinterpret_cast<TupleNode*>(value.data.v_handle));
@@ -646,4 +646,4 @@ bool Any::GreaterEqual(const Any& lhs, const Any& rhs) {
 const RTValue None;
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

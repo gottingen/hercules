@@ -20,7 +20,7 @@
  */
 
 /*!
- * \file matx/ir/struct_info_functor.h
+ * \file hvm/ir/struct_info_functor.h
  * \brief Functors and visitors for struct info.
  */
 #pragma once
@@ -30,7 +30,7 @@
 
 #include <utility>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 template <typename FStructInfo>
@@ -40,7 +40,7 @@ class StructInfoFunctor;
 #define STRUCT_INFO_FUNCTOR_DEFAULT \
   { return VisitStructInfoDefault_(op, std::forward<Args>(args)...); }
 
-#define MATXSCRIPT_STRUCT_INFO_FUNCTOR_DISPATCH(OP)                                              \
+#define HERCULES_STRUCT_INFO_FUNCTOR_DISPATCH(OP)                                              \
   vtable.template set_dispatch<OP>([](const ObjectRef& n, TSelf* self, Args... args) {           \
     return self->VisitStructInfo_(static_cast<const OP*>(n.get()), std::forward<Args>(args)...); \
   });
@@ -73,7 +73,7 @@ class StructInfoFunctor<R(const StructInfo& n, Args...)> {
    * \return The result of the call
    */
   virtual R VisitStructInfo(const StructInfo& n, Args... args) {
-    MXCHECK(n.defined());
+    HSCHECK(n.defined());
     static FStructInfo vtable = InitVTable();
     return vtable(n, this, std::forward<Args>(args)...);
   }
@@ -89,7 +89,7 @@ class StructInfoFunctor<R(const StructInfo& n, Args...)> {
   virtual R VisitStructInfo_(const TupleStructInfoNode* op,
                              Args... args) STRUCT_INFO_FUNCTOR_DEFAULT;
   virtual R VisitStructInfoDefault_(const Object* op, Args...) {
-    MXLOG(FATAL) << "Do not have a default for " << op->GetTypeKey();
+    HSLOG(FATAL) << "Do not have a default for " << op->GetTypeKey();
     throw;  // unreachable, written to stop compiler warning
   }
 
@@ -98,21 +98,21 @@ class StructInfoFunctor<R(const StructInfo& n, Args...)> {
   static FStructInfo InitVTable() {
     FStructInfo vtable;
     // Set dispatch
-    MATXSCRIPT_STRUCT_INFO_FUNCTOR_DISPATCH(ObjectStructInfoNode);
-    MATXSCRIPT_STRUCT_INFO_FUNCTOR_DISPATCH(PrimStructInfoNode);
-    MATXSCRIPT_STRUCT_INFO_FUNCTOR_DISPATCH(ShapeStructInfoNode);
-    MATXSCRIPT_STRUCT_INFO_FUNCTOR_DISPATCH(TensorStructInfoNode);
-    MATXSCRIPT_STRUCT_INFO_FUNCTOR_DISPATCH(TupleStructInfoNode);
+    HERCULES_STRUCT_INFO_FUNCTOR_DISPATCH(ObjectStructInfoNode);
+    HERCULES_STRUCT_INFO_FUNCTOR_DISPATCH(PrimStructInfoNode);
+    HERCULES_STRUCT_INFO_FUNCTOR_DISPATCH(ShapeStructInfoNode);
+    HERCULES_STRUCT_INFO_FUNCTOR_DISPATCH(TensorStructInfoNode);
+    HERCULES_STRUCT_INFO_FUNCTOR_DISPATCH(TupleStructInfoNode);
     return vtable;
   }
 };
 
-#undef MATXSCRIPT_STRUCT_INFO_FUNCTOR_DISPATCH
+#undef HERCULES_STRUCT_INFO_FUNCTOR_DISPATCH
 
 /*!
  * \brief A struct info visitor.
  */
-class MATX_DLL StructInfoVisitor : public StructInfoFunctor<void(const StructInfo& n)> {
+class HERCULES_DLL StructInfoVisitor : public StructInfoFunctor<void(const StructInfo& n)> {
  public:
   void VisitStructInfo_(const ObjectStructInfoNode* op) override;
   void VisitStructInfo_(const PrimStructInfoNode* op) override;
@@ -131,7 +131,7 @@ class MATX_DLL StructInfoVisitor : public StructInfoFunctor<void(const StructInf
 /*!
  * \brief StructInfoMutator that mutates struct info.
  */
-class MATX_DLL StructInfoMutator : public StructInfoFunctor<StructInfo(const StructInfo& n)> {
+class HERCULES_DLL StructInfoMutator : public StructInfoFunctor<StructInfo(const StructInfo& n)> {
  public:
   StructInfo VisitStructInfo_(const ObjectStructInfoNode* op) override;
   StructInfo VisitStructInfo_(const PrimStructInfoNode* op) override;
@@ -150,4 +150,4 @@ class MATX_DLL StructInfoMutator : public StructInfoFunctor<StructInfo(const Str
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -22,7 +22,7 @@
 #include <hercules/runtime/native_object_registry.h>
 #include <hercules/runtime/type_name_traits.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace {
@@ -35,13 +35,13 @@ class MyTestNameTraitsV2 {
 class MyTestNameTraitsV3 {
   int a = 0;
 };
-MATXSCRIPT_REGISTER_TYPE_NAME_TRAITS(MyTestNameTraitsV1);
+HERCULES_REGISTER_TYPE_NAME_TRAITS(MyTestNameTraitsV1);
 }  // namespace
-MATXSCRIPT_REGISTER_TYPE_NAME_TRAITS(MyTestNameTraitsV2);
+HERCULES_REGISTER_TYPE_NAME_TRAITS(MyTestNameTraitsV2);
 
 TEST(TypeNameTraits, RegisterGet) {
-  MATXSCRIPT_REGISTER_TYPE_NAME_TRAITS(MyTestNameTraitsV1);
-  MATXSCRIPT_REGISTER_TYPE_NAME_TRAITS(MyTestNameTraitsV2);
+  HERCULES_REGISTER_TYPE_NAME_TRAITS(MyTestNameTraitsV1);
+  HERCULES_REGISTER_TYPE_NAME_TRAITS(MyTestNameTraitsV2);
 
   EXPECT_EQ(TypeNameTraits::Get<MyTestNameTraitsV1>(), "MyTestNameTraitsV1");
   EXPECT_EQ(TypeNameTraits::Get<MyTestNameTraitsV2>(), "MyTestNameTraitsV2");
@@ -59,14 +59,14 @@ class MyNativeDataExampleXXX {
     return "MyNativeDataExampleXXX";
   }
 };
-MATX_REGISTER_NATIVE_OBJECT(MyNativeDataExampleXXX)
+HVM_REGISTER_NATIVE_OBJECT(MyNativeDataExampleXXX)
     .SetConstructor([](PyArgs args) -> std::shared_ptr<void> {
-      MXCHECK_EQ(args.size(), 0) << "[MyNativeDataExampleXXX] Expect 0 arguments but get "
+      HSCHECK_EQ(args.size(), 0) << "[MyNativeDataExampleXXX] Expect 0 arguments but get "
                                  << args.size();
       return std::make_shared<MyNativeDataExampleXXX>();
     })
     .RegisterFunction("get_content", [](void* self, PyArgs args) -> RTValue {
-      MXCHECK_EQ(args.size(), 0)
+      HSCHECK_EQ(args.size(), 0)
           << "[MyNativeDataExampleXXX][func: get_content] Expect 0 arguments but get "
           << args.size();
       return reinterpret_cast<MyNativeDataExampleXXX*>(self)->get_content();
@@ -78,4 +78,4 @@ TEST(TypeNameTraits, GetPipelineExample) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

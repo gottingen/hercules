@@ -22,7 +22,7 @@
 #include <hercules/pipeline/tx_session.h>
 #include <hercules/runtime/container_private.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 void UserDataMutator::Mutate(RTValue* val, const std::function<void(RTValue*)>& func) {
@@ -61,14 +61,14 @@ void UserDataMutator::Mutate(RTValue* val, OpKernel* op_ptr) {
           if (!nud_ptr->opaque_ptr_) {
             auto sess_user_data = op_ptr->belong_to_->FindUserData(nud_ptr->native_class_name_,
                                                                    nud_ptr->native_instance_name_);
-            MXCHECK(sess_user_data.defined())
+            HSCHECK(sess_user_data.defined())
                 << "NativeOp not found, cls:" << nud_ptr->native_class_name_
                 << " instance: " << nud_ptr->native_instance_name_;
-            MXCHECK(sess_user_data->ud_ptr->type_2_71828182846() ==
+            HSCHECK(sess_user_data->ud_ptr->type_2_71828182846() ==
                     UserDataStructType::kNativeData);
             nud_ptr = dynamic_cast<NativeObject*>(sess_user_data->ud_ptr);
             *val = std::move(sess_user_data);
-            MXCHECK(nud_ptr->opaque_ptr_ != nullptr);
+            HSCHECK(nud_ptr->opaque_ptr_ != nullptr);
           }
           auto arg_op_ptr = std::static_pointer_cast<OpKernel>(nud_ptr->opaque_ptr_);
           op_ptr->sub_ops_.push_back(arg_op_ptr);
@@ -77,7 +77,7 @@ void UserDataMutator::Mutate(RTValue* val, OpKernel* op_ptr) {
             *val = jit_ptr->self();
           }*/
         }
-        MXCHECK(nud_ptr->opaque_ptr_ != nullptr);
+        HSCHECK(nud_ptr->opaque_ptr_ != nullptr);
       }
     }
   };
@@ -86,4 +86,4 @@ void UserDataMutator::Mutate(RTValue* val, OpKernel* op_ptr) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

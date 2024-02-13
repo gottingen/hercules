@@ -21,7 +21,7 @@
 
 #include "ndarray.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 /*!
  * \brief The container base structure
@@ -92,7 +92,7 @@ class NDArray::Container : public Object, public NDArray::ContainerBase {
     dl_tensor.data = data;
     shape_ = std::move(shape);
     dl_tensor.ndim = static_cast<int>(shape_.size());
-    dl_tensor.shape = ::matxscript::runtime::BeginPtr(shape_);
+    dl_tensor.shape = ::hercules::runtime::BeginPtr(shape_);
     dl_tensor.dtype = dtype;
     dl_tensor.strides = nullptr;
     dl_tensor.byte_offset = 0;
@@ -106,35 +106,35 @@ class NDArray::Container : public Object, public NDArray::ContainerBase {
     deleter_ = deleter;
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const int64_t* StridesBegin() {
+  HERCULES_ALWAYS_INLINE const int64_t* StridesBegin() {
     return strides_.data();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const int64_t* StridesEnd() {
+  HERCULES_ALWAYS_INLINE const int64_t* StridesEnd() {
     return strides_.data() + dl_tensor.ndim;
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const int64_t* ShapeBegin() {
+  HERCULES_ALWAYS_INLINE const int64_t* ShapeBegin() {
     return shape_.data();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const int64_t* ShapeEnd() {
+  HERCULES_ALWAYS_INLINE const int64_t* ShapeEnd() {
     return shape_.data() + dl_tensor.ndim;
   }
 
-  MATXSCRIPT_ALWAYS_INLINE std::vector<int64_t> StridesVec() {
+  HERCULES_ALWAYS_INLINE std::vector<int64_t> StridesVec() {
     return strides_;
   }
 
-  MATXSCRIPT_ALWAYS_INLINE std::vector<int64_t> ShapeVec() {
+  HERCULES_ALWAYS_INLINE std::vector<int64_t> ShapeVec() {
     return shape_;
   }
 
-  MATXSCRIPT_ALWAYS_INLINE int64_t Strides(int i) {
+  HERCULES_ALWAYS_INLINE int64_t Strides(int i) {
     return strides_[i];
   }
 
-  MATXSCRIPT_ALWAYS_INLINE int64_t Shape(int i) {
+  HERCULES_ALWAYS_INLINE int64_t Shape(int i) {
     return shape_[i];
   }
 
@@ -146,11 +146,11 @@ class NDArray::Container : public Object, public NDArray::ContainerBase {
   // Information for object protocol.
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeNDArray;
   static constexpr const char* _type_key = "runtime.NDArray";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(NDArray::Container, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(NDArray::Container, Object);
 
  protected:
   friend class NDArray::Internal;
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

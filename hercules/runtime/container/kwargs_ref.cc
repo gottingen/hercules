@@ -23,7 +23,7 @@
 #include <hercules/runtime/container/kwargs_private.h>
 #include <hercules/runtime/memory.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
@@ -42,7 +42,7 @@ Kwargs::Kwargs(std::initializer_list<value_type> init) {  // NOLINT(*)
 RTValue& Kwargs::get_item(string_view key) const {
   MX_CHECK_DPTR(Kwargs);
   auto iter = d->data_container.find(key);
-  MXCHECK(iter != d->data_container.end()) << "Kwargs[" << key << "] not found";
+  HSCHECK(iter != d->data_container.end()) << "Kwargs[" << key << "] not found";
   return iter->second;
 }
 
@@ -110,7 +110,7 @@ void KwargsUnpackHelper::unpack(RTView* pos_args, PyArgs original_args) const {
 }
 
 void KwargsUnpackHelper::unpack(RTView* pos_args,
-                                MATXScriptAny* original_args,
+                                HerculesAny* original_args,
                                 int num_original_args) const {
   int64_t default_begin_pos = num_args_ - num_default_args_;
   num_original_args -= 1;
@@ -167,4 +167,4 @@ std::ostream& operator<<(std::ostream& os, Kwargs const& n) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

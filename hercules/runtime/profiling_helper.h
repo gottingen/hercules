@@ -22,7 +22,7 @@
 #include <hercules/runtime/env_time.h>
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct TimeLine {
@@ -50,4 +50,4 @@ class ProfilingHelper {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

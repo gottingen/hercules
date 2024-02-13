@@ -22,7 +22,7 @@
 #include <hercules/runtime/container/opaque_object.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct OpaqueObjectNode : public Object {
@@ -40,8 +40,8 @@ struct OpaqueObjectNode : public Object {
 
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeOpaqueObject;
   static constexpr const char* _type_key = "runtime.OpaqueObject";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(OpaqueObjectNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(OpaqueObjectNode, Object);
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -22,7 +22,7 @@
 #pragma once
 
 #include <stdint.h>
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class Yielder {
@@ -49,4 +49,4 @@ class Yielder {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

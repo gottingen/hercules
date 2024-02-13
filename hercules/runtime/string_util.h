@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace StringUtil {
 
@@ -44,4 +44,4 @@ extern std::string& Replace(std::string& input, const std::string& t, const std:
 
 }  // namespace StringUtil
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -20,7 +20,7 @@
 #include <gtest/gtest.h>
 #include <hercules/runtime/ft_container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(FTDict, Constructor) {
@@ -55,14 +55,14 @@ TEST(FTDict, RTValue) {
 }
 
 TEST(FTDict, iterator) {
-  FTDict<int, String> d1{{1, String("hello")}, {2, String("matx4")}};
+  FTDict<int, String> d1{{1, String("hello")}, {2, String("hvm4")}};
   FTDict<int, String>::const_iterator iter_begin = d1.begin();
   FTDict<int, String>::const_iterator iter_end = d1.end();
   EXPECT_EQ(2, std::distance(iter_begin, iter_end));
 }
 
 TEST(FTDict, len) {
-  FTDict<int, String> d1{{1, String("hello")}, {2, String("matx4")}};
+  FTDict<int, String> d1{{1, String("hello")}, {2, String("hvm4")}};
   ASSERT_EQ(d1.size(), 2);
   FTDict<String, int> c;
   ASSERT_EQ(c.size(), 0);
@@ -72,19 +72,19 @@ TEST(FTDict, equal) {
   FTDict<int, String> d0;  // empty dict
   FTDict<String, int> b0;
   ASSERT_EQ(d0, b0);                                                   // is it right?
-  FTDict<int, String> d1{{1, String("hello")}, {2, String("matx4")}};  // same type
-  FTDict<int, String> d2{{1, String("hello")}, {2, String("matx4")}};
+  FTDict<int, String> d1{{1, String("hello")}, {2, String("hvm4")}};  // same type
+  FTDict<int, String> d2{{1, String("hello")}, {2, String("hvm4")}};
   ASSERT_NE(d0, d1);
   ASSERT_EQ(d1, d1);
   ASSERT_EQ(d1, d2);
-  FTDict<int, String> d3{{1, String("hello")}, {3, String("matx4")}};
+  FTDict<int, String> d3{{1, String("hello")}, {3, String("hvm4")}};
   ASSERT_NE(d1, d3);
-  FTDict<String, int> d4{{String("hello"), 1}, {String("matx4"), 2}};  // different type
+  FTDict<String, int> d4{{String("hello"), 1}, {String("hvm4"), 2}};  // different type
   ASSERT_NE(d1, d4);
   // TODO: fixme
-  // FTDict<String, int> d5{{RTValue("hello"), 1}, {RTValue("matx4"), 2}};  // RTValue
+  // FTDict<String, int> d5{{RTValue("hello"), 1}, {RTValue("hvm4"), 2}};  // RTValue
   // ASSERT_NE(d1, d5);
-  // FTDict<int, String> d6{{RTValue(1), String("hello")}, {RTValue(2), String("matx4")}};
+  // FTDict<int, String> d6{{RTValue(1), String("hello")}, {RTValue(2), String("hvm4")}};
   // ASSERT_EQ(d1, d6);
 }
 
@@ -92,7 +92,7 @@ TEST(FTDict, contains) {
   FTDict<int, String> d0;  // empty dict
   ASSERT_FALSE(d0.contains(1));
   ASSERT_FALSE(d0.contains("uu"));
-  FTDict<int, String> d1{{1, String("hello")}, {2, String("matx4")}};
+  FTDict<int, String> d1{{1, String("hello")}, {2, String("hvm4")}};
   ASSERT_TRUE(d1.contains(1));  // same type
   ASSERT_FALSE(d1.contains(42));
   ASSERT_FALSE(d1.contains(1.3));  // different type
@@ -105,7 +105,7 @@ TEST(FTDict, contains) {
   ASSERT_FALSE(d1.contains(RTValue(U"a")));
   ASSERT_TRUE(d1.contains(RTValue(1)));
 
-  FTDict<String, int> d2{{String("hello"), 1}, {String("matx4"), 1}};
+  FTDict<String, int> d2{{String("hello"), 1}, {String("hvm4"), 1}};
   ASSERT_TRUE(d2.contains(String("hello")));  // same type
   ASSERT_FALSE(d2.contains(String("world")));
   ASSERT_FALSE(d2.contains(1.3));  // different type
@@ -121,7 +121,7 @@ TEST(FTDict, contains) {
 
 TEST(FTDict, get_item) {
   FTDict<int, String> d0;  // empty dict
-  FTDict<int, String> d{{1, String("hello")}, {2, String("matx4")}};
+  FTDict<int, String> d{{1, String("hello")}, {2, String("hvm4")}};
   ASSERT_EQ(d[1], "hello");           // same type
   ASSERT_EQ(d[RTValue(1)], "hello");  // RTValue
   ASSERT_ANY_THROW(d[RTValue("a")]);
@@ -188,7 +188,7 @@ TEST(FTDict, set_item) {
   FTDict<int, String> d0;  // empty dict
   d0[0] = "hello";
   ASSERT_EQ(d0[0], "hello");
-  FTDict<int, Unicode> d{{1, Unicode(U"hello")}, {2, Unicode(U"matx4")}};
+  FTDict<int, Unicode> d{{1, Unicode(U"hello")}, {2, Unicode(U"hvm4")}};
   d[2] = U"3";  // same type
   ASSERT_EQ(d[2], U"3");
   d[3] = Unicode(U"world");
@@ -205,7 +205,7 @@ TEST(FTDict, set_item) {
 }
 
 TEST(FTDict, clear) {
-  FTDict<int, Unicode> d{{1, Unicode(U"hello")}, {2, Unicode(U"matx4")}};
+  FTDict<int, Unicode> d{{1, Unicode(U"hello")}, {2, Unicode(U"hvm4")}};
   FTDict<int, Unicode> d0;
   d.clear();
   ASSERT_EQ(d.size(), 0);
@@ -213,4 +213,4 @@ TEST(FTDict, clear) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

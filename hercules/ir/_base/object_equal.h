@@ -23,7 +23,7 @@
 
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::Object;
@@ -43,4 +43,4 @@ struct ObjectEqual {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

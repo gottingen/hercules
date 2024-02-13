@@ -20,7 +20,7 @@
 #include <gtest/gtest.h>
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Iterator, Constructor) {
@@ -64,4 +64,4 @@ TEST(Iterator, Constructor) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

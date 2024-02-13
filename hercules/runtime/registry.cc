@@ -34,7 +34,7 @@
 
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct FunctionRegistry::Manager {
@@ -56,7 +56,7 @@ FunctionRegistry& FunctionRegistry::Register(string_view name,
   Manager* m = Manager::Global();
   std::lock_guard<std::mutex> lock(m->mutex);
   if (m->fmap.count(name)) {
-    MXCHECK(can_override) << "Global Function " << name << " is already registered";
+    HSCHECK(can_override) << "Global Function " << name << " is already registered";
   }
 
   FunctionRegistry* r = new FunctionRegistry();
@@ -106,4 +106,4 @@ std::vector<string_view> FunctionRegistry::ListNames() {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

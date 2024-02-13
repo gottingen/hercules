@@ -22,32 +22,32 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(user_data, __getattr__, __getattr__)
+HERCULES_IR_DEFINE_HLO_METHOD(user_data, __getattr__, __getattr__)
     .set_num_inputs(2)
-    .add_argument("self", "matx.NativeObject", "")
+    .add_argument("self", "hvm.NativeObject", "")
     .add_argument("attr", "str_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(user_data, __setattr__, set_attr)
+HERCULES_IR_DEFINE_HLO_METHOD(user_data, __setattr__, set_attr)
     .set_num_inputs(3)
-    .add_argument("self", "matx.NativeObject", "")
+    .add_argument("self", "hvm.NativeObject", "")
     .add_argument("attr", "str_view", "")
     .add_argument("val", "Any|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(user_data, call, generic_call)
+HERCULES_IR_DEFINE_HLO_METHOD(user_data, call, generic_call)
     .set_num_inputs(2)
-    .add_argument("self", "matx.NativeObject", "")
+    .add_argument("self", "hvm.NativeObject", "")
     .add_argument("args", "*args", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(user_data, call_attr, generic_call_attr)
+HERCULES_IR_DEFINE_HLO_METHOD(user_data, call_attr, generic_call_attr)
     .set_num_inputs(3)
-    .add_argument("self", "matx.NativeObject", "")
+    .add_argument("self", "hvm.NativeObject", "")
     .add_argument("func_name", "bytes_view", "")
     .add_argument("args", "*args", "");
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

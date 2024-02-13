@@ -23,10 +23,10 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Regex")
+HERCULES_REGISTER_GLOBAL("runtime.Regex")
     .set_body_typed([](unicode_view pattern,
                        bool ignore_case,
                        bool dotall,
@@ -36,18 +36,18 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Regex")
       return Regex(pattern, ignore_case, dotall, extended, anchored, ucp);
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.RegexSplit").set_body_typed([](Regex regex_ref, RTView string) {
+HERCULES_REGISTER_GLOBAL("runtime.RegexSplit").set_body_typed([](Regex regex_ref, RTView string) {
   return regex_ref.split(string);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.RegexReplace").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 3) << "runtime.RegexReplace expected 3 arguments but got " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.RegexReplace").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 3) << "runtime.RegexReplace expected 3 arguments but got " << args.size();
   Regex regex_ref = args[0].As<Regex>();
   return regex_ref.replace(args[1], args[2]);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.RegexMatch").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 2 || args.size() == 3)
+HERCULES_REGISTER_GLOBAL("runtime.RegexMatch").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 2 || args.size() == 3)
       << "runtime.RegexMatch expected 2 or 3 arguments but got " << args.size();
   Regex regex_ref = args[0].As<Regex>();
   if (args.size() == 2) {
@@ -58,4 +58,4 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.RegexMatch").set_body([](PyArgs args) -> RTV
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

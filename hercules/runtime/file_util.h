@@ -42,7 +42,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/string_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace FileUtil {
 /*!
@@ -117,4 +117,4 @@ int Copy(string_view src, string_view dest);
 
 }  // namespace FileUtil
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

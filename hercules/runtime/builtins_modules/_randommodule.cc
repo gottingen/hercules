@@ -117,7 +117,7 @@
 #define UPPER_MASK 0x80000000U /* most significant w-r bits */
 #define LOWER_MASK 0x7fffffffU /* least significant r bits */
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -514,7 +514,7 @@ struct Random {
     auto a_code = a.type_code();
     if (a_code != TypeIndex::kRuntimeNullptr) {
       if (a_code != TypeIndex::kRuntimeInteger) {
-        MXTHROW << "random.seed only support int";
+        HSTHROW << "random.seed only support int";
       }
       this->seed_int(a.As<int64_t>());
     } else {
@@ -530,7 +530,7 @@ struct Random {
 
   void setstate(const Tuple& state) {
     int64_t version = state[0].As<int64_t>();
-    MXCHECK(version == VERSION) << "version not match";
+    HSCHECK(version == VERSION) << "version not match";
     this->gauss_next = state[2];
     Tuple internalstate = state[1].As<Tuple>();
     return py_builtins::_random_Random_setstate(&random_impl, internalstate);
@@ -784,7 +784,7 @@ struct Random {
 
   int64_t _randbelow_without_getrandbits(int64_t n, int64_t maxsize = (1ULL << BPF)) {
     if (n >= maxsize) {
-      MXLOG(WARNING)
+      HSLOG(WARNING)
           << ("Underlying random() generator does not supply \n"
               "enough bits to choose from a population range this large.\n"
               "To remove the range limitation, add a getrandbits() method.");
@@ -823,7 +823,7 @@ static std::mutex DEFAULT_RANDOM_OBJECT_MUTEX;
 
 // for codegen
 using random_Random = py_builtins::Random;
-MATX_REGISTER_NATIVE_OBJECT(random_Random).SetConstructor([](PyArgs args) -> std::shared_ptr<void> {
+HVM_REGISTER_NATIVE_OBJECT(random_Random).SetConstructor([](PyArgs args) -> std::shared_ptr<void> {
   switch (args.size()) {
     case 0: {
       return std::make_shared<random_Random>();
@@ -833,7 +833,7 @@ MATX_REGISTER_NATIVE_OBJECT(random_Random).SetConstructor([](PyArgs args) -> std
       return std::make_shared<random_Random>(seed);
     } break;
     default: {
-      MXTHROW << "[random.Random] Expect 0 or 1 arguments but get " << args.size();
+      HSTHROW << "[random.Random] Expect 0 or 1 arguments but get " << args.size();
       return nullptr;
     } break;
   }
@@ -865,7 +865,7 @@ void kernel_random_seed(PyArgs args) {
       return kernel_random_seed_unroll(args[0], args[1].As<int64_t>());
     } break;
     default: {
-      MXTHROW << "[random.seed] Expect 0, 1 or 2 arguments but get " << args.size();
+      HSTHROW << "[random.seed] Expect 0, 1 or 2 arguments but get " << args.size();
       return;
     } break;
   }
@@ -909,7 +909,7 @@ double kernel_random_triangular(PyArgs args) {
           args[0].As<double>(), args[1].As<double>(), args[2]);
     } break;
     default: {
-      MXTHROW << "[random.triangular] Expect 0-3 arguments but get " << args.size();
+      HSTHROW << "[random.triangular] Expect 0-3 arguments but get " << args.size();
       return 0.0;
     } break;
   }
@@ -956,4 +956,4 @@ double kernel_random_weibullvariate(double alpha, double beta) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

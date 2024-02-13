@@ -23,7 +23,7 @@
 #include <hercules/runtime/memory.h>
 #include <unordered_set>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 bool is_comparable(const List& list) {
@@ -73,7 +73,7 @@ void ListHelper::Sort(const List& list) {
   }
   /*
   if (!is_comparable(list)) {
-    MXTHROW << "list_sort: only support List[number], List[str], List[bytes]";
+    HSTHROW << "list_sort: only support List[number], List[str], List[bytes]";
   }
   */
   std::sort((p->data_container).begin(),
@@ -164,7 +164,7 @@ static void ShiftDown(std::vector<RTValue>& v,
 void ListHelper::HeapReplace(const List& list, const Any& item) {
   ListNode* p = list.GetListNode();
   if (list.size() == 0) {
-    MXTHROW << "heap_replace: IndexError";
+    HSTHROW << "heap_replace: IndexError";
   }
   p->data_container[0] = item.As<RTValue>();
   ShiftDown(
@@ -174,7 +174,7 @@ void ListHelper::HeapReplace(const List& list, const Any& item) {
 void ListHelper::HeapReplace(const List& list, const Any& item, const UserDataRef& comp) {
   ListNode* p = list.GetListNode();
   if (list.size() == 0) {
-    MXTHROW << "heap_replace: IndexError";
+    HSTHROW << "heap_replace: IndexError";
   }
   p->data_container[0] = item.As<RTValue>();
   ShiftDown(p->data_container, 0, [&comp](const RTValue& x, const RTValue& y) -> bool {
@@ -185,7 +185,7 @@ void ListHelper::HeapReplace(const List& list, const Any& item, const UserDataRe
 RTValue ListHelper::HeapPushPop(const List& list, const Any& item) {
   ListNode* p = list.GetListNode();
   if (list.size() == 0) {
-    MXTHROW << "heap_pushpop: IndexError";
+    HSTHROW << "heap_pushpop: IndexError";
   }
   if (ArithOps::ge((p->data_container)[0], item)) {
     return item.As<RTValue>();
@@ -200,7 +200,7 @@ RTValue ListHelper::HeapPushPop(const List& list, const Any& item) {
 RTValue ListHelper::HeapPushPop(const List& list, const Any& item, const UserDataRef& comp) {
   ListNode* p = list.GetListNode();
   if (list.size() == 0) {
-    MXTHROW << "heap_pushpop: IndexError";
+    HSTHROW << "heap_pushpop: IndexError";
   }
   if (comp.call((p->data_container)[0], item).As<int64_t>() >= 0) {
     return item.As<RTValue>();
@@ -214,4 +214,4 @@ RTValue ListHelper::HeapPushPop(const List& list, const Any& item, const UserDat
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

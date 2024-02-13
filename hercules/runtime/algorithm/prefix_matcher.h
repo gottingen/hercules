@@ -22,14 +22,14 @@
 #include <memory>
 #include <set>
 #include <string>
-#if MATXSCRIPT_USE_CXX17_STRING_VIEW
+#if HERCULES_USE_CXX17_STRING_VIEW
 #include <string_view>
 #endif
 
 #include <hercules/runtime/algorithm/cedar.h>
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // Given a list of strings, finds the longest string which is a
@@ -61,4 +61,4 @@ class PrefixMatcher {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

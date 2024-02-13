@@ -32,7 +32,7 @@ extern "C" {
 
 #include <hercules/runtime/container/string.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace regex {
 
@@ -220,4 +220,4 @@ class RegexHelper {
 
 }  // namespace regex
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

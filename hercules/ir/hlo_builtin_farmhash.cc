@@ -22,75 +22,75 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
 // farmhash
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash32)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash32)
     .set_num_inputs(1)
     .add_argument("s", "bytes_view|unicode_view|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash64)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash64)
     .set_num_inputs(1)
     .add_argument("s", "bytes_view|unicode_view|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash128)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash128)
     .set_num_inputs(1)
     .add_argument("s", "bytes_view|unicode_view|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash32withseed)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash32withseed)
     .set_num_inputs(2)
     .add_argument("s", "bytes_view|unicode_view|any_view", "")
     .add_argument("seed", "uint32", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash64withseed)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash64withseed)
     .set_num_inputs(2)
     .add_argument("s", "bytes_view|unicode_view|any_view", "")
     .add_argument("seed", "uint64", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash128withseed)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash128withseed)
     .set_num_inputs(3)
     .add_argument("s", "bytes_view|unicode_view|any_view", "")
     .add_argument("seed", "uint64", "")
     .add_argument("seed", "uint64", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, fingerprint32)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, fingerprint32)
     .set_num_inputs(1)
     .add_argument("s", "bytes_view|unicode_view|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, fingerprint64)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, fingerprint64)
     .set_num_inputs(1)
     .add_argument("s", "bytes_view|unicode_view|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, fingerprint128)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, fingerprint128)
     .set_num_inputs(1)
     .add_argument("s", "bytes_view|unicode_view|any_view", "");
 
 /******************************************************************************
  * for fix overflow, some sugar
  *****************************************************************************/
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash64_mod)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash64_mod)
     .set_num_inputs(2)
     .add_argument("s", "bytes_view|unicode_view|any_view", "")
     .add_argument("y", "int64", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash64withseed_mod)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, hash64withseed_mod)
     .set_num_inputs(3)
     .add_argument("s", "bytes_view|unicode_view|any_view", "")
     .add_argument("seed", "uint64", "")
     .add_argument("y", "int64", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, fingerprint64_mod)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, fingerprint64_mod)
     .set_num_inputs(2)
     .add_argument("s", "bytes_view|unicode_view|any_view", "")
     .add_argument("y", "int64", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(farmhash, fingerprint128_mod)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(farmhash, fingerprint128_mod)
     .set_num_inputs(2)
     .add_argument("s", "bytes_view|unicode_view|any_view", "")
     .add_argument("y", "int64", "");
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -26,7 +26,7 @@
 #include <hercules/ir/hlo_builtin.h>
 #include <hercules/ir/stmt_functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class FuseContBinaryAddOptimizer : public StmtExprMutator {
@@ -103,4 +103,4 @@ class FuseContBinaryAddOptimizer : public StmtExprMutator {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

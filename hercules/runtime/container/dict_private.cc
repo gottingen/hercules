@@ -19,10 +19,10 @@
  */
 #include <hercules/runtime/container/dict_private.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(DictNode);
+HERCULES_REGISTER_OBJECT_TYPE(DictNode);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -26,7 +26,7 @@
 #include "pyconfig.h"
 
 #ifdef HAVE_GCC_ASM_FOR_X87
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -35,7 +35,7 @@ extern void _Py_set_387controlword(unsigned short);
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 #endif
 
 /* Return whether integral type *type* is signed or not. */

@@ -23,10 +23,10 @@
 
 #include "userdata_mutator.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_REGISTER_NATIVE_OP(PyTorchInferOp).SetThreadSafety(false);
+HVM_REGISTER_NATIVE_OP(PyTorchInferOp).SetThreadSafety(false);
 
 void PyTorchInferOp::Init() {
   auto impl_data = GetAttr<RTValue>("impl");
@@ -41,4 +41,4 @@ RTValue PyTorchInferOp::Process(PyArgs inputs) const {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

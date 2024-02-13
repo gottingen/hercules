@@ -21,7 +21,7 @@
 
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
@@ -89,4 +89,4 @@ struct PyArgs {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

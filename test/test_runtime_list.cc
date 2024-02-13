@@ -23,7 +23,7 @@
 #include <hercules/runtime/container_private.h>
 #include <hercules/runtime/function.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(List, Constructor) {
@@ -247,4 +247,4 @@ TEST(List, sort) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

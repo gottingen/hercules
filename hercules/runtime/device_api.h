@@ -27,7 +27,7 @@
 #include <hercules/runtime/c_runtime_api.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 /*!
  * \brief the query type into GetAttr
@@ -57,10 +57,10 @@ constexpr int kTempAllocaAlignment = 128;
 constexpr int kMaxStackAlloca = 1024;
 
 /*!
- *  \brief MATX Runtime Device API, abstracts the device
+ *  \brief HVM Runtime Device API, abstracts the device
  *  specific interface for memory management.
  */
-class MATX_DLL DeviceAPI {
+class HERCULES_DLL DeviceAPI {
  public:
   /*! \brief virtual destructor */
   virtual ~DeviceAPI() {
@@ -69,7 +69,7 @@ class MATX_DLL DeviceAPI {
    * \brief Set the environment device id to ctx
    * \param ctx The context to be set.
    */
-  virtual void SetDevice(MATXScriptDevice ctx) = 0;
+  virtual void SetDevice(HerculesDevice ctx) = 0;
   /*!
    * \brief Get attribute of specified device.
    * \param ctx The device context
@@ -77,7 +77,7 @@ class MATX_DLL DeviceAPI {
    * \param rv The return value.
    * \sa DeviceAttrKind
    */
-  virtual void GetAttr(MATXScriptDevice ctx, DeviceAttrKind kind, RTValue* rv) = 0;
+  virtual void GetAttr(HerculesDevice ctx, DeviceAttrKind kind, RTValue* rv) = 0;
   /*!
    * \brief Allocate a data space on device.
    * \param ctx The device context to perform operation.
@@ -88,25 +88,25 @@ class MATX_DLL DeviceAPI {
    * \return The allocated device pointer.
    */
 
-  virtual void* AllocRaw(MATXScriptDevice ctx,
+  virtual void* AllocRaw(HerculesDevice ctx,
                          size_t nbytes,
                          size_t alignment,
                          DLDataType type_hint) = 0;
 
-  virtual void* Alloc(MATXScriptDevice ctx,
+  virtual void* Alloc(HerculesDevice ctx,
                       size_t nbytes,
                       size_t alignment,
                       DLDataType type_hint) = 0;
 
-  virtual void* Alloc(MATXScriptDevice ctx, size_t nbytes) = 0;
+  virtual void* Alloc(HerculesDevice ctx, size_t nbytes) = 0;
 
   /*!
    * \brief Free a data space on device.
    * \param ctx The device context to perform operation.
    * \param ptr The data space.
    */
-  virtual void FreeRaw(MATXScriptDevice ctx, void* ptr) = 0;
-  virtual void Free(MATXScriptDevice ctx, void* ptr) = 0;
+  virtual void FreeRaw(HerculesDevice ctx, void* ptr) = 0;
+  virtual void Free(HerculesDevice ctx, void* ptr) = 0;
 
   /*!
    * \brief copy data from one place to another
@@ -126,16 +126,16 @@ class MATX_DLL DeviceAPI {
                               void* to,
                               size_t to_offset,
                               size_t num_bytes,
-                              MATXScriptDevice ctx_from,
-                              MATXScriptDevice ctx_to,
+                              HerculesDevice ctx_from,
+                              HerculesDevice ctx_to,
                               DLDataType type_hint,
-                              MATXScriptStreamHandle stream) = 0;
+                              HerculesStreamHandle stream) = 0;
   /*!
    * \brief Create a new stream of execution.
    *
    * \param ctx The context of allocation.
    */
-  virtual MATXScriptStreamHandle CreateStream(MATXScriptDevice ctx) = 0;
+  virtual HerculesStreamHandle CreateStream(HerculesDevice ctx) = 0;
 
   /*!
    * \brief Free a stream of execution
@@ -143,40 +143,40 @@ class MATX_DLL DeviceAPI {
    * \param ctx The context of the stream
    * \param stream The pointer to be freed.
    */
-  virtual void FreeStream(MATXScriptDevice ctx, MATXScriptStreamHandle stream) = 0;
+  virtual void FreeStream(HerculesDevice ctx, HerculesStreamHandle stream) = 0;
 
   /*!
    * \brief return default stream on ctx
    *
    * \param ctx The context to perform operation.
    */
-  virtual MATXScriptStreamHandle GetDefaultStream(MATXScriptDevice ctx) = 0;
+  virtual HerculesStreamHandle GetDefaultStream(HerculesDevice ctx) = 0;
 
   /*!
    * \brief return current stream on ctx
    *
    * \param ctx The context to perform operation.
    */
-  virtual MATXScriptStreamHandle GetCurrentThreadStream(MATXScriptDevice ctx) = 0;
-  virtual std::shared_ptr<void> GetSharedCurrentThreadStream(MATXScriptDevice ctx) = 0;
+  virtual HerculesStreamHandle GetCurrentThreadStream(HerculesDevice ctx) = 0;
+  virtual std::shared_ptr<void> GetSharedCurrentThreadStream(HerculesDevice ctx) = 0;
 
   /*!
    * \brief Set the stream only for current thread
    * \param ctx The context to set stream.
    * \param stream The stream to be set.
    */
-  virtual void SetCurrentThreadStream(MATXScriptDevice ctx, std::shared_ptr<void> stream) = 0;
+  virtual void SetCurrentThreadStream(HerculesDevice ctx, std::shared_ptr<void> stream) = 0;
 
   /*!
    * \brief Synchronize the stream
    * \param ctx The context to perform operation.
    * \param stream The stream to be sync.
    */
-  virtual void StreamSync(MATXScriptDevice ctx, MATXScriptStreamHandle stream) = 0;
+  virtual void StreamSync(HerculesDevice ctx, HerculesStreamHandle stream) = 0;
 
-  virtual void CreateEventSync(MATXScriptStreamHandle stream) = 0;
+  virtual void CreateEventSync(HerculesStreamHandle stream) = 0;
 
-  inline void CurrentThreadStreamSync(MATXScriptDevice ctx) {
+  inline void CurrentThreadStreamSync(HerculesDevice ctx) {
     this->CreateEventSync(this->GetCurrentThreadStream(ctx));
   }
 
@@ -192,9 +192,9 @@ class MATX_DLL DeviceAPI {
    * \param event_src The source stream to synchronize.
    * \param event_dst The destination stream to synchronize.
    */
-  virtual void SyncStreamFromTo(MATXScriptDevice ctx,
-                                MATXScriptStreamHandle event_src,
-                                MATXScriptStreamHandle event_dst);
+  virtual void SyncStreamFromTo(HerculesDevice ctx,
+                                HerculesStreamHandle event_src,
+                                HerculesStreamHandle event_dst);
 
   /*!
    * \brief Get device API based on context.
@@ -202,8 +202,8 @@ class MATX_DLL DeviceAPI {
    * \param allow_missing Whether allow missing
    * \return The corresponding device API.
    */
-  static DeviceAPI* Get(MATXScriptDevice ctx, bool allow_missing = false);
-  static void SetErrorMessage(MATXScriptDevice ctx, String msg);
+  static DeviceAPI* Get(HerculesDevice ctx, bool allow_missing = false);
+  static void SetErrorMessage(HerculesDevice ctx, String msg);
 
   /*!
    * \brief Whether a certian device type requires set device context
@@ -217,11 +217,11 @@ class MATX_DLL DeviceAPI {
 
 class DeviceStreamGuard {
  public:
-  DeviceStreamGuard(MATXScriptDevice ctx, std::shared_ptr<void> stream);
+  DeviceStreamGuard(HerculesDevice ctx, std::shared_ptr<void> stream);
   virtual ~DeviceStreamGuard();
 
  private:
-  MATXScriptDevice device_;
+  HerculesDevice device_;
   DeviceAPI* device_api_;
   std::shared_ptr<void> old_stream_;
   std::shared_ptr<void> new_stream_;
@@ -236,4 +236,4 @@ int DeviceNameToType(const string_view& name);
 std::ostream& operator<<(std::ostream& os, DLDevice dev);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

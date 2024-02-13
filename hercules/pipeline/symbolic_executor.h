@@ -26,7 +26,7 @@
 #include <hercules/runtime/container.h>
 #include <hercules/runtime/container/_flat_hash_map.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct SymbolicExecutor {
@@ -45,4 +45,4 @@ struct SymbolicExecutor {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

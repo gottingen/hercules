@@ -48,7 +48,7 @@
 #include <hercules/runtime/bytes_hash.h>
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class string_view {
@@ -209,7 +209,7 @@ class string_view {
   // Returns the ith element of the `string_view` using the array operator.
   // Note that this operator does not perform any bounds checking.
   constexpr const_reference operator[](size_type i) const noexcept {
-    return MATXSCRIPT_ASSERT(i < size()), ptr_[i];
+    return HERCULES_ASSERT(i < size()), ptr_[i];
   }
 
   // string_view::at()
@@ -218,7 +218,7 @@ class string_view {
   // and an exception of type `std::out_of_range` will be thrown on invalid
   // access.
   constexpr const_reference at(size_type i) const {
-    return MATXSCRIPT_LIKELY(i < size()) ? ptr_[i] : throw std::out_of_range("string_view::at"),
+    return HERCULES_LIKELY(i < size()) ? ptr_[i] : throw std::out_of_range("string_view::at"),
            ptr_[i];
   }
 
@@ -226,14 +226,14 @@ class string_view {
   //
   // Returns the first element of a `string_view`.
   constexpr const_reference front() const noexcept {
-    return MATXSCRIPT_ASSERT(!empty()), ptr_[0];
+    return HERCULES_ASSERT(!empty()), ptr_[0];
   }
 
   // string_view::back()
   //
   // Returns the last element of a `string_view`.
   constexpr const_reference back() const noexcept {
-    return MATXSCRIPT_ASSERT(!empty()), ptr_[size() - 1];
+    return HERCULES_ASSERT(!empty()), ptr_[size() - 1];
   }
 
   // string_view::data()
@@ -254,7 +254,7 @@ class string_view {
   // Removes the first `n` characters from the `string_view`. Note that the
   // underlying std::string is not changed, only the view.
   void remove_prefix(size_type n) noexcept {
-    MATXSCRIPT_ASSERT(n <= length_);
+    HERCULES_ASSERT(n <= length_);
     ptr_ += n;
     length_ -= n;
   }
@@ -264,7 +264,7 @@ class string_view {
   // Removes the last `n` characters from the `string_view`. Note that the
   // underlying std::string is not changed, only the view.
   void remove_suffix(size_type n) noexcept {
-    MATXSCRIPT_ASSERT(n <= length_);
+    HERCULES_ASSERT(n <= length_);
     length_ -= n;
   }
 
@@ -292,7 +292,7 @@ class string_view {
   // Copies the contents of the `string_view` at offset `pos` and length `n`
   // into `buf`.
   size_type copy(char* buf, size_type n, size_type pos = 0) const {
-    if (MATXSCRIPT_UNLIKELY(pos > length_)) {
+    if (HERCULES_UNLIKELY(pos > length_)) {
       throw std::out_of_range("string_view::copy");
     }
     size_type rlen = (std::min)(length_ - pos, n);
@@ -309,7 +309,7 @@ class string_view {
   // `n`) as another string_view. This function throws `std::out_of_bounds` if
   // `pos > size`.
   string_view substr(size_type pos, size_type n = npos) const {
-    return MATXSCRIPT_UNLIKELY(pos > length_)
+    return HERCULES_UNLIKELY(pos > length_)
                ? (throw std::out_of_range("string_view::substr"), string_view{})
                : string_view(ptr_ + pos, Min(n, length_ - pos));
   }
@@ -506,13 +506,13 @@ inline string_view ClippedSubstr(string_view s, size_t pos, size_t n = string_vi
 
 struct std_string_hash {
   std::size_t operator()(const ::std::string& str) const {
-    return ::matxscript::runtime::BytesHash(str.data(), str.size());
+    return ::hercules::runtime::BytesHash(str.data(), str.size());
   }
-  std::size_t operator()(::matxscript::runtime::string_view str) const {
-    return ::matxscript::runtime::BytesHash(str.data(), str.size());
+  std::size_t operator()(::hercules::runtime::string_view str) const {
+    return ::hercules::runtime::BytesHash(str.data(), str.size());
   }
   std::size_t operator()(const char* str) const {
-    return operator()(::matxscript::runtime::string_view(str));
+    return operator()(::hercules::runtime::string_view(str));
   }
 };
 
@@ -520,55 +520,55 @@ struct std_string_equal_to {
   bool operator()(const ::std::string& a, const ::std::string& b) const {
     return a == b;
   }
-  bool operator()(const ::std::string& a, ::matxscript::runtime::string_view b) const {
+  bool operator()(const ::std::string& a, ::hercules::runtime::string_view b) const {
     return a == b;
   }
-  bool operator()(::matxscript::runtime::string_view a, const ::std::string& b) const {
+  bool operator()(::hercules::runtime::string_view a, const ::std::string& b) const {
     return a == b;
   }
   bool operator()(const ::std::string& a, const char* b) const {
-    return operator()(a, ::matxscript::runtime::string_view(b));
+    return operator()(a, ::hercules::runtime::string_view(b));
   }
   bool operator()(const char* a, const ::std::string& b) const {
-    return operator()(::matxscript::runtime::string_view(a), b);
+    return operator()(::hercules::runtime::string_view(a), b);
   }
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 namespace std {
 
 template <>
-struct hash<::matxscript::runtime::string_view> {
-  std::size_t operator()(::matxscript::runtime::string_view str) const {
-    return ::matxscript::runtime::BytesHash(str.data(), str.size());
+struct hash<::hercules::runtime::string_view> {
+  std::size_t operator()(::hercules::runtime::string_view str) const {
+    return ::hercules::runtime::BytesHash(str.data(), str.size());
   }
   std::size_t operator()(const ::std::string& str) const {
-    return ::matxscript::runtime::BytesHash(str.data(), str.size());
+    return ::hercules::runtime::BytesHash(str.data(), str.size());
   }
   std::size_t operator()(const char* str) const {
-    return operator()(::matxscript::runtime::string_view(str));
+    return operator()(::hercules::runtime::string_view(str));
   }
 };
 
 template <>
-struct equal_to<::matxscript::runtime::string_view> {
-  bool operator()(::matxscript::runtime::string_view a,
-                  ::matxscript::runtime::string_view b) const {
+struct equal_to<::hercules::runtime::string_view> {
+  bool operator()(::hercules::runtime::string_view a,
+                  ::hercules::runtime::string_view b) const {
     return a == b;
   }
-  bool operator()(const ::std::string& a, ::matxscript::runtime::string_view b) const {
+  bool operator()(const ::std::string& a, ::hercules::runtime::string_view b) const {
     return a == b;
   }
-  bool operator()(::matxscript::runtime::string_view a, const ::std::string& b) const {
+  bool operator()(::hercules::runtime::string_view a, const ::std::string& b) const {
     return a == b;
   }
-  bool operator()(::matxscript::runtime::string_view a, const char* b) const {
-    return operator()(a, ::matxscript::runtime::string_view(b));
+  bool operator()(::hercules::runtime::string_view a, const char* b) const {
+    return operator()(a, ::hercules::runtime::string_view(b));
   }
-  bool operator()(const char* a, ::matxscript::runtime::string_view b) const {
-    return operator()(::matxscript::runtime::string_view(a), b);
+  bool operator()(const char* a, ::hercules::runtime::string_view b) const {
+    return operator()(::hercules::runtime::string_view(a), b);
   }
 };
 

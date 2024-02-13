@@ -24,7 +24,7 @@
 #include <hercules/runtime/container.h>
 #include <hercules/runtime/type_helper_macros.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 extern std::string NormalizeError(std::string err_msg);
@@ -37,7 +37,7 @@ TEST(TypeAs, StackTraceWithPyInfo) {
     message.append(", line ").append("10");
     message.append(", in ").append("my_mock_func").append("\n");
     message.append("   ");
-    MATXSCRIPT_TYPE_AS_WITH_PY_INFO(a, int64_t, message.data());
+    HERCULES_TYPE_AS_WITH_PY_INFO(a, int64_t, message.data());
   } catch (const std::runtime_error& e) {
     auto ret = NormalizeError(e.what());
     std::cout << ret << std::endl;
@@ -47,11 +47,11 @@ TEST(TypeAs, StackTraceWithPyInfo) {
 TEST(TypeAs, MoveString) {
   constexpr char data[] = "Hello, World";
   RTValue d = data;
-  auto s1 = MATXSCRIPT_TYPE_AS(d, String);
+  auto s1 = HERCULES_TYPE_AS(d, String);
   EXPECT_EQ(s1, String(data));
   EXPECT_TRUE(d.Is<String>());
   EXPECT_EQ(d.As<String>(), String(data));
-  auto s2 = MATXSCRIPT_TYPE_AS(std::move(d), String);
+  auto s2 = HERCULES_TYPE_AS(std::move(d), String);
   EXPECT_EQ(s2, String(data));
   EXPECT_TRUE(d.is_nullptr());
 }
@@ -59,11 +59,11 @@ TEST(TypeAs, MoveString) {
 TEST(TypeAs, MoveUnicode) {
   constexpr char32_t data[] = U"Hello, World";
   RTValue d = data;
-  auto s1 = MATXSCRIPT_TYPE_AS(d, Unicode);
+  auto s1 = HERCULES_TYPE_AS(d, Unicode);
   EXPECT_EQ(s1, Unicode(data));
   EXPECT_TRUE(d.Is<Unicode>());
   EXPECT_EQ(d.As<Unicode>(), Unicode(data));
-  auto s2 = MATXSCRIPT_TYPE_AS(std::move(d), Unicode);
+  auto s2 = HERCULES_TYPE_AS(std::move(d), Unicode);
   EXPECT_EQ(s2, Unicode(data));
   EXPECT_TRUE(d.is_nullptr());
 }
@@ -71,14 +71,14 @@ TEST(TypeAs, MoveUnicode) {
 TEST(TypeAs, MoveObject) {
   List obj{RTValue(U"hello")};
   RTValue d(obj);
-  auto t1 = MATXSCRIPT_TYPE_AS(d, List);
+  auto t1 = HERCULES_TYPE_AS(d, List);
   EXPECT_EQ(t1, obj);
   EXPECT_TRUE(d.Is<List>());
   EXPECT_EQ(d.As<List>(), obj);
-  auto s2 = MATXSCRIPT_TYPE_AS(std::move(d), List);
+  auto s2 = HERCULES_TYPE_AS(std::move(d), List);
   EXPECT_EQ(s2, obj);
   EXPECT_TRUE(d.is_nullptr());
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

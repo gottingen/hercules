@@ -2,48 +2,48 @@
 #include <hercules/runtime/container/ndarray_helper.h>
 #include "hercules/runtime/runtime_port.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace {
 
 struct AddOP {
   template <typename LDType, typename RDType, typename DType>
-  MATXSCRIPT_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
+  HERCULES_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
     *t = ((DType)(x) + (DType)(y));
   }
 };
 
 struct MulOP {
   template <typename LDType, typename RDType, typename DType>
-  MATXSCRIPT_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
+  HERCULES_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
     *t = ((DType)(x) * (DType)(y));
   }
 };
 
 struct SubOP {
   template <typename LDType, typename RDType, typename DType>
-  MATXSCRIPT_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
+  HERCULES_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
     *t = ((DType)(x) - (DType)(y));
   }
 };
 
 struct RSubOP {
   template <typename LDType, typename RDType, typename DType>
-  MATXSCRIPT_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
+  HERCULES_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
     *t = ((DType)(y) - (DType)(x));
   }
 };
 
 struct DivOP {
   template <typename LDType, typename RDType, typename DType>
-  MATXSCRIPT_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
+  HERCULES_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
     *t = ((DType)(x) / (DType)(y));
   }
 };
 
 struct RDivOP {
   template <typename LDType, typename RDType, typename DType>
-  MATXSCRIPT_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
+  HERCULES_ALWAYS_INLINE static void Map(LDType x, RDType y, DType* t) {
     *t = ((DType)(y) / (DType)(x));
   }
 };
@@ -124,16 +124,16 @@ NDArray broadcast_binary_nd(const NDArray& nd1, const NDArray& nd2, const DataTy
   std::vector<int64_t> broadcast_shape;
   // TODO: nd.Shape create a new vector, which is not necessary here
   if (!NDArrayHelper::GetBroadcastShape(nd1.Shape(), nd2.Shape(), broadcast_shape)) {
-    MXTHROW << "ndarray operator: shape not match";
+    HSTHROW << "ndarray operator: shape not match";
   }
   std::vector<int64_t> nd1_strides =
       broadcast_stride(broadcast_shape, nd1.GetShapePtr(), nd1.GetStridesPtr(), nd1.GetDim());
   std::vector<int64_t> nd2_strides =
       broadcast_stride(broadcast_shape, nd2.GetShapePtr(), nd2.GetStridesPtr(), nd2.GetDim());
   NDArray ret = NDArray::Empty(broadcast_shape, data_type, nd1->device);
-  MATX_NDARRAY_TYPE_SWITCH(ret.DataType(), DType, {
-    MATX_NDARRAY_TYPE_SWITCH(nd1.DataType(), LDType, {
-      MATX_NDARRAY_TYPE_SWITCH(nd2.DataType(), RDType, {
+  HVM_NDARRAY_TYPE_SWITCH(ret.DataType(), DType, {
+    HVM_NDARRAY_TYPE_SWITCH(nd1.DataType(), LDType, {
+      HVM_NDARRAY_TYPE_SWITCH(nd2.DataType(), RDType, {
         LDType* l_data = (LDType*)((char*)nd1->data + nd1->byte_offset);
         RDType* r_data = (RDType*)((char*)nd2->data + nd2->byte_offset);
         DType* dst_data = (DType*)((char*)ret->data + ret->byte_offset);
@@ -154,8 +154,8 @@ NDArray broadcast_binary_nd(const NDArray& nd1, const NDArray& nd2, const DataTy
 template <typename OP, typename SType>
 void broadcast_binary_scalar(const NDArray& nd1, SType s, NDArray& ret) {
   auto shape = ret.Shape();
-  MATX_NDARRAY_TYPE_SWITCH(ret.DataType(), DType, {
-    MATX_NDARRAY_TYPE_SWITCH(nd1.DataType(), LDType, {
+  HVM_NDARRAY_TYPE_SWITCH(ret.DataType(), DType, {
+    HVM_NDARRAY_TYPE_SWITCH(nd1.DataType(), LDType, {
       LDType* l_data = (LDType*)((char*)nd1->data + nd1->byte_offset);
       DType* dst_data = (DType*)((char*)ret->data + ret->byte_offset);
       ScalarAssign<OP, DType, LDType, SType>(dst_data,
@@ -173,9 +173,9 @@ template <typename OP>
 NDArray contiguous_binary_nd(const NDArray& nd1, const NDArray& nd2, const DataType& data_type) {
   NDArray ret = NDArray::Empty(nd1.Shape(), data_type, nd1->device);
   int64_t element_num = NDArrayHelper::GetItemNum(ret.GetShapePtr(), ret.GetDim());
-  MATX_NDARRAY_TYPE_SWITCH(ret.DataType(), DType, {
-    MATX_NDARRAY_TYPE_SWITCH(nd1.DataType(), LDType, {
-      MATX_NDARRAY_TYPE_SWITCH(nd2.DataType(), RDType, {
+  HVM_NDARRAY_TYPE_SWITCH(ret.DataType(), DType, {
+    HVM_NDARRAY_TYPE_SWITCH(nd1.DataType(), LDType, {
+      HVM_NDARRAY_TYPE_SWITCH(nd2.DataType(), RDType, {
         LDType* l_data = (LDType*)((char*)nd1->data + nd1->byte_offset);
         RDType* r_data = (RDType*)((char*)nd2->data + nd2->byte_offset);
         DType* dst_data = (DType*)((char*)ret->data + ret->byte_offset);
@@ -191,8 +191,8 @@ NDArray contiguous_binary_nd(const NDArray& nd1, const NDArray& nd2, const DataT
 template <typename OP, typename SType>
 void contiguous_binary_scalar(const NDArray& nd1, SType s, NDArray& ret) {
   int64_t element_num = NDArrayHelper::GetItemNum(ret.GetShapePtr(), ret.GetDim());
-  MATX_NDARRAY_TYPE_SWITCH(ret.DataType(), DType, {
-    MATX_NDARRAY_TYPE_SWITCH(nd1.DataType(), LDType, {
+  HVM_NDARRAY_TYPE_SWITCH(ret.DataType(), DType, {
+    HVM_NDARRAY_TYPE_SWITCH(nd1.DataType(), LDType, {
       LDType* l_data = (LDType*)((char*)nd1->data + nd1->byte_offset);
       DType* dst_data = (DType*)((char*)ret->data + ret->byte_offset);
       for (int64_t i = 0; i < element_num; ++i) {
@@ -328,4 +328,4 @@ NDArray NDArrayOperate::Mul(const NDArray& lhs, double num) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -26,7 +26,7 @@
 #include <hercules/pipeline/attributes.h>
 #include <hercules/pipeline/node.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class TXSession;
@@ -69,4 +69,4 @@ struct NativeOp {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -24,7 +24,7 @@
 
 #include <hercules/runtime/logging.h>
 #ifndef RAPIDJSON_ASSERT
-#define RAPIDJSON_ASSERT(x) MXCHECK(x)
+#define RAPIDJSON_ASSERT(x) HSCHECK(x)
 #endif
 #include <hercules/runtime/container.h>
 #include <hercules/runtime/file_util.h>
@@ -33,7 +33,7 @@
 /**
  * util class for rapidjson.
  */
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace JsonUtil {
 
@@ -108,8 +108,8 @@ extern void Set(rapidjson::Value* obj,
 #ifndef JSON_GET
 #define JSON_GET(value, member, TYPE)                                      \
   [&]() {                                                                  \
-    MXCHECK((value).HasMember((member))) << #value " must define " member; \
-    MXCHECK((value)[(member)].Is##TYPE()) << member " must be a " #TYPE;   \
+    HSCHECK((value).HasMember((member))) << #value " must define " member; \
+    HSCHECK((value)[(member)].Is##TYPE()) << member " must be a " #TYPE;   \
     return (value)[(member)].Get##TYPE();                                  \
   }()
 #endif
@@ -119,11 +119,11 @@ extern void Set(rapidjson::Value* obj,
   [&]() {                                                                \
     if (!(value).HasMember((member)))                                    \
       return def;                                                        \
-    MXCHECK((value)[(member)].Is##TYPE()) << member " must be a " #TYPE; \
+    HSCHECK((value)[(member)].Is##TYPE()) << member " must be a " #TYPE; \
     return (value)[(member)].Get##TYPE();                                \
   }()
 #endif
 
 }  // namespace JsonUtil
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

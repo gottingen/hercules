@@ -29,7 +29,7 @@
 #include <hercules/runtime/memory.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
@@ -54,7 +54,7 @@ class IteratorNode : public Object {
 
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeIterator;
   static constexpr const char* _type_key = "Iterator";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(IteratorNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(IteratorNode, Object);
 
  public:
   friend class IteratorNodeTrait;
@@ -181,4 +181,4 @@ static inline Iterator MakeGenericIterator(CONTAINER_TYPE&& container,
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

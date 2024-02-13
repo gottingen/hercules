@@ -21,7 +21,7 @@
 
 #include <type_traits>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace details {
@@ -54,4 +54,4 @@ generic_enumerate(Iterable&& seq, long first = 0L) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

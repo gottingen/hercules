@@ -19,12 +19,12 @@
  */
 #include <hercules/runtime/unicodelib/unicode_normal_form.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace UnicodeNormalForm {
 
-MATX_DLL int32_t FromStr(string_view form) noexcept {
+HERCULES_DLL int32_t FromStr(string_view form) noexcept {
   if (form == "NFC") {
     return NFC;
   }
@@ -40,7 +40,7 @@ MATX_DLL int32_t FromStr(string_view form) noexcept {
   return Invalid;
 }
 
-MATX_DLL string_view ToStr(int32_t form) noexcept {
+HERCULES_DLL string_view ToStr(int32_t form) noexcept {
   switch (form) {
     case NFC: {
       return "NFC";
@@ -63,4 +63,4 @@ MATX_DLL string_view ToStr(int32_t form) noexcept {
 }  // namespace UnicodeNormalForm
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -21,7 +21,7 @@
 
 #include <hercules/ir/hlo_builtin.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 const BaseExprNode* FullTypedOptimizerAnalysis::RemoveMove(const BaseExprNode* node) {
@@ -170,24 +170,24 @@ static Array<BaseExpr> GetListLiteralValues(const BaseExprNode* init) {
   if (init->IsInstance<InitializerListNode>()) {
     return static_cast<const InitializerListNode*>(init)->fields;
   }
-  MXCHECK(init->IsInstance<CallNode>());
+  HSCHECK(init->IsInstance<CallNode>());
   auto* call_node = static_cast<const CallNode*>(init);
   if (call_node->op.as<ConstructorNode>()) {
     if (call_node->args.size() == 0) {
       return {};
     }
-    MXCHECK(call_node->args.size() == 1) << "argument size must be 0 or 1";
+    HSCHECK(call_node->args.size() == 1) << "argument size must be 0 or 1";
     return GetListLiteralValues(call_node->args[0].get());
   }
   if (call_node->op.same_as(builtin::list_fused_repeat_one())) {
-    MXCHECK(call_node->args.size() == 2) << "internal error";
+    HSCHECK(call_node->args.size() == 2) << "internal error";
     return {call_node->args[1]};
   }
   if (call_node->op.same_as(builtin::list_fused_repeat_many())) {
-    MXCHECK(call_node->args.size() == 2) << "internal error";
+    HSCHECK(call_node->args.size() == 2) << "internal error";
     return GetListLiteralValues(call_node->args[1].get());
   }
-  MXTHROW << "internal error";
+  HSTHROW << "internal error";
   return {};
 }
 
@@ -195,14 +195,14 @@ static Map<BaseExpr, BaseExpr> GetDictLiteralValues(const BaseExprNode* init) {
   if (init->IsInstance<InitializerDictNode>()) {
     return static_cast<const InitializerDictNode*>(init)->fields;
   }
-  MXCHECK(init->IsInstance<CallNode>());
+  HSCHECK(init->IsInstance<CallNode>());
   auto* call_node = static_cast<const CallNode*>(init);
   auto* call_op = call_node->op.as<ConstructorNode>();
-  MXCHECK(call_op) << "[internal error] expect the op is an constructor";
+  HSCHECK(call_op) << "[internal error] expect the op is an constructor";
   if (call_node->args.size() == 0) {
     return {};
   }
-  MXCHECK(call_node->args.size() == 1) << "argument size must be 0 or 1";
+  HSCHECK(call_node->args.size() == 1) << "argument size must be 0 or 1";
   return GetDictLiteralValues(call_node->args[0].get());
 }
 
@@ -367,7 +367,7 @@ FullTypedOptimizerMutator::FullTypedOptimizerMutator()
       } {
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.FullTypedOptimizer_GetMoveVarAndLineno")
+HERCULES_REGISTER_GLOBAL("ir.FullTypedOptimizer_GetMoveVarAndLineno")
     .set_body_typed([](BaseFunc f) {
       FullTypedOptimizerAnalysis analysis;
       auto result = analysis.run(f);
@@ -383,10 +383,10 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.FullTypedOptimizer_GetMoveVarAndLineno")
       return runtime::Tuple(info.begin(), info.end());
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.FullTypedOptimizerMutator").set_body_typed([](BaseFunc f) {
+HERCULES_REGISTER_GLOBAL("ir.FullTypedOptimizerMutator").set_body_typed([](BaseFunc f) {
   FullTypedOptimizerMutator optimizer;
   return runtime::RTValue(optimizer.run(f));
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

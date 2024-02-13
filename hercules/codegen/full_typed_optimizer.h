@@ -25,7 +25,7 @@
 
 #include <hercules/ir/stmt_functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class FullTypedOptimizerAnalysis : public StmtExprVisitor {
@@ -201,4 +201,4 @@ class FullTypedOptimizerMutator : public StmtExprMutator {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

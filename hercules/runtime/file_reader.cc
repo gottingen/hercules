@@ -24,7 +24,7 @@
 
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 size_t FileReader::_s_buf_size = 8 * 1024 * 1024;
@@ -34,7 +34,7 @@ FileReader::FileReader(string_view path, bool keep_newline) {
   _keep_newline = keep_newline;
   _path = std::string(path.data(), path.size());
   _fd = open(_path.c_str(), O_RDONLY);
-  MXCHECK_NE(_fd, -1) << "[FileReader] open file failed! \"" << _path.c_str()
+  HSCHECK_NE(_fd, -1) << "[FileReader] open file failed! \"" << _path.c_str()
                       << "\" maybe not exists.";
   _buffer.capacity = _s_buf_size;
   _buffer.data = new char[_buffer.capacity + 1];
@@ -187,4 +187,4 @@ bool FileReader::readLineFromBuffer(const char** line, size_t* len) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

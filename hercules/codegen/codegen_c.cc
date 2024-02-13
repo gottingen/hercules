@@ -34,7 +34,7 @@
 #include <hercules/runtime/str_escape.h>
 #include <hercules/runtime/string_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace codegen {
 
 using namespace ir;
@@ -104,7 +104,7 @@ void CodeGenC::PrintLineVars(std::ostream& os,
                              bool no_alias,
                              bool use_move,
                              bool skip_first) {
-  MXCHECK(params.size() >= default_params.size());
+  HSCHECK(params.size() >= default_params.size());
   size_t default_begin_pos = params.size() - default_params.size();
   size_t params_begin_pos = skip_first ? 1 : 0;
   for (size_t i = params_begin_pos; i < params.size(); ++i) {
@@ -152,7 +152,7 @@ void CodeGenC::PrintLineVars(std::ostream& os,
       }
     }
     if (with_defaults) {
-      MXCHECK(with_var_type && with_var_name);
+      HSCHECK(with_var_type && with_var_name);
       if (i >= default_begin_pos) {
         std::ostringstream temp_ss;
         VisitExpr(default_params[i - default_begin_pos], temp_ss);
@@ -203,7 +203,7 @@ void CodeGenC::AddFunctionDeclaration(const ir::BaseFunc& f) {
   PrintLineVars(this->stream, f->GetParams(), f->GetDefaultParams(), true, true, true, true);
   stream << ");\n";
   this->stream << "int " << FunctionNameRules::add_packed_suffix(func_name)
-               << "(MATXScriptAny*, int, MATXScriptAny*, void*);\n";
+               << "(HerculesAny*, int, HerculesAny*, void*);\n";
 }
 
 void CodeGenC::AddFunction(const Function& f) {
@@ -342,8 +342,8 @@ void CodeGenC::PrintPackedFunctionMacro(const String& global_symbol,
   };
   // declare c packed function
   stream << "int " << FunctionNameRules::add_packed_suffix(global_symbol) << "(";
-  stream << "MATXScriptAny* args, int num_args, ";
-  stream << "MATXScriptAny* out_ret_value, void* resource_handle = nullptr)\n";
+  stream << "HerculesAny* args, int num_args, ";
+  stream << "HerculesAny* out_ret_value, void* resource_handle = nullptr)\n";
   stream << "{\n";
   auto scope = this->BeginScope();
 
@@ -489,7 +489,7 @@ void CodeGenC::PrintExpr(const BaseExpr& n, std::ostream& os) {  // NOLINT(*)
     } else if (const HLOExprNode* hlo = n.as<HLOExprNode>()) {
       os << SSAGetID(temp.str(), hlo->checked_type_, os);
     } else {
-      MXTHROW << "[BaseExpr:" << n->GetTypeKey() << "] is not supported";
+      HSTHROW << "[BaseExpr:" << n->GetTypeKey() << "] is not supported";
     }
   } else {
     VisitExpr(n, os);
@@ -548,7 +548,7 @@ String CodeGenC::GetBufferRef(DataType t, const PrimVarNode* buffer, PrimExpr in
       // optimize for constant access
       if (auto* ptr = index.as<IntImmNode>()) {
         int64_t offset = ptr->value;
-        MXCHECK_EQ(offset % t.lanes(), 0) << "Find unaligned vector load to a vector type";
+        HSCHECK_EQ(offset % t.lanes(), 0) << "Find unaligned vector load to a vector type";
         os << vid << '[' << (offset / t.lanes()) << ']';
         return os.str();
       }
@@ -593,7 +593,7 @@ void CodeGenC::RegisterHandleType(const PrimVarNode* buf_var, DataType t) {
   if (it == handle_data_type_.end()) {
     handle_data_type_[buf_var] = t;
   } else {
-    MXCHECK(it->second == t) << "conflicting buf var type";
+    HSCHECK(it->second == t) << "conflicting buf var type";
   }
 }
 
@@ -611,7 +611,7 @@ void CodeGenC::PrintStorageSync(const PrimCallNode* op) {  // NOLINT(*)
 }
 
 void CodeGenC::PrintStorageScope(const String& scope, std::ostream& os) {  // NOLINT(*)
-  MXCHECK_EQ(scope, "global");
+  HSCHECK_EQ(scope, "global");
 }
 
 void CodeGenC::PrintSpan(const Span& span, std::ostream& os) {
@@ -640,7 +640,7 @@ String CodeGenC::GenPythonStyleSpanMessage(const Span& span, const string_view& 
 }
 
 void CodeGenC::PrintType(DataType t, std::ostream& os) {  // NOLINT(*)
-  MXCHECK_EQ(t.lanes(), 1) << "do not yet support vector types";
+  HSCHECK_EQ(t.lanes(), 1) << "do not yet support vector types";
   if (t.is_handle()) {
     os << "void*";
     return;
@@ -678,7 +678,7 @@ void CodeGenC::PrintType(DataType t, std::ostream& os) {  // NOLINT(*)
       }
     }
   }
-  MXLOG(FATAL) << "Cannot convert type " << t << " to C type";
+  HSLOG(FATAL) << "Cannot convert type " << t << " to C type";
 }
 
 void CodeGenC::PrintType(const Type& type, std::ostream& os) {  // NOLINT(*)
@@ -772,10 +772,10 @@ void CodeGenC::PrintType(const Type& type, std::ostream& os) {  // NOLINT(*)
     PrintType(ptr->value, os);
     os << "&";
   } else if (auto* ptr = type.as<RangeTypeNode>()) {
-    MXLOG(FATAL)
+    HSLOG(FATAL)
         << "RangeType should be decomposed by compiler. Please contact the developer to resolve the issue";
   } else {
-    MXLOG(FATAL) << "Type " << type << " does not have a corresponding Runtime Type";
+    HSLOG(FATAL) << "Type " << type << " does not have a corresponding Runtime Type";
   }
 }
 
@@ -811,7 +811,7 @@ String CodeGenC::PrintTypeCast(const Type& from_type,
         // UserData to ClassType
         return String::Concat({to_type_repr, "(", value, ")"});
       } else {
-        MXTHROW << "Internal Error: can not convert '" << from_type0->GetPythonTypeName()
+        HSTHROW << "Internal Error: can not convert '" << from_type0->GetPythonTypeName()
                 << "' to '" << to_type0->GetPythonTypeName() << "'";
         return String{};
       }
@@ -820,7 +820,7 @@ String CodeGenC::PrintTypeCast(const Type& from_type,
       if (IsUserDataType(to_type0) || IsObjectType(to_type0)) {
         return String::Concat({"(", value, ").operator ", to_type_repr, "()"});
       } else {
-        MXTHROW << "Internal Error: can not convert '" << from_type0->GetPythonTypeName()
+        HSTHROW << "Internal Error: can not convert '" << from_type0->GetPythonTypeName()
                 << "' to '" << to_type0->GetPythonTypeName() << "'";
         return String{};
       }
@@ -859,7 +859,7 @@ String CodeGenC::PrintTypeCast(const Type& from_type,
     }
   }
   // should be unreachable
-  MXTHROW << "Internal Error: can not convert '" << from_type0->GetPythonTypeName() << "' to '"
+  HSTHROW << "Internal Error: can not convert '" << from_type0->GetPythonTypeName() << "' to '"
           << to_type0->GetPythonTypeName() << "'";
   return String{};
 }
@@ -924,7 +924,7 @@ inline void PrintConst(const FloatImmNode* op, std::ostream& os, CodeGenC* p) { 
       break;
     }
     default:
-      MXLOG(FATAL) << "Bad bit-width for float: " << op->dtype << "\n";
+      HSLOG(FATAL) << "Bad bit-width for float: " << op->dtype << "\n";
   }
 }
 
@@ -983,7 +983,7 @@ inline void PrintBinaryIntrinsic(const PrimCallNode* op,
                                  std::ostream& os,  // NOLINT(*)
                                  CodeGenC* p) {
   if (op->dtype.lanes() == 1) {
-    MXCHECK_EQ(op->args.size(), 2U);
+    HSCHECK_EQ(op->args.size(), 2U);
     os << '(';
     p->PrintExpr(op->args[0], os);
     os << opstr;
@@ -1100,7 +1100,7 @@ void CodeGenC::VisitExpr_(const PrimCallNode* op, std::ostream& os) {  // NOLINT
     auto call_op = GetRef<Op>(ptr_op);
 
     if (op->op.same_as(builtin_call_extern_) || op->op.same_as(builtin_call_pure_extern_)) {
-      MXCHECK_GE(op->args.size(), 1U);
+      HSCHECK_GE(op->args.size(), 1U);
       auto func = Downcast<StringImm>(op->args[0]);
       this->PrintCallExtern(GetType(GetRef<PrimExpr>(op)),
                             func->value,
@@ -1117,7 +1117,7 @@ void CodeGenC::VisitExpr_(const PrimCallNode* op, std::ostream& os) {  // NOLINT
     } else if (op->op.same_as(builtin::bitwise_and())) {
       PrintBinaryIntrinsic(op, " & ", os, this);
     } else if (op->op.same_as(builtin::large_uint_imm())) {
-      MXCHECK_EQ(op->args.size(), 2U);
+      HSCHECK_EQ(op->args.size(), 2U);
       uint64_t low = static_cast<uint64_t>(Downcast<IntImm>(op->args[0])->value);
       uint64_t high = static_cast<uint64_t>(Downcast<IntImm>(op->args[1])->value);
       uint64_t val = (high << 32U) | low;
@@ -1127,7 +1127,7 @@ void CodeGenC::VisitExpr_(const PrimCallNode* op, std::ostream& os) {  // NOLINT
     } else if (op->op.same_as(builtin::bitwise_or())) {
       PrintBinaryIntrinsic(op, " | ", os, this);
     } else if (op->op.same_as(builtin::bitwise_not())) {
-      MXCHECK_EQ(op->args.size(), 1U);
+      HSCHECK_EQ(op->args.size(), 1U);
       os << "(~";
       this->PrintExpr(op->args[0], os);
       os << ')';
@@ -1145,9 +1145,9 @@ void CodeGenC::VisitExpr_(const PrimCallNode* op, std::ostream& os) {  // NOLINT
       PrintExpr(op->args[2], os);
       os << ")";
     } else if (op->op.same_as(builtin::address_of())) {
-      MXTHROW << "not support builtin::address_of";
+      HSTHROW << "not support builtin::address_of";
       //      const LoadNode* l = op->args[0].as<LoadNode>();
-      //      MXCHECK(op->args.size() == 1 && l);
+      //      HSCHECK(op->args.size() == 1 && l);
       //      os << "((";
       //      this->PrintType(l->dtype.element_of(), os);
       //      os << " *)" << this->GetVarID(l->buffer_var.get()) << " + "
@@ -1158,7 +1158,7 @@ void CodeGenC::VisitExpr_(const PrimCallNode* op, std::ostream& os) {  // NOLINT
       //      }
       //      os << "))";
     } else if (op->op.same_as(builtin::isnullptr())) {
-      MXCHECK_EQ(op->args.size(), 1U);
+      HSCHECK_EQ(op->args.size(), 1U);
       os << "(";
       this->PrintExpr(op->args[0], os);
       os << " == NULL)";
@@ -1176,12 +1176,12 @@ void CodeGenC::VisitExpr_(const PrimCallNode* op, std::ostream& os) {  // NOLINT
       this->PrintExpr(op->args[0], os);
       os << ")";
     } else {
-      MXLOG(FATAL) << "Unresolved call " << op->op;
+      HSLOG(FATAL) << "Unresolved call " << op->op;
     }
   } else {
-    // MXCHECK(op->op.as<GlobalVarNode>());
-    MXLOG(FATAL) << "Do not yet support cross function call";
-    MXCHECK(false);
+    // HSCHECK(op->op.as<GlobalVarNode>());
+    HSLOG(FATAL) << "Do not yet support cross function call";
+    HSCHECK(false);
   }
 }
 
@@ -1208,7 +1208,7 @@ void CodeGenC::PrintVecBinaryOp(const String& op,
 void CodeGenC::VisitExpr_(const PrimLetNode* op, std::ostream& os) {  // NOLINT(*)
   auto it = let_binding_.find(op->var);
   if (it != let_binding_.end()) {
-    MXCHECK(deep_equal_(it->second->value, op->value))
+    HSCHECK(deep_equal_(it->second->value, op->value))
         << "Let cannot bind the same var to two different values";
   } else {
     let_binding_[op->var] = op;
@@ -1220,7 +1220,7 @@ void CodeGenC::VisitExpr_(const PrimLetNode* op, std::ostream& os) {  // NOLINT(
 
 // void CodeGenC::VisitExpr_(const RampNode* op, std::ostream& os) {  // NOLINT(*)
 //  // constraint of current logic
-//  MXCHECK_EQ(op->base.dtype(), DataType::Int(32));
+//  HSCHECK_EQ(op->base.dtype(), DataType::Int(32));
 //  os << "((int" << op->lanes << ")(";
 //  for (int i = 0; i < op->lanes; i++) {
 //    os << "(" << PrintExpr(op->base) << ")"
@@ -1340,7 +1340,7 @@ void CodeGenC::VisitStmt_(const AllocaVarStmtNode* op, std::ostream& os) {
     this->PrintType(var->type_annotation, os);
     os << " " << var->name_hint();
   } else {
-    MXCHECK(false) << "only support PrimVar and HLOVar...";
+    HSCHECK(false) << "only support PrimVar and HLOVar...";
   }
   if (op->init_value.defined()) {
     os << " = (";
@@ -1484,7 +1484,7 @@ void CodeGenC::VisitStmt_(const AutoForNode* op, std::ostream& os) {
     String var_type = ss.str();
     temp_vars.emplace(var_key, VarInfo{var_name, var_type, temp_var.second->checked_type()});
   }
-  MXCHECK(op->raw_container->checked_type()->Iterable()) << raw_container << " is not iterable";
+  HSCHECK(op->raw_container->checked_type()->Iterable()) << raw_container << " is not iterable";
 
   // unroll zip
   bool unroll_zip_state = [op]() {
@@ -1608,7 +1608,7 @@ void CodeGenC::VisitStmt_(const AutoForNode* op, std::ostream& os) {
     }
     // cache enumerate pos
     if (unroll_enumerate_state) {
-      MXCHECK(op->temp_vars.contains(AutoFor::TEMP_ENUMERATE_POS_VAR_KEY));
+      HSCHECK(op->temp_vars.contains(AutoFor::TEMP_ENUMERATE_POS_VAR_KEY));
       auto* enum_node_ptr = op->raw_container.as<HLOEnumerateNode>();
       String enum_pos_vid = temp_vars[AutoFor::TEMP_ENUMERATE_POS_VAR_KEY].name;
       PrintIndent(os);
@@ -1620,7 +1620,7 @@ void CodeGenC::VisitStmt_(const AutoForNode* op, std::ostream& os) {
       os << ";";
       PrintSpanWithNewLine(op->span, os);
     }
-    MXCHECK_EQ(iter_var_reprs.size(), iter_end_var_reprs.size());
+    HSCHECK_EQ(iter_var_reprs.size(), iter_end_var_reprs.size());
     for (auto ii = 0; ii < iter_var_reprs.size(); ++ii) {
       bool has_begin_end = op->eval_containers[ii]->checked_type()->HasBeginEnd();
       // print begin or make_iterable
@@ -1683,7 +1683,7 @@ void CodeGenC::VisitStmt_(const AutoForNode* op, std::ostream& os) {
     };
     int li_start = 0;
     if (unroll_enumerate_state) {
-      MXCHECK(op->temp_vars.contains(AutoFor::TEMP_ENUMERATE_POS_VAR_KEY));
+      HSCHECK(op->temp_vars.contains(AutoFor::TEMP_ENUMERATE_POS_VAR_KEY));
       String enum_pos_vid = temp_vars[AutoFor::TEMP_ENUMERATE_POS_VAR_KEY].name;
       PrintIndent(os);
       if (!op->yield_mode) {
@@ -1751,7 +1751,7 @@ void CodeGenC::VisitStmt_(const AutoForNode* op, std::ostream& os) {
           os << "++" << iter_var_reprs[iter_idx].name << ";";
           PrintSpanWithNewLine(op->span, os);
         } else {
-          MXCHECK(loop_var_holder_ii < loop_var_holder_reprs.size()) << "internal error";
+          HSCHECK(loop_var_holder_ii < loop_var_holder_reprs.size()) << "internal error";
           auto loop_var_holder = loop_var_holder_reprs[loop_var_holder_ii++];
           String vid_iter_has_next = iter_end_var_reprs[iter_idx].name;
           String vid_iter_next_holder = loop_var_holder.name;
@@ -1780,7 +1780,7 @@ void CodeGenC::VisitStmt_(const AutoForNode* op, std::ostream& os) {
         }
       }
     } else {
-      MXCHECK(op->temp_vars.contains(AutoFor::TEMP_VALUE_VAR_KEY));
+      HSCHECK(op->temp_vars.contains(AutoFor::TEMP_VALUE_VAR_KEY));
       const String& vid_value = temp_vars[AutoFor::TEMP_VALUE_VAR_KEY].name;
       const String& vid_type = temp_vars[AutoFor::TEMP_VALUE_VAR_KEY].type;
       const Type& vid_ir_type = RemoveReference(temp_vars[AutoFor::TEMP_VALUE_VAR_KEY].ir_type);
@@ -1835,7 +1835,7 @@ void CodeGenC::VisitStmt_(const AutoForNode* op, std::ostream& os) {
         os << "++" << iter_var_reprs[0].name << ";";
         PrintSpanWithNewLine(op->span, os);
       } else {
-        MXCHECK(!loop_var_holder_reprs.empty()) << "internal error";
+        HSCHECK(!loop_var_holder_reprs.empty()) << "internal error";
         auto loop_var_holder = loop_var_holder_reprs[0];
         String vid_iter_has_next = iter_end_var_reprs[0].name;
         String vid_iter_next_holder = loop_var_holder.name;
@@ -1962,7 +1962,7 @@ void CodeGenC::VisitExpr_(const ConstructorNode* op, std::ostream& os) {  // NOL
   }
 }
 
-void CodeGenC::PrintAsRTValue(::matxscript::ir::BaseExpr expr, std::ostream& os) {
+void CodeGenC::PrintAsRTValue(::hercules::ir::BaseExpr expr, std::ostream& os) {
   if (auto* n = expr.as<StringImmNode>()) {
     VisitExpr_(n, os);
   } else if (auto* n = expr.as<IntImmNode>()) {
@@ -2074,7 +2074,7 @@ void CodeGenC::PrintAsConstructor(const CallNode* op, std::ostream& os) {
         std::stringstream tmp_ss;
         PrintAsRTValue(init_iter->container, tmp_ss);
         auto iter_c_name = tmp_ss.str();
-        os << "::matxscript::runtime::Iterator(" << iter_c_name << ")";
+        os << "::hercules::runtime::Iterator(" << iter_c_name << ")";
       } else {
         os << "(";
         PrintAsRTValue(op->args[i], os);
@@ -2091,8 +2091,8 @@ void CodeGenC::VisitExpr_(const CallNode* op, std::ostream& os) {  // NOLINT(*)
   } else if (auto* ptr_op = op->op.as<OpNode>()) {
     auto call_op = GetRef<Op>(ptr_op);
     if (op->op.same_as(builtin_call_extern_) || op->op.same_as(builtin_call_pure_extern_)) {
-      MXCHECK_GE(op->args.size(), 1U);
-      MXCHECK(op->type_args.empty()) << "[call extern] type_args is not supported!!!";
+      HSCHECK_GE(op->args.size(), 1U);
+      HSCHECK(op->type_args.empty()) << "[call extern] type_args is not supported!!!";
       auto func = Downcast<StringImm>(op->args[0]);
       this->PrintCallExtern(op->checked_type(), func->value, op->args, true, os);
     } else if (op_attr_global_symbol_.count(call_op)) {
@@ -2102,7 +2102,7 @@ void CodeGenC::VisitExpr_(const CallNode* op, std::ostream& os) {  // NOLINT(*)
       // call method if the op itself have a method symbol.
       this->PrintCallMethod(op, os);
     } else if (op->op.same_as(builtin::call_lambda())) {  // hlo arith
-      MXCHECK_GE(op->args.size(), 1U);
+      HSCHECK_GE(op->args.size(), 1U);
       // function
       this->VisitExpr(op->args[0], os);
       os << "(";
@@ -2114,9 +2114,9 @@ void CodeGenC::VisitExpr_(const CallNode* op, std::ostream& os) {  // NOLINT(*)
       }
       os << ")";
     } else if (op->op.same_as(builtin::torch_ops())) {
-      MXCHECK(op->args.size() >= 1);
+      HSCHECK(op->args.size() >= 1);
       auto func_name = op->args[0].as<StringImmNode>();
-      MXCHECK(func_name != nullptr);
+      HSCHECK(func_name != nullptr);
       os << "call_native_function(\"torch_ops_" << func_name->value << "\"";
       for (auto i = 1; i < op->args.size(); ++i) {
         os << ", ";
@@ -2124,9 +2124,9 @@ void CodeGenC::VisitExpr_(const CallNode* op, std::ostream& os) {  // NOLINT(*)
       }
       os << ")";
     } else if (op->op.same_as(builtin::numpy_ops())) {
-      MXCHECK(op->args.size() >= 1);
+      HSCHECK(op->args.size() >= 1);
       auto func_name = op->args[0].as<StringImmNode>();
-      MXCHECK(func_name != nullptr);
+      HSCHECK(func_name != nullptr);
       os << "call_native_function(\"numpy_ops_" << func_name->value << "\"";
       for (auto i = 1; i < op->args.size(); ++i) {
         os << ", ";
@@ -2134,8 +2134,8 @@ void CodeGenC::VisitExpr_(const CallNode* op, std::ostream& os) {  // NOLINT(*)
       }
       os << ")";
     } else if (op->op.same_as(builtin::make_kwargs_op())) {
-      MXCHECK(op->args.size() % 2 == 0);
-      os << "::matxscript::runtime::Kwargs({";
+      HSCHECK(op->args.size() % 2 == 0);
+      os << "::hercules::runtime::Kwargs({";
       for (auto i = 0; i < op->args.size(); i += 2) {
         if (i > 0) {
           os << ", ";
@@ -2150,7 +2150,7 @@ void CodeGenC::VisitExpr_(const CallNode* op, std::ostream& os) {  // NOLINT(*)
       os << "})";
     } else if (op->op.same_as(builtin::if_then_else()) ||
                op->op.same_as(builtin::hlo_if_then_else())) {
-      MXCHECK(op->args.size() == 3) << "internal error";
+      HSCHECK(op->args.size() == 3) << "internal error";
       os << "(";
       PrintExpr(op->args[0], os);
       os << " ? ";
@@ -2159,7 +2159,7 @@ void CodeGenC::VisitExpr_(const CallNode* op, std::ostream& os) {  // NOLINT(*)
       PrintExpr(op->args[2], os);
       os << ")";
     } else {
-      MXLOG(FATAL) << "Unresolved call " << op->op;
+      HSLOG(FATAL) << "Unresolved call " << op->op;
     }
   } else {
     this->PrintExpr(op->op, os);
@@ -2175,7 +2175,7 @@ void CodeGenC::VisitExpr_(const CallNode* op, std::ostream& os) {  // NOLINT(*)
 }
 
 void CodeGenC::PrintCallMethod(const CallNode* op, std::ostream& os) {
-  MXCHECK_GE(op->args.size(), 1);
+  HSCHECK_GE(op->args.size(), 1);
   Op builtin_op = Downcast<Op>(op->op);
   String method = op_attr_method_symbol_.get(builtin_op, "").operator String();
 
@@ -2205,7 +2205,7 @@ void CodeGenC::PrintCallMethod(const CallNode* op, std::ostream& os) {
   if (op->op.same_as(builtin::user_data_call_attr())) {
     // user data dispatch
     arg_index += 1;
-    MXCHECK(op->args[1]->IsInstance<StringImmNode>())
+    HSCHECK(op->args[1]->IsInstance<StringImmNode>())
         << "generic dispatch second arg must be function name";
     os << "\"" << op->args[1].as<StringImmNode>()->value << "\"";
     if (op->args.size() > arg_index) {
@@ -2232,30 +2232,30 @@ void CodeGenC::PrintCallMethod(const CallNode* op, std::ostream& os) {
 void CodeGenC::PrintCallFunction(const CallNode* op, std::ostream& os) {
   Op builtin_op = Downcast<Op>(op->op);
   String func_name = op_attr_global_symbol_.get(builtin_op, "").operator String();
-  MXCHECK(!func_name.empty());
+  HSCHECK(!func_name.empty());
 
   auto* ptr_op = op->op.as<OpNode>();
   // step1: check arguments number
   if (ptr_op->num_inputs >= 0) {
     if (ptr_op->num_inputs_max == ptr_op->num_inputs) {
-      MXCHECK_GE(ptr_op->num_inputs, op->args.size())
+      HSCHECK_GE(ptr_op->num_inputs, op->args.size())
           << "[CodeGenC::PrintCallFunction] arg num is mismatched, expect " << ptr_op->num_inputs
           << ", but get " << op->args.size() << ", op:" << func_name;
     } else if (ptr_op->num_inputs_max > 0) {
-      MXCHECK(op->args.size() >= ptr_op->num_inputs && op->args.size() <= ptr_op->num_inputs_max)
+      HSCHECK(op->args.size() >= ptr_op->num_inputs && op->args.size() <= ptr_op->num_inputs_max)
           << "[CodeGenC::PrintCallFunction] arg num is mismatched, expect (" << ptr_op->num_inputs
           << "-" << ptr_op->num_inputs_max << ")"
           << ", but get " << op->args.size() << ", op:" << func_name;
     } else {
       // -1 means it is variable length
-      MXCHECK_GE(op->args.size(), ptr_op->num_inputs)
+      HSCHECK_GE(op->args.size(), ptr_op->num_inputs)
           << "[CodeGenC::PrintCallFunction] arg num is mismatched, expect " << ptr_op->num_inputs
           << " or more, but get " << op->args.size() << ", op:" << func_name;
     }
   } else {
     // -1 means it is variable length
     if (op->op.same_as(builtin::object___dispatch__())) {
-      MXCHECK_GE(op->args.size(), 2)
+      HSCHECK_GE(op->args.size(), 2)
           << "[CodeGenC::PrintGenericBuiltinOp] arg num is mismatched, expect ge 2"
           << ", but get " << op->args.size() << ", op:" << func_name;
     }
@@ -2288,7 +2288,7 @@ void CodeGenC::PrintCallFunction(const CallNode* op, std::ostream& os) {
   bool is_object = func_name.substr(0, strlen("kernel_object_")) == "kernel_object_";
   int32_t arg_index = 0;
   if (is_object) {
-    MXCHECK(op->args.size() >= 1) << "object.func(...) first arg must be self";
+    HSCHECK(op->args.size() >= 1) << "object.func(...) first arg must be self";
     arg_index += 1;
     auto& self_type = RemoveReference(op->args[0]->checked_type_);
     if (self_type.as<ClassTypeNode>()) {
@@ -2305,7 +2305,7 @@ void CodeGenC::PrintCallFunction(const CallNode* op, std::ostream& os) {
   if (op->op.same_as(builtin::object___dispatch__())) {
     // user data dispatch
     arg_index += 1;
-    MXCHECK(op->args[1]->IsInstance<StringImmNode>())
+    HSCHECK(op->args[1]->IsInstance<StringImmNode>())
         << "generic dispatch second arg must be function name";
     os << "\"" << op->args[1].as<StringImmNode>()->value << "\"";
     os << ", ";
@@ -2313,7 +2313,7 @@ void CodeGenC::PrintCallFunction(const CallNode* op, std::ostream& os) {
              op->op.same_as(builtin::object___setattr__())) {
     // user data dispatch
     arg_index += 1;
-    MXCHECK(op->args[1]->IsInstance<StringImmNode>())
+    HSCHECK(op->args[1]->IsInstance<StringImmNode>())
         << "generic dispatch second arg must be attribute name";
     os << "\"" << op->args[1].as<StringImmNode>()->value << "\"";
     if (op->args.size() > 2) {
@@ -2395,4 +2395,4 @@ void CodeGenC::PrintStmt(const Stmt& n, std::ostream& os) {
 }
 
 }  // namespace codegen
-}  // namespace matxscript
+}  // namespace hercules

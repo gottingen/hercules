@@ -26,7 +26,7 @@
 #include <hercules/ir/hlo_builtin.h>
 #include <hercules/ir/stmt_functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class FuseContCasterOptimizer : public StmtExprMutator {
@@ -66,4 +66,4 @@ class FuseContCasterOptimizer : public StmtExprMutator {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

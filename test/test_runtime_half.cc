@@ -22,7 +22,7 @@
 #include <gtest/gtest.h>
 #include <hercules/runtime/half.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Half, float_half_conversion) {
@@ -70,4 +70,4 @@ TEST(Half, Div) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

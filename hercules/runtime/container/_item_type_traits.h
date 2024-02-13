@@ -23,7 +23,7 @@
 
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace details {
@@ -105,4 +105,4 @@ using ITEM_TRANSFORM_TYPE =
 
 }  // namespace details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

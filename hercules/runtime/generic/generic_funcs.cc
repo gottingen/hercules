@@ -45,14 +45,14 @@
 #include <hercules/runtime/unicodelib/py_unicodedata.h>
 #endif
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * user data custom method
  *****************************************************************************/
 RTValue kernel_object___dispatch__(const Any& self, string_view func_name, PyArgs args) {
-  MXCHECK(self.type_code() == TypeIndex::kRuntimeUserData)
+  HSCHECK(self.type_code() == TypeIndex::kRuntimeUserData)
       << self.type_name() << " has no method named " << func_name;
   return self.AsObjectViewNoCheck<UserDataRef>().data().generic_call_attr(func_name, args);
 }
@@ -96,7 +96,7 @@ int64_t kernel_object___len__(const Any& self) {
       return ud_view.data().generic_call_attr("__len__", {}).As<int64_t>();
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"len\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"len\"";
     } break;
   }
   // this is unreachable, just for disable warning!
@@ -137,7 +137,7 @@ RTValue kernel_object___getitem__(const Any& self, const Any& key) {
       return ud_view.data().generic_call_attr("__getitem__", PyArgs(&key, 1));
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"__getitem__\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"__getitem__\"";
     } break;
   }
   // this is unreachable, just for disable warning!
@@ -166,14 +166,14 @@ RTValue kernel_object___setitem__(const Any& self, const Any& key, const Any& it
       return ud_view.data().generic_call_attr("__setitem__", {key.As<RTView>(), item.As<RTView>()});
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"__setitem__\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"__setitem__\"";
     } break;
   }
   return None;
 }
 
 RTValue kernel_object___delitem__(const Any& self, const Any& key) {
-  MXTHROW << "\"" << self.type_name() << "\" object has no method \"__delitem__\"";
+  HSTHROW << "\"" << self.type_name() << "\" object has no method \"__delitem__\"";
   return None;
 }
 
@@ -184,7 +184,7 @@ RTValue kernel_object___getattr__(const Any& self, string_view attr) {
       return ud_view.data().__getattr__(attr);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"__getattr__\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"__getattr__\"";
     } break;
   }
   // this is unreachable, just for disable warning!
@@ -198,7 +198,7 @@ RTValue kernel_object___setattr__(const Any& self, string_view attr, const Any& 
       ud_ref.set_attr(attr, item);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"__setattr__\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"__setattr__\"";
     } break;
   }
   return None;
@@ -245,7 +245,7 @@ RTValue kernel_object___getslice__(const Any& self,
           "__getslice__", {start.As<RTView>(), end.As<RTView>(), step.As<RTView>()});
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"__getslice__\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"__getslice__\"";
     } break;
   }
   // this is unreachable, just for disable warning!
@@ -274,7 +274,7 @@ RTValue kernel_object___setslice__(const Any& self,
           "__setslice__", {start.As<RTView>(), end.As<RTView>(), item.As<RTView>()});
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"__setslice__\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"__setslice__\"";
     } break;
   }
   // this is unreachable, just for disable warning!
@@ -282,7 +282,7 @@ RTValue kernel_object___setslice__(const Any& self,
 }
 
 RTValue kernel_object___reversed__(const Any& self) {
-  MXTHROW << "\"" << self.type_name() << "\" object has no method \"__reversed__\"";
+  HSTHROW << "\"" << self.type_name() << "\" object has no method \"__reversed__\"";
   return None;
 }
 
@@ -317,7 +317,7 @@ bool kernel_object___contains__(const Any& self, const Any& item) {
       return ud_view.data().generic_call_attr("__contains__", PyArgs(&item, 1)).As<bool>();
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"__contains__\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"__contains__\"";
     } break;
   }
   // this is unreachable, just for disable warning!
@@ -325,7 +325,7 @@ bool kernel_object___contains__(const Any& self, const Any& item) {
 }
 
 RTValue kernel_object___hash__(const Any& self) {
-  MXTHROW << "\"" << self.type_name() << "\" object has no method \"__hash__\"";
+  HSTHROW << "\"" << self.type_name() << "\" object has no method \"__hash__\"";
   return None;
 }
 
@@ -386,7 +386,7 @@ RTValue kernel_object___fused_setitem__(const Any& self, const PyArgs& keys, con
 RTValue kernel_object_append(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeList: {
-      MXCHECK_EQ(args.size(), 1) << "list.append Expect 1 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 1) << "list.append Expect 1 arguments but get " << args.size();
       self.AsObjectViewNoCheck<List>().data().push_back(args[0].As<RTValue>());
     } break;
     case TypeIndex::kRuntimeFTList: {
@@ -398,7 +398,7 @@ RTValue kernel_object_append(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("append", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"append\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"append\"";
     } break;
   }
   return None;
@@ -407,7 +407,7 @@ RTValue kernel_object_append(const Any& self, PyArgs args) {
 RTValue kernel_object_add(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeSet: {
-      MXCHECK_EQ(args.size(), 1) << "set.add Expect 1 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 1) << "set.add Expect 1 arguments but get " << args.size();
       self.AsObjectViewNoCheck<Set>().data().add(args[0].As<RTValue>());
     } break;
     case TypeIndex::kRuntimeFTSet: {
@@ -419,7 +419,7 @@ RTValue kernel_object_add(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("add", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"add\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"add\"";
     } break;
   }
   return None;
@@ -428,8 +428,8 @@ RTValue kernel_object_add(const Any& self, PyArgs args) {
 RTValue kernel_object_extend(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeList: {
-      MXCHECK_EQ(args.size(), 1) << "list.extend Expect 1 arguments but get " << args.size();
-      MXCHECK(args[0].IsObjectRef<List>())
+      HSCHECK_EQ(args.size(), 1) << "list.extend Expect 1 arguments but get " << args.size();
+      HSCHECK(args[0].IsObjectRef<List>())
           << "\"" << args[0].type_name() << "\" is not a valid argument type. "
           << "You can only extend a List with List.";
       self.AsObjectViewNoCheck<List>().data().extend(args[0].AsObjectViewNoCheck<List>().data());
@@ -443,7 +443,7 @@ RTValue kernel_object_extend(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("extend", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"extend\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"extend\"";
     } break;
   }
   return None;
@@ -451,15 +451,15 @@ RTValue kernel_object_extend(const Any& self, PyArgs args) {
 RTValue kernel_object_clear(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeList: {
-      MXCHECK_EQ(args.size(), 0) << "list.clear Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "list.clear Expect 0 arguments but get " << args.size();
       self.AsObjectViewNoCheck<List>().data().clear();
     } break;
     case TypeIndex::kRuntimeDict: {
-      MXCHECK_EQ(args.size(), 0) << "dict.clear Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "dict.clear Expect 0 arguments but get " << args.size();
       self.AsObjectViewNoCheck<Dict>().data().clear();
     } break;
     case TypeIndex::kRuntimeSet: {
-      MXCHECK_EQ(args.size(), 0) << "set.clear Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "set.clear Expect 0 arguments but get " << args.size();
       self.AsObjectViewNoCheck<Set>().data().clear();
     } break;
     case TypeIndex::kRuntimeFTList:
@@ -473,7 +473,7 @@ RTValue kernel_object_clear(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("clear", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"clear\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"clear\"";
     } break;
   }
   return None;
@@ -482,15 +482,15 @@ RTValue kernel_object_clear(const Any& self, PyArgs args) {
 RTValue kernel_object_reserve(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeList: {
-      MXCHECK_EQ(args.size(), 1) << "list.reserve Expect 1 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 1) << "list.reserve Expect 1 arguments but get " << args.size();
       self.AsObjectViewNoCheck<List>().data().reserve(args[0].As<int64_t>());
     } break;
     case TypeIndex::kRuntimeDict: {
-      MXCHECK_EQ(args.size(), 1) << "dict.reserve Expect 1 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 1) << "dict.reserve Expect 1 arguments but get " << args.size();
       self.AsObjectViewNoCheck<Dict>().data().reserve(args[0].As<int64_t>());
     } break;
     case TypeIndex::kRuntimeSet: {
-      MXCHECK_EQ(args.size(), 1) << "set.reserve Expect 1 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 1) << "set.reserve Expect 1 arguments but get " << args.size();
       self.AsObjectViewNoCheck<Set>().data().reserve(args[0].As<int64_t>());
     } break;
     case TypeIndex::kRuntimeFTList:
@@ -504,7 +504,7 @@ RTValue kernel_object_reserve(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("reserve", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"reserve\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"reserve\"";
     } break;
   }
   return None;
@@ -513,7 +513,7 @@ RTValue kernel_object_reserve(const Any& self, PyArgs args) {
 RTValue kernel_object_capacity(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeList: {
-      MXCHECK_EQ(args.size(), 0) << "list.capacity Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "list.capacity Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<List>().data().capacity();
     } break;
     case TypeIndex::kRuntimeFTList: {
@@ -525,7 +525,7 @@ RTValue kernel_object_capacity(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("capacity", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"capacity\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"capacity\"";
     } break;
   }
 
@@ -536,11 +536,11 @@ RTValue kernel_object_capacity(const Any& self, PyArgs args) {
 RTValue kernel_object_bucket_count(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeDict: {
-      MXCHECK_EQ(args.size(), 0) << "dict.bucket_count Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "dict.bucket_count Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<Dict>().data().bucket_count();
     } break;
     case TypeIndex::kRuntimeSet: {
-      MXCHECK_EQ(args.size(), 0) << "set.bucket_count Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "set.bucket_count Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<Set>().data().bucket_count();
     } break;
     case TypeIndex::kRuntimeFTDict:
@@ -553,7 +553,7 @@ RTValue kernel_object_bucket_count(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("bucket_count", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"bucket_count\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"bucket_count\"";
     } break;
   }
 
@@ -564,7 +564,7 @@ RTValue kernel_object_bucket_count(const Any& self, PyArgs args) {
 RTValue kernel_object_find(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeUnicode: {
-      MXCHECK(args.size() >= 1 && args.size() <= 3)
+      HSCHECK(args.size() >= 1 && args.size() <= 3)
           << "unicode.find Expect 1, 2 or 3 arguments but get " << args.size();
       if (args.size() == 1) {
         return UnicodeHelper::PyFind(self.AsNoCheck<unicode_view>(), args[0].As<unicode_view>());
@@ -583,7 +583,7 @@ RTValue kernel_object_find(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("find", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"find\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"find\"";
     } break;
   }
   return None;
@@ -592,7 +592,7 @@ RTValue kernel_object_find(const Any& self, PyArgs args) {
 RTValue kernel_object_update(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeTrie: {
-      MXCHECK(args.size() == 1 || args.size() == 2)
+      HSCHECK(args.size() == 1 || args.size() == 2)
           << "trie.update Expect 1 or 2 arguments but get " << args.size();
       if (args.size() == 1) {
         self.ptr<TrieNode>()->update(args[0]);
@@ -612,7 +612,7 @@ RTValue kernel_object_update(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("update", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"update\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"update\"";
     } break;
   }
   return None;
@@ -620,7 +620,7 @@ RTValue kernel_object_update(const Any& self, PyArgs args) {
 
 RTValue container_min(const Iterator& iter) {
   auto iter_node = iter.GetMutableNode();
-  MXCHECK(iter_node || iter_node->HasNext()) << "input is empty";
+  HSCHECK(iter_node || iter_node->HasNext()) << "input is empty";
   RTValue min_value = iter_node->Next();
   while (iter_node->HasNext()) {
     RTValue item = iter_node->Next();
@@ -633,7 +633,7 @@ RTValue container_min(const Iterator& iter) {
 
 RTValue container_max(const Iterator& iter) {
   auto iter_node = iter.GetMutableNode();
-  MXCHECK(iter_node || iter_node->HasNext()) << "input is empty";
+  HSCHECK(iter_node || iter_node->HasNext()) << "input is empty";
   RTValue max_value = iter_node->Next();
   while (iter_node->HasNext()) {
     RTValue item = iter_node->Next();
@@ -667,7 +667,7 @@ NDArray kernel_nd_module_add(const Any& lhs, const Any& rhs) {
       rhs.type_code() == TypeIndex::kRuntimeNDArray) {
     return NDArrayOperate::Add(rhs.AsObjectViewNoCheck<NDArray>().data(), lhs.As<double>());
   }
-  MXTHROW << "NDArray add op only supports: "
+  HSTHROW << "NDArray add op only supports: "
           << "(NDArray,NDArray) and (NDArray, number)";
   return {};
 }
@@ -694,7 +694,7 @@ NDArray kernel_nd_module_sub(const Any& lhs, const Any& rhs) {
       rhs.type_code() == TypeIndex::kRuntimeNDArray) {
     return NDArrayOperate::Sub(lhs.As<double>(), rhs.AsObjectViewNoCheck<NDArray>().data());
   }
-  MXTHROW << "NDArray sub op only supports: "
+  HSTHROW << "NDArray sub op only supports: "
           << "(NDArray,NDArray) and (NDArray, number)";
   return {};
 }
@@ -723,7 +723,7 @@ NDArray kernel_nd_module_div(const Any& lhs, const Any& rhs) {
       rhs.type_code() == TypeIndex::kRuntimeNDArray) {
     return NDArrayOperate::Div(lhs.As<double>(), rhs.AsObjectViewNoCheck<NDArray>().data());
   }
-  MXTHROW << "NDArray div op only supports: "
+  HSTHROW << "NDArray div op only supports: "
           << "(NDArray,NDArray) and (NDArray, number)";
   return {};
 }
@@ -750,21 +750,21 @@ NDArray kernel_nd_module_mul(const Any& lhs, const Any& rhs) {
       rhs.type_code() == TypeIndex::kRuntimeNDArray) {
     return NDArrayOperate::Mul(rhs.AsObjectViewNoCheck<NDArray>().data(), lhs.As<double>());
   }
-  MXTHROW << "NDArray multiply op only supports: "
+  HSTHROW << "NDArray multiply op only supports: "
           << "(NDArray,NDArray) and (NDArray, number)";
   return {};
 }
 
 NDArray kernel_nd_module_rand(const Any& view) {
-  MXCHECK(view.type_code() == TypeIndex::kRuntimeList) << "argument of matx.nd_rand must be List";
+  HSCHECK(view.type_code() == TypeIndex::kRuntimeList) << "argument of hvm.nd_rand must be List";
   const auto& obj_view = view.AsObjectViewNoCheck<List>();
   const List& obj = obj_view.data();
   std::vector<int64_t> shape(obj.size(), 0);
   for (size_t i = 0; i < shape.size(); ++i) {
-    MXCHECK(obj[i].type_code() == TypeIndex::kRuntimeInteger)
-        << "matx.nd_rand: argument shape is invalid";
+    HSCHECK(obj[i].type_code() == TypeIndex::kRuntimeInteger)
+        << "hvm.nd_rand: argument shape is invalid";
     shape[i] = obj[i].As<int64_t>();
-    MXCHECK(shape[i] > 0) << "argument shape is invalid";
+    HSCHECK(shape[i] > 0) << "argument shape is invalid";
   }
   return NDArrayOperate::Rand(shape);
 }
@@ -786,13 +786,13 @@ NDArray kernel_nd_module_stack(PyArgs args) {
 }
 
 void kernel_list_module_sort(PyArgs args) {
-  MXCHECK(args.size() == 1 || args.size() == 2)
+  HSCHECK(args.size() == 1 || args.size() == 2)
       << "list_sort expect 1 or 2 args, bug get " << args.size();
-  MXCHECK(args[0].type_code() == TypeIndex::kRuntimeList) << "list_sort: first arg must be List";
+  HSCHECK(args[0].type_code() == TypeIndex::kRuntimeList) << "list_sort: first arg must be List";
   if (args.size() == 1) {
     return ListHelper::Sort(args[0].AsObjectViewNoCheck<List>().data());
   } else {
-    MXCHECK(args[1].type_code() == TypeIndex::kRuntimeUserData)
+    HSCHECK(args[1].type_code() == TypeIndex::kRuntimeUserData)
         << "list_sort: second arg must be UserDataRef";
     return ListHelper::Sort(args[0].AsObjectViewNoCheck<List>().data(),
                             args[1].AsObjectViewNoCheck<UserDataRef>().data());
@@ -800,15 +800,15 @@ void kernel_list_module_sort(PyArgs args) {
 }
 
 void kernel_list_module_nth_element(PyArgs args) {
-  MXCHECK(args.size() == 2 || args.size() == 3)
+  HSCHECK(args.size() == 2 || args.size() == 3)
       << "list_nth_element expect 2 or 3 args, bug get " << args.size();
-  MXCHECK(args[0].type_code() == TypeIndex::kRuntimeList)
+  HSCHECK(args[0].type_code() == TypeIndex::kRuntimeList)
       << "list_nth_element: first arg must be List";
   if (args.size() == 2) {
     return ListHelper::NthElement(args[0].AsObjectViewNoCheck<List>().data(),
                                   args[1].As<int64_t>());
   } else {
-    MXCHECK(args[2].type_code() == TypeIndex::kRuntimeUserData)
+    HSCHECK(args[2].type_code() == TypeIndex::kRuntimeUserData)
         << "list_nth_element: third arg must be UserDataRef";
     return ListHelper::NthElement(args[0].AsObjectViewNoCheck<List>().data(),
                                   args[1].As<int64_t>(),
@@ -817,13 +817,13 @@ void kernel_list_module_nth_element(PyArgs args) {
 }
 
 void kernel_list_module_heapify(PyArgs args) {
-  MXCHECK(args.size() == 1 || args.size() == 2)
+  HSCHECK(args.size() == 1 || args.size() == 2)
       << "list_heapify expect 1 or 2 args, bug get " << args.size();
-  MXCHECK(args[0].type_code() == TypeIndex::kRuntimeList) << "list_heapify: first arg must be List";
+  HSCHECK(args[0].type_code() == TypeIndex::kRuntimeList) << "list_heapify: first arg must be List";
   if (args.size() == 1) {
     return ListHelper::Heapify(args[0].AsObjectViewNoCheck<List>().data());
   } else {
-    MXCHECK(args[1].type_code() == TypeIndex::kRuntimeUserData)
+    HSCHECK(args[1].type_code() == TypeIndex::kRuntimeUserData)
         << "list_heapify: second arg must be UserDataRef";
     return ListHelper::Heapify(args[0].AsObjectViewNoCheck<List>().data(),
                                args[1].AsObjectViewNoCheck<UserDataRef>().data());
@@ -831,14 +831,14 @@ void kernel_list_module_heapify(PyArgs args) {
 }
 
 void kernel_list_module_heap_replace(PyArgs args) {
-  MXCHECK(args.size() == 2 || args.size() == 3)
+  HSCHECK(args.size() == 2 || args.size() == 3)
       << "list_heap_replace expect 2 or 3 args, bug get " << args.size();
-  MXCHECK(args[0].type_code() == TypeIndex::kRuntimeList)
+  HSCHECK(args[0].type_code() == TypeIndex::kRuntimeList)
       << "list_heap_replace: first arg must be List";
   if (args.size() == 2) {
     return ListHelper::HeapReplace(args[0].AsObjectViewNoCheck<List>().data(), args[1]);
   } else {
-    MXCHECK(args[2].type_code() == TypeIndex::kRuntimeUserData)
+    HSCHECK(args[2].type_code() == TypeIndex::kRuntimeUserData)
         << "list_heap_replace: third arg must be UserDataRef";
     return ListHelper::HeapReplace(args[0].AsObjectViewNoCheck<List>().data(),
                                    args[1],
@@ -847,14 +847,14 @@ void kernel_list_module_heap_replace(PyArgs args) {
 }
 
 RTValue kernel_list_module_heap_pushpop(PyArgs args) {
-  MXCHECK(args.size() == 2 || args.size() == 3)
+  HSCHECK(args.size() == 2 || args.size() == 3)
       << "list_heap_pushpop expect 2 or 3 args, bug get " << args.size();
-  MXCHECK(args[0].type_code() == TypeIndex::kRuntimeList)
+  HSCHECK(args[0].type_code() == TypeIndex::kRuntimeList)
       << "list_heap_pushpop: first arg must be List";
   if (args.size() == 2) {
     return ListHelper::HeapPushPop(args[0].AsObjectViewNoCheck<List>().data(), args[1]);
   } else {
-    MXCHECK(args[2].type_code() == TypeIndex::kRuntimeUserData)
+    HSCHECK(args[2].type_code() == TypeIndex::kRuntimeUserData)
         << "list_heap_pushpop: third arg must be UserDataRef";
     return ListHelper::HeapPushPop(args[0].AsObjectViewNoCheck<List>().data(),
                                    args[1],
@@ -862,36 +862,36 @@ RTValue kernel_list_module_heap_pushpop(PyArgs args) {
   }
 }
 
-static void MATXCUDAStreamDeleter(void* self) {
+static void HVMCUDAStreamDeleter(void* self) {
   auto stream_info = reinterpret_cast<StreamInfo*>(self);
-  MATXScriptStreamFree(DLDeviceType::kDLCUDA,
+  HerculesStreamFree(DLDeviceType::kDLCUDA,
                        stream_info->device_id,
-                       reinterpret_cast<MATXScriptStreamHandle>(stream_info->device_stream));
+                       reinterpret_cast<HerculesStreamHandle>(stream_info->device_stream));
 
   stream_info->~StreamInfo();
 }
 
 OpaqueObject kernel_cuda_module_default_stream(int64_t device_id) {
-  MXCHECK(device_id >= 0) << "Device Id must be equal or greater than zeros .";
+  HSCHECK(device_id >= 0) << "Device Id must be equal or greater than zeros .";
 
-  MATXScriptStreamHandle stream = nullptr;
+  HerculesStreamHandle stream = nullptr;
   OpaqueObject opaque_object = OpaqueObject();
   unsigned char* buffer_ptr = opaque_object.GetInternalBufferPtr();
 
   StreamInfo* stream_info = new (buffer_ptr)(StreamInfo);
   stream_info->device_id = device_id;
   stream_info->device_stream = stream;
-  opaque_object.update(1, stream_info, MATXCUDAStreamDeleter);
+  opaque_object.update(1, stream_info, HVMCUDAStreamDeleter);
   return opaque_object;
 }
 
 OpaqueObject kernel_cuda_module_create_stream(int64_t device_id) {
-  MXCHECK(device_id >= 0) << "Device Id must be equal or greater than zeros .";
+  HSCHECK(device_id >= 0) << "Device Id must be equal or greater than zeros .";
 
-  MATXScriptDevice device;
+  HerculesDevice device;
   device.device_id = device_id;
   device.device_type = DLDeviceType::kDLCUDA;
-  MATXScriptStreamHandle stream = DeviceAPI::Get(device)->CreateStream(device);
+  HerculesStreamHandle stream = DeviceAPI::Get(device)->CreateStream(device);
 
   OpaqueObject opaque_object = OpaqueObject();
   unsigned char* buffer_ptr = opaque_object.GetInternalBufferPtr();
@@ -899,7 +899,7 @@ OpaqueObject kernel_cuda_module_create_stream(int64_t device_id) {
   StreamInfo* stream_info = new (buffer_ptr)(StreamInfo);
   stream_info->device_id = device_id;
   stream_info->device_stream = stream;
-  opaque_object.update(1, stream_info, MATXCUDAStreamDeleter);
+  opaque_object.update(1, stream_info, HVMCUDAStreamDeleter);
   return opaque_object;
 }
 
@@ -908,9 +908,9 @@ void kernel_cuda_module_stream_sync(const OpaqueObject& stream, int64_t device_i
     THROW_PY_ValueError("stream_sync() Device Id must be equal or greater than zeros.");
   }
   StreamInfo* stream_info = reinterpret_cast<StreamInfo*>(stream.GetOpaquePtr());
-  MATXScriptSynchronize(DLDeviceType::kDLCUDA,
+  HerculesSynchronize(DLDeviceType::kDLCUDA,
                         stream_info->device_id,
-                        reinterpret_cast<MATXScriptStreamHandle>(stream_info->device_stream));
+                        reinterpret_cast<HerculesStreamHandle>(stream_info->device_stream));
 }
 
 void kernel_cuda_module_stream_sync(const Any& stream, int64_t device_id) {
@@ -949,12 +949,12 @@ static auto _iter_max(T begin, T end) {
 }
 
 RTValue kernel_math_iterable_min(const List& arg) {
-  MXCHECK(!arg.empty()) << "input is empty";
+  HSCHECK(!arg.empty()) << "input is empty";
   return _iter_min(arg.begin(), arg.end());
 }
 
 RTValue kernel_math_iterable_min(const Set& arg) {
-  MXCHECK(!arg.empty()) << "input is empty";
+  HSCHECK(!arg.empty()) << "input is empty";
   return _iter_min(arg.begin(), arg.end());
 }
 
@@ -986,12 +986,12 @@ RTValue kernel_math_min(PyArgs args) {
 }
 
 RTValue kernel_math_iterable_max(const List& arg) {
-  MXCHECK(!arg.empty()) << "input is empty";
+  HSCHECK(!arg.empty()) << "input is empty";
   return _iter_max(arg.begin(), arg.end());
 }
 
 RTValue kernel_math_iterable_max(const Set& arg) {
-  MXCHECK(!arg.empty()) << "input is empty";
+  HSCHECK(!arg.empty()) << "input is empty";
   return _iter_max(arg.begin(), arg.end());
 }
 
@@ -1026,11 +1026,11 @@ RTValue kernel_math_max(PyArgs args) {
 RTValue kernel_object_lower(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeString: {
-      MXCHECK_EQ(args.size(), 0) << "bytes.lower Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "bytes.lower Expect 0 arguments but get " << args.size();
       return StringHelper::Lower(self.AsNoCheck<string_view>());
     } break;
     case TypeIndex::kRuntimeUnicode: {
-      MXCHECK_EQ(args.size(), 0) << "unicode.lower Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "unicode.lower Expect 0 arguments but get " << args.size();
       return UnicodeHelper::Lower(self.AsNoCheck<unicode_view>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1038,7 +1038,7 @@ RTValue kernel_object_lower(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("lower", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"lower\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"lower\"";
     } break;
   }
   // this is unreachable, just for disable warning!
@@ -1047,11 +1047,11 @@ RTValue kernel_object_lower(const Any& self, PyArgs args) {
 RTValue kernel_object_upper(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeString: {
-      MXCHECK_EQ(args.size(), 0) << "bytes.upper Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "bytes.upper Expect 0 arguments but get " << args.size();
       return StringHelper::Upper(self.AsNoCheck<string_view>());
     } break;
     case TypeIndex::kRuntimeUnicode: {
-      MXCHECK_EQ(args.size(), 0) << "unicode.upper Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "unicode.upper Expect 0 arguments but get " << args.size();
       return UnicodeHelper::Upper(self.AsNoCheck<unicode_view>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1059,7 +1059,7 @@ RTValue kernel_object_upper(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("upper", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"upper\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"upper\"";
     } break;
   }
   // this is unreachable, just for disable warning!
@@ -1069,11 +1069,11 @@ RTValue kernel_object_upper(const Any& self, PyArgs args) {
 RTValue kernel_object_isdigit(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeString: {
-      MXCHECK_EQ(args.size(), 0) << "bytes.isdigit Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "bytes.isdigit Expect 0 arguments but get " << args.size();
       return StringHelper::Isdigit(self.AsNoCheck<string_view>());
     } break;
     case TypeIndex::kRuntimeUnicode: {
-      MXCHECK_EQ(args.size(), 0) << "unicode.isdigit Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "unicode.isdigit Expect 0 arguments but get " << args.size();
       return UnicodeHelper::IsDigit(self.AsNoCheck<unicode_view>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1081,7 +1081,7 @@ RTValue kernel_object_isdigit(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("isdigit", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"isdigit\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"isdigit\"";
     } break;
   }
   // this is unreachable, just for disable warning!
@@ -1091,11 +1091,11 @@ RTValue kernel_object_isdigit(const Any& self, PyArgs args) {
 RTValue kernel_object_isalpha(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeString: {
-      MXCHECK_EQ(args.size(), 0) << "bytes.isalpha Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "bytes.isalpha Expect 0 arguments but get " << args.size();
       return StringHelper::Isalpha(self.AsNoCheck<string_view>());
     } break;
     case TypeIndex::kRuntimeUnicode: {
-      MXCHECK_EQ(args.size(), 0) << "unicode.isalpha Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "unicode.isalpha Expect 0 arguments but get " << args.size();
       return UnicodeHelper::IsAlpha(self.AsNoCheck<unicode_view>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1103,7 +1103,7 @@ RTValue kernel_object_isalpha(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("isalpha", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"isalpha\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"isalpha\"";
     } break;
   }
   // this is unreachable, just for disable warning!
@@ -1113,7 +1113,7 @@ RTValue kernel_object_isalpha(const Any& self, PyArgs args) {
 RTValue kernel_object_encode(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeUnicode: {
-      MXCHECK_EQ(args.size(), 0) << "unicode.encode Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "unicode.encode Expect 0 arguments but get " << args.size();
       return UnicodeHelper::Encode(self.AsNoCheck<unicode_view>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1121,7 +1121,7 @@ RTValue kernel_object_encode(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("encode", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"encode\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"encode\"";
     } break;
   }
   return None;
@@ -1130,7 +1130,7 @@ RTValue kernel_object_encode(const Any& self, PyArgs args) {
 RTValue kernel_object_decode(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeString: {
-      MXCHECK_EQ(args.size(), 0) << "bytes.decode Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "bytes.decode Expect 0 arguments but get " << args.size();
       return StringHelper::Decode(self.AsNoCheck<string_view>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1138,7 +1138,7 @@ RTValue kernel_object_decode(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("decode", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"decode\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"decode\"";
     } break;
   }
   return None;
@@ -1203,9 +1203,9 @@ RTValue kernel_object_split(const Any& self, PyArgs args) {
         }
       }
     } break;
-#ifdef MATX_ENABLE_PCRE_REGEX
+#ifdef HVM_ENABLE_PCRE_REGEX
     case TypeIndex::kRuntimeRegex: {
-      MXCHECK(args.size() == 1) << "re.split Expect 1 arguments but get " << args.size();
+      HSCHECK(args.size() == 1) << "re.split Expect 1 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<Regex>().data().split(args[0]);
     } break;
 #endif
@@ -1214,7 +1214,7 @@ RTValue kernel_object_split(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("split", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"split\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"split\"";
     } break;
   }
   return None;
@@ -1223,11 +1223,11 @@ RTValue kernel_object_split(const Any& self, PyArgs args) {
 RTValue kernel_object_join(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeString: {
-      MXCHECK(args.size() == 1) << "bytes.join Expect 1 arguments but get " << args.size();
+      HSCHECK(args.size() == 1) << "bytes.join Expect 1 arguments but get " << args.size();
       return StringHelper::Join(self.AsNoCheck<string_view>(), args[0]);
     } break;
     case TypeIndex::kRuntimeUnicode: {
-      MXCHECK(args.size() == 1) << "unicode.join Expect 1 arguments but get " << args.size();
+      HSCHECK(args.size() == 1) << "unicode.join Expect 1 arguments but get " << args.size();
       return UnicodeHelper::Join(self.AsNoCheck<unicode_view>(), args[0]);
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1235,7 +1235,7 @@ RTValue kernel_object_join(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("join", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"join\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"join\"";
     } break;
   }
   return None;
@@ -1243,9 +1243,9 @@ RTValue kernel_object_join(const Any& self, PyArgs args) {
 
 RTValue kernel_object_replace(const Any& self, PyArgs args) {
   switch (self.type_code()) {
-#ifdef MATX_ENABLE_PCRE_REGEX
+#ifdef HVM_ENABLE_PCRE_REGEX
     case TypeIndex::kRuntimeRegex: {
-      MXCHECK(args.size() == 2) << "re.replace Expect 2 arguments but get " << args.size();
+      HSCHECK(args.size() == 2) << "re.replace Expect 2 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<Regex>().data().replace(args[0], args[1]);
     } break;
 #endif
@@ -1254,7 +1254,7 @@ RTValue kernel_object_replace(const Any& self, PyArgs args) {
         return StringHelper::Replace(
             self.AsNoCheck<string_view>(), args[0].As<string_view>(), args[1].As<string_view>());
       }
-      MXCHECK(args.size() == 3) << "bytes.replace Expect 2 or 3 arguments but get " << args.size();
+      HSCHECK(args.size() == 3) << "bytes.replace Expect 2 or 3 arguments but get " << args.size();
       return StringHelper::Replace(self.AsNoCheck<string_view>(),
                                    args[0].As<string_view>(),
                                    args[1].As<string_view>(),
@@ -1265,7 +1265,7 @@ RTValue kernel_object_replace(const Any& self, PyArgs args) {
         return UnicodeHelper::Replace(
             self.AsNoCheck<unicode_view>(), args[0].As<unicode_view>(), args[1].As<unicode_view>());
       }
-      MXCHECK(args.size() == 3) << "unicode.replace Expect 2 or 3 arguments but get "
+      HSCHECK(args.size() == 3) << "unicode.replace Expect 2 or 3 arguments but get "
                                 << args.size();
       return UnicodeHelper::Replace(self.AsNoCheck<unicode_view>(),
                                     args[0].As<unicode_view>(),
@@ -1277,14 +1277,14 @@ RTValue kernel_object_replace(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("replace", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"split\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"split\"";
     } break;
   }
   return None;
 }
 RTValue kernel_object_match(const Any& self, PyArgs args) {
   switch (self.type_code()) {
-#ifdef MATX_ENABLE_PCRE_REGEX
+#ifdef HVM_ENABLE_PCRE_REGEX
     case TypeIndex::kRuntimeRegex: {
       int64_t offset = 0;
       if (args.size() == 2) {
@@ -1298,7 +1298,7 @@ RTValue kernel_object_match(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("match", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"match\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"match\"";
     } break;
   }
   return None;
@@ -1313,7 +1313,7 @@ RTValue kernel_object_startswith(const Any& self, PyArgs args) {
         return StringHelper::StartsWith(
             self.AsNoCheck<string_view>(), args[0], args[1].As<int64_t>());
       }
-      MXCHECK(args.size() == 3) << "bytes.startswith Expect 1, 2 or 3 arguments but get "
+      HSCHECK(args.size() == 3) << "bytes.startswith Expect 1, 2 or 3 arguments but get "
                                 << args.size();
       return StringHelper::StartsWith(
           self.AsNoCheck<string_view>(), args[0], args[1].As<int64_t>(), args[2].As<int64_t>());
@@ -1325,7 +1325,7 @@ RTValue kernel_object_startswith(const Any& self, PyArgs args) {
         return UnicodeHelper::StartsWith(
             self.AsNoCheck<unicode_view>(), args[0], args[1].As<int64_t>());
       }
-      MXCHECK(args.size() == 3) << "unicode.startswith Expect 1, 2 or 3 arguments but get "
+      HSCHECK(args.size() == 3) << "unicode.startswith Expect 1, 2 or 3 arguments but get "
                                 << args.size();
       return UnicodeHelper::StartsWith(
           self.AsNoCheck<unicode_view>(), args[0], args[1].As<int64_t>(), args[2].As<int64_t>());
@@ -1335,7 +1335,7 @@ RTValue kernel_object_startswith(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("startswith", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" container has no method \"startswith\"";
+      HSTHROW << "\"" << self.type_name() << "\" container has no method \"startswith\"";
     } break;
   }
   return None;
@@ -1350,7 +1350,7 @@ RTValue kernel_object_endswith(const Any& self, PyArgs args) {
         return StringHelper::EndsWith(
             self.AsNoCheck<string_view>(), args[0], args[1].As<int64_t>());
       }
-      MXCHECK(args.size() == 3) << "bytes.endswith Expect 1, 2 or 3 arguments but get "
+      HSCHECK(args.size() == 3) << "bytes.endswith Expect 1, 2 or 3 arguments but get "
                                 << args.size();
       return StringHelper::EndsWith(
           self.AsNoCheck<string_view>(), args[0], args[1].As<int64_t>(), args[2].As<int64_t>());
@@ -1362,7 +1362,7 @@ RTValue kernel_object_endswith(const Any& self, PyArgs args) {
         return UnicodeHelper::EndsWith(
             self.AsNoCheck<unicode_view>(), args[0], args[1].As<int64_t>());
       }
-      MXCHECK(args.size() == 3) << "unicode.endswith Expect 1, 2 or 3 arguments but get "
+      HSCHECK(args.size() == 3) << "unicode.endswith Expect 1, 2 or 3 arguments but get "
                                 << args.size();
       return UnicodeHelper::EndsWith(
           self.AsNoCheck<unicode_view>(), args[0], args[1].As<int64_t>(), args[2].As<int64_t>());
@@ -1372,7 +1372,7 @@ RTValue kernel_object_endswith(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("endswith", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" container has no method \"endswith\"";
+      HSTHROW << "\"" << self.type_name() << "\" container has no method \"endswith\"";
     } break;
   }
   return None;
@@ -1384,14 +1384,14 @@ RTValue kernel_object_lstrip(const Any& self, PyArgs args) {
       if (args.size() == 0) {
         return StringHelper::LStrip(self.AsNoCheck<string_view>());
       }
-      MXCHECK(args.size() == 1) << "bytes.lstrip Expect 0 or 1 argument but get " << args.size();
+      HSCHECK(args.size() == 1) << "bytes.lstrip Expect 0 or 1 argument but get " << args.size();
       return StringHelper::LStrip(self.AsNoCheck<string_view>(), args[0].As<string_view>());
     } break;
     case TypeIndex::kRuntimeUnicode: {
       if (args.size() == 0) {
         return UnicodeHelper::LStrip(self.AsNoCheck<unicode_view>());
       }
-      MXCHECK(args.size() == 1) << "unicode.lstrip Expect 0 or 1 argument but get " << args.size();
+      HSCHECK(args.size() == 1) << "unicode.lstrip Expect 0 or 1 argument but get " << args.size();
       return UnicodeHelper::LStrip(self.AsNoCheck<unicode_view>(), args[0].As<unicode_view>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1399,7 +1399,7 @@ RTValue kernel_object_lstrip(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("lstrip", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" container has no method \"lstrip\"";
+      HSTHROW << "\"" << self.type_name() << "\" container has no method \"lstrip\"";
     } break;
   }
   return None;
@@ -1411,14 +1411,14 @@ RTValue kernel_object_rstrip(const Any& self, PyArgs args) {
       if (args.size() == 0) {
         return StringHelper::RStrip(self.AsNoCheck<string_view>());
       }
-      MXCHECK(args.size() == 1) << "bytes.rstrip Expect 0 or 1 argument but get " << args.size();
+      HSCHECK(args.size() == 1) << "bytes.rstrip Expect 0 or 1 argument but get " << args.size();
       return StringHelper::RStrip(self.AsNoCheck<string_view>(), args[0].As<string_view>());
     } break;
     case TypeIndex::kRuntimeUnicode: {
       if (args.size() == 0) {
         return UnicodeHelper::RStrip(self.AsNoCheck<unicode_view>());
       }
-      MXCHECK(args.size() == 1) << "unicode.rstrip Expect 0 or 1 argument but get " << args.size();
+      HSCHECK(args.size() == 1) << "unicode.rstrip Expect 0 or 1 argument but get " << args.size();
       return UnicodeHelper::RStrip(self.AsNoCheck<unicode_view>(), args[0].As<unicode_view>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1426,7 +1426,7 @@ RTValue kernel_object_rstrip(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("rstrip", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" container has no method \"rstrip\"";
+      HSTHROW << "\"" << self.type_name() << "\" container has no method \"rstrip\"";
     } break;
   }
   return None;
@@ -1438,14 +1438,14 @@ RTValue kernel_object_strip(const Any& self, PyArgs args) {
       if (args.size() == 0) {
         return StringHelper::Strip(self.AsNoCheck<string_view>());
       }
-      MXCHECK(args.size() == 1) << "bytes.strip Expect 0 or 1 argument but get " << args.size();
+      HSCHECK(args.size() == 1) << "bytes.strip Expect 0 or 1 argument but get " << args.size();
       return StringHelper::Strip(self.AsNoCheck<string_view>(), args[0].As<string_view>());
     } break;
     case TypeIndex::kRuntimeUnicode: {
       if (args.size() == 0) {
         return UnicodeHelper::Strip(self.AsNoCheck<unicode_view>());
       }
-      MXCHECK(args.size() == 1) << "unicode.strip Expect 0 or 1 argument but get " << args.size();
+      HSCHECK(args.size() == 1) << "unicode.strip Expect 0 or 1 argument but get " << args.size();
       return UnicodeHelper::Strip(self.AsNoCheck<unicode_view>(), args[0].As<unicode_view>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1453,7 +1453,7 @@ RTValue kernel_object_strip(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("strip", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" container has no method \"strip\"";
+      HSTHROW << "\"" << self.type_name() << "\" container has no method \"strip\"";
     } break;
   }
   return None;
@@ -1468,7 +1468,7 @@ RTValue kernel_object_count(const Any& self, PyArgs args) {
         return StringHelper::Count(
             self.AsNoCheck<string_view>(), args[0].As<string_view>(), args[1].As<int64_t>());
       }
-      MXCHECK(args.size() == 3) << "bytes.count Expect 1, 2 or 3 arguments but get " << args.size();
+      HSCHECK(args.size() == 3) << "bytes.count Expect 1, 2 or 3 arguments but get " << args.size();
       return StringHelper::Count(self.AsNoCheck<string_view>(),
                                  args[0].As<string_view>(),
                                  args[1].As<int64_t>(),
@@ -1481,7 +1481,7 @@ RTValue kernel_object_count(const Any& self, PyArgs args) {
         return UnicodeHelper::Count(
             self.AsNoCheck<unicode_view>(), args[0].As<unicode_view>(), args[1].As<int64_t>());
       }
-      MXCHECK(args.size() == 3) << "unicode.count Expect 1, 2 or 3 arguments but get "
+      HSCHECK(args.size() == 3) << "unicode.count Expect 1, 2 or 3 arguments but get "
                                 << args.size();
       return UnicodeHelper::Count(self.AsNoCheck<unicode_view>(),
                                   args[0].As<unicode_view>(),
@@ -1489,11 +1489,11 @@ RTValue kernel_object_count(const Any& self, PyArgs args) {
                                   args[2].As<int64_t>());
     } break;
     case TypeIndex::kRuntimeList: {
-      MXCHECK(args.size() == 1) << "list.count Expect 1 arguments but get " << args.size();
+      HSCHECK(args.size() == 1) << "list.count Expect 1 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<List>().data().count(args[0]);
     } break;
     case TypeIndex::kRuntimeTuple: {
-      MXCHECK(args.size() == 1) << "tuple.count Expect 1 arguments but get " << args.size();
+      HSCHECK(args.size() == 1) << "tuple.count Expect 1 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<Tuple>().data().count(args[0]);
     } break;
     case TypeIndex::kRuntimeFTList: {
@@ -1505,7 +1505,7 @@ RTValue kernel_object_count(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("count", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" container has no method \"count\"";
+      HSTHROW << "\"" << self.type_name() << "\" container has no method \"count\"";
     } break;
   }
   return None;
@@ -1521,7 +1521,7 @@ RTValue kernel_object_format(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("format", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" container has no method \"format\"";
+      HSTHROW << "\"" << self.type_name() << "\" container has no method \"format\"";
     } break;
   }
   return None;
@@ -1531,7 +1531,7 @@ RTValue kernel_object_format(const Any& self, PyArgs args) {
 RTValue kernel_object_keys(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeDict: {
-      MXCHECK_EQ(args.size(), 0) << "dict.keys Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "dict.keys Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<Dict>().data().key_iter();
     } break;
     case TypeIndex::kRuntimeFTDict: {
@@ -1543,7 +1543,7 @@ RTValue kernel_object_keys(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("keys", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"keys\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"keys\"";
     } break;
   }
   return None;
@@ -1552,7 +1552,7 @@ RTValue kernel_object_keys(const Any& self, PyArgs args) {
 RTValue kernel_object_values(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeDict: {
-      MXCHECK_EQ(args.size(), 0) << "dict.values Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "dict.values Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<Dict>().data().value_iter();
     } break;
     case TypeIndex::kRuntimeFTDict: {
@@ -1564,7 +1564,7 @@ RTValue kernel_object_values(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("values", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"values\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"values\"";
     } break;
   }
   return None;
@@ -1573,7 +1573,7 @@ RTValue kernel_object_values(const Any& self, PyArgs args) {
 RTValue kernel_object_items(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeDict: {
-      MXCHECK_EQ(args.size(), 0) << "dict.items Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "dict.items Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<Dict>().data().item_iter();
     } break;
     case TypeIndex::kRuntimeFTDict: {
@@ -1585,7 +1585,7 @@ RTValue kernel_object_items(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("items", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"items\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"items\"";
     } break;
   }
   return None;
@@ -1595,7 +1595,7 @@ RTValue kernel_object_get(const Any& self, PyArgs args) {
   auto args_num = args.size();
   switch (self.type_code()) {
     case TypeIndex::kRuntimeDict: {
-      MXCHECK(args_num == 1 || args_num == 2)
+      HSCHECK(args_num == 1 || args_num == 2)
           << "dict.get Expect 1 or 2 arguments but get" << args.size();
       if (args.size() == 1) {
         return self.AsObjectViewNoCheck<Dict>().data().get_default(args[0].As<RTValue>(), None);
@@ -1613,7 +1613,7 @@ RTValue kernel_object_get(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("get", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"get\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"get\"";
     } break;
   }
   return None;
@@ -1634,7 +1634,7 @@ RTValue kernel_object_union(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("union", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"union\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"union\"";
     } break;
   }
   return None;
@@ -1654,7 +1654,7 @@ RTValue kernel_object_difference(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("difference", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"difference\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"difference\"";
     } break;
   }
   return None;
@@ -1674,7 +1674,7 @@ RTValue kernel_object_difference_update(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("difference_update", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"difference_update\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"difference_update\"";
     } break;
   }
   return None;
@@ -1683,7 +1683,7 @@ RTValue kernel_object_difference_update(const Any& self, PyArgs args) {
 RTValue kernel_object_discard(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeSet: {
-      MXCHECK_EQ(args.size(), 1) << "set.discard Expect 1 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 1) << "set.discard Expect 1 arguments but get " << args.size();
       self.AsObjectViewNoCheck<Set>().data().discard(args[0]);
     } break;
     case TypeIndex::kRuntimeFTSet: {
@@ -1695,7 +1695,7 @@ RTValue kernel_object_discard(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("discard", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"discard\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"discard\"";
     } break;
   }
   return None;
@@ -1705,7 +1705,7 @@ RTValue kernel_object_discard(const Any& self, PyArgs args) {
 RTValue kernel_object_to_list(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK_EQ(args.size(), 0) << "ndarray.to_list Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "ndarray.to_list Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<NDArray>().data().ToList();
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1713,7 +1713,7 @@ RTValue kernel_object_to_list(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("to_list", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"to_list\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"to_list\"";
     } break;
   }
   return None;
@@ -1722,7 +1722,7 @@ RTValue kernel_object_to_list(const Any& self, PyArgs args) {
 RTValue kernel_object_tolist(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK_EQ(args.size(), 0) << "ndarray.tolist Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "ndarray.tolist Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<NDArray>().data().ToList();
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1730,7 +1730,7 @@ RTValue kernel_object_tolist(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("tolist", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"tolist\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"tolist\"";
     } break;
   }
   return None;
@@ -1739,7 +1739,7 @@ RTValue kernel_object_tolist(const Any& self, PyArgs args) {
 RTValue kernel_object_is_contiguous(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK_EQ(args.size(), 0) << "ndarray.is_contiguous Expect 0 arguments but get "
+      HSCHECK_EQ(args.size(), 0) << "ndarray.is_contiguous Expect 0 arguments but get "
                                  << args.size();
       return self.AsObjectViewNoCheck<NDArray>().data().IsContiguous();
     } break;
@@ -1748,7 +1748,7 @@ RTValue kernel_object_is_contiguous(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("is_contiguous", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"is_contiguous\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"is_contiguous\"";
     } break;
   }
   return None;
@@ -1757,7 +1757,7 @@ RTValue kernel_object_is_contiguous(const Any& self, PyArgs args) {
 RTValue kernel_object_contiguous(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK_EQ(args.size(), 0) << "ndarray.contiguous Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "ndarray.contiguous Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<NDArray>().data().Contiguous();
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1765,7 +1765,7 @@ RTValue kernel_object_contiguous(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("contiguous", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"contiguous\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"contiguous\"";
     } break;
   }
   return None;
@@ -1774,7 +1774,7 @@ RTValue kernel_object_contiguous(const Any& self, PyArgs args) {
 RTValue kernel_object_reshape(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK_EQ(args.size(), 1) << "ndarray.reshape Expect 1 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 1) << "ndarray.reshape Expect 1 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<NDArray>().data().Reshape(args[0]);
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1782,7 +1782,7 @@ RTValue kernel_object_reshape(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("reshape", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"reshape\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"reshape\"";
     } break;
   }
   return None;
@@ -1791,7 +1791,7 @@ RTValue kernel_object_reshape(const Any& self, PyArgs args) {
 RTValue kernel_object_squeeze(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK_EQ(args.size(), 1) << "ndarray.squeeze Expect 1 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 1) << "ndarray.squeeze Expect 1 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<NDArray>().data().Squeeze(
           args[0].AsObjectRefNoCheck<Tuple>());
     } break;
@@ -1800,7 +1800,7 @@ RTValue kernel_object_squeeze(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("squeeze", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"squeeze\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"squeeze\"";
     } break;
   }
   return None;
@@ -1809,7 +1809,7 @@ RTValue kernel_object_squeeze(const Any& self, PyArgs args) {
 RTValue kernel_object_unsqueeze(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK_EQ(args.size(), 1) << "ndarray.unsqueeze Expect 1 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 1) << "ndarray.unsqueeze Expect 1 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<NDArray>().data().Unsqueeze(args[0].As<int64_t>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1817,7 +1817,7 @@ RTValue kernel_object_unsqueeze(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("squeeze", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"squeeze\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"squeeze\"";
     } break;
   }
   return None;
@@ -1826,7 +1826,7 @@ RTValue kernel_object_unsqueeze(const Any& self, PyArgs args) {
 RTValue kernel_object_shape(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK_EQ(args.size(), 0) << "ndarray.shape Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "ndarray.shape Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<NDArray>().data().ShapeList();
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1834,7 +1834,7 @@ RTValue kernel_object_shape(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("shape", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"shape\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"shape\"";
     } break;
   }
   return None;
@@ -1843,7 +1843,7 @@ RTValue kernel_object_shape(const Any& self, PyArgs args) {
 RTValue kernel_object_dtype(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK_EQ(args.size(), 0) << "ndarray.dtype Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "ndarray.dtype Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<NDArray>().data().DTypeUnicode();
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1851,7 +1851,7 @@ RTValue kernel_object_dtype(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("dtype", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"dtype\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"dtype\"";
     } break;
   }
   return None;
@@ -1879,7 +1879,7 @@ RTValue kernel_object_dim(const Any& self, PyArgs args) {
 RTValue kernel_object_device(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK_EQ(args.size(), 0) << "ndarray.device Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "ndarray.device Expect 0 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<NDArray>().data().Device();
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1887,7 +1887,7 @@ RTValue kernel_object_device(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("device", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"device\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"device\"";
     } break;
   }
   return None;
@@ -1896,7 +1896,7 @@ RTValue kernel_object_device(const Any& self, PyArgs args) {
 RTValue kernel_object_transpose(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK(args.size() == 0 || args.size() == 1)
+      HSCHECK(args.size() == 0 || args.size() == 1)
           << "ndarray.transpose Expect 0 or 1 arguments, but get " << args.size();
       if (args.size() == 0) {
         return self.AsObjectViewNoCheck<NDArray>().data().transpose();
@@ -1909,7 +1909,7 @@ RTValue kernel_object_transpose(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("transpose", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"transpose\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"transpose\"";
     } break;
   }
   return None;
@@ -1918,7 +1918,7 @@ RTValue kernel_object_transpose(const Any& self, PyArgs args) {
 RTValue kernel_object_as_type(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeNDArray: {
-      MXCHECK(args.size() == 1) << "ndarray.as_type Expect 1 arguments, but get " << args.size();
+      HSCHECK(args.size() == 1) << "ndarray.as_type Expect 1 arguments, but get " << args.size();
       return self.AsObjectViewNoCheck<NDArray>().data().as_type(args[0].As<Unicode>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1926,7 +1926,7 @@ RTValue kernel_object_as_type(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("as_type", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"as_type\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"as_type\"";
     } break;
   }
   return None;
@@ -1936,7 +1936,7 @@ RTValue kernel_object_as_type(const Any& self, PyArgs args) {
 RTValue kernel_object_prefix_search(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeTrie: {
-      MXCHECK(args.size() == 1 || args.size() == 2)
+      HSCHECK(args.size() == 1 || args.size() == 2)
           << "trie.prefix_search Expect 1 or 2 arguments but get " << args.size();
       int64_t pos = 0;
       if (args.size() == 2) {
@@ -1949,7 +1949,7 @@ RTValue kernel_object_prefix_search(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("prefix_search", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"prefix_search\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"prefix_search\"";
     } break;
   }
   return None;
@@ -1958,7 +1958,7 @@ RTValue kernel_object_prefix_search(const Any& self, PyArgs args) {
 RTValue kernel_object_prefix_search_all(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeTrie: {
-      MXCHECK(args.size() == 1 || args.size() == 2)
+      HSCHECK(args.size() == 1 || args.size() == 2)
           << "trie.prefix_search_all Expect 1 or 2 arguments but get " << args.size();
       int64_t pos = 0;
       if (args.size() == 2) {
@@ -1971,7 +1971,7 @@ RTValue kernel_object_prefix_search_all(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("prefix_search", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"prefix_search\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"prefix_search\"";
     } break;
   }
   return None;
@@ -1980,7 +1980,7 @@ RTValue kernel_object_prefix_search_all(const Any& self, PyArgs args) {
 RTValue kernel_object_save(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeTrie: {
-      MXCHECK(args.size() == 1) << "trie.save Expect 1 arguments but get " << args.size();
+      HSCHECK(args.size() == 1) << "trie.save Expect 1 arguments but get " << args.size();
       return self.ptr<TrieNode>()->save(args[0].As<Unicode>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -1988,7 +1988,7 @@ RTValue kernel_object_save(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("save", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"save\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"save\"";
     } break;
   }
   return None;
@@ -1997,7 +1997,7 @@ RTValue kernel_object_save(const Any& self, PyArgs args) {
 RTValue kernel_object_load(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeTrie: {
-      MXCHECK(args.size() == 1) << "trie.load Expect 1 arguments but get " << args.size();
+      HSCHECK(args.size() == 1) << "trie.load Expect 1 arguments but get " << args.size();
       return self.ptr<TrieNode>()->load(args[0].As<Unicode>());
     } break;
     case TypeIndex::kRuntimeUserData: {
@@ -2005,7 +2005,7 @@ RTValue kernel_object_load(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("load", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"load\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"load\"";
     } break;
   }
   return None;
@@ -2033,7 +2033,7 @@ RTValue kernel_object_read(const Any& self, PyArgs args) {
       }
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"read\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"read\"";
     } break;
   }
   return None;
@@ -2114,13 +2114,13 @@ Unicode kernel_builtins_chr(int64_t i) {
 
 // json
 RTValue kernel_json_load(PyArgs args) {
-  MXCHECK(args.size() == 1) << "json.load Expect 1 arguments but get " << args.size();
+  HSCHECK(args.size() == 1) << "json.load Expect 1 arguments but get " << args.size();
   auto fp_view = args[0].AsObjectView<File>();
   return json_load(fp_view.data());
 }
 
 RTValue kernel_json_loads(PyArgs args) {
-  MXCHECK(args.size() == 1) << "json.loads Expect 1 arguments but get " << args.size();
+  HSCHECK(args.size() == 1) << "json.loads Expect 1 arguments but get " << args.size();
   if (args[0].type_code() == TypeIndex::kRuntimeUnicode) {
     return json_loads(UTF8Encode(args[0].AsNoCheck<unicode_view>()));
   }
@@ -2135,13 +2135,13 @@ Unicode kernel_json_dumps(PyArgs args) {
   if (args.size() == 2) {
     return json_dumps(args[0], args[1].As<int64_t>());
   }
-  MXCHECK(args.size() == 3) << "json.loads Expect 1-3 arguments but get " << args.size();
+  HSCHECK(args.size() == 3) << "json.loads Expect 1-3 arguments but get " << args.size();
   return json_dumps(args[0], args[1].As<int64_t>(), args[1].As<int64_t>());
 }
 
 // file
 File kernel_file_open(PyArgs args) {
-  MXCHECK(args.size() >= 1 && args.size() <= 3) << "Expect 1-3 arguments but get " << args.size();
+  HSCHECK(args.size() >= 1 && args.size() <= 3) << "Expect 1-3 arguments but get " << args.size();
   auto path = Unicode(args[0].As<unicode_view>());
   if (args.size() == 1) {
     return File(path);
@@ -2162,7 +2162,7 @@ void kernel_file_close(const File& f) {
 RTValue kernel_object_pop(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeList: {
-      MXCHECK(args.size() == 0 || args.size() == 1)
+      HSCHECK(args.size() == 0 || args.size() == 1)
           << "list.pop Expect 0 or 1 arguments but get " << args.size();
       if (args.size() == 0) {
         return self.AsObjectViewNoCheck<List>().data().pop();
@@ -2171,7 +2171,7 @@ RTValue kernel_object_pop(const Any& self, PyArgs args) {
       }
     } break;
     case TypeIndex::kRuntimeDict: {
-      MXCHECK(args.size() == 1 || args.size() == 2)
+      HSCHECK(args.size() == 1 || args.size() == 2)
           << "dict.pop Expect 1 or 2 arguments but get " << args.size();
       return self.AsObjectViewNoCheck<Dict>().data().pop(args);
     } break;
@@ -2180,7 +2180,7 @@ RTValue kernel_object_pop(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("pop", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"pop\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"pop\"";
     } break;
   }
   return None;
@@ -2189,7 +2189,7 @@ RTValue kernel_object_pop(const Any& self, PyArgs args) {
 RTValue kernel_object_insert(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeList: {
-      MXCHECK(args.size() == 2) << "list.insert Expect 2 arguments but get " << args.size();
+      HSCHECK(args.size() == 2) << "list.insert Expect 2 arguments but get " << args.size();
       self.AsObjectViewNoCheck<List>().data().insert(args[0].As<int64_t>(), args[1].As<RTValue>());
     } break;
     case TypeIndex::kRuntimeFTList: {
@@ -2197,7 +2197,7 @@ RTValue kernel_object_insert(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("insert", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"insert\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"insert\"";
     } break;
   }
   return None;
@@ -2206,7 +2206,7 @@ RTValue kernel_object_insert(const Any& self, PyArgs args) {
 RTValue kernel_object_remove(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeList: {
-      MXCHECK_EQ(args.size(), 1) << "list.remove Expect 1 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 1) << "list.remove Expect 1 arguments but get " << args.size();
       self.AsObjectViewNoCheck<List>().data().remove(args[0].As<RTValue>());
     } break;
     case TypeIndex::kRuntimeFTList: {
@@ -2218,7 +2218,7 @@ RTValue kernel_object_remove(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("remove", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"remove\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"remove\"";
     } break;
   }
   return None;
@@ -2227,7 +2227,7 @@ RTValue kernel_object_remove(const Any& self, PyArgs args) {
 RTValue kernel_object_reverse(const Any& self, PyArgs args) {
   switch (self.type_code()) {
     case TypeIndex::kRuntimeList: {
-      MXCHECK_EQ(args.size(), 0) << "list.remove Expect 0 arguments but get " << args.size();
+      HSCHECK_EQ(args.size(), 0) << "list.remove Expect 0 arguments but get " << args.size();
       self.AsObjectViewNoCheck<List>().data().reverse();
     } break;
     case TypeIndex::kRuntimeFTList: {
@@ -2239,7 +2239,7 @@ RTValue kernel_object_reverse(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("reverse", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"reverse\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"reverse\"";
     } break;
   }
   return None;
@@ -2271,7 +2271,7 @@ RTValue kernel_object_sort(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("sort", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"sort\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"sort\"";
     } break;
   }
   return None;
@@ -2304,7 +2304,7 @@ RTValue kernel_object_index(const Any& self, PyArgs args) {
           return list_view.data().index(std::move(x), start, end);
         } break;
         default: {
-          MXTHROW << "TypeError: index expected at most 3 arguments, got 4";
+          HSTHROW << "TypeError: index expected at most 3 arguments, got 4";
         } break;
       }
     } break;
@@ -2317,7 +2317,7 @@ RTValue kernel_object_index(const Any& self, PyArgs args) {
       return ud_view.data().generic_call_attr("index", args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object has no method \"sort\"";
+      HSTHROW << "\"" << self.type_name() << "\" object has no method \"sort\"";
     } break;
   }
   return None;
@@ -2331,7 +2331,7 @@ double kernel_time_time() {
 
 // os
 RTValue kernel_os_getenv(PyArgs args) {
-  MXCHECK(args.size() == 1 || args.size() == 2)
+  HSCHECK(args.size() == 1 || args.size() == 2)
       << "os.getenv Expect 1 or 2 arguments but get " << args.size();
   unicode_view key = args[0].As<unicode_view>();
   const char* env_p = std::getenv(UTF8Encode(key).c_str());
@@ -2409,7 +2409,7 @@ RTValue kernel_builtins_sorted(const Any& iterable, const Any& key, bool reverse
       return new_list;
     };
     default: {
-      MXTHROW << "\"" << iterable.type_name() << "\" object does not support \"sorted\"";
+      HSTHROW << "\"" << iterable.type_name() << "\" object does not support \"sorted\"";
       return List();
     };
   }
@@ -2458,7 +2458,7 @@ RTValue kernel_object_call(const Any& self, PyArgs args) {
       return self.AsObjectViewNoCheck<UserDataRef>().data().generic_call(args);
     } break;
     default: {
-      MXTHROW << "\"" << self.type_name() << "\" object should be a callable object.";
+      HSTHROW << "\"" << self.type_name() << "\" object should be a callable object.";
     } break;
   }
   return None;
@@ -2473,4 +2473,4 @@ RTValue kernel_pickle_deserialize(unicode_view s) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

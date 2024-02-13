@@ -22,10 +22,10 @@
 #include <hercules/runtime/container_private.h>
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_REGISTER_NATIVE_OP(PythonBaseOp).SetThreadSafety(false);
+HVM_REGISTER_NATIVE_OP(PythonBaseOp).SetThreadSafety(false);
 
 void PythonBaseOp::Init() {
   py_op_name = GetAttr<Unicode>("py_op_name").encode();
@@ -49,15 +49,15 @@ void PythonBaseOp::Init() {
       auto op_name_s = op_name.As<Unicode>().encode();
       sub_op_deps[op_cls].push_back(op_name_s);
       auto op_ptr = GetOpImpl(op_cls, op_name_s);
-      MXCHECK(op_ptr != nullptr) << "op not found, class: " << op_cls << ", name: " << op_name_s;
+      HSCHECK(op_ptr != nullptr) << "op not found, class: " << op_cls << ", name: " << op_name_s;
     }
   }
 }
 
 RTValue PythonBaseOp::Process(PyArgs inputs) const {
-  MXCHECK(py_callable) << "[PythonBaseOp] internal error: python callable object is not defined!!!";
+  HSCHECK(py_callable) << "[PythonBaseOp] internal error: python callable object is not defined!!!";
   return py_callable(inputs);
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

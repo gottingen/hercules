@@ -24,7 +24,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/uchar_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class String;
@@ -100,11 +100,11 @@ struct StringHelper {
                        int64_t start = 0,
                        int64_t end = std::numeric_limits<int64_t>::max()) noexcept;
 
-  static self_view AsView(const MATXScriptAny* value);
-  static self_view AsViewNoCheck(const MATXScriptAny* value) noexcept;
-  static MATXScriptAny CopyFrom(const MATXScriptAny* value);
-  static MATXScriptAny CopyFrom(MATXScriptAny value);
-  static void Destroy(MATXScriptAny* value) noexcept;
+  static self_view AsView(const HerculesAny* value);
+  static self_view AsViewNoCheck(const HerculesAny* value) noexcept;
+  static HerculesAny CopyFrom(const HerculesAny* value);
+  static HerculesAny CopyFrom(HerculesAny value);
+  static void Destroy(HerculesAny* value) noexcept;
 };
 
 template <typename T>
@@ -146,7 +146,7 @@ FTList<T> StringHelper::SplitFT(self_view sv, self_view sep, int64_t maxsplit) {
       ret.push_back(T(data_last, data_end - data_last));
     }
   } else {
-    MXCHECK(!sep.empty()) << "ValueError: empty separator";
+    HSCHECK(!sep.empty()) << "ValueError: empty separator";
     size_type end;
     for (size_type start = 0; start < sv.size(); --maxsplit) {
       if (maxsplit > 0 && (end = sv.find(sep, start)) != npos) {
@@ -164,4 +164,4 @@ FTList<T> StringHelper::SplitFT(self_view sv, self_view sep, int64_t maxsplit) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

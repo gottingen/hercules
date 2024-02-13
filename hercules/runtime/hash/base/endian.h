@@ -29,7 +29,7 @@
 
 #include <cstdint>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace base_internal {
 
@@ -104,4 +104,4 @@ inline uint16_t gbswap_16(uint16_t host_int) {
 
 }  // namespace base_internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

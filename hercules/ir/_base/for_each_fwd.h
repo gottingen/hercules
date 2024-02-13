@@ -24,7 +24,7 @@
  */
 #pragma once
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 namespace detail {
@@ -52,4 +52,4 @@ inline void for_each(const F& f, Args&&... args) {  // NOLINT(*)
 }  // namespace detail
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

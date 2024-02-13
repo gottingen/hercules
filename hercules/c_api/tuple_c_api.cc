@@ -23,25 +23,25 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * Tuple container
  *****************************************************************************/
-MATXSCRIPT_REGISTER_GLOBAL("runtime.GetTupleSize").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.GetTupleSize").set_body([](PyArgs args) -> RTValue {
   const auto& tup = args[0].As<Tuple>();
   return static_cast<int64_t>(tup.size());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.GetTupleFields").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.GetTupleFields").set_body([](PyArgs args) -> RTValue {
   int64_t idx = args[1].As<int64_t>();
   const auto& tup = args[0].As<Tuple>();
-  MXCHECK_LT(idx, tup.size());
+  HSCHECK_LT(idx, tup.size());
   return tup[idx];
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Tuple").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.Tuple").set_body([](PyArgs args) -> RTValue {
   std::vector<RTValue> fields;
   fields.reserve(args.size());
   for (auto i = 0; i < args.size(); ++i) {
@@ -50,8 +50,8 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Tuple").set_body([](PyArgs args) -> RTValue 
   return Tuple(std::make_move_iterator(fields.begin()), std::make_move_iterator(fields.end()));
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.TupleEqual").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "tuple.__eq__ expect " << 2 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.TupleEqual").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "tuple.__eq__ expect " << 2 << " arguments but get " << args.size();
   const auto& self = args[0];
   const auto& other = args[1];
   switch (self.type_code()) {
@@ -61,11 +61,11 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.TupleEqual").set_body([](PyArgs args) -> RTV
       }
     } break;
     default: {
-      MXTHROW << "expect 'tuple' but get '" << self.type_name();
+      HSTHROW << "expect 'tuple' but get '" << self.type_name();
     } break;
   }
   return false;
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

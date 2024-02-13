@@ -25,7 +25,7 @@
 #include "_object_holder.h"
 #include "iterator_utils.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace details {
@@ -91,4 +91,4 @@ generic_builtins_zip(Iterables&&... seq) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

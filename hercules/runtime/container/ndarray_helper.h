@@ -24,7 +24,7 @@
 #include <hercules/runtime/container/ndarray.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class NDArrayHelper {
@@ -75,4 +75,4 @@ class NDArrayOperate {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

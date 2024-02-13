@@ -23,7 +23,7 @@
 
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 static string_view PREFIX_KEY("____prefix_path____");
@@ -58,7 +58,7 @@ struct Attributes {
   static Attributes FromDict(const Dict& generic_attrs) {
     Attributes res_attrs;
     for (auto& attr : generic_attrs.items()) {
-      MXCHECK(attr.first.type_code() == TypeIndex::kRuntimeString ||
+      HSCHECK(attr.first.type_code() == TypeIndex::kRuntimeString ||
               attr.first.type_code() == TypeIndex::kRuntimeUnicode);
       if (attr.first.type_code() == TypeIndex::kRuntimeString) {
         res_attrs.attrs_[attr.first.As<String>()] = attr.second;
@@ -113,4 +113,4 @@ inline Unicode Attributes::GetAttr(string_view key, const Unicode& default_val) 
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -25,7 +25,7 @@
 #include <hercules/runtime/json_util.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 RTValue json_loads(string_view s) {
@@ -55,7 +55,7 @@ Unicode json_dumps(const Any& obj, int indent, bool ensure_ascii) {
 // TODO(wuxian): Need a file class that supports write operations
 // }
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.JsonDumps").set_body_typed(json_dumps);
+HERCULES_REGISTER_GLOBAL("runtime.JsonDumps").set_body_typed(json_dumps);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

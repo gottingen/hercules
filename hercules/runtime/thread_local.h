@@ -29,7 +29,7 @@
 #include <mutex>
 #include <vector>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // macro hanlding for threadlocal variables
@@ -41,7 +41,7 @@ namespace runtime {
 #define MX_THREAD_LOCAL __declspec(thread)
 #endif
 
-#if MATXSCRIPT_CXX11_THREAD_LOCAL == 0
+#if HERCULES_CXX11_THREAD_LOCAL == 0
 #pragma message("Warning: CXX11 thread_local is not formally supported")
 #endif
 
@@ -55,7 +55,7 @@ class ThreadLocalStore {
  public:
   /*! \return get a thread local singleton */
   static T* Get() {
-#if MATXSCRIPT_CXX11_THREAD_LOCAL && MATXSCRIPT_MODERN_THREAD_LOCAL == 1
+#if HERCULES_CXX11_THREAD_LOCAL && HERCULES_MODERN_THREAD_LOCAL == 1
     static thread_local T inst;
     return &inst;
 #else
@@ -101,4 +101,4 @@ class ThreadLocalStore {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

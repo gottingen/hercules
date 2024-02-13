@@ -2,7 +2,7 @@
 // clang-format off
 // Taken from https://github.com/skarupke/flat_hash_map/blob/2c4687431f978f02a3780e24b8b701d22aa32d9c/flat_hash_map.hpp
 // with fixes applied:
-// - add namespace ::matxscript::runtime for fix conflict with pytorch
+// - add namespace ::hercules::runtime for fix conflict with pytorch
 // - fix bug: HashPolicySelector compile failed when gcc version <= 4.9
 
 //          Copyright Malte Skarupke 2017.
@@ -27,7 +27,7 @@
 #endif
 
 // fix conflict with 3rd party
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace ska
@@ -1573,5 +1573,5 @@ struct power_of_two_std_hash : std::hash<T>
 } // end namespace ska
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 // clang-format on

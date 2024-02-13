@@ -26,7 +26,7 @@
 #include <hercules/runtime/container/file_ref.h>
 #include <hercules/runtime/jsonlib/json.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Json, loads) {
@@ -46,7 +46,7 @@ TEST(Json, load) {
 }
 
 TEST(Json, dumps) {
-  Dict d{{1, 2}, {Unicode(U"hello"), 3}, {3, Unicode(U"matx4")}};
+  Dict d{{1, 2}, {Unicode(U"hello"), 3}, {3, Unicode(U"hvm4")}};
   Unicode s = json_dumps(RTView(d));
   std::cout << s << std::endl;
   s = json_dumps(RTView(d), 2);
@@ -56,4 +56,4 @@ TEST(Json, dumps) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

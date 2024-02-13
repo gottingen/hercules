@@ -25,13 +25,13 @@
 
 #include <hercules/ir/stmt_functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class FuncArgsOptimizerLeftValueFilter : public ExprVisitor {
  public:
   void run(const BaseExpr& expr) {
-    MXCHECK(func_args_);
+    HSCHECK(func_args_);
     VisitExpr(expr);
   }
 
@@ -127,4 +127,4 @@ class FuncArgsOptimizerMutator {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

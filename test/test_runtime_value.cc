@@ -23,7 +23,7 @@
 #include <hercules/runtime/runtime_value.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(RTValue, Constructor) {
@@ -99,7 +99,7 @@ TEST(RTValue, Cast) {
   EXPECT_EQ(string_nv3.use_count(), 1);
 }
 
-MATXSCRIPT_NO_INLINE List test_runtime_value_view(const List& u) {
+HERCULES_NO_INLINE List test_runtime_value_view(const List& u) {
   EXPECT_EQ(u.use_count(), 1);
   return u;
 }
@@ -111,4 +111,4 @@ TEST(RTValue, ObjectView) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

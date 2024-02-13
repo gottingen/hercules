@@ -38,7 +38,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*! \brief Type information */
@@ -76,7 +76,7 @@ class TypeContext {
       return true;
     {
       std::lock_guard<std::mutex> lock(mutex_);
-      MXCHECK_LT(child_tindex, type_table_.size());
+      HSCHECK_LT(child_tindex, type_table_.size());
       while (child_tindex > parent_tindex) {
         child_tindex = type_table_[child_tindex].parent_index;
       }
@@ -95,10 +95,10 @@ class TypeContext {
       return it->second;
     }
     // try to allocate from parent's type table.
-    MXCHECK_LT(parent_tindex, type_table_.size())
+    HSCHECK_LT(parent_tindex, type_table_.size())
         << " skey= " << skey << "static_index=" << static_tindex;
     TypeInfo& pinfo = type_table_[parent_tindex];
-    MXCHECK_EQ(pinfo.index, parent_tindex);
+    HSCHECK_EQ(pinfo.index, parent_tindex);
 
     // if parent cannot overflow, then this class cannot.
     if (!pinfo.child_slots_can_overflow) {
@@ -112,8 +112,8 @@ class TypeContext {
     if (static_tindex != TypeIndex::kDynamic) {
       // statically assigned type
       allocated_tindex = static_tindex;
-      MXCHECK_LT(static_tindex, type_table_.size());
-      MXCHECK_EQ(type_table_[allocated_tindex].allocated_slots, 0U)
+      HSCHECK_LT(static_tindex, type_table_.size());
+      HSCHECK_EQ(type_table_[allocated_tindex].allocated_slots, 0U)
           << "Conflicting static index " << static_tindex << " between "
           << type_table_[allocated_tindex].name << " and " << skey;
     } else if (pinfo.allocated_slots + num_slots <= pinfo.num_slots) {
@@ -122,15 +122,15 @@ class TypeContext {
       // update parent's state
       pinfo.allocated_slots += num_slots;
     } else {
-      MXCHECK(pinfo.child_slots_can_overflow)
+      HSCHECK(pinfo.child_slots_can_overflow)
           << "Reach maximum number of sub-classes for " << pinfo.name;
       // allocate new entries.
       allocated_tindex = type_counter_;
       type_counter_ += num_slots;
-      MXCHECK_LE(type_table_.size(), type_counter_);
+      HSCHECK_LE(type_table_.size(), type_counter_);
       type_table_.resize(type_counter_, TypeInfo());
     }
-    MXCHECK_GT(allocated_tindex, parent_tindex);
+    HSCHECK_GT(allocated_tindex, parent_tindex);
     // initialize the slot.
     type_table_[allocated_tindex].index = allocated_tindex;
     type_table_[allocated_tindex].parent_index = parent_tindex;
@@ -146,7 +146,7 @@ class TypeContext {
 
   const String& TypeIndex2Key(uint32_t tindex) {
     std::lock_guard<std::mutex> lock(mutex_);
-    MXCHECK(tindex < type_table_.size() && type_table_[tindex].allocated_slots != 0)
+    HSCHECK(tindex < type_table_.size() && type_table_[tindex].allocated_slots != 0)
         << "Unknown type index " << tindex;
     return type_table_[tindex].name;
   }
@@ -163,16 +163,16 @@ class TypeContext {
 
   size_t TypeIndex2KeyHash(uint32_t tindex) {
     std::lock_guard<std::mutex> lock(mutex_);
-    MXCHECK(tindex < type_table_.size() && type_table_[tindex].allocated_slots != 0)
+    HSCHECK(tindex < type_table_.size() && type_table_[tindex].allocated_slots != 0)
         << "Unknown type index " << tindex;
     return type_table_[tindex].name_hash;
   }
 
   uint32_t TypeKey2Index(const string_view& skey) {
     auto it = type_key2index_.find(skey);
-    MXCHECK(it != type_key2index_.end())
+    HSCHECK(it != type_key2index_.end())
         << "Cannot find type " << skey
-        << ". Did you forget to register the node by MATXSCRIPT_REGISTER_NODE_TYPE ?";
+        << ". Did you forget to register the node by HERCULES_REGISTER_NODE_TYPE ?";
     return it->second;
   }
 
@@ -241,43 +241,43 @@ uint32_t Object::TypeKey2Index(const string_view& key) {
   return TypeContext::Global()->TypeKey2Index(key);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.DumpTypeTable").set_body_typed([](int min_child_count) {
+HERCULES_REGISTER_GLOBAL("runtime.DumpTypeTable").set_body_typed([](int min_child_count) {
   TypeContext::Global()->Dump(min_child_count);
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
-int MATXScriptObjectGetTypeIndex(MATXScriptObjectHandle obj, unsigned* out_tindex) {
+int HerculesObjectGetTypeIndex(HerculesObjectHandle obj, unsigned* out_tindex) {
   API_BEGIN();
-  MXCHECK(obj != nullptr);
-  out_tindex[0] = static_cast<::matxscript::runtime::Object*>(obj)->type_index();
+  HSCHECK(obj != nullptr);
+  out_tindex[0] = static_cast<::hercules::runtime::Object*>(obj)->type_index();
   API_END();
 }
 
-int MATXScriptObjectRetain(MATXScriptObjectHandle obj) {
+int HerculesObjectRetain(HerculesObjectHandle obj) {
   API_BEGIN();
-  ::matxscript::runtime::ObjectInternal::ObjectRetain(obj);
+  ::hercules::runtime::ObjectInternal::ObjectRetain(obj);
   API_END();
 }
 
-int MATXScriptObjectFree(MATXScriptObjectHandle obj) {
+int HerculesObjectFree(HerculesObjectHandle obj) {
   API_BEGIN();
-  ::matxscript::runtime::ObjectInternal::ObjectFree(obj);
+  ::hercules::runtime::ObjectInternal::ObjectFree(obj);
   API_END();
 }
 
-int MATXScriptObjectDerivedFrom(uint32_t child_type_index,
+int HerculesObjectDerivedFrom(uint32_t child_type_index,
                                 uint32_t parent_type_index,
                                 int* is_derived) {
   API_BEGIN();
-  *is_derived = ::matxscript::runtime::TypeContext::Global()->DerivedFrom(child_type_index,
+  *is_derived = ::hercules::runtime::TypeContext::Global()->DerivedFrom(child_type_index,
                                                                           parent_type_index);
   API_END();
 }
 
-int MATXScriptObjectTypeKey2Index(const char* type_key, unsigned* out_tindex) {
+int HerculesObjectTypeKey2Index(const char* type_key, unsigned* out_tindex) {
   API_BEGIN();
-  out_tindex[0] = ::matxscript::runtime::ObjectInternal::ObjectTypeKey2Index(type_key);
+  out_tindex[0] = ::hercules::runtime::ObjectInternal::ObjectTypeKey2Index(type_key);
   API_END();
 }

@@ -27,7 +27,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/utf8_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // Forward declare TArgValue
@@ -95,8 +95,8 @@ class String {
   self_view view() const noexcept;
 
   // Convert with Any
-  void MoveTo(MATXScriptAny* value) noexcept;
-  static String MoveFromNoCheck(MATXScriptAny* value) noexcept;
+  void MoveTo(HerculesAny* value) noexcept;
+  static String MoveFromNoCheck(HerculesAny* value) noexcept;
 
   // C++11 21.4.2 construct/copy/destroy
   String() noexcept = default;
@@ -169,12 +169,12 @@ class String {
   operator ::std::string() const;
 
   // clang-format off
-#if MATXSCRIPT_USE_CXX17_STRING_VIEW
+#if HERCULES_USE_CXX17_STRING_VIEW
   explicit operator std::basic_string_view<value_type, std::char_traits<value_type>>()
       const noexcept {
     return {data(), size_t(size())};
   }
-#elif MATXSCRIPT_USE_CXX14_STRING_VIEW
+#elif HERCULES_USE_CXX14_STRING_VIEW
   explicit operator std::experimental::basic_string_view<value_type, std::char_traits<value_type>>()
       const noexcept {
     return {data(), size_t(size())};
@@ -513,51 +513,51 @@ inline std::ostream& operator<<(std::ostream& out, const String& input) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 namespace std {
 
 template <>
-struct hash<::matxscript::runtime::String> {
-  std::size_t operator()(const ::matxscript::runtime::String& str) const noexcept {
-    return ::matxscript::runtime::BytesHash(str.data(), str.size());
+struct hash<::hercules::runtime::String> {
+  std::size_t operator()(const ::hercules::runtime::String& str) const noexcept {
+    return ::hercules::runtime::BytesHash(str.data(), str.size());
   }
-  std::size_t operator()(::matxscript::runtime::string_view str) const noexcept {
-    return ::matxscript::runtime::BytesHash(str.data(), str.size());
+  std::size_t operator()(::hercules::runtime::string_view str) const noexcept {
+    return ::hercules::runtime::BytesHash(str.data(), str.size());
   }
   std::size_t operator()(const ::std::string& str) const noexcept {
-    return ::matxscript::runtime::BytesHash(str.data(), str.size());
+    return ::hercules::runtime::BytesHash(str.data(), str.size());
   }
   std::size_t operator()(const char* str) const noexcept {
-    return operator()(::matxscript::runtime::string_view(str));
+    return operator()(::hercules::runtime::string_view(str));
   }
 };
 
 template <>
-struct equal_to<::matxscript::runtime::String> {
-  bool operator()(const ::matxscript::runtime::String& a,
-                  const ::matxscript::runtime::String& b) const noexcept {
+struct equal_to<::hercules::runtime::String> {
+  bool operator()(const ::hercules::runtime::String& a,
+                  const ::hercules::runtime::String& b) const noexcept {
     return a == b;
   }
-  bool operator()(::matxscript::runtime::string_view a,
-                  const ::matxscript::runtime::String& b) const noexcept {
+  bool operator()(::hercules::runtime::string_view a,
+                  const ::hercules::runtime::String& b) const noexcept {
     return a == b.view();
   }
-  bool operator()(const ::matxscript::runtime::String& a,
-                  ::matxscript::runtime::string_view b) const noexcept {
+  bool operator()(const ::hercules::runtime::String& a,
+                  ::hercules::runtime::string_view b) const noexcept {
     return a.view() == b;
   }
-  bool operator()(const ::std::string& a, const ::matxscript::runtime::String& b) const noexcept {
-    return ::matxscript::runtime::string_view(a) == b.view();
+  bool operator()(const ::std::string& a, const ::hercules::runtime::String& b) const noexcept {
+    return ::hercules::runtime::string_view(a) == b.view();
   }
-  bool operator()(const ::matxscript::runtime::String& a, const ::std::string& b) const noexcept {
-    return a.view() == ::matxscript::runtime::string_view(b);
+  bool operator()(const ::hercules::runtime::String& a, const ::std::string& b) const noexcept {
+    return a.view() == ::hercules::runtime::string_view(b);
   }
-  bool operator()(const ::matxscript::runtime::String& a, const char* b) const noexcept {
-    return operator()(a, ::matxscript::runtime::string_view(b));
+  bool operator()(const ::hercules::runtime::String& a, const char* b) const noexcept {
+    return operator()(a, ::hercules::runtime::string_view(b));
   }
-  bool operator()(const char* a, const ::matxscript::runtime::String& b) const noexcept {
-    return operator()(::matxscript::runtime::string_view(a), b);
+  bool operator()(const char* a, const ::hercules::runtime::String& b) const noexcept {
+    return operator()(::hercules::runtime::string_view(a), b);
   }
 };
 

@@ -22,59 +22,59 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
 /******************************************************************************
  * File builtin methods
  *****************************************************************************/
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(file, open)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(file, open)
     .set_num_inputs(1)
     .add_argument("args", "*args", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(file, HasNext, HasNext)
+HERCULES_IR_DEFINE_HLO_METHOD(file, HasNext, HasNext)
     .set_num_inputs(1)
-    .add_argument("self", "matx.File", "");
+    .add_argument("self", "hvm.File", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(file, readline_string, ReadLineString)
+HERCULES_IR_DEFINE_HLO_METHOD(file, readline_string, ReadLineString)
     .set_num_inputs(1)
-    .add_argument("self", "matx.File", "");
+    .add_argument("self", "hvm.File", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(file, readline_unicode, ReadLineUnicode)
+HERCULES_IR_DEFINE_HLO_METHOD(file, readline_unicode, ReadLineUnicode)
     .set_num_inputs(1)
-    .add_argument("self", "matx.File", "");
+    .add_argument("self", "hvm.File", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(file, readline, Next)
+HERCULES_IR_DEFINE_HLO_METHOD(file, readline, Next)
     .set_num_inputs(1)
-    .add_argument("self", "matx.File", "");
+    .add_argument("self", "hvm.File", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(file, readlines, ReadLines)
+HERCULES_IR_DEFINE_HLO_METHOD(file, readlines, ReadLines)
     .set_num_inputs(1)
-    .add_argument("self", "matx.File", "");
+    .add_argument("self", "hvm.File", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(file, read, Read)
+HERCULES_IR_DEFINE_HLO_METHOD(file, read, Read)
     .set_num_inputs(1)
     .set_num_inputs_max(2)
-    .add_argument("self", "matx.File", "")
+    .add_argument("self", "hvm.File", "")
     .add_argument("size", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(file, read_bytes, ReadString)
+HERCULES_IR_DEFINE_HLO_METHOD(file, read_bytes, ReadString)
     .set_num_inputs(1)
     .set_num_inputs_max(2)
-    .add_argument("self", "matx.File", "")
+    .add_argument("self", "hvm.File", "")
     .add_argument("size", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(file, read_unicode, ReadUnicode)
+HERCULES_IR_DEFINE_HLO_METHOD(file, read_unicode, ReadUnicode)
     .set_num_inputs(1)
     .set_num_inputs_max(2)
-    .add_argument("self", "matx.File", "")
+    .add_argument("self", "hvm.File", "")
     .add_argument("size", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(file, close, close)
+HERCULES_IR_DEFINE_HLO_METHOD(file, close, close)
     .set_num_inputs(1)
-    .add_argument("self", "matx.File", "");
+    .add_argument("self", "hvm.File", "");
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

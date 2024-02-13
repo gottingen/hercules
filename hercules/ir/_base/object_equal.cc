@@ -22,7 +22,7 @@
 #include <hercules/ir/_base/object_equal.h>
 #include <hercules/ir/_base/string_ref.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 bool ObjectEqual::operator()(const ObjectRef& a, const ObjectRef& b) const {
@@ -41,4 +41,4 @@ bool ObjectEqual::operator()(const ObjectRef& a, const ObjectRef& b) const {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

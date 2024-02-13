@@ -27,7 +27,7 @@
 
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 // Implementation of Visitors
@@ -45,4 +45,4 @@ inline Array<T> MutateArray(const Array<T>& arr, F fmutate) {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

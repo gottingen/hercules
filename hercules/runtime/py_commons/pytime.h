@@ -30,7 +30,7 @@
 #include <sys/time.h>
 #endif
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -203,4 +203,4 @@ int _PyTime_GetPerfCounterWithInfo(_PyTime_t* t, _Py_clock_info_t* info);
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

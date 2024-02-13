@@ -21,7 +21,7 @@
 #include <vector>
 #include "i_runnable.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace internal {
 
@@ -40,4 +40,4 @@ struct IThreadPool {
 
 }  // namespace internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

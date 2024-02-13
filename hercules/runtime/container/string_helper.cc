@@ -27,7 +27,7 @@
 #include <hercules/runtime/generic/generic_constructor_funcs.h>
 #include <hercules/runtime/utf8_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 String StringHelper::Concat(self_view lhs, self_view rhs) {
@@ -58,7 +58,7 @@ String StringHelper::Concat(std::initializer_list<self_view> args) {
 }
 
 String StringHelper::Repeat(self_view sv, int64_t times) {
-  times = MATXSCRIPT_UNLIKELY(times < 0) ? 0 : times;
+  times = HERCULES_UNLIKELY(times < 0) ? 0 : times;
   auto result_size = times * sv.length();
   String::ContainerType store(result_size, String::ContainerType::NoInit{});
   auto* data = (String::pointer)store.data();
@@ -101,14 +101,14 @@ bool StringHelper::Contains(self_view sv, value_type c) noexcept {
 
 int64_t StringHelper::GetItem(self_view sv, int64_t pos) {
   int64_t len = sv.size();
-  MXCHECK((pos >= 0 && pos < len) || (pos < 0 && pos >= -len)) << "ValueError: index overflow";
+  HSCHECK((pos >= 0 && pos < len) || (pos < 0 && pos >= -len)) << "ValueError: index overflow";
   pos = slice_index_correction(pos, len);
   return int64_t{sv[pos]};
 }
 
 String StringHelper::GetSlice(self_view sv, int64_t b, int64_t e, int64_t step) {
   // TODO: change to noexcept
-  MXCHECK_GT(step, 0) << "String.slice_load step must be gt 0";
+  HSCHECK_GT(step, 0) << "String.slice_load step must be gt 0";
   int64_t len = sv.size();
   b = slice_index_correction(b, len);
   e = slice_index_correction(e, len);
@@ -170,7 +170,7 @@ List StringHelper::Split(self_view sv, self_view sep, int64_t maxsplit) {
       ret_node->emplace_back(String(data_last, data_end));
     }
   } else {
-    MXCHECK(!sep.empty()) << "ValueError: empty separator";
+    HSCHECK(!sep.empty()) << "ValueError: empty separator";
     size_type end;
     for (size_type start = 0; start < sv.size(); --maxsplit) {
       if (maxsplit > 0 && (end = sv.find(sep, start)) != npos) {
@@ -393,7 +393,7 @@ bool StringHelper::StartsWith(self_view sv, const Tuple& prefixes, int64_t start
     if (!prefix.Is<string_view>()) {
       THROW_PY_TypeError("a bytes-like object is required, not '", prefix.type_name(), "'");
     }
-    MXCHECK(prefix.IsString()) << "elements of `suffixes` should be String.";
+    HSCHECK(prefix.IsString()) << "elements of `suffixes` should be String.";
     if (StartsWith(sv, prefix.As<string_view>(), start, end)) {
       return true;
     }
@@ -517,7 +517,7 @@ int64_t StringHelper::Count(self_view sv, self_view x, int64_t start, int64_t en
   return ret;
 }
 
-StringHelper::self_view StringHelper::AsViewNoCheck(const MATXScriptAny* value) noexcept {
+StringHelper::self_view StringHelper::AsViewNoCheck(const HerculesAny* value) noexcept {
   if (value->pad >= 0) {
     return string_view{(char*)value->data.v_str_store.v_small_bytes, size_t(value->pad), 0};
   } else {
@@ -526,13 +526,13 @@ StringHelper::self_view StringHelper::AsViewNoCheck(const MATXScriptAny* value) 
   }
 }
 
-StringHelper::self_view StringHelper::AsView(const MATXScriptAny* value) {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value->code, TypeIndex::kRuntimeString);
+StringHelper::self_view StringHelper::AsView(const HerculesAny* value) {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value->code, TypeIndex::kRuntimeString);
   return AsViewNoCheck(value);
 }
 
-MATXScriptAny StringHelper::CopyFrom(const MATXScriptAny* value) {
-  MATXScriptAny ret;
+HerculesAny StringHelper::CopyFrom(const HerculesAny* value) {
+  HerculesAny ret;
   auto view = StringHelper::AsView(value);
   string_core<String::value_type> str(view.data(), view.size(), view.category());
   str.MoveTo(&ret.data.v_str_store, &ret.pad);
@@ -540,13 +540,13 @@ MATXScriptAny StringHelper::CopyFrom(const MATXScriptAny* value) {
   return ret;
 }
 
-MATXScriptAny StringHelper::CopyFrom(MATXScriptAny value) {
+HerculesAny StringHelper::CopyFrom(HerculesAny value) {
   return CopyFrom(&value);
 }
 
-void StringHelper::Destroy(MATXScriptAny* value) noexcept {
+void StringHelper::Destroy(HerculesAny* value) noexcept {
   string_core<String::value_type>::DestroyCHost(value);
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

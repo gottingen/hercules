@@ -24,7 +24,7 @@
 
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace FunctionNameRules {
 
@@ -47,7 +47,7 @@ String add_class_prefix(string_view class_name, string_view method_name) {
 }
 
 string_view remove_class_prefix(string_view class_name, string_view method_name) {
-  MXCHECK(is_class_method(class_name, method_name));
+  HSCHECK(is_class_method(class_name, method_name));
   return method_name.substr(class_name.size() + class_method_sep.size());
 }
 
@@ -59,4 +59,4 @@ bool is_class_method(string_view class_name, string_view method_name) {
 
 }  // namespace FunctionNameRules
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -28,11 +28,11 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::runtime;
+using namespace ::hercules::ir::printer;
 
 PrimExpr::PrimExpr(int32_t value) : PrimExpr(IntImm(runtime::DataType::Int(32), value)) {
 }
@@ -41,11 +41,11 @@ PrimExpr::PrimExpr(float value) : PrimExpr(FloatImm(runtime::DataType::Float(32)
 }
 
 IntImm::IntImm(runtime::DataType dtype, int64_t value, Span span) {
-  MXCHECK(dtype.is_scalar()) << "ValueError: IntImm can only take scalar.";
-  MXCHECK(dtype.is_int() || dtype.is_uint())
+  HSCHECK(dtype.is_scalar()) << "ValueError: IntImm can only take scalar.";
+  HSCHECK(dtype.is_int() || dtype.is_uint())
       << "ValueError: IntImm supports only int or uint type.";
   if (dtype.is_uint()) {
-    MXCHECK_GE(value, 0U);
+    HSCHECK_GE(value, 0U);
   }
   ObjectPtr<IntImmNode> node = runtime::make_object<IntImmNode>();
   node->dtype = dtype;
@@ -55,15 +55,15 @@ IntImm::IntImm(runtime::DataType dtype, int64_t value, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(IntImmNode);
+HERCULES_REGISTER_NODE_TYPE(IntImmNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<IntImm>("", [](IntImm s, ObjectPath p, IRDocsifier d) -> Doc {
       return LiteralDoc::Int(s->value, p->Attr("value"));
     });
 
 FloatImm::FloatImm(runtime::DataType dtype, double value, Span span) {
-  MXCHECK_EQ(dtype.lanes(), 1) << "ValueError: FloatImm can only take scalar.";
+  HSCHECK_EQ(dtype.lanes(), 1) << "ValueError: FloatImm can only take scalar.";
   ObjectPtr<FloatImmNode> node = runtime::make_object<FloatImmNode>();
   node->dtype = dtype;
   node->checked_type_ = PrimType(node->dtype);
@@ -72,17 +72,17 @@ FloatImm::FloatImm(runtime::DataType dtype, double value, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(FloatImmNode);
+HERCULES_REGISTER_NODE_TYPE(FloatImmNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<FloatImm>("", [](FloatImm s, ObjectPath p, IRDocsifier d) -> Doc {
       return LiteralDoc::Float(s->value, p->Attr("value"));
     });
 
 // PrimCast
 PrimCast::PrimCast(DataType t, PrimExpr value, Span span) {
-  MXCHECK(value.defined());
-  MXCHECK_EQ(t.lanes(), value.dtype().lanes());
+  HSCHECK(value.defined());
+  HSCHECK_EQ(t.lanes(), value.dtype().lanes());
   ObjectPtr<PrimCastNode> node = make_object<PrimCastNode>();
   node->dtype = t;
   node->checked_type_ = PrimType(node->dtype);
@@ -91,14 +91,14 @@ PrimCast::PrimCast(DataType t, PrimExpr value, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimCast")
+HERCULES_REGISTER_GLOBAL("ir.PrimCast")
     .set_body_typed([](DataType dtype, PrimExpr value, Span span) {
       return PrimCast(dtype, std::move(value), std::move(span));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimCastNode);
+HERCULES_REGISTER_NODE_TYPE(PrimCastNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<PrimCast>("", [](PrimCast s, ObjectPath p, IRDocsifier d) -> Doc {
       ExprDoc value = d->AsDoc<ExprDoc>(s->value, p->Attr("value"));
       if (s->dtype == runtime::DataType::Int(64)) {
@@ -115,7 +115,7 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // HLOCastPrim
 HLOCastPrim::HLOCastPrim(DataType t, BaseExpr value, Span span) {
-  MXCHECK(value.defined());
+  HSCHECK(value.defined());
   ObjectPtr<HLOCastPrimNode> node = make_object<HLOCastPrimNode>();
   node->dtype = t;
   node->checked_type_ = PrimType(node->dtype);
@@ -124,14 +124,14 @@ HLOCastPrim::HLOCastPrim(DataType t, BaseExpr value, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOCastPrim")
+HERCULES_REGISTER_GLOBAL("ir.HLOCastPrim")
     .set_body_typed([](DataType dtype, BaseExpr value, Span span) {
       return HLOCastPrim(dtype, value);
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOCastPrimNode);
+HERCULES_REGISTER_NODE_TYPE(HLOCastPrimNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<HLOCastPrim>("", [](HLOCastPrim s, ObjectPath p, IRDocsifier d) -> Doc {
       ExprDoc value = d->AsDoc<ExprDoc>(s->value, p->Attr("value"));
       if (d->cfg->ignore_type_cast) {
@@ -141,12 +141,12 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
       return Dialect(d, "HLOCastPrim")->Call({dtype, value});
     });
 
-#define MATXSCRIPT_DEFINE_BINOP_CONSTRUCTOR(Name)                       \
+#define HERCULES_DEFINE_BINOP_CONSTRUCTOR(Name)                       \
   Name::Name(PrimExpr a, PrimExpr b, Span span) {                       \
     using T = Name::ContainerType;                                      \
-    MXCHECK(a.defined()) << "ValueError: a is undefined\n";             \
-    MXCHECK(b.defined()) << "ValueError: b is undefined\n";             \
-    MXCHECK(a.dtype() == b.dtype()) << "TypeError: mismatched types\n"; \
+    HSCHECK(a.defined()) << "ValueError: a is undefined\n";             \
+    HSCHECK(b.defined()) << "ValueError: b is undefined\n";             \
+    HSCHECK(a.dtype() == b.dtype()) << "TypeError: mismatched types\n"; \
     ObjectPtr<T> node = make_object<T>();                               \
     node->dtype = a.dtype();                                            \
     node->checked_type_ = PrimType(node->dtype);                        \
@@ -156,12 +156,12 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     data_ = std::move(node);                                            \
   }
 
-#define MATXSCRIPT_DEFINE_CMPOP_CONSTRUCTOR(Name)                       \
+#define HERCULES_DEFINE_CMPOP_CONSTRUCTOR(Name)                       \
   Name::Name(PrimExpr a, PrimExpr b, Span span) {                       \
     using T = Name::ContainerType;                                      \
-    MXCHECK(a.defined()) << "ValueError: a is undefined\n";             \
-    MXCHECK(b.defined()) << "ValueError: b is undefined\n";             \
-    MXCHECK(a.dtype() == b.dtype()) << "TypeError: mismatched types\n"; \
+    HSCHECK(a.defined()) << "ValueError: a is undefined\n";             \
+    HSCHECK(b.defined()) << "ValueError: b is undefined\n";             \
+    HSCHECK(a.dtype() == b.dtype()) << "TypeError: mismatched types\n"; \
     ObjectPtr<T> node = make_object<T>();                               \
     node->dtype = DataType::Bool(a.dtype().lanes());                    \
     node->checked_type_ = PrimType(node->dtype);                        \
@@ -171,17 +171,17 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     data_ = std::move(node);                                            \
   }
 
-#define MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(                                          \
+#define HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(                                          \
     NodeType, NodeObj, NodeFunc, OpString, OpKind)                                                \
-  MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)                                               \
+  HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)                                               \
       .set_dispatch<ir::NodeType>("", [](ir::NodeType node, ObjectPath p, IRDocsifier d) -> Doc { \
         ExprDoc a = d->AsDoc<ExprDoc>(node->a, p->Attr("a"));                                     \
         ExprDoc b = d->AsDoc<ExprDoc>(node->b, p->Attr("b"));                                     \
         return OperationDoc(OperationDocNode::Kind::OpKind, {a, b});                              \
       });
 
-#define MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY(NodeType, OpString)                                  \
-  MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)                                               \
+#define HERCULES_SCRIPT_PRINTER_DEF_BINARY(NodeType, OpString)                                  \
+  HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)                                               \
       .set_dispatch<ir::NodeType>("", [](ir::NodeType node, ObjectPath p, IRDocsifier d) -> Doc { \
         ExprDoc a = d->AsDoc<ExprDoc>(node->a, p->Attr("a"));                                     \
         ExprDoc b = d->AsDoc<ExprDoc>(node->b, p->Attr("b"));                                     \
@@ -189,52 +189,52 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
       });
 
 // PrimAdd
-MATXSCRIPT_DEFINE_BINOP_CONSTRUCTOR(PrimAdd);
+HERCULES_DEFINE_BINOP_CONSTRUCTOR(PrimAdd);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimAdd").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimAdd").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimAdd(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimAddNode);
+HERCULES_REGISTER_NODE_TYPE(PrimAddNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimAdd, PrimAddNode, add, "Add", kAdd);
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimAdd, PrimAddNode, add, "Add", kAdd);
 
 // PrimSub
-MATXSCRIPT_DEFINE_BINOP_CONSTRUCTOR(PrimSub);
+HERCULES_DEFINE_BINOP_CONSTRUCTOR(PrimSub);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimSub").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimSub").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimSub(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimSubNode);
+HERCULES_REGISTER_NODE_TYPE(PrimSubNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimSub, PrimSubNode, sub, "Sub", kSub);
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimSub, PrimSubNode, sub, "Sub", kSub);
 
 // PrimMul
-MATXSCRIPT_DEFINE_BINOP_CONSTRUCTOR(PrimMul);
+HERCULES_DEFINE_BINOP_CONSTRUCTOR(PrimMul);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimMul").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimMul").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimMul(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimMulNode);
+HERCULES_REGISTER_NODE_TYPE(PrimMulNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimMul, PrimMulNode, mul, "Mul", kMult);
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimMul, PrimMulNode, mul, "Mul", kMult);
 
 // PrimDiv
-MATXSCRIPT_DEFINE_BINOP_CONSTRUCTOR(PrimDiv);
+HERCULES_DEFINE_BINOP_CONSTRUCTOR(PrimDiv);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimDiv").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimDiv").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimDiv(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimDivNode);
+HERCULES_REGISTER_NODE_TYPE(PrimDivNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<PrimDiv>("", [](PrimDiv node, ObjectPath p, IRDocsifier d) -> Doc {
       ExprDoc a = d->AsDoc<ExprDoc>(node->a, p->Attr("a"));
       ExprDoc b = d->AsDoc<ExprDoc>(node->b, p->Attr("b"));
-      PrimExpr ret = matxscript::ir::div(node->a, node->b);
+      PrimExpr ret = hercules::ir::div(node->a, node->b);
       if (!ret->IsInstance<PrimDivNode>()) {
         return Dialect(d, "PrimDiv")->Call({a, b});
       }
@@ -246,21 +246,21 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     });
 
 // PrimMod
-MATXSCRIPT_DEFINE_BINOP_CONSTRUCTOR(PrimMod);
+HERCULES_DEFINE_BINOP_CONSTRUCTOR(PrimMod);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimMod").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimMod").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimMod(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimModNode);
+HERCULES_REGISTER_NODE_TYPE(PrimModNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY(PrimMod, "truncmod");
+HERCULES_SCRIPT_PRINTER_DEF_BINARY(PrimMod, "truncmod");
 
 // PrimFloorDiv
 PrimFloorDiv::PrimFloorDiv(PrimExpr a, PrimExpr b, Span span) {
   using T = PrimFloorDiv::ContainerType;
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
 
   bool a_is_int = a.dtype().is_int() || a.dtype().is_uint();
   bool b_is_int = b.dtype().is_int() || b.dtype().is_uint();
@@ -278,20 +278,20 @@ PrimFloorDiv::PrimFloorDiv(PrimExpr a, PrimExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimFloorDiv").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimFloorDiv").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimFloorDiv(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimFloorDivNode);
+HERCULES_REGISTER_NODE_TYPE(PrimFloorDivNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(
     PrimFloorDiv, PrimFloorDivNode, floordiv, "FloorDiv", kFloorDiv);
 
 // PrimFloorMod
 PrimFloorMod::PrimFloorMod(PrimExpr a, PrimExpr b, Span span) {
   using T = PrimFloorMod::ContainerType;
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
 
   bool a_is_int = a.dtype().is_int() || a.dtype().is_uint();
   bool b_is_int = b.dtype().is_int() || b.dtype().is_uint();
@@ -309,109 +309,109 @@ PrimFloorMod::PrimFloorMod(PrimExpr a, PrimExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimFloorMod").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimFloorMod").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimFloorMod(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimFloorModNode);
+HERCULES_REGISTER_NODE_TYPE(PrimFloorModNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(
     PrimFloorMod, PrimFloorModNode, floormod, "FloorMod", kMod);
 
 // PrimMin
-MATXSCRIPT_DEFINE_BINOP_CONSTRUCTOR(PrimMin);
+HERCULES_DEFINE_BINOP_CONSTRUCTOR(PrimMin);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimMin").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimMin").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimMin(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimMinNode);
+HERCULES_REGISTER_NODE_TYPE(PrimMinNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY(PrimMin, "min");
+HERCULES_SCRIPT_PRINTER_DEF_BINARY(PrimMin, "min");
 
 // PrimMax
-MATXSCRIPT_DEFINE_BINOP_CONSTRUCTOR(PrimMax);
+HERCULES_DEFINE_BINOP_CONSTRUCTOR(PrimMax);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimMax").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimMax").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimMax(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimMaxNode);
+HERCULES_REGISTER_NODE_TYPE(PrimMaxNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY(PrimMax, "max");
+HERCULES_SCRIPT_PRINTER_DEF_BINARY(PrimMax, "max");
 
 // PrimEQ
-MATXSCRIPT_DEFINE_CMPOP_CONSTRUCTOR(PrimEQ);
+HERCULES_DEFINE_CMPOP_CONSTRUCTOR(PrimEQ);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimEQ").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimEQ").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimEQ(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimEQNode);
+HERCULES_REGISTER_NODE_TYPE(PrimEQNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimEQ, PrimEQNode, equal, "EQ", kEq);
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimEQ, PrimEQNode, equal, "EQ", kEq);
 
 // PrimNE
-MATXSCRIPT_DEFINE_CMPOP_CONSTRUCTOR(PrimNE);
+HERCULES_DEFINE_CMPOP_CONSTRUCTOR(PrimNE);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimNE").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimNE").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimNE(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimNENode);
+HERCULES_REGISTER_NODE_TYPE(PrimNENode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimNE, PrimNENode, not_equal, "NE", kNotEq);
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimNE, PrimNENode, not_equal, "NE", kNotEq);
 
 // PrimLT
-MATXSCRIPT_DEFINE_CMPOP_CONSTRUCTOR(PrimLT);
+HERCULES_DEFINE_CMPOP_CONSTRUCTOR(PrimLT);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimLT").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimLT").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimLT(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimLTNode);
+HERCULES_REGISTER_NODE_TYPE(PrimLTNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimLT, PrimLTNode, less_than, "LT", kLt);
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimLT, PrimLTNode, less_than, "LT", kLt);
 
 // PrimLE
-MATXSCRIPT_DEFINE_CMPOP_CONSTRUCTOR(PrimLE);
+HERCULES_DEFINE_CMPOP_CONSTRUCTOR(PrimLE);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimLE").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimLE").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimLE(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimLENode);
+HERCULES_REGISTER_NODE_TYPE(PrimLENode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimLE, PrimLENode, less_or_equal, "LE", kLtE);
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimLE, PrimLENode, less_or_equal, "LE", kLtE);
 
 // PrimGT
-MATXSCRIPT_DEFINE_CMPOP_CONSTRUCTOR(PrimGT);
+HERCULES_DEFINE_CMPOP_CONSTRUCTOR(PrimGT);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimGT").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimGT").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimGT(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimGTNode);
+HERCULES_REGISTER_NODE_TYPE(PrimGTNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimGT, PrimGTNode, greater_than, "GT", kGt);
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimGT, PrimGTNode, greater_than, "GT", kGt);
 
 // PrimGE
-MATXSCRIPT_DEFINE_CMPOP_CONSTRUCTOR(PrimGE);
+HERCULES_DEFINE_CMPOP_CONSTRUCTOR(PrimGE);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimGE").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimGE").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimGE(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimGENode);
+HERCULES_REGISTER_NODE_TYPE(PrimGENode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimGE, PrimGENode, greater_or_equal, "GE", kGtE);
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimGE, PrimGENode, greater_or_equal, "GE", kGtE);
 
 // PrimAnd
 PrimAnd::PrimAnd(PrimExpr a, PrimExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined";
-  MXCHECK(b.defined()) << "ValueError: b is undefined";
-  MXCHECK(a.dtype().is_bool() || a.dtype().is_int());
-  MXCHECK(b.dtype().is_bool() || b.dtype().is_int());
+  HSCHECK(a.defined()) << "ValueError: a is undefined";
+  HSCHECK(b.defined()) << "ValueError: b is undefined";
+  HSCHECK(a.dtype().is_bool() || a.dtype().is_int());
+  HSCHECK(b.dtype().is_bool() || b.dtype().is_int());
 
   ObjectPtr<PrimAndNode> node = make_object<PrimAndNode>();
   node->dtype = DataType::Bool(a.dtype().lanes());
@@ -422,20 +422,20 @@ PrimAnd::PrimAnd(PrimExpr a, PrimExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimAnd").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimAnd").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimAnd(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimAndNode);
+HERCULES_REGISTER_NODE_TYPE(PrimAndNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimAnd, PrimAndNode, logic_and, "And", kAnd);
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimAnd, PrimAndNode, logic_and, "And", kAnd);
 
 // PrimOr
 PrimOr::PrimOr(PrimExpr a, PrimExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined";
-  MXCHECK(b.defined()) << "ValueError: b is undefined";
-  MXCHECK(a.dtype().is_bool() || a.dtype().is_int());
-  MXCHECK(b.dtype().is_bool() || b.dtype().is_int());
+  HSCHECK(a.defined()) << "ValueError: a is undefined";
+  HSCHECK(b.defined()) << "ValueError: b is undefined";
+  HSCHECK(a.dtype().is_bool() || a.dtype().is_int());
+  HSCHECK(b.dtype().is_bool() || b.dtype().is_int());
 
   ObjectPtr<PrimOrNode> node = make_object<PrimOrNode>();
   node->dtype = DataType::Bool(a.dtype().lanes());
@@ -446,21 +446,21 @@ PrimOr::PrimOr(PrimExpr a, PrimExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimOr").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimOr").set_body_typed([](PrimExpr a, PrimExpr b, Span span) {
   return PrimOr(std::move(a), std::move(b), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimOrNode);
+HERCULES_REGISTER_NODE_TYPE(PrimOrNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimOr, PrimOrNode, logic_or, "Or", kOr);
+HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR(PrimOr, PrimOrNode, logic_or, "Or", kOr);
 
-#undef MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY
-#undef MATXSCRIPT_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR
+#undef HERCULES_SCRIPT_PRINTER_DEF_BINARY
+#undef HERCULES_SCRIPT_PRINTER_DEF_BINARY_WITH_SUGAR
 
 // PrimNot
 PrimNot::PrimNot(PrimExpr a, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined";
-  MXCHECK(a.dtype().is_bool() || a.dtype().is_int());
+  HSCHECK(a.defined()) << "ValueError: a is undefined";
+  HSCHECK(a.dtype().is_bool() || a.dtype().is_int());
 
   ObjectPtr<PrimNotNode> node = make_object<PrimNotNode>();
   node->dtype = DataType::Bool(a.dtype().lanes());
@@ -470,13 +470,13 @@ PrimNot::PrimNot(PrimExpr a, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimNot").set_body_typed([](PrimExpr a, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.PrimNot").set_body_typed([](PrimExpr a, Span span) {
   return PrimNot(std::move(a), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimNotNode);
+HERCULES_REGISTER_NODE_TYPE(PrimNotNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::PrimNot>("", [](ir::PrimNot node, ObjectPath p, IRDocsifier d) -> Doc {
       ExprDoc a = d->AsDoc<ExprDoc>(node->a, p->Attr("a"));
       return OperationDoc(OperationDocNode::Kind::kNot, {a});
@@ -484,13 +484,13 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // PrimSelect
 PrimSelect::PrimSelect(PrimExpr condition, PrimExpr true_value, PrimExpr false_value, Span span) {
-  MXCHECK(condition.defined()) << "ValueError: condition is undefined";
-  MXCHECK(true_value.defined()) << "ValueError: true_value is undefined";
-  MXCHECK(false_value.defined()) << "ValueError: true_value is undefined";
-  MXCHECK(condition.dtype().is_bool());
-  MXCHECK(condition.dtype().lanes() == true_value.dtype().lanes() ||
+  HSCHECK(condition.defined()) << "ValueError: condition is undefined";
+  HSCHECK(true_value.defined()) << "ValueError: true_value is undefined";
+  HSCHECK(false_value.defined()) << "ValueError: true_value is undefined";
+  HSCHECK(condition.dtype().is_bool());
+  HSCHECK(condition.dtype().lanes() == true_value.dtype().lanes() ||
           condition.dtype().lanes() == 1);
-  MXCHECK(false_value.dtype() == true_value.dtype()) << "TypeError: mismatched types";
+  HSCHECK(false_value.dtype() == true_value.dtype()) << "TypeError: mismatched types";
 
   ObjectPtr<PrimSelectNode> node = make_object<PrimSelectNode>();
   node->dtype = true_value.dtype();
@@ -502,14 +502,14 @@ PrimSelect::PrimSelect(PrimExpr condition, PrimExpr true_value, PrimExpr false_v
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimSelect")
+HERCULES_REGISTER_GLOBAL("ir.PrimSelect")
     .set_body_typed([](PrimExpr condition, PrimExpr true_value, PrimExpr false_value, Span span) {
       return PrimSelect(std::move(condition), std::move(true_value), std::move(false_value), span);
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimSelectNode);
+HERCULES_REGISTER_NODE_TYPE(PrimSelectNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::PrimSelect>(
         "", [](ir::PrimSelect select, ObjectPath p, IRDocsifier d) -> Doc {
           return Dialect(d, "PrimSelect")
@@ -522,10 +522,10 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // Let
 PrimLet::PrimLet(PrimVar var, PrimExpr value, PrimExpr body, Span span) {
-  MXCHECK(value.defined());
-  MXCHECK(body.defined());
-  MXCHECK(var.as<PrimExprNode>());
-  MXCHECK_EQ(value.dtype(), var.as<PrimExprNode>()->dtype);
+  HSCHECK(value.defined());
+  HSCHECK(body.defined());
+  HSCHECK(var.as<PrimExprNode>());
+  HSCHECK_EQ(value.dtype(), var.as<PrimExprNode>()->dtype);
 
   ObjectPtr<PrimLetNode> node = make_object<PrimLetNode>();
   node->dtype = body.dtype();
@@ -537,14 +537,14 @@ PrimLet::PrimLet(PrimVar var, PrimExpr value, PrimExpr body, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimLet")
+HERCULES_REGISTER_GLOBAL("ir.PrimLet")
     .set_body_typed([](PrimVar var, PrimExpr value, PrimExpr body, Span span) {
       return PrimLet(var, value, body, span);
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimLetNode);
+HERCULES_REGISTER_NODE_TYPE(PrimLetNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::PrimLet>("", [](ir::PrimLet let, ObjectPath p, IRDocsifier d) -> Doc {
       DictDoc where({d->AsDoc<ExprDoc>(let->var, p->Attr("var"))},
                     {d->AsDoc<ExprDoc>(let->value, p->Attr("value"))});
@@ -557,7 +557,7 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 // Call
 PrimCall::PrimCall(DataType dtype, HLOExpr op, Array<PrimExpr> args, Span span) {
   for (size_t i = 0; i < args.size(); ++i) {
-    MXCHECK(args[i].defined());
+    HSCHECK(args[i].defined());
   }
 
   ObjectPtr<PrimCallNode> node = make_object<PrimCallNode>();
@@ -569,17 +569,17 @@ PrimCall::PrimCall(DataType dtype, HLOExpr op, Array<PrimExpr> args, Span span) 
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimCall")
+HERCULES_REGISTER_GLOBAL("ir.PrimCall")
     .set_body_typed([](DataType type, HLOExpr op, Array<ObjectRef> args, Span span) {
       Array<PrimExpr> prim_expr_args;
       for (const auto& it : args) {
-        MXCHECK(it->IsInstance<PrimExprNode>());
+        HSCHECK(it->IsInstance<PrimExprNode>());
         prim_expr_args.push_back(Downcast<PrimExpr>(it));
       }
       return PrimCall(type, op, prim_expr_args, span);
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimCallNode);
+HERCULES_REGISTER_NODE_TYPE(PrimCallNode);
 
 template <typename DocType, typename AST>
 static inline Array<DocType> build_arrays(const Array<AST>& ast_list,
@@ -615,14 +615,14 @@ static Doc PrimCallMethodToDoc(StringRef method_name,
                                IRDocsifier d) {
   Array<StringRef> kw_keys;
   Array<ExprDoc> kw_values;
-  MXCHECK(call->args.size() >= 1) << "internal error";
+  HSCHECK(call->args.size() >= 1) << "internal error";
   auto self = d->AsDoc<ExprDoc>(call->args[0], p->Attr("args")->ArrayIndex(0));
   int arg_pos = 1;
   Array<ExprDoc> args = build_arrays<ExprDoc>(call->args, p, d, arg_pos);
   return self->Attr(method_name)->Call(args, kw_keys, kw_values);
 }
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::PrimCall>("", [](ir::PrimCall call, ObjectPath call_p, IRDocsifier d) -> Doc {
       ExprDoc prefix{nullptr};
       if (const auto* op = call->op.as<OpNode>()) {
@@ -651,11 +651,11 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
       return prefix->Call(args);
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.GetIntImm").set_body_typed([](IntImm i) { return i->value; });
+HERCULES_REGISTER_GLOBAL("runtime.GetIntImm").set_body_typed([](IntImm i) { return i->value; });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.GetFloatImm").set_body_typed([](FloatImm f) {
+HERCULES_REGISTER_GLOBAL("runtime.GetFloatImm").set_body_typed([](FloatImm f) {
   return f->value;
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -36,7 +36,7 @@
 #include <dlfcn.h>
 #endif
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // Dynamic shared library.
@@ -70,7 +70,7 @@ class DSOLibrary final : public Library {
     // use wstring version that is needed by LLVM.
     std::wstring wname(name.begin(), name.end());
     lib_handle_ = LoadLibraryW(wname.c_str());
-    MXCHECK(lib_handle_ != nullptr) << "Failed to load dynamic shared library " << name;
+    HSCHECK(lib_handle_ != nullptr) << "Failed to load dynamic shared library " << name;
   }
 
   void Unload() {
@@ -83,7 +83,7 @@ class DSOLibrary final : public Library {
   // load the library
   void Load(const String& name) {
     lib_handle_ = dlopen(name.c_str(), RTLD_NOW | RTLD_LOCAL);
-    MXCHECK(lib_handle_ != nullptr)
+    HSCHECK(lib_handle_ != nullptr)
         << "Failed to load dynamic shared library " << name << " " << dlerror();
   }
 
@@ -98,11 +98,11 @@ class DSOLibrary final : public Library {
 #endif
 };
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.module.loadfile_so").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.module.loadfile_so").set_body([](PyArgs args) -> RTValue {
   auto n = make_object<DSOLibrary>();
   n->Init(args[0].As<String>());
   return CreateModuleFromLibrary(n);
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

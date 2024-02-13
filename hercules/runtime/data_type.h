@@ -31,7 +31,7 @@
 #include <hercules/runtime/half.h>
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 /*!
  * \brief Runtime primitive data type.
@@ -309,14 +309,14 @@ inline bool TypeEqual(DLDataType lhs, DLDataType rhs) {
  * \param type_code Custom type code
  * \return Custom type name
  */
-MATX_DLL String GetCustomTypeName(uint8_t type_code);
+HERCULES_DLL String GetCustomTypeName(uint8_t type_code);
 
 /*!
  * \brief Runtime utility for checking whether custom type is registered
  * \param type_code Custom type code
  * \return Bool representing whether type is registered
  */
-MATX_DLL bool GetCustomTypeRegistered(uint8_t type_code);
+HERCULES_DLL bool GetCustomTypeRegistered(uint8_t type_code);
 
 /*!
  * \brief Runtime utility for parsing string of the form "custom[<typename>]"
@@ -324,7 +324,7 @@ MATX_DLL bool GetCustomTypeRegistered(uint8_t type_code);
  * \param scan pointer to parsing pointer, which is scanning across s
  * \return type code of custom type parsed
  */
-MATX_DLL uint8_t ParseCustomDatatype(const String& s, const char** scan);
+HERCULES_DLL uint8_t ParseCustomDatatype(const String& s, const char** scan);
 
 /*!
  * \brief Convert type code to its name
@@ -354,116 +354,116 @@ inline std::ostream& operator<<(std::ostream& os, const DataType& dtype) {  // N
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
-#define MATX_NDARRAY_TYPE_SWITCH(dtype, DType, ...)                       \
-  switch (::matxscript::runtime::DataType::flatten(dtype)) {              \
-    case ::matxscript::runtime::FlattenedDataType::INT8: {                \
+#define HVM_NDARRAY_TYPE_SWITCH(dtype, DType, ...)                       \
+  switch (::hercules::runtime::DataType::flatten(dtype)) {              \
+    case ::hercules::runtime::FlattenedDataType::INT8: {                \
       typedef int8_t DType;                                               \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::INT16: {               \
+    case ::hercules::runtime::FlattenedDataType::INT16: {               \
       typedef int16_t DType;                                              \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::INT32: {               \
+    case ::hercules::runtime::FlattenedDataType::INT32: {               \
       typedef int32_t DType;                                              \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::INT64: {               \
+    case ::hercules::runtime::FlattenedDataType::INT64: {               \
       typedef int64_t DType;                                              \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::FLOAT16: {             \
+    case ::hercules::runtime::FlattenedDataType::FLOAT16: {             \
       typedef Half DType;                                                 \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::FLOAT32: {             \
+    case ::hercules::runtime::FlattenedDataType::FLOAT32: {             \
       typedef float DType;                                                \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::FLOAT64: {             \
+    case ::hercules::runtime::FlattenedDataType::FLOAT64: {             \
       typedef double DType;                                               \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::UINT8: {               \
+    case ::hercules::runtime::FlattenedDataType::UINT8: {               \
       typedef uint8_t DType;                                              \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::UINT16: {              \
+    case ::hercules::runtime::FlattenedDataType::UINT16: {              \
       typedef uint16_t DType;                                             \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
     default: {                                                            \
-      MXCHECK(false) << ::matxscript::runtime::DataType::debug_str(dtype) \
+      HSCHECK(false) << ::hercules::runtime::DataType::debug_str(dtype) \
                      << " : unsupported ndarray type";                    \
       break;                                                              \
     }                                                                     \
   }
 
-#define MATX_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DType, ...)             \
-  switch (::matxscript::runtime::DataType::flatten(dtype)) {              \
-    case ::matxscript::runtime::FlattenedDataType::INT8: {                \
+#define HVM_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DType, ...)             \
+  switch (::hercules::runtime::DataType::flatten(dtype)) {              \
+    case ::hercules::runtime::FlattenedDataType::INT8: {                \
       typedef int8_t DType;                                               \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::INT16: {               \
+    case ::hercules::runtime::FlattenedDataType::INT16: {               \
       typedef int16_t DType;                                              \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::INT32: {               \
+    case ::hercules::runtime::FlattenedDataType::INT32: {               \
       typedef int32_t DType;                                              \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::INT64: {               \
+    case ::hercules::runtime::FlattenedDataType::INT64: {               \
       typedef int64_t DType;                                              \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::FLOAT16: {             \
+    case ::hercules::runtime::FlattenedDataType::FLOAT16: {             \
       typedef Half DType;                                                 \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::FLOAT32: {             \
+    case ::hercules::runtime::FlattenedDataType::FLOAT32: {             \
       typedef float DType;                                                \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::FLOAT64: {             \
+    case ::hercules::runtime::FlattenedDataType::FLOAT64: {             \
       typedef double DType;                                               \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::UINT8: {               \
+    case ::hercules::runtime::FlattenedDataType::UINT8: {               \
       typedef uint8_t DType;                                              \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::UINT16: {              \
+    case ::hercules::runtime::FlattenedDataType::UINT16: {              \
       typedef uint16_t DType;                                             \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
-    case ::matxscript::runtime::FlattenedDataType::BOOL: {                \
+    case ::hercules::runtime::FlattenedDataType::BOOL: {                \
       typedef bool DType;                                                 \
       { __VA_ARGS__ }                                                     \
       break;                                                              \
     }                                                                     \
     default: {                                                            \
-      MXCHECK(false) << ::matxscript::runtime::DataType::debug_str(dtype) \
+      HSCHECK(false) << ::hercules::runtime::DataType::debug_str(dtype) \
                      << " : unsupported ndarray type";                    \
       break;                                                              \
     }                                                                     \

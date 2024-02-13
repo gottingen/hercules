@@ -19,7 +19,7 @@
  */
 
 /*!
- * \file matx/ir/class_stmt.h
+ * \file hvm/ir/class_stmt.h
  * \brief Class nodes.
  */
 #pragma once
@@ -32,7 +32,7 @@
 #include <hercules/ir/attrs.h>
 #include <hercules/ir/stmt.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -99,7 +99,7 @@ class ClassStmtNode : public StmtNode {
    * \param name The name of the method.
    * \returns The method named by the argument.
    */
-  MATX_DLL Stmt Lookup(const StringRef& name) const;
+  HERCULES_DLL Stmt Lookup(const StringRef& name) const;
 
   void VisitAttrs(AttrVisitor* v) {
     v->Visit("name", &name);
@@ -126,7 +126,7 @@ class ClassStmtNode : public StmtNode {
   static constexpr const char* _type_key = "ir.ClassStmt";
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ClassStmtNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ClassStmtNode, StmtNode);
 };
 
 /*!
@@ -135,14 +135,14 @@ class ClassStmtNode : public StmtNode {
  */
 class ClassStmt : public Stmt {
  public:
-  MATX_DLL explicit ClassStmt(StringRef name,
+  HERCULES_DLL explicit ClassStmt(StringRef name,
                               Stmt base,
                               Array<Stmt> body,
                               ClassType cls_type,
                               DictAttrs attrs = NullValue<DictAttrs>(),
                               Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(ClassStmt, Stmt, ClassStmtNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(ClassStmtNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(ClassStmt, Stmt, ClassStmtNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(ClassStmtNode);
 };
 
 /*!
@@ -184,4 +184,4 @@ inline ClassStmt WithAttr(ClassStmt stmt, StringRef attr_key, ObjectRef attr_val
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

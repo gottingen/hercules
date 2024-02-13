@@ -25,7 +25,7 @@
  */
 #include "codegen_source_base.h"
 
-namespace matxscript {
+namespace hercules {
 namespace codegen {
 
 void CodeGenSourceBase::ClearFuncState() {
@@ -75,7 +75,7 @@ runtime::String CodeGenSourceBase::SSAGetID(runtime::String src, ir::Type t, std
 }
 
 runtime::String CodeGenSourceBase::AllocVarID(const ir::PrimVarNode* v) {
-  MXCHECK(!var_idmap_.count(v)) << "Need input to be in SSA form dup " << v->name_hint;
+  HSCHECK(!var_idmap_.count(v)) << "Need input to be in SSA form dup " << v->name_hint;
   runtime::String key = v->name_hint;
   runtime::String vid = GetUniqueName(key);
   var_idmap_[v] = vid;
@@ -83,7 +83,7 @@ runtime::String CodeGenSourceBase::AllocVarID(const ir::PrimVarNode* v) {
 }
 
 runtime::String CodeGenSourceBase::AllocVarID(const ir::HLOVarNode* v) {
-  MXCHECK(!var_idmap_.count(v)) << "Need input to be in SSA form dup " << v->name_hint();
+  HSCHECK(!var_idmap_.count(v)) << "Need input to be in SSA form dup " << v->name_hint();
   runtime::String key = v->name_hint();
   runtime::String vid = GetUniqueName(key);
   var_idmap_[v] = vid;
@@ -92,13 +92,13 @@ runtime::String CodeGenSourceBase::AllocVarID(const ir::HLOVarNode* v) {
 
 runtime::String CodeGenSourceBase::GetVarID(const ir::PrimVarNode* v) const {
   auto it = var_idmap_.find(v);
-  MXCHECK(it != var_idmap_.end()) << "Find undefined Variable " << v->name_hint;
+  HSCHECK(it != var_idmap_.end()) << "Find undefined Variable " << v->name_hint;
   return it->second;
 }
 
 runtime::String CodeGenSourceBase::GetVarID(const ir::HLOVarNode* v) const {
   auto it = var_idmap_.find(v);
-  MXCHECK(it != var_idmap_.end()) << "Find undefined Variable " << v->name_hint();
+  HSCHECK(it != var_idmap_.end()) << "Find undefined Variable " << v->name_hint();
   return it->second;
 }
 
@@ -116,7 +116,7 @@ void CodeGenSourceBase::MarkConst(runtime::String vid) {
     e.scope_id = 0;
     ssa_assign_map_[vid] = e;
   } else {
-    MXCHECK_EQ(it->second.vid, vid);
+    HSCHECK_EQ(it->second.vid, vid);
   }
 }
 
@@ -133,4 +133,4 @@ void CodeGenSourceBase::EndScope(int scope_id) {
 }
 
 }  // namespace codegen
-}  // namespace matxscript
+}  // namespace hercules

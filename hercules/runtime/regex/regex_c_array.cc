@@ -24,7 +24,7 @@
 
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace regex {
 
@@ -33,11 +33,11 @@ int c_array_init(c_array_t* array, size_t n, size_t size) {
   array->size = size;
   array->nalloc = n;
 
-  array->base = malloc(n * size + MATXSCRIPT_MEMORY_ALIGNMENT - 1);
+  array->base = malloc(n * size + HERCULES_MEMORY_ALIGNMENT - 1);
   if (array->base == nullptr) {
     return 0;
   }
-  array->elts = matxscript_memory_align_ptr(array->base, MATXSCRIPT_MEMORY_ALIGNMENT);
+  array->elts = hercules_memory_align_ptr(array->base, HERCULES_MEMORY_ALIGNMENT);
   return 1;
 }
 
@@ -75,13 +75,13 @@ void* c_array_push(c_array_t* a) {
 
     size = a->size * a->nalloc;
 
-    new_elt = realloc(a->base, 2 * size + MATXSCRIPT_MEMORY_ALIGNMENT - 1);
+    new_elt = realloc(a->base, 2 * size + HERCULES_MEMORY_ALIGNMENT - 1);
     if (new_elt == nullptr) {
       return nullptr;
     }
 
     a->base = new_elt;
-    a->elts = matxscript_memory_align_ptr(a->base, MATXSCRIPT_MEMORY_ALIGNMENT);
+    a->elts = hercules_memory_align_ptr(a->base, HERCULES_MEMORY_ALIGNMENT);
     a->nalloc *= 2;
   }
 
@@ -104,13 +104,13 @@ void* c_array_push_n(c_array_t* a, size_t n) {
 
     nalloc = 2 * ((n >= a->nalloc) ? n : a->nalloc);
 
-    new_elt = realloc(a->base, nalloc * a->size + MATXSCRIPT_MEMORY_ALIGNMENT - 1);
+    new_elt = realloc(a->base, nalloc * a->size + HERCULES_MEMORY_ALIGNMENT - 1);
     if (new_elt == nullptr) {
       return nullptr;
     }
 
     a->base = new_elt;
-    a->elts = matxscript_memory_align_ptr(a->base, MATXSCRIPT_MEMORY_ALIGNMENT);
+    a->elts = hercules_memory_align_ptr(a->base, HERCULES_MEMORY_ALIGNMENT);
     a->nalloc = nalloc;
   }
 
@@ -122,4 +122,4 @@ void* c_array_push_n(c_array_t* a, size_t n) {
 
 }  // namespace regex
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

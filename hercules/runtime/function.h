@@ -23,22 +23,22 @@
 
 #include <hercules/runtime/py_args.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 using NativeMethod = std::function<RTValue(void* self, PyArgs args)>;
 using NativeFunction = std::function<RTValue(PyArgs args)>;
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE NativeFunction Any::As<NativeFunction>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimePackedFuncHandle);
+HERCULES_ALWAYS_INLINE NativeFunction Any::As<NativeFunction>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimePackedFuncHandle);
   return NativeFunction(*reinterpret_cast<NativeFunction*>(value_.data.v_handle));
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE NativeFunction Any::AsNoCheck<NativeFunction>() const {
+HERCULES_ALWAYS_INLINE NativeFunction Any::AsNoCheck<NativeFunction>() const {
   return NativeFunction(*reinterpret_cast<NativeFunction*>(value_.data.v_handle));
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

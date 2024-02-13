@@ -23,10 +23,10 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Set").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.Set").set_body([](PyArgs args) -> RTValue {
   Set data;
   for (int i = 0; i < args.size(); ++i) {
     data.emplace(args[i].As<RTValue>());
@@ -34,7 +34,7 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Set").set_body([](PyArgs args) -> RTValue {
   return data;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.FTSet").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.FTSet").set_body([](PyArgs args) -> RTValue {
   FTSet<RTValue> data;
   for (int i = 0; i < args.size(); ++i) {
     data.emplace(args[i].As<RTValue>());
@@ -42,8 +42,8 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.FTSet").set_body([](PyArgs args) -> RTValue 
   return data;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetEqual").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "set.__eq__ expect " << 2 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.SetEqual").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "set.__eq__ expect " << 2 << " arguments but get " << args.size();
   const auto& self = args[0];
   const auto& other = args[1];
   switch (self.type_code()) {
@@ -55,14 +55,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetEqual").set_body([](PyArgs args) -> RTVal
                                                                        {other.As<RTView>()});
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Set_Iter").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 == args.size()) << "set.__iter__ expect " << 1 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.Set_Iter").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 == args.size()) << "set.__iter__ expect " << 1 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (self.type_code()) {
     case TypeIndex::kRuntimeSet: {
@@ -72,14 +72,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Set_Iter").set_body([](PyArgs args) -> RTVal
       return self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("__iter__", {});
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetSize").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 == args.size()) << "set.__len__ expect " << 1 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.SetSize").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 == args.size()) << "set.__len__ expect " << 1 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (self.type_code()) {
     case TypeIndex::kRuntimeSet: {
@@ -89,14 +89,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetSize").set_body([](PyArgs args) -> RTValu
       return self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("__len__", {});
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetContains").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "set.__contains__ expect " << 2 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.SetContains").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "set.__contains__ expect " << 2 << " arguments but get "
                             << args.size();
   const auto& self = args[0];
   const auto& key = args[1];
@@ -109,14 +109,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetContains").set_body([](PyArgs args) -> RT
                                                                        {key.As<RTView>()});
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetAddItem").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "set.add expect " << 2 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.SetAddItem").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "set.add expect " << 2 << " arguments but get " << args.size();
   const auto& self = args[0];
   const auto& key = args[1];
   switch (self.type_code()) {
@@ -127,14 +127,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetAddItem").set_body([](PyArgs args) -> RTV
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("add", {key.As<RTView>()});
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetClear").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 == args.size()) << "set.clear expect " << 1 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.SetClear").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 == args.size()) << "set.clear expect " << 1 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (self.type_code()) {
     case TypeIndex::kRuntimeSet: {
@@ -144,14 +144,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetClear").set_body([](PyArgs args) -> RTVal
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("clear", {});
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetReserve").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "set.reserve expect " << 2 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.SetReserve").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "set.reserve expect " << 2 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (self.type_code()) {
     case TypeIndex::kRuntimeSet: {
@@ -161,14 +161,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetReserve").set_body([](PyArgs args) -> RTV
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("reserve", {args[1].As<RTView>()});
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetBucketCount").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 == args.size()) << "set.bucket_count expect " << 1 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.SetBucketCount").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 == args.size()) << "set.bucket_count expect " << 1 << " arguments but get "
                             << args.size();
   const auto& self = args[0];
   switch (self.type_code()) {
@@ -179,14 +179,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetBucketCount").set_body([](PyArgs args) ->
       return self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("bucket_count", {});
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetDifference").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 <= args.size()) << "set.difference expect no less than " << 1 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.SetDifference").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 <= args.size()) << "set.difference expect no less than " << 1 << " arguments but get "
                             << args.size();
   const auto& self = args[0];
   PyArgs params = PyArgs(args.begin() + 1, args.size() - 1);
@@ -199,14 +199,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetDifference").set_body([](PyArgs args) -> 
       return self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("difference", params);
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetDifferenceUpdate").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 <= args.size()) << "set.difference_update expect no less than " << 1
+HERCULES_REGISTER_GLOBAL("runtime.SetDifferenceUpdate").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 <= args.size()) << "set.difference_update expect no less than " << 1
                             << " arguments but get " << args.size();
   const auto& self = args[0];
   PyArgs params = PyArgs(args.begin() + 1, args.size() - 1);
@@ -219,14 +219,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetDifferenceUpdate").set_body([](PyArgs arg
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("difference_update", params);
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetDiscard").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "set.discard expect " << 2 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.SetDiscard").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "set.discard expect " << 2 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (self.type_code()) {
     case TypeIndex::kRuntimeSet: {
@@ -236,14 +236,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetDiscard").set_body([](PyArgs args) -> RTV
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("discard", {args[1].As<RTView>()});
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetUpdate").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 <= args.size()) << "set.update expect no less than " << 1 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.SetUpdate").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 <= args.size()) << "set.update expect no less than " << 1 << " arguments but get "
                             << args.size();
   const auto& self = args[0];
   PyArgs params = PyArgs(args.begin() + 1, args.size() - 1);
@@ -256,14 +256,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetUpdate").set_body([](PyArgs args) -> RTVa
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("update", params);
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetUnion").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 <= args.size()) << "set.union expect no less than " << 1 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.SetUnion").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 <= args.size()) << "set.union expect no less than " << 1 << " arguments but get "
                             << args.size();
   const auto& self = args[0];
   PyArgs params = PyArgs(args.begin() + 1, args.size() - 1);
@@ -276,11 +276,11 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.SetUnion").set_body([](PyArgs args) -> RTVal
       return self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("union", params);
     } break;
     default: {
-      MXTHROW << "expect 'set' but get '" << self.type_name();
+      HSTHROW << "expect 'set' but get '" << self.type_name();
     } break;
   }
   return None;
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

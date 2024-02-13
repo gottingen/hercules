@@ -25,7 +25,7 @@
 #include <memory>
 #include <unordered_set>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class ThreadPoolExecutor {
@@ -79,4 +79,4 @@ class ThreadPoolExecutor {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -23,7 +23,7 @@
 #include <hercules/ir/_base/string_ref.h>
 #include <hercules/ir/printer/text_printer.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 std::ostream& operator<<(std::ostream& os, const runtime::ObjectRef& n) {
@@ -37,4 +37,4 @@ std::ostream& operator<<(std::ostream& os, const runtime::ObjectRef& n) {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

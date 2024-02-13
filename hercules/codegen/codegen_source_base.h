@@ -36,7 +36,7 @@
 #include <hercules/ir/printer/printer.h>
 #include <hercules/runtime/module.h>
 
-namespace matxscript {
+namespace hercules {
 namespace codegen {
 
 /*!
@@ -78,7 +78,7 @@ class CodeGenSourceBase {
     } else if (auto node_hlo = expr.as<ir::HLOVarNode>()) {
       return AllocVarID(node_hlo);
     } else {
-      MXCHECK(false) << "expr is not a var: " << expr;
+      HSCHECK(false) << "expr is not a var: " << expr;
     }
     return "this is a sb call";
   }
@@ -95,7 +95,7 @@ class CodeGenSourceBase {
     } else if (auto node_hlo = expr.as<ir::HLOVarNode>()) {
       return GetVarID(node_hlo);
     } else {
-      MXCHECK(false) << "expr is not a var: " << expr;
+      HSCHECK(false) << "expr is not a var: " << expr;
     }
     return "this is a sb call";
   }
@@ -175,4 +175,4 @@ runtime::Module CSourceModuleCreate(const runtime::String& code,
                                     const ir::Array<ir::StringRef>& const_vars = {});
 
 }  // namespace codegen
-}  // namespace matxscript
+}  // namespace hercules

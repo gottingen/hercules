@@ -24,7 +24,7 @@
 #include <hercules/runtime/generic/generic_constructor_funcs.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 Iterator Iterator::MakeGenericIterator(RTValue container,
@@ -120,4 +120,4 @@ std::ostream& operator<<(std::ostream& os, Iterator const& n) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

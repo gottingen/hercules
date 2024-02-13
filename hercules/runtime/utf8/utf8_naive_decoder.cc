@@ -19,7 +19,7 @@
  */
 #include <hercules/runtime/utf8/utf8_naive_decoder.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace utf8_details {
 
@@ -82,4 +82,4 @@ ptrdiff_t NaiveDecoder(unsigned char const* s_ptr,
 
 }  // namespace utf8_details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

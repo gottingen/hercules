@@ -23,7 +23,7 @@
 #include <hercules/runtime/container/string_view.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace serialization {
 
@@ -33,4 +33,4 @@ String msgpack_dumps(const Any& obj);
 
 }  // namespace serialization
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -21,7 +21,7 @@
 
 #include <mutex>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct TypeNameTraits::Manager {
@@ -54,4 +54,4 @@ string_view TypeNameTraits::Get(std::type_index ty_idx) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

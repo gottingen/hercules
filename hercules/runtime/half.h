@@ -2,7 +2,7 @@
 // Acknowledgement:
 // Taken from https://github.com/pytorch/pytorch/blob/release/1.11/c10/util/Half.h
 // with fixes applied:
-// - change namespace to matxscript::runtime for fix conflict with pytorch
+// - change namespace to hercules::runtime for fix conflict with pytorch
 
 #pragma once
 
@@ -49,21 +49,21 @@
 
 // Standard check for compiling CUDA with clang
 #if defined(__clang__) && defined(__CUDA__) && defined(__CUDA_ARCH__)
-#define MATXSCRIPT_RUNTIME_DEVICE_HOST_FUNCTION __device__ __host__
-#define MATXSCRIPT_RUNTIME_HOST_DEVICE __host__ __device__
+#define HERCULES_RUNTIME_DEVICE_HOST_FUNCTION __device__ __host__
+#define HERCULES_RUNTIME_HOST_DEVICE __host__ __device__
 #else
-#define MATXSCRIPT_RUNTIME_DEVICE_HOST_FUNCTION
-#define MATXSCRIPT_RUNTIME_HOST_DEVICE
+#define HERCULES_RUNTIME_DEVICE_HOST_FUNCTION
+#define HERCULES_RUNTIME_HOST_DEVICE
 #endif
 
 #include <typeinfo>  // operator typeid
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace detail {
 
-MATXSCRIPT_RUNTIME_DEVICE_HOST_FUNCTION inline float fp32_from_bits(uint32_t w) {
+HERCULES_RUNTIME_DEVICE_HOST_FUNCTION inline float fp32_from_bits(uint32_t w) {
 #if defined(__OPENCL_VERSION__)
   return as_float(w);
 #elif defined(__CUDA_ARCH__)
@@ -79,7 +79,7 @@ MATXSCRIPT_RUNTIME_DEVICE_HOST_FUNCTION inline float fp32_from_bits(uint32_t w) 
 #endif
 }
 
-MATXSCRIPT_RUNTIME_DEVICE_HOST_FUNCTION inline uint32_t fp32_to_bits(float f) {
+HERCULES_RUNTIME_DEVICE_HOST_FUNCTION inline uint32_t fp32_to_bits(float f) {
 #if defined(__OPENCL_VERSION__)
   return as_uint(f);
 #elif defined(__CUDA_ARCH__)
@@ -368,30 +368,30 @@ struct alignas(2) Half {
   unsigned short x;
 
   struct from_bits_t {};
-  MATXSCRIPT_RUNTIME_HOST_DEVICE static constexpr from_bits_t from_bits() {
+  HERCULES_RUNTIME_HOST_DEVICE static constexpr from_bits_t from_bits() {
     return from_bits_t();
   }
 
   // HIP wants __host__ __device__ tag, CUDA does not
 #if defined(USE_ROCM)
-  MATXSCRIPT_RUNTIME_HOST_DEVICE Half() = default;
+  HERCULES_RUNTIME_HOST_DEVICE Half() = default;
 #else
   Half() = default;
 #endif
 
-  constexpr MATXSCRIPT_RUNTIME_HOST_DEVICE Half(unsigned short bits, from_bits_t) : x(bits){};
-  inline MATXSCRIPT_RUNTIME_HOST_DEVICE Half(float value);
-  inline MATXSCRIPT_RUNTIME_HOST_DEVICE operator float() const;
+  constexpr HERCULES_RUNTIME_HOST_DEVICE Half(unsigned short bits, from_bits_t) : x(bits){};
+  inline HERCULES_RUNTIME_HOST_DEVICE Half(float value);
+  inline HERCULES_RUNTIME_HOST_DEVICE operator float() const;
 
 #if defined(__CUDACC__) || defined(__HIPCC__)
-  inline MATXSCRIPT_RUNTIME_HOST_DEVICE Half(const __half& value);
-  inline MATXSCRIPT_RUNTIME_HOST_DEVICE operator __half() const;
+  inline HERCULES_RUNTIME_HOST_DEVICE Half(const __half& value);
+  inline HERCULES_RUNTIME_HOST_DEVICE operator __half() const;
 #endif
 };
 
 std::ostream& operator<<(std::ostream& out, const Half& value);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 #include <hercules/runtime/half-inl.h>  // IWYU pragma: keep

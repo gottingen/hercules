@@ -24,7 +24,7 @@
 
 #include <cmath>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -97,4 +97,4 @@ size_t _Py_HashPointer(void* p) noexcept {
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

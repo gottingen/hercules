@@ -34,7 +34,7 @@
 #include <hercules/ir/struct_info_functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 ObjectStructInfo::ObjectStructInfo(Span span) {
@@ -43,9 +43,9 @@ ObjectStructInfo::ObjectStructInfo(Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ObjectStructInfoNode);
+HERCULES_REGISTER_NODE_TYPE(ObjectStructInfoNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ObjectStructInfo").set_body_typed([](Span span) {
+HERCULES_REGISTER_GLOBAL("ir.ObjectStructInfo").set_body_typed([](Span span) {
   return ObjectStructInfo(span);
 });
 
@@ -57,9 +57,9 @@ PrimStructInfo::PrimStructInfo(runtime::DataType dtype, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimStructInfoNode);
+HERCULES_REGISTER_NODE_TYPE(PrimStructInfoNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimStructInfo")
+HERCULES_REGISTER_GLOBAL("ir.PrimStructInfo")
     .set_body_typed([](runtime::DataType dtype, Span span) { return PrimStructInfo(dtype, span); });
 
 // Shape
@@ -70,7 +70,7 @@ ShapeStructInfo::ShapeStructInfo(Array<PrimExpr> values, Span span) {
     if (value->IsInstance<IntImmNode>()) {
       return cast(runtime::DataType::Int(64), value, value->span);
     }
-    MXCHECK(value.dtype() == runtime::DataType::Int(64))
+    HSCHECK(value.dtype() == runtime::DataType::Int(64))
         << "the value in ShapeStructInfo can only have dtype of int64";
     return value;
   });
@@ -80,18 +80,18 @@ ShapeStructInfo::ShapeStructInfo(Array<PrimExpr> values, Span span) {
 
 ShapeStructInfo::ShapeStructInfo(int ndim, Span span) {
   ObjectPtr<ShapeStructInfoNode> n = runtime::make_object<ShapeStructInfoNode>();
-  MXCHECK_GE(ndim, -1) << "ndim of ShapeStructInfo must be >= -1, but got " << ndim;
+  HSCHECK_GE(ndim, -1) << "ndim of ShapeStructInfo must be >= -1, but got " << ndim;
   n->ndim = ndim;
   n->span = std::move(span);
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ShapeStructInfoNode);
+HERCULES_REGISTER_NODE_TYPE(ShapeStructInfoNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ShapeStructInfo")
+HERCULES_REGISTER_GLOBAL("ir.ShapeStructInfo")
     .set_body_typed([](Optional<Array<PrimExpr>> values, int ndim, Span span) {
       if (values.defined()) {
-        MXCHECK_EQ(ndim, kUnknownNDim) << "ValueError: Cannot both specify values and ndim";
+        HSCHECK_EQ(ndim, kUnknownNDim) << "ValueError: Cannot both specify values and ndim";
         return ShapeStructInfo(values.value(), span);
       } else {
         return ShapeStructInfo(ndim, span);
@@ -103,9 +103,9 @@ TensorStructInfo::TensorStructInfo(HLOExpr shape, runtime::DataType dtype, Span 
   ObjectPtr<TensorStructInfoNode> n = runtime::make_object<TensorStructInfoNode>();
   // assign ndim before move
   Optional<ShapeStructInfo> sinfo = MatchStructInfo<ShapeStructInfo>(shape);
-  MXCHECK(sinfo) << "We expect shape to contain pre-set shape struct info";
-  MXCHECK(shape.defined()) << "Must provide a shape in this constructor";
-  MXCHECK(shape->IsInstance<ShapeExprNode>() || shape->IsInstance<HLOVarNode>())
+  HSCHECK(sinfo) << "We expect shape to contain pre-set shape struct info";
+  HSCHECK(shape.defined()) << "Must provide a shape in this constructor";
+  HSCHECK(shape->IsInstance<ShapeExprNode>() || shape->IsInstance<HLOVarNode>())
       << "We require shape to be normalized when constructing TensorStructInfo";
   n->ndim = sinfo.get()->ndim;
   // assign rest of the fields.
@@ -117,19 +117,19 @@ TensorStructInfo::TensorStructInfo(HLOExpr shape, runtime::DataType dtype, Span 
 
 TensorStructInfo::TensorStructInfo(runtime::DataType dtype, int ndim, Span span) {
   ObjectPtr<TensorStructInfoNode> n = runtime::make_object<TensorStructInfoNode>();
-  MXCHECK_GE(ndim, -1) << "ndim of TensorStructInfo must be >= -1, but got " << ndim;
+  HSCHECK_GE(ndim, -1) << "ndim of TensorStructInfo must be >= -1, but got " << ndim;
   n->ndim = ndim;
   n->dtype = dtype;
   n->span = std::move(span);
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(TensorStructInfoNode);
+HERCULES_REGISTER_NODE_TYPE(TensorStructInfoNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.TensorStructInfo")
+HERCULES_REGISTER_GLOBAL("ir.TensorStructInfo")
     .set_body_typed([](Optional<HLOExpr> shape, runtime::DataType dtype, int ndim, Span span) {
       if (shape.defined()) {
-        MXCHECK_EQ(ndim, kUnknownNDim) << "ValueError: Cannot both specify shape and ndim";
+        HSCHECK_EQ(ndim, kUnknownNDim) << "ValueError: Cannot both specify shape and ndim";
         return TensorStructInfo(shape.value(), dtype, span);
       } else {
         return TensorStructInfo(dtype, ndim, span);
@@ -144,30 +144,30 @@ TupleStructInfo::TupleStructInfo(Array<StructInfo> fields, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(TupleStructInfoNode);
+HERCULES_REGISTER_NODE_TYPE(TupleStructInfoNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.TupleStructInfo")
+HERCULES_REGISTER_GLOBAL("ir.TupleStructInfo")
     .set_body_typed([](Array<StructInfo> fields, Span span) {
       return TupleStructInfo(fields, span);
     });
 
 // Helper functions
 void UpdateStructInfo(HLOExpr expr, StructInfo struct_info) {
-  MXCHECK(!expr->struct_info_.defined())
+  HSCHECK(!expr->struct_info_.defined())
       << "the struct_info_ of the Expr to be updated must be nullptr for idempotency";
   expr->struct_info_ = struct_info;
   // also set checked type
   expr->checked_type_ = GetStaticType(struct_info);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.UpdateStructInfo")
+HERCULES_REGISTER_GLOBAL("ir.UpdateStructInfo")
     .set_body_typed([](HLOExpr expr, StructInfo struct_info) {
       UpdateStructInfo(expr, struct_info);
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ExprStructInfo").set_body_typed([](HLOExpr expr) {
+HERCULES_REGISTER_GLOBAL("ir.ExprStructInfo").set_body_typed([](HLOExpr expr) {
   return GetStructInfo(expr);
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

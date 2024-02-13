@@ -35,7 +35,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/object_internal.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -62,7 +62,7 @@ class IntImmNode : public PrimExprNode {
   }
 
   static constexpr const char* _type_key = "IntImm";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(IntImmNode, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(IntImmNode, PrimExprNode);
 };
 
 /*!
@@ -77,9 +77,9 @@ class IntImm : public PrimExpr {
    * \param dtype The data type of the value.
    * \param value The internal value.
    */
-  MATX_DLL IntImm(runtime::DataType dtype, int64_t value, Span span = Span());
+  HERCULES_DLL IntImm(runtime::DataType dtype, int64_t value, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(IntImm, PrimExpr, IntImmNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(IntImm, PrimExpr, IntImmNode);
 };
 
 /*!
@@ -106,7 +106,7 @@ class FloatImmNode : public PrimExprNode {
   }
 
   static constexpr const char* _type_key = "FloatImm";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(FloatImmNode, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(FloatImmNode, PrimExprNode);
 };
 
 /*!
@@ -121,9 +121,9 @@ class FloatImm : public PrimExpr {
    * \param dtype The data type of the value.
    * \param value The internal value.
    */
-  MATX_DLL FloatImm(runtime::DataType dtype, double value, Span span = Span());
+  HERCULES_DLL FloatImm(runtime::DataType dtype, double value, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(FloatImm, PrimExpr, FloatImmNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(FloatImm, PrimExpr, FloatImmNode);
 };
 
 /*!
@@ -143,7 +143,7 @@ class Bool : public IntImm {
     return (*this)->value != 0;
   }
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(Bool, IntImm, IntImmNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(Bool, IntImm, IntImmNode);
 };
 
 // Overload operators to make sure we have the most fine grained types.
@@ -216,7 +216,7 @@ class Integer : public IntImm {
    * \brief convert to int64_t
    */
   operator int64_t() const {
-    MXCHECK(data_ != nullptr) << " Trying to reference a null Integer";
+    HSCHECK(data_ != nullptr) << " Trying to reference a null Integer";
     return (*this)->value;
   }
   // comparators
@@ -262,7 +262,7 @@ class PrimCastNode : public PrimExprNode {
   }
 
   static constexpr const char* _type_key = "ir.PrimCast";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PrimCastNode, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PrimCastNode, PrimExprNode);
 };
 
 /*!
@@ -271,8 +271,8 @@ class PrimCastNode : public PrimExprNode {
  */
 class PrimCast : public PrimExpr {
  public:
-  MATX_DLL PrimCast(runtime::DataType dtype, PrimExpr value, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimCast, PrimExpr, PrimCastNode);
+  HERCULES_DLL PrimCast(runtime::DataType dtype, PrimExpr value, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimCast, PrimExpr, PrimCastNode);
 };
 
 /*!
@@ -299,7 +299,7 @@ class HLOCastPrimNode : public PrimExprNode {
   }
 
   static constexpr const char* _type_key = "ir.HLOCastPrim";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(HLOCastPrimNode, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(HLOCastPrimNode, PrimExprNode);
 };
 
 /*!
@@ -308,8 +308,8 @@ class HLOCastPrimNode : public PrimExprNode {
  */
 class HLOCastPrim : public PrimExpr {
  public:
-  MATX_DLL HLOCastPrim(runtime::DataType type, BaseExpr value, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOCastPrim, PrimExpr, HLOCastPrimNode);
+  HERCULES_DLL HLOCastPrim(runtime::DataType type, BaseExpr value, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOCastPrim, PrimExpr, HLOCastPrimNode);
 };
 
 /*!
@@ -340,7 +340,7 @@ class PrimBinaryOpNode : public PrimExprNode {
     hash_reduce(b);
   }
 
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(T, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(T, PrimExprNode);
 };
 
 /*! \brief a + b */
@@ -355,8 +355,8 @@ class PrimAddNode : public PrimBinaryOpNode<PrimAddNode> {
  */
 class PrimAdd : public PrimExpr {
  public:
-  MATX_DLL PrimAdd(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimAdd, PrimExpr, PrimAddNode);
+  HERCULES_DLL PrimAdd(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimAdd, PrimExpr, PrimAddNode);
 };
 
 /*! \brief a - b */
@@ -371,8 +371,8 @@ class PrimSubNode : public PrimBinaryOpNode<PrimSubNode> {
  */
 class PrimSub : public PrimExpr {
  public:
-  MATX_DLL PrimSub(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimSub, PrimExpr, PrimSubNode);
+  HERCULES_DLL PrimSub(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimSub, PrimExpr, PrimSubNode);
 };
 
 /*! \brief a * b */
@@ -387,8 +387,8 @@ class PrimMulNode : public PrimBinaryOpNode<PrimMulNode> {
  */
 class PrimMul : public PrimExpr {
  public:
-  MATX_DLL PrimMul(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimMul, PrimExpr, PrimMulNode);
+  HERCULES_DLL PrimMul(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimMul, PrimExpr, PrimMulNode);
 };
 
 /*!
@@ -406,8 +406,8 @@ class PrimDivNode : public PrimBinaryOpNode<PrimDivNode> {
  */
 class PrimDiv : public PrimExpr {
  public:
-  MATX_DLL PrimDiv(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimDiv, PrimExpr, PrimDivNode);
+  HERCULES_DLL PrimDiv(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimDiv, PrimExpr, PrimDivNode);
 };
 
 /*!
@@ -425,8 +425,8 @@ class PrimModNode : public PrimBinaryOpNode<PrimModNode> {
  */
 class PrimMod : public PrimExpr {
  public:
-  MATX_DLL PrimMod(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimMod, PrimExpr, PrimModNode);
+  HERCULES_DLL PrimMod(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimMod, PrimExpr, PrimModNode);
 };
 
 /*! \brief Floor division, floor(a/b) */
@@ -441,8 +441,8 @@ class PrimFloorDivNode : public PrimBinaryOpNode<PrimFloorDivNode> {
  */
 class PrimFloorDiv : public PrimExpr {
  public:
-  MATX_DLL PrimFloorDiv(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimFloorDiv, PrimExpr, PrimFloorDivNode);
+  HERCULES_DLL PrimFloorDiv(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimFloorDiv, PrimExpr, PrimFloorDivNode);
 };
 
 /*! \brief The remainder of the floordiv */
@@ -457,8 +457,8 @@ class PrimFloorModNode : public PrimBinaryOpNode<PrimFloorModNode> {
  */
 class PrimFloorMod : public PrimExpr {
  public:
-  MATX_DLL PrimFloorMod(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimFloorMod, PrimExpr, PrimFloorModNode);
+  HERCULES_DLL PrimFloorMod(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimFloorMod, PrimExpr, PrimFloorModNode);
 };
 
 /*! \brief min(a, b) */
@@ -473,8 +473,8 @@ class PrimMinNode : public PrimBinaryOpNode<PrimMinNode> {
  */
 class PrimMin : public PrimExpr {
  public:
-  MATX_DLL PrimMin(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimMin, PrimExpr, PrimMinNode);
+  HERCULES_DLL PrimMin(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimMin, PrimExpr, PrimMinNode);
 };
 
 /*! \brief max(a, b) */
@@ -489,8 +489,8 @@ class PrimMaxNode : public PrimBinaryOpNode<PrimMaxNode> {
  */
 class PrimMax : public PrimExpr {
  public:
-  MATX_DLL PrimMax(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimMax, PrimExpr, PrimMaxNode);
+  HERCULES_DLL PrimMax(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimMax, PrimExpr, PrimMaxNode);
 };
 
 /*!
@@ -521,7 +521,7 @@ class PrimCmpOpNode : public PrimExprNode {
     hash_reduce(b);
   }
 
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(T, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(T, PrimExprNode);
 };
 
 /*! \brief a == b */
@@ -536,8 +536,8 @@ class PrimEQNode : public PrimCmpOpNode<PrimEQNode> {
  */
 class PrimEQ : public PrimExpr {
  public:
-  MATX_DLL PrimEQ(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimEQ, PrimExpr, PrimEQNode);
+  HERCULES_DLL PrimEQ(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimEQ, PrimExpr, PrimEQNode);
 };
 
 /*! \brief a != b */
@@ -552,8 +552,8 @@ class PrimNENode : public PrimCmpOpNode<PrimNENode> {
  */
 class PrimNE : public PrimExpr {
  public:
-  MATX_DLL PrimNE(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimNE, PrimExpr, PrimNENode);
+  HERCULES_DLL PrimNE(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimNE, PrimExpr, PrimNENode);
 };
 
 /*! \brief a < b */
@@ -568,8 +568,8 @@ class PrimLTNode : public PrimCmpOpNode<PrimLTNode> {
  */
 class PrimLT : public PrimExpr {
  public:
-  MATX_DLL PrimLT(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimLT, PrimExpr, PrimLTNode);
+  HERCULES_DLL PrimLT(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimLT, PrimExpr, PrimLTNode);
 };
 
 /*! \brief a <= b */
@@ -584,8 +584,8 @@ struct PrimLENode : public PrimCmpOpNode<PrimLENode> {
  */
 class PrimLE : public PrimExpr {
  public:
-  MATX_DLL PrimLE(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimLE, PrimExpr, PrimLENode);
+  HERCULES_DLL PrimLE(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimLE, PrimExpr, PrimLENode);
 };
 
 /*! \brief a > b */
@@ -600,8 +600,8 @@ class PrimGTNode : public PrimCmpOpNode<PrimGTNode> {
  */
 class PrimGT : public PrimExpr {
  public:
-  MATX_DLL PrimGT(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimGT, PrimExpr, PrimGTNode);
+  HERCULES_DLL PrimGT(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimGT, PrimExpr, PrimGTNode);
 };
 
 /*! \brief a >= b */
@@ -616,8 +616,8 @@ class PrimGENode : public PrimCmpOpNode<PrimGENode> {
  */
 class PrimGE : public PrimExpr {
  public:
-  MATX_DLL PrimGE(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimGE, PrimExpr, PrimGENode);
+  HERCULES_DLL PrimGE(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimGE, PrimExpr, PrimGENode);
 };
 
 /*! \brief a && b */
@@ -645,7 +645,7 @@ class PrimAndNode : public PrimExprNode {
   }
 
   static constexpr const char* _type_key = "ir.PrimAnd";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PrimAndNode, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PrimAndNode, PrimExprNode);
 };
 
 /*!
@@ -654,8 +654,8 @@ class PrimAndNode : public PrimExprNode {
  */
 class PrimAnd : public PrimExpr {
  public:
-  MATX_DLL PrimAnd(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimAnd, PrimExpr, PrimAndNode);
+  HERCULES_DLL PrimAnd(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimAnd, PrimExpr, PrimAndNode);
 };
 
 /*! \brief a || b */
@@ -683,7 +683,7 @@ class PrimOrNode : public PrimExprNode {
   }
 
   static constexpr const char* _type_key = "ir.PrimOr";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PrimOrNode, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PrimOrNode, PrimExprNode);
 };
 
 /*!
@@ -692,8 +692,8 @@ class PrimOrNode : public PrimExprNode {
  */
 class PrimOr : public PrimExpr {
  public:
-  MATX_DLL PrimOr(PrimExpr a, PrimExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimOr, PrimExpr, PrimOrNode);
+  HERCULES_DLL PrimOr(PrimExpr a, PrimExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimOr, PrimExpr, PrimOrNode);
 };
 
 /*! \brief !a */
@@ -717,7 +717,7 @@ class PrimNotNode : public PrimExprNode {
   }
 
   static constexpr const char* _type_key = "ir.PrimNot";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PrimNotNode, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PrimNotNode, PrimExprNode);
 };
 
 /*!
@@ -726,8 +726,8 @@ class PrimNotNode : public PrimExprNode {
  */
 class PrimNot : public PrimExpr {
  public:
-  MATX_DLL PrimNot(PrimExpr a, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimNot, PrimExpr, PrimNotNode);
+  HERCULES_DLL PrimNot(PrimExpr a, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimNot, PrimExpr, PrimNotNode);
 };
 
 /*!
@@ -766,7 +766,7 @@ class PrimSelectNode : public PrimExprNode {
   }
 
   static constexpr const char* _type_key = "ir.PrimSelect";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PrimSelectNode, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PrimSelectNode, PrimExprNode);
 };
 
 /*!
@@ -775,12 +775,12 @@ class PrimSelectNode : public PrimExprNode {
  */
 class PrimSelect : public PrimExpr {
  public:
-  MATX_DLL PrimSelect(PrimExpr condition,
+  HERCULES_DLL PrimSelect(PrimExpr condition,
                       PrimExpr true_value,
                       PrimExpr false_value,
                       Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimSelect, PrimExpr, PrimSelectNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimSelect, PrimExpr, PrimSelectNode);
 };
 
 /*!
@@ -815,7 +815,7 @@ class PrimLetNode : public PrimExprNode {
   }
 
   static constexpr const char* _type_key = "ir.PrimLet";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PrimLetNode, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PrimLetNode, PrimExprNode);
 };
 
 /*!
@@ -824,8 +824,8 @@ class PrimLetNode : public PrimExprNode {
  */
 class PrimLet : public PrimExpr {
  public:
-  MATX_DLL PrimLet(PrimVar var, PrimExpr value, PrimExpr body, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimLet, PrimExpr, PrimLetNode);
+  HERCULES_DLL PrimLet(PrimVar var, PrimExpr value, PrimExpr body, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimLet, PrimExpr, PrimLetNode);
 };
 
 /*!
@@ -836,7 +836,7 @@ class PrimCallNode : public PrimExprNode {
   /*!
    * \brief The operator(function) being invoked
    *
-   *  - It can be matx::Op which corresponds to the primitive operators(intrinsics).
+   *  - It can be hvm::Op which corresponds to the primitive operators(intrinsics).
    *  - It can also be another function in the IRModule (GlobalVar).
    */
   HLOExpr op;
@@ -861,7 +861,7 @@ class PrimCallNode : public PrimExprNode {
   }
 
   static constexpr const char* _type_key = "ir.PrimCall";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PrimCallNode, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PrimCallNode, PrimExprNode);
 };
 
 /*!
@@ -870,9 +870,9 @@ class PrimCallNode : public PrimExprNode {
  */
 class PrimCall : public PrimExpr {
  public:
-  MATX_DLL PrimCall(runtime::DataType dtype, HLOExpr op, Array<PrimExpr> args, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimCall, PrimExpr, PrimCallNode);
+  HERCULES_DLL PrimCall(runtime::DataType dtype, HLOExpr op, Array<PrimExpr> args, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimCall, PrimExpr, PrimCallNode);
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

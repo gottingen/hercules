@@ -21,7 +21,7 @@
 
 #include <type_traits>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace {
 
@@ -81,4 +81,4 @@ struct is_comparable {
 
 }  // namespace
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

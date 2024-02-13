@@ -27,7 +27,7 @@
 
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 /*!
  * \brief Allocate an object using default allocator.
@@ -106,7 +106,7 @@ class MemoryPoolAllocator : public ObjAllocatorBase<MemoryPoolAllocator> {
     using StorageType = typename std::aligned_storage<sizeof(T), alignof(T)>::type;
 
     template <typename... Args>
-    MATXSCRIPT_ALWAYS_INLINE static T* New(MemoryPoolAllocator*, Args&&... args) {
+    HERCULES_ALWAYS_INLINE static T* New(MemoryPoolAllocator*, Args&&... args) {
       // NOTE: the first argument is not needed for SimpleObjAllocator
       // It is reserved for special allocators that needs to recycle
       // the object to itself (e.g. in the case of object pool).
@@ -125,7 +125,7 @@ class MemoryPoolAllocator : public ObjAllocatorBase<MemoryPoolAllocator> {
       return reinterpret_cast<T*>(data);
     }
 
-    MATXSCRIPT_ALWAYS_INLINE static Object::FDeleter Deleter() {
+    HERCULES_ALWAYS_INLINE static Object::FDeleter Deleter() {
       return Deleter_;
     }
 
@@ -211,4 +211,4 @@ inline ObjectPtr<ArrayType> make_inplace_array_object(size_t num_elems, Args&&..
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

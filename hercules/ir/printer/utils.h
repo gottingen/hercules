@@ -33,7 +33,7 @@
 #include <utility>
 #include <vector>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -55,7 +55,7 @@ inline ExprDoc DefineVar(const ir::BaseExpr& var, const Frame& frame, const IRDo
   if (const auto* hlo_var = var.as<ir::HLOVarNode>()) {
     return d->Define(var, frame, hlo_var->name_hint().empty() ? "v" : hlo_var->name_hint());
   }
-  MXTHROW << "[printer][DefineVar] the input expr is not a var!!!";
+  HSTHROW << "[printer][DefineVar] the input expr is not a var!!!";
   return ExprDoc{nullptr};
 }
 
@@ -170,4 +170,4 @@ Doc DoConciseScoping(const Optional<ExprDoc>& lhs,
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

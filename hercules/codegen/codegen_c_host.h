@@ -34,7 +34,7 @@
 
 #include <hercules/ir/expr.h>
 
-namespace matxscript {
+namespace hercules {
 namespace codegen {
 
 class CodeGenCHost final : public CodeGenC {
@@ -127,4 +127,4 @@ class CodeGenCHost final : public CodeGenC {
 };
 
 }  // namespace codegen
-}  // namespace matxscript
+}  // namespace hercules

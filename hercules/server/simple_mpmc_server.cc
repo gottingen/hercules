@@ -19,7 +19,7 @@
  */
 #include <hercules/server/simple_mpmc_server.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace server {
 
@@ -131,4 +131,4 @@ std::vector<std::pair<std::string, RTValue>> SimpleMPMCServer::process_with_tc(
 
 }  // namespace server
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

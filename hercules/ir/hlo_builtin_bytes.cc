@@ -22,34 +22,34 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
-#define MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(Prefix, OpName)                                \
-  MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(Prefix##_##OpName)                                     \
+#define HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(Prefix, OpName)                                \
+  HERCULES_IR_DEFINE_HLO_BUILTIN_FUNC(Prefix##_##OpName)                                     \
       .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque))          \
-      .set_attr<TGlobalSymbol>("TGlobalSymbol", MATXSCRIPT_AS_STR(kernel_##Prefix##_##OpName)) \
+      .set_attr<TGlobalSymbol>("TGlobalSymbol", HERCULES_AS_STR(kernel_##Prefix##_##OpName)) \
       .set_attr<TPrinterMethodSymbol>("TPrinterMethodSymbol", #OpName)
 
 /******************************************************************************
  * String(bytes) unbound methods
  *****************************************************************************/
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, __len__)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, __len__)
     .set_num_inputs(1)
     .add_argument("self", "bytes_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, __contains__)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, __contains__)
     .set_num_inputs(2)
     .add_argument("self", "bytes_view", "")
     .add_argument("key", "int|bytes_view|Any|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, __getitem__)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, __getitem__)
     .set_num_inputs(2)
     .add_argument("self", "bytes_view", "")
     .add_argument("pos", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, __getslice__)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, __getslice__)
     .set_num_inputs(3)
     .set_num_inputs_max(4)
     .add_argument("self", "bytes_view", "")
@@ -57,46 +57,46 @@ MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, __getslice__)
     .add_argument("e", "int", "")
     .add_argument("step", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, lower)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, lower)
     .set_num_inputs(1)
     .add_argument("self", "bytes_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, upper)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, upper)
     .set_num_inputs(1)
     .add_argument("self", "bytes_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, isdigit)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, isdigit)
     .set_num_inputs(1)
     .add_argument("self", "bytes_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, isalpha)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, isalpha)
     .set_num_inputs(1)
     .add_argument("self", "bytes_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, decode)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, decode)
     .set_num_inputs(1)
     .add_argument("self", "bytes_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, split)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, split)
     .set_num_inputs(1)
     .set_num_inputs_max(3)
     .add_argument("self", "bytes_view", "")
     .add_argument("sep", "bytes_view|Any|any_view", "")
     .add_argument("maxsplit", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, split_ft)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, split_ft)
     .set_num_inputs(1)
     .set_num_inputs_max(3)
     .add_argument("self", "bytes_view", "")
     .add_argument("sep", "bytes_view|Any|any_view", "")
     .add_argument("maxsplit", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, join)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, join)
     .set_num_inputs(2)
     .add_argument("self", "bytes_view", "")
     .add_argument("iterable", "list|FTList[bytes]|Any|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, replace)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, replace)
     .set_num_inputs(3)
     .set_num_inputs_max(4)
     .add_argument("self", "bytes_view", "")
@@ -104,7 +104,7 @@ MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, replace)
     .add_argument("new_s", "bytes_view", "")
     .add_argument("count", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, startswith)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, startswith)
     .set_num_inputs(2)
     .set_num_inputs_max(4)
     .add_argument("self", "bytes_view", "")
@@ -112,7 +112,7 @@ MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, startswith)
     .add_argument("start", "int", "")
     .add_argument("end", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, endswith)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, endswith)
     .set_num_inputs(2)
     .set_num_inputs_max(4)
     .add_argument("self", "bytes_view", "")
@@ -120,25 +120,25 @@ MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, endswith)
     .add_argument("start", "int", "")
     .add_argument("end", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, lstrip)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, lstrip)
     .set_num_inputs(1)
     .set_num_inputs_max(2)
     .add_argument("self", "bytes_view", "")
     .add_argument("chars", "bytes_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, rstrip)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, rstrip)
     .set_num_inputs(1)
     .set_num_inputs_max(2)
     .add_argument("self", "bytes_view", "")
     .add_argument("chars", "bytes_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, strip)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, strip)
     .set_num_inputs(1)
     .set_num_inputs_max(2)
     .add_argument("self", "bytes_view", "")
     .add_argument("chars", "bytes_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, count)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, count)
     .set_num_inputs(2)
     .set_num_inputs_max(4)
     .add_argument("self", "bytes_view", "")
@@ -146,7 +146,7 @@ MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, count)
     .add_argument("start", "int", "")
     .add_argument("end", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, repeat)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, repeat)
     .set_num_inputs(2)
     .add_argument("self", "bytes_view", "")
     .add_argument("times", "int", "");
@@ -154,7 +154,7 @@ MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, repeat)
 /******************************************************************************
  * String(bytes) fused ops
  *****************************************************************************/
-MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, fused_concat)
+HERCULES_IR_DEFINE_HLO_BYTES_FUNCTION(str, fused_concat)
     .set_num_inputs(2)
     .set_num_inputs_max(-1)
     .add_argument("s1", "bytes_view", "")
@@ -162,4 +162,4 @@ MATXSCRIPT_IR_DEFINE_HLO_BYTES_FUNCTION(str, fused_concat)
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

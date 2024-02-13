@@ -23,7 +23,7 @@
 #include <hercules/pipeline/tx_session.h>
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 Graph::Graph(const std::vector<NodePtr>& outputs) {
@@ -119,7 +119,7 @@ std::shared_ptr<Graph> Graph::FromGenericList(TXSession* sess, List generic_grap
     String op_name = node_config.get_item("op_name").As<String>();
     NodePtr node = Node::FromDict(node_config, graph.get());
     auto op_ptr = sess->FindOp(op_cls, op_name);
-    MXCHECK(op_ptr != nullptr) << "not found op: " << op_cls << ", name: " << op_name;
+    HSCHECK(op_ptr != nullptr) << "not found op: " << op_cls << ", name: " << op_name;
     node->op = op_ptr;
     graph->nodes_->emplace_back(node);
     for (size_t i = 0; i < node->outputs.size(); ++i) {
@@ -142,7 +142,7 @@ std::shared_ptr<Graph> Graph::FromGenericList(TXSession* sess, List generic_grap
       }
     }
   }
-  MXCHECK(!node_outputs.empty()) << "compute graph has zero output nodes!!!";
+  HSCHECK(!node_outputs.empty()) << "compute graph has zero output nodes!!!";
   graph->build_input_output(node_outputs);
   return std::move(graph);
 }
@@ -158,4 +158,4 @@ List Graph::ToGenericList() const {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

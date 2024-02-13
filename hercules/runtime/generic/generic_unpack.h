@@ -24,7 +24,7 @@
 
 #include "generic_funcs.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace {
@@ -48,18 +48,18 @@ using has_size_method = decltype(has_size_method_impl<T>(0));
 
 struct KernelBuiltinsLenDetails {
   template <typename... ARGS>
-  MATXSCRIPT_ALWAYS_INLINE static int64_t run(const std::tuple<ARGS...>& container) {
+  HERCULES_ALWAYS_INLINE static int64_t run(const std::tuple<ARGS...>& container) {
     return std::tuple_size<std::tuple<ARGS...>>{};
   }
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE static int64_t run(const std::pair<T1, T2>& container) {
+  HERCULES_ALWAYS_INLINE static int64_t run(const std::pair<T1, T2>& container) {
     return 2;
   }
   template <typename T, typename = typename std::enable_if<has_size_method<T>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static int64_t run(const T& container) {
+  HERCULES_ALWAYS_INLINE static int64_t run(const T& container) {
     return container.size();
   }
-  MATXSCRIPT_ALWAYS_INLINE static int64_t run(const Any& container) {
+  HERCULES_ALWAYS_INLINE static int64_t run(const Any& container) {
     return kernel_object___len__(container);
   }
 };
@@ -68,16 +68,16 @@ template <int64_t index, typename R>
 struct KernelBuiltinsGetItemDetails {
   using return_type = typename std::remove_cv<typename std::remove_reference<R>::type>::type;
   template <typename... ARGS>
-  MATXSCRIPT_ALWAYS_INLINE static return_type run(const std::tuple<ARGS...>& container) {
+  HERCULES_ALWAYS_INLINE static return_type run(const std::tuple<ARGS...>& container) {
     return std::get<index>(container);
   }
   template <typename T,
             typename = typename std::enable_if<has_get_item_int_method_impl<T>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static return_type run(const T& container) {
+  HERCULES_ALWAYS_INLINE static return_type run(const T& container) {
     GenericValueConverter<return_type> converter;
     return converter(container.get_item(index));
   }
-  MATXSCRIPT_ALWAYS_INLINE static return_type run(const Any& container) {
+  HERCULES_ALWAYS_INLINE static return_type run(const Any& container) {
     static_assert(std::is_same<return_type, RTValue>::value,
                   "Any.__getitem__ return_type must be Any");
     return kernel_object___getitem__(container, RTView(index));
@@ -88,20 +88,20 @@ template <typename R>
 struct KernelBuiltinsGetItemDetails<0, R> {
   using return_type = typename std::remove_cv<typename std::remove_reference<R>::type>::type;
   template <typename... ARGS>
-  MATXSCRIPT_ALWAYS_INLINE static return_type run(const std::tuple<ARGS...>& container) {
+  HERCULES_ALWAYS_INLINE static return_type run(const std::tuple<ARGS...>& container) {
     return std::get<0>(container);
   }
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE static return_type run(const std::pair<T1, T2>& container) {
+  HERCULES_ALWAYS_INLINE static return_type run(const std::pair<T1, T2>& container) {
     return container.first;
   }
   template <typename T,
             typename = typename std::enable_if<has_get_item_int_method_impl<T>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static return_type run(const T& container) {
+  HERCULES_ALWAYS_INLINE static return_type run(const T& container) {
     GenericValueConverter<return_type> converter;
     return converter(container.get_item(0));
   }
-  MATXSCRIPT_ALWAYS_INLINE static return_type run(const Any& container) {
+  HERCULES_ALWAYS_INLINE static return_type run(const Any& container) {
     static_assert(std::is_same<return_type, RTValue>::value,
                   "internal error: Any.__getitem__ return_type must be Any");
     return kernel_object___getitem__(container, RTView(0));
@@ -112,20 +112,20 @@ template <typename R>
 struct KernelBuiltinsGetItemDetails<1, R> {
   using return_type = typename std::remove_cv<typename std::remove_reference<R>::type>::type;
   template <typename... ARGS>
-  MATXSCRIPT_ALWAYS_INLINE static return_type run(const std::tuple<ARGS...>& container) {
+  HERCULES_ALWAYS_INLINE static return_type run(const std::tuple<ARGS...>& container) {
     return std::get<1>(container);
   }
   template <typename T1, typename T2>
-  MATXSCRIPT_ALWAYS_INLINE static return_type run(const std::pair<T1, T2>& container) {
+  HERCULES_ALWAYS_INLINE static return_type run(const std::pair<T1, T2>& container) {
     return container.second;
   }
   template <typename T,
             typename = typename std::enable_if<has_get_item_int_method_impl<T>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE static return_type run(const T& container) {
+  HERCULES_ALWAYS_INLINE static return_type run(const T& container) {
     GenericValueConverter<return_type> converter;
     return converter(container.get_item(1));
   }
-  MATXSCRIPT_ALWAYS_INLINE static return_type run(const Any& container) {
+  HERCULES_ALWAYS_INLINE static return_type run(const Any& container) {
     static_assert(std::is_same<return_type, RTValue>::value,
                   "internal error: Any.__getitem__ return_type must be Any");
     return kernel_object___getitem__(container, RTView(1));
@@ -133,14 +133,14 @@ struct KernelBuiltinsGetItemDetails<1, R> {
 };
 
 template <int64_t index, typename R, typename T>
-MATXSCRIPT_ALWAYS_INLINE R kernel_builtins_unpack(const T& container) {
+HERCULES_ALWAYS_INLINE R kernel_builtins_unpack(const T& container) {
   return KernelBuiltinsGetItemDetails<index, R>::run(container);
 }
 
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_builtins_len(const T& container) {
+HERCULES_ALWAYS_INLINE int64_t kernel_builtins_len(const T& container) {
   return KernelBuiltinsLenDetails::run(container);
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

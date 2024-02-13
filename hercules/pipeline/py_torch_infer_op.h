@@ -22,7 +22,7 @@
 #include <hercules/pipeline/global_unique_index.h>
 #include <hercules/pipeline/op_kernel.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class PyTorchInferOp : public OpKernel {
@@ -36,4 +36,4 @@ class PyTorchInferOp : public OpKernel {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

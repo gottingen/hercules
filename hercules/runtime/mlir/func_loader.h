@@ -23,7 +23,7 @@
 #include <hercules/runtime/runtime_value.h>
 #include <unordered_map>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace mlir {
 
@@ -36,4 +36,4 @@ void* load_func(const std::string& func_name, const std::string& share_lib_path)
 
 }  // namespace mlir
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

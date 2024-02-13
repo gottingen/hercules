@@ -24,7 +24,7 @@
 
 #include <mutex>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*
@@ -35,29 +35,29 @@ static int64_t logging_level = LoggingLevel::WARNING;
 
 NullStream null_stream;
 
-MATX_DLL void SetLoggingLevel(int64_t level) {
+HERCULES_DLL void SetLoggingLevel(int64_t level) {
   logging_level = level;
 }
 
-MATX_DLL int64_t GetLoggingLevel() {
+HERCULES_DLL int64_t GetLoggingLevel() {
   return logging_level;
 }
 
-static int GET_ENV_MATXSCRIPT_LOG_STACK_TRACE() {
-  if (auto var = std::getenv("MATXSCRIPT_LOG_STACK_TRACE")) {
+static int GET_ENV_HERCULES_LOG_STACK_TRACE() {
+  if (auto var = std::getenv("HERCULES_LOG_STACK_TRACE")) {
     return std::atoi(var);
   }
   return 1;
 }
 
-bool ENV_ENABLE_MATX_LOG_STACK_TRACE = GET_ENV_MATXSCRIPT_LOG_STACK_TRACE();
+bool ENV_ENABLE_HVM_LOG_STACK_TRACE = GET_ENV_HERCULES_LOG_STACK_TRACE();
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
-#ifdef MATXSCRIPT_LOG_STACK_TRACE
+#ifdef HERCULES_LOG_STACK_TRACE
 
-#ifdef MATX_WITH_LIBBACKTRACE
+#ifdef HVM_WITH_LIBBACKTRACE
 
 #include <backtrace.h>
 #include <cxxabi.h>
@@ -69,7 +69,7 @@ bool ENV_ENABLE_MATX_LOG_STACK_TRACE = GET_ENV_MATXSCRIPT_LOG_STACK_TRACE();
 #include <string>
 #include <vector>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace {
 
@@ -138,12 +138,12 @@ int BacktraceFullCallback(
   }
 
   if (!(stack_trace->lines.size() == 0 &&
-        (symbol_str->find("matxscript::runtime::StackTrace", 0) == 0 ||
-         symbol_str->find("matxscript::runtime::LogMessageFatal", 0) == 0))) {
+        (symbol_str->find("hercules::runtime::StackTrace", 0) == 0 ||
+         symbol_str->find("hercules::runtime::LogMessageFatal", 0) == 0))) {
     stack_trace->lines.push_back(s.str());
   }
   std::vector<std::string> terminates = {
-      "MATXPipelineTXSessionRun", "MATXPipelineOpKernelCall", "MATXFuncCall"};
+      "HVMPipelineTXSessionRun", "HVMPipelineOpKernelCall", "HVMFuncCall"};
   if (std::find(terminates.begin(), terminates.end(), *symbol_str) != terminates.end()) {
     return 1;
   }
@@ -174,16 +174,16 @@ std::string StackTrace(size_t start_frame, const size_t stack_size) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 #else
 
-#define MATX_EXECINFO_H <execinfo.h>
+#define HVM_EXECINFO_H <execinfo.h>
 #include <cxxabi.h>
 #include <sstream>
-#include MATX_EXECINFO_H
+#include HVM_EXECINFO_H
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 std::string StackTrace(size_t start_frame, const size_t stack_size) {
@@ -199,7 +199,7 @@ std::string StackTrace(size_t start_frame, const size_t stack_size) {
   char** msgs = backtrace_symbols(stack.data(), nframes);
   if (msgs != nullptr) {
     for (int frameno = start_frame; frameno < nframes; ++frameno) {
-      string msg = ::matxscript::runtime::Demangle(msgs[frameno]);
+      string msg = ::hercules::runtime::Demangle(msgs[frameno]);
       stacktrace_os << "  [bt] (" << frameno - start_frame << ") " << msg << "\n";
     }
   }
@@ -209,7 +209,7 @@ std::string StackTrace(size_t start_frame, const size_t stack_size) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
-#endif  // MATXSCRIPT_WITH_LIBBACKTRACE
-#endif  // MATXSCRIPT_LOG_STACK_TRACE
+#endif  // HERCULES_WITH_LIBBACKTRACE
+#endif  // HERCULES_LOG_STACK_TRACE

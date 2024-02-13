@@ -32,7 +32,7 @@
 
 #include "iterator_utils.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class TupleNode;
@@ -235,12 +235,12 @@ struct type_index_traits<Tuple> {
 
 // TODO RTValue as Tuple constructor ???
 template <>
-MATXSCRIPT_ALWAYS_INLINE Tuple Any::As<Tuple>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeTuple);
+HERCULES_ALWAYS_INLINE Tuple Any::As<Tuple>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeTuple);
   return Tuple(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 template <>
-MATXSCRIPT_ALWAYS_INLINE Tuple Any::AsNoCheck<Tuple>() const {
+HERCULES_ALWAYS_INLINE Tuple Any::AsNoCheck<Tuple>() const {
   return Tuple(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
@@ -250,4 +250,4 @@ bool IsConvertible<Tuple>(const Object* node);
 extern std::ostream& operator<<(std::ostream& os, Tuple const& n);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

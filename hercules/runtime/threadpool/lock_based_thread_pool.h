@@ -37,7 +37,7 @@ typedef DWORD pid_t;
 
 #include <hercules/runtime/threadpool/i_thread_pool.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace internal {
 
@@ -88,4 +88,4 @@ class LockBasedThreadPool : public IThreadPool {
 
 }  // namespace internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

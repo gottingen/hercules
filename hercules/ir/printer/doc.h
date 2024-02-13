@@ -32,7 +32,7 @@
 #include <hercules/ir/_base/string_ref.h>
 #include <hercules/ir/expr.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -67,7 +67,7 @@ class DocNode : public Object {
   }
 
   static constexpr const char* _type_key = "ir.printer.Doc";
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(DocNode, Object);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(DocNode, Object);
 
  public:
   virtual ~DocNode() = default;
@@ -84,7 +84,7 @@ class Doc : public ObjectRef {
 
  public:
   virtual ~Doc() = default;
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(Doc, ObjectRef, DocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(Doc, ObjectRef, DocNode);
 };
 
 class ExprDoc;
@@ -129,7 +129,7 @@ class ExprDocNode : public DocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ExprDoc";
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(ExprDocNode, DocNode);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(ExprDocNode, DocNode);
 };
 
 /*!
@@ -148,7 +148,7 @@ class ExprDoc : public Doc {
    */
   ExprDoc operator[](Array<Doc> indices) const;
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ExprDoc, Doc, ExprDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ExprDoc, Doc, ExprDocNode);
 };
 
 /*!
@@ -174,7 +174,7 @@ class StmtDocNode : public DocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.StmtDoc";
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(StmtDocNode, DocNode);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(StmtDocNode, DocNode);
 };
 
 /*!
@@ -187,7 +187,7 @@ class StmtDoc : public Doc {
   StmtDoc() = default;
 
  public:
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(StmtDoc, Doc, StmtDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(StmtDoc, Doc, StmtDocNode);
 };
 
 /*!
@@ -207,7 +207,7 @@ class StmtBlockDocNode : public DocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.StmtBlockDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(StmtBlockDocNode, DocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(StmtBlockDocNode, DocNode);
 };
 
 /*!
@@ -221,7 +221,7 @@ class StmtBlockDoc : public Doc {
    * \param stmts The list of statements.
    */
   explicit StmtBlockDoc(Array<StmtDoc> stmts);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(StmtBlockDoc, Doc, StmtBlockDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(StmtBlockDoc, Doc, StmtBlockDocNode);
 };
 
 /*!
@@ -248,7 +248,7 @@ class LiteralDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.LiteralDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(LiteralDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(LiteralDocNode, ExprDocNode);
 };
 
 /*!
@@ -323,7 +323,7 @@ class LiteralDoc : public ExprDoc {
     return LiteralDoc::Str(dtype, p);
   }
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(LiteralDoc, ExprDoc, LiteralDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(LiteralDoc, ExprDoc, LiteralDocNode);
 };
 
 /*!
@@ -342,7 +342,7 @@ class IdDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.IdDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(IdDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(IdDocNode, ExprDocNode);
 };
 
 /*!
@@ -359,7 +359,7 @@ class IdDoc : public ExprDoc {
   explicit IdDoc(StringRef name);
   explicit IdDoc(std::nullptr_t) : ExprDoc(nullptr) {
   }
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(IdDoc, ExprDoc, IdDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(IdDoc, ExprDoc, IdDocNode);
 };
 
 /*!
@@ -381,7 +381,7 @@ class AttrAccessDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.AttrAccessDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(AttrAccessDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(AttrAccessDocNode, ExprDocNode);
 };
 
 /*!
@@ -397,7 +397,7 @@ class AttrAccessDoc : public ExprDoc {
    * \param name The name of attribute to access.
    */
   explicit AttrAccessDoc(ExprDoc value, StringRef name);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(AttrAccessDoc, ExprDoc, AttrAccessDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(AttrAccessDoc, ExprDoc, AttrAccessDocNode);
 };
 
 /*!
@@ -425,7 +425,7 @@ class IndexDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.IndexDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(IndexDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(IndexDocNode, ExprDocNode);
 };
 
 /*!
@@ -441,7 +441,7 @@ class IndexDoc : public ExprDoc {
    * \param indices The indices to access.
    */
   explicit IndexDoc(ExprDoc value, Array<Doc> indices);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(IndexDoc, ExprDoc, IndexDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(IndexDoc, ExprDoc, IndexDocNode);
 };
 
 /*!
@@ -474,7 +474,7 @@ class CallDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.CallDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(CallDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(CallDocNode, ExprDocNode);
 };
 
 /*!
@@ -495,7 +495,7 @@ class CallDoc : public ExprDoc {
           Array<ExprDoc> args,
           Array<StringRef> kwargs_keys,
           Array<ExprDoc> kwargs_values);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(CallDoc, ExprDoc, CallDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(CallDoc, ExprDoc, CallDocNode);
 };
 
 /*!
@@ -560,7 +560,7 @@ class OperationDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.OperationDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(OperationDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(OperationDocNode, ExprDocNode);
 };
 
 /*!
@@ -576,7 +576,7 @@ class OperationDoc : public ExprDoc {
    * \param operands Operands of this expression.
    */
   explicit OperationDoc(OperationDocNode::Kind kind, Array<ExprDoc> operands);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(OperationDoc, ExprDoc, OperationDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(OperationDoc, ExprDoc, OperationDocNode);
 };
 
 /*!
@@ -601,7 +601,7 @@ class LambdaDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.LambdaDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(LambdaDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(LambdaDocNode, ExprDocNode);
 };
 
 /*!
@@ -617,7 +617,7 @@ class LambdaDoc : public ExprDoc {
    * \param body Body expression of this function.
    */
   explicit LambdaDoc(Array<IdDoc> args, ExprDoc body);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(LambdaDoc, ExprDoc, LambdaDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(LambdaDoc, ExprDoc, LambdaDocNode);
 };
 
 /*!
@@ -636,7 +636,7 @@ class TupleDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.TupleDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TupleDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(TupleDocNode, ExprDocNode);
 };
 
 /*!
@@ -656,7 +656,7 @@ class TupleDoc : public ExprDoc {
    * \param elements Elements of tuple.
    */
   explicit TupleDoc(Array<ExprDoc> elements);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TupleDoc, ExprDoc, TupleDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TupleDoc, ExprDoc, TupleDocNode);
 };
 
 /*!
@@ -675,7 +675,7 @@ class ListDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ListDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ListDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ListDocNode, ExprDocNode);
 };
 
 /*!
@@ -695,7 +695,7 @@ class ListDoc : public ExprDoc {
    * \param elements Elements of list.
    */
   explicit ListDoc(Array<ExprDoc> elements);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ListDoc, ExprDoc, ListDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ListDoc, ExprDoc, ListDocNode);
 };
 
 /*!
@@ -722,7 +722,7 @@ class DictDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.DictDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(DictDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(DictDocNode, ExprDocNode);
 };
 
 /*!
@@ -743,7 +743,7 @@ class DictDoc : public ExprDoc {
    * \param values Values of dictionary, must have same length as `keys`.
    */
   explicit DictDoc(Array<ExprDoc> keys, Array<ExprDoc> values);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(DictDoc, ExprDoc, DictDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(DictDoc, ExprDoc, DictDocNode);
 };
 
 /*!
@@ -762,7 +762,7 @@ class SetDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.SetDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(SetDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(SetDocNode, ExprDocNode);
 };
 
 /*!
@@ -782,7 +782,7 @@ class SetDoc : public ExprDoc {
    * \param elements Elements of list.
    */
   explicit SetDoc(Array<ExprDoc> elements);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(SetDoc, ExprDoc, SetDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(SetDoc, ExprDoc, SetDocNode);
 };
 
 /*!
@@ -801,7 +801,7 @@ class ComprehensionDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ComprehensionDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ComprehensionDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ComprehensionDocNode, ExprDocNode);
 };
 
 /*!
@@ -810,9 +810,9 @@ class ComprehensionDocNode : public ExprDocNode {
  */
 class ComprehensionDoc : public ExprDoc {
  public:
-  MATX_DLL ComprehensionDoc(ExprDoc target, ExprDoc iter, Optional<Array<ExprDoc>> ifs);
+  HERCULES_DLL ComprehensionDoc(ExprDoc target, ExprDoc iter, Optional<Array<ExprDoc>> ifs);
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ComprehensionDoc, ExprDoc, ComprehensionDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ComprehensionDoc, ExprDoc, ComprehensionDocNode);
 };
 
 /*!
@@ -829,7 +829,7 @@ class ListCompDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ListCompDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ListCompDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ListCompDocNode, ExprDocNode);
 };
 
 /*!
@@ -838,9 +838,9 @@ class ListCompDocNode : public ExprDocNode {
  */
 class ListCompDoc : public ExprDoc {
  public:
-  MATX_DLL ListCompDoc(ExprDoc elt, Array<ComprehensionDoc> generators);
+  HERCULES_DLL ListCompDoc(ExprDoc elt, Array<ComprehensionDoc> generators);
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ListCompDoc, ExprDoc, ListCompDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ListCompDoc, ExprDoc, ListCompDocNode);
 };
 
 /*!
@@ -857,7 +857,7 @@ class SetCompDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.SetCompDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(SetCompDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(SetCompDocNode, ExprDocNode);
 };
 
 /*!
@@ -866,9 +866,9 @@ class SetCompDocNode : public ExprDocNode {
  */
 class SetCompDoc : public ExprDoc {
  public:
-  MATX_DLL SetCompDoc(ExprDoc elt, Array<ComprehensionDoc> generators);
+  HERCULES_DLL SetCompDoc(ExprDoc elt, Array<ComprehensionDoc> generators);
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(SetCompDoc, ExprDoc, SetCompDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(SetCompDoc, ExprDoc, SetCompDocNode);
 };
 
 /*!
@@ -887,7 +887,7 @@ class DictCompDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.DictCompDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(DictCompDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(DictCompDocNode, ExprDocNode);
 };
 
 /*!
@@ -896,9 +896,9 @@ class DictCompDocNode : public ExprDocNode {
  */
 class DictCompDoc : public ExprDoc {
  public:
-  MATX_DLL DictCompDoc(ExprDoc key, ExprDoc value, Array<ComprehensionDoc> generators);
+  HERCULES_DLL DictCompDoc(ExprDoc key, ExprDoc value, Array<ComprehensionDoc> generators);
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(DictCompDoc, ExprDoc, DictCompDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(DictCompDoc, ExprDoc, DictCompDocNode);
 };
 
 /*!
@@ -925,7 +925,7 @@ class SliceDocNode : public DocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.SliceDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(SliceDocNode, DocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(SliceDocNode, DocNode);
 };
 
 /*!
@@ -942,7 +942,7 @@ class SliceDoc : public Doc {
    * \param step The step of slice.
    */
   explicit SliceDoc(Optional<ExprDoc> start, Optional<ExprDoc> stop, Optional<ExprDoc> step);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(SliceDoc, Doc, SliceDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(SliceDoc, Doc, SliceDocNode);
 };
 
 /*!
@@ -960,7 +960,7 @@ class YieldDocNode : public ExprDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.YieldDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(YieldDocNode, ExprDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(YieldDocNode, ExprDocNode);
 };
 
 /*!
@@ -974,7 +974,7 @@ class YieldDoc : public ExprDoc {
    * \brief Constructor of YieldDoc.
    */
   explicit YieldDoc(Optional<ExprDoc> value);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(YieldDoc, ExprDoc, YieldDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(YieldDoc, ExprDoc, YieldDocNode);
 };
 
 /*!
@@ -1003,7 +1003,7 @@ class AssignDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.AssignDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(AssignDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(AssignDocNode, StmtDocNode);
 };
 
 /*!
@@ -1020,7 +1020,7 @@ class AssignDoc : public StmtDoc {
    * \param annotation The type annotation of this assignment.
    */
   explicit AssignDoc(ExprDoc lhs, Optional<ExprDoc> rhs, Optional<ExprDoc> annotation);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(AssignDoc, StmtDoc, AssignDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(AssignDoc, StmtDoc, AssignDocNode);
 };
 
 /*!
@@ -1045,7 +1045,7 @@ class IfDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.IfDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(IfDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(IfDocNode, StmtDocNode);
 };
 
 /*!
@@ -1062,7 +1062,7 @@ class IfDoc : public StmtDoc {
    * \param else_branch The else branch of the if-then-else statement.
    */
   explicit IfDoc(ExprDoc predicate, Array<StmtDoc> then_branch, Array<StmtDoc> else_branch);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(IfDoc, StmtDoc, IfDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(IfDoc, StmtDoc, IfDocNode);
 };
 
 /*!
@@ -1084,7 +1084,7 @@ class WhileDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.WhileDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(WhileDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(WhileDocNode, StmtDocNode);
 };
 
 /*!
@@ -1100,7 +1100,7 @@ class WhileDoc : public StmtDoc {
    * \param body The body of the while statement.
    */
   explicit WhileDoc(ExprDoc predicate, Array<StmtDoc> body);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(WhileDoc, StmtDoc, WhileDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(WhileDoc, StmtDoc, WhileDocNode);
 };
 
 /*!
@@ -1129,7 +1129,7 @@ class ForDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ForDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ForDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ForDocNode, StmtDocNode);
 };
 
 /*!
@@ -1146,7 +1146,7 @@ class ForDoc : public StmtDoc {
    * \param body The body of the for statement.
    */
   explicit ForDoc(ExprDoc lhs, ExprDoc rhs, Array<StmtDoc> body);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ForDoc, StmtDoc, ForDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ForDoc, StmtDoc, ForDocNode);
 };
 
 /*!
@@ -1161,7 +1161,7 @@ class BreakDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.BreakDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(BreakDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(BreakDocNode, StmtDocNode);
 };
 
 /*!
@@ -1175,7 +1175,7 @@ class BreakDoc : public StmtDoc {
    * \brief Constructor of BreakDoc.
    */
   explicit BreakDoc();
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(BreakDoc, StmtDoc, BreakDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(BreakDoc, StmtDoc, BreakDocNode);
 };
 
 /*!
@@ -1190,7 +1190,7 @@ class ContinueDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ContinueDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ContinueDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ContinueDocNode, StmtDocNode);
 };
 
 /*!
@@ -1204,7 +1204,7 @@ class ContinueDoc : public StmtDoc {
    * \brief Constructor of ContinueDoc.
    */
   explicit ContinueDoc();
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ContinueDoc, StmtDoc, ContinueDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ContinueDoc, StmtDoc, ContinueDocNode);
 };
 
 /*!
@@ -1230,7 +1230,7 @@ class ExceptionHandlerDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ExceptionHandlerDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ExceptionHandlerDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ExceptionHandlerDocNode, StmtDocNode);
 };
 
 /*!
@@ -1244,7 +1244,7 @@ class ExceptionHandlerDoc : public StmtDoc {
    * \brief Constructor of ExceptionHandlerDoc.
    */
   explicit ExceptionHandlerDoc(Optional<ExprDoc> type, Optional<ExprDoc> name, Array<StmtDoc> body);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ExceptionHandlerDoc,
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ExceptionHandlerDoc,
                                                    StmtDoc,
                                                    ExceptionHandlerDocNode);
 };
@@ -1275,7 +1275,7 @@ class TryExceptDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.TryExceptDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TryExceptDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(TryExceptDocNode, StmtDocNode);
 };
 
 /*!
@@ -1292,7 +1292,7 @@ class TryExceptDoc : public StmtDoc {
                         Optional<Array<ExceptionHandlerDoc>> handlers,
                         Optional<Array<StmtDoc>> orelse,
                         Optional<Array<StmtDoc>> finalbody);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TryExceptDoc, StmtDoc, TryExceptDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TryExceptDoc, StmtDoc, TryExceptDocNode);
 };
 
 /*!
@@ -1315,7 +1315,7 @@ class RaiseDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.RaiseDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(RaiseDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(RaiseDocNode, StmtDocNode);
 };
 
 /*!
@@ -1329,7 +1329,7 @@ class RaiseDoc : public StmtDoc {
    * \brief Constructor of RaiseDoc.
    */
   explicit RaiseDoc(Optional<ExprDoc> exc, Optional<ExprDoc> cause);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(RaiseDoc, StmtDoc, RaiseDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(RaiseDoc, StmtDoc, RaiseDocNode);
 };
 
 /*!
@@ -1359,7 +1359,7 @@ class ScopeDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ScopeDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ScopeDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ScopeDocNode, StmtDocNode);
 };
 
 /*!
@@ -1384,7 +1384,7 @@ class ScopeDoc : public StmtDoc {
    */
   explicit ScopeDoc(ExprDoc rhs, Array<StmtDoc> body);
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ScopeDoc, StmtDoc, ScopeDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ScopeDoc, StmtDoc, ScopeDocNode);
 };
 
 /*!
@@ -1403,7 +1403,7 @@ class ExprStmtDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ExprStmtDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ExprStmtDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ExprStmtDocNode, StmtDocNode);
 };
 
 /*!
@@ -1418,7 +1418,7 @@ class ExprStmtDoc : public StmtDoc {
    * \param expr The expression represented by this doc.
    */
   explicit ExprStmtDoc(ExprDoc expr);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ExprStmtDoc, StmtDoc, ExprStmtDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ExprStmtDoc, StmtDoc, ExprStmtDocNode);
 };
 
 /*!
@@ -1440,7 +1440,7 @@ class AssertDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.AssertDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(AssertDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(AssertDocNode, StmtDocNode);
 };
 
 /*!
@@ -1456,7 +1456,7 @@ class AssertDoc : public StmtDoc {
    * \param msg The optional error message when assertion failed.
    */
   explicit AssertDoc(ExprDoc test, Optional<ExprDoc> msg = NullOpt);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(AssertDoc, StmtDoc, AssertDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(AssertDoc, StmtDoc, AssertDocNode);
 };
 
 /*!
@@ -1475,7 +1475,7 @@ class ReturnDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ReturnDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ReturnDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ReturnDocNode, StmtDocNode);
 };
 
 /*!
@@ -1490,7 +1490,7 @@ class ReturnDoc : public StmtDoc {
    * \param value The value to return.
    */
   explicit ReturnDoc(ExprDoc value);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ReturnDoc, StmtDoc, ReturnDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ReturnDoc, StmtDoc, ReturnDocNode);
 };
 
 /*!
@@ -1527,7 +1527,7 @@ class FunctionDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.FunctionDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(FunctionDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(FunctionDocNode, StmtDocNode);
 };
 
 /*!
@@ -1550,7 +1550,7 @@ class FunctionDoc : public StmtDoc {
                        Array<ExprDoc> decorators,
                        Optional<ExprDoc> return_type,
                        Array<StmtDoc> body);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(FunctionDoc, StmtDoc, FunctionDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(FunctionDoc, StmtDoc, FunctionDocNode);
 };
 
 /*!
@@ -1578,7 +1578,7 @@ class ClassDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ClassDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ClassDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ClassDocNode, StmtDocNode);
 };
 
 /*!
@@ -1595,7 +1595,7 @@ class ClassDoc : public StmtDoc {
    * \param body The body of class.
    */
   explicit ClassDoc(IdDoc name, IdDoc base, Array<ExprDoc> decorators, Array<StmtDoc> body);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ClassDoc, StmtDoc, ClassDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ClassDoc, StmtDoc, ClassDocNode);
 };
 
 /*!
@@ -1606,7 +1606,7 @@ class ClassDoc : public StmtDoc {
 class CommentDocNode : public StmtDocNode {
  public:
   static constexpr const char* _type_key = "ir.printer.CommentDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(CommentDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(CommentDocNode, StmtDocNode);
 };
 
 /*!
@@ -1617,7 +1617,7 @@ class CommentDocNode : public StmtDocNode {
 class CommentDoc : public StmtDoc {
  public:
   explicit CommentDoc(StringRef comment);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(CommentDoc, StmtDoc, CommentDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(CommentDoc, StmtDoc, CommentDocNode);
 };
 
 /*!
@@ -1628,7 +1628,7 @@ class CommentDoc : public StmtDoc {
 class DocStringDocNode : public StmtDocNode {
  public:
   static constexpr const char* _type_key = "ir.printer.DocStringDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(DocStringDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(DocStringDocNode, StmtDocNode);
 };
 
 /*!
@@ -1639,7 +1639,7 @@ class DocStringDocNode : public StmtDocNode {
 class DocStringDoc : public StmtDoc {
  public:
   explicit DocStringDoc(StringRef docs);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(DocStringDoc, StmtDoc, DocStringDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(DocStringDoc, StmtDoc, DocStringDocNode);
 };
 
 /*!
@@ -1658,7 +1658,7 @@ class ModuleDocNode : public StmtDocNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.ModuleDoc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ModuleDocNode, StmtDocNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ModuleDocNode, StmtDocNode);
 };
 
 /*!
@@ -1673,9 +1673,9 @@ class ModuleDoc : public StmtDoc {
    * \param body The body of class.
    */
   explicit ModuleDoc(Array<StmtDoc> body);
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ModuleDoc, StmtDoc, ModuleDocNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ModuleDoc, StmtDoc, ModuleDocNode);
 };
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -33,7 +33,7 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::PyArgs;
@@ -192,7 +192,7 @@ struct MapNodeTrait {
       }
     }
 
-    MXCHECK(lhs->size() == rhs->size());
+    HSCHECK(lhs->size() == rhs->size());
     return true;
   }
 
@@ -224,7 +224,7 @@ struct MapNodeTrait {
       }
     }
 
-    MXCHECK(lhs->size() == rhs->size());
+    HSCHECK(lhs->size() == rhs->size());
     return true;
   }
 
@@ -256,12 +256,12 @@ struct MapNodeTrait {
   }
 };
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(MapNode);
-MATXSCRIPT_REGISTER_REFLECTION_VTABLE(MapNode, MapNodeTrait)
+HERCULES_REGISTER_OBJECT_TYPE(MapNode);
+HERCULES_REGISTER_REFLECTION_VTABLE(MapNode, MapNodeTrait)
     .set_creator([](const runtime::String&) -> ObjectPtr<Object> { return MapNode::Empty(); });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Map").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size() % 2, 0);
+HERCULES_REGISTER_GLOBAL("runtime.Map").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size() % 2, 0);
   std::unordered_map<ObjectRef, ObjectRef, runtime::ObjectPtrHash, runtime::ObjectPtrEqual> data;
   for (int i = 0; i < args.size(); i += 2) {
     ObjectRef k =
@@ -272,38 +272,38 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Map").set_body([](PyArgs args) -> RTValue {
   return Map<ObjectRef, ObjectRef>(std::move(data));
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.MapSize").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args[0].type_code(), 0);
+HERCULES_REGISTER_GLOBAL("runtime.MapSize").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args[0].type_code(), 0);
   Object* ptr = static_cast<Object*>(args[0].value().data.v_handle);
-  MXCHECK(ptr->IsInstance<MapNode>());
+  HSCHECK(ptr->IsInstance<MapNode>());
   auto* n = static_cast<const MapNode*>(ptr);
   return static_cast<int64_t>(n->size());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.MapGetItem").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args[0].type_code(), 0);
+HERCULES_REGISTER_GLOBAL("runtime.MapGetItem").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args[0].type_code(), 0);
   Object* ptr = static_cast<Object*>(args[0].value().data.v_handle);
-  MXCHECK(ptr->IsInstance<MapNode>());
+  HSCHECK(ptr->IsInstance<MapNode>());
 
   auto* n = static_cast<const MapNode*>(ptr);
   auto it = n->find(StringRef::CanConvertFrom(args[1]) ? args[1].As<StringRef>()
                                                        : args[1].As<ObjectRef>());
-  MXCHECK(it != n->end()) << "cannot find the corresponding key in the Map";
+  HSCHECK(it != n->end()) << "cannot find the corresponding key in the Map";
   return (*it).second;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.MapCount").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args[0].type_code(), 0);
+HERCULES_REGISTER_GLOBAL("runtime.MapCount").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args[0].type_code(), 0);
   Object* ptr = static_cast<Object*>(args[0].value().data.v_handle);
-  MXCHECK(ptr->IsInstance<MapNode>());
+  HSCHECK(ptr->IsInstance<MapNode>());
   const MapNode* n = static_cast<const MapNode*>(ptr);
   int64_t cnt = n->count(StringRef::CanConvertFrom(args[1]) ? args[1].As<StringRef>()
                                                             : args[1].As<ObjectRef>());
   return cnt;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.MapItems").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args[0].type_code(), 0);
+HERCULES_REGISTER_GLOBAL("runtime.MapItems").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args[0].type_code(), 0);
   Object* ptr = static_cast<Object*>(args[0].value().data.v_handle);
   auto* n = static_cast<const MapNode*>(ptr);
   Array<ObjectRef> rkvs;
@@ -318,8 +318,8 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.MapItems").set_body([](PyArgs args) -> RTVal
   return std::move(rkvs);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.MapKeys").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args[0].type_code(), 0);
+HERCULES_REGISTER_GLOBAL("runtime.MapKeys").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args[0].type_code(), 0);
   Object* ptr = static_cast<Object*>(args[0].value().data.v_handle);
   auto* n = static_cast<const MapNode*>(ptr);
   Array<ObjectRef> keys;
@@ -333,8 +333,8 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.MapKeys").set_body([](PyArgs args) -> RTValu
   return keys;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.MapValues").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args[0].type_code(), 0);
+HERCULES_REGISTER_GLOBAL("runtime.MapValues").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args[0].type_code(), 0);
   Object* ptr = static_cast<Object*>(args[0].value().data.v_handle);
   auto* n = static_cast<const MapNode*>(ptr);
   Array<ObjectRef> values;
@@ -344,10 +344,10 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.MapValues").set_body([](PyArgs args) -> RTVa
   return std::move(values);
 });
 
-MATX_DLL constexpr uint64_t DenseMapNode::kNextProbeLocation[];
+HERCULES_DLL constexpr uint64_t DenseMapNode::kNextProbeLocation[];
 
-using namespace ::matxscript::ir::printer;
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+using namespace ::hercules::ir::printer;
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<Map<ObjectRef, ObjectRef>>(  //
         "",
         [](Map<ObjectRef, ObjectRef> dict, ObjectPath p, IRDocsifier d) -> Doc {
@@ -383,4 +383,4 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
         });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

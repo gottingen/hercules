@@ -18,7 +18,7 @@
 
 #define STATIC_ASSERT(e, msg) typedef char msg[(e) ? 1 : -1]
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace cedar {
@@ -836,4 +836,4 @@ namespace cedar {
 // clang-format on
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

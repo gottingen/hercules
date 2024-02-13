@@ -27,7 +27,7 @@
 
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -38,4 +38,4 @@ double float_floor_div(double v, double w);
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -23,7 +23,7 @@
 #include "hercules/runtime/mlir/convert_memref.h"
 #include "hercules/runtime/mlir/memref_cpp_interface.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace mlir {
 
@@ -161,4 +161,4 @@ TEST(MLIR, convert_from_ndarray) {
 
 }  // namespace mlir
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

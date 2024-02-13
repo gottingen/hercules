@@ -23,7 +23,7 @@
 
 #include <hercules/ir/printer/ir_docsifier.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -46,7 +46,7 @@ class IRFrameNode : public FrameNode {
   }
 
   static constexpr const char* _type_key = "ir.printer.TIRFrame";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(IRFrameNode, FrameNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(IRFrameNode, FrameNode);
 };
 
 /*! \brief Managed reference to IRFrameNode */
@@ -61,9 +61,9 @@ class IRFrame : public Frame {
     data_ = std::move(n);
   }
 
-  MATXSCRIPT_DEFINE_MUTABLE_NOTNULLABLE_OBJECT_REF_METHODS(IRFrame, Frame, IRFrameNode);
+  HERCULES_DEFINE_MUTABLE_NOTNULLABLE_OBJECT_REF_METHODS(IRFrame, Frame, IRFrameNode);
 };
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

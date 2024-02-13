@@ -6,7 +6,7 @@
 #include <hercules/runtime/py_args.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace list_details {
 
@@ -42,4 +42,4 @@ inline void trait_sort_kwargs(const PyArgs& args, RTValue** key_func, bool* reve
 
 }  // namespace list_details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

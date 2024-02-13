@@ -19,19 +19,19 @@
  */
 #include <hercules/runtime/generator/generator_private.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * Generator
  *****************************************************************************/
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(BoolGeneratorNode);
-MATXSCRIPT_REGISTER_OBJECT_TYPE(Int32GeneratorNode);
-MATXSCRIPT_REGISTER_OBJECT_TYPE(Int64GeneratorNode);
-MATXSCRIPT_REGISTER_OBJECT_TYPE(Float32GeneratorNode);
-MATXSCRIPT_REGISTER_OBJECT_TYPE(Float64GeneratorNode);
-MATXSCRIPT_REGISTER_OBJECT_TYPE(RTValueGeneratorNode);
+HERCULES_REGISTER_OBJECT_TYPE(BoolGeneratorNode);
+HERCULES_REGISTER_OBJECT_TYPE(Int32GeneratorNode);
+HERCULES_REGISTER_OBJECT_TYPE(Int64GeneratorNode);
+HERCULES_REGISTER_OBJECT_TYPE(Float32GeneratorNode);
+HERCULES_REGISTER_OBJECT_TYPE(Float64GeneratorNode);
+HERCULES_REGISTER_OBJECT_TYPE(RTValueGeneratorNode);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

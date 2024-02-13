@@ -29,13 +29,13 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::make_object;
-using namespace matxscript::ir::printer;
+using namespace hercules::ir::printer;
 
-MATXSCRIPT_REGISTER_NODE_TYPE(IdNode);
+HERCULES_REGISTER_NODE_TYPE(IdNode);
 
 Id::Id(StringRef name_hint) {
   ObjectPtr<IdNode> n = make_object<IdNode>();
@@ -52,14 +52,14 @@ HLOVar::HLOVar(Id vid, Type type_annotation, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOVarNode);
+HERCULES_REGISTER_NODE_TYPE(HLOVarNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOVar")
+HERCULES_REGISTER_GLOBAL("ir.HLOVar")
     .set_body_typed([](StringRef str, Type type_annotation, Span span) {
       return HLOVar(str, type_annotation, span);
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
     .set_dispatch<HLOVar>("", [](HLOVar var, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(var->name_hint());
     });
@@ -71,16 +71,16 @@ GlobalVar::GlobalVar(StringRef name_hint, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(GlobalVarNode);
+HERCULES_REGISTER_NODE_TYPE(GlobalVarNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.GlobalVar").set_body_typed([](StringRef name, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.GlobalVar").set_body_typed([](StringRef name, Span span) {
   return GlobalVar(name, span);
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
     .set_dispatch<GlobalVar>("", [](GlobalVar var, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(var->name_hint);
     });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

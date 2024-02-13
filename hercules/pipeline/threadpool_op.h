@@ -24,7 +24,7 @@
 #include <hercules/pipeline/op_kernel.h>
 #include <hercules/runtime/threadpool/i_thread_pool.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class ThreadPoolOp : public OpKernel {
@@ -47,4 +47,4 @@ class ThreadPoolOp : public OpKernel {
   std::shared_ptr<internal::IThreadPool> pool_ = nullptr;
 };
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -28,7 +28,7 @@
 #include <atomic>
 #include <memory>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <typename T>
@@ -183,4 +183,4 @@ class MPMCBoundedQueue {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

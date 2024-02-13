@@ -23,7 +23,7 @@
 #include <cstdio>
 #include <fstream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class FileTest : public ::testing::Test {
@@ -204,4 +204,4 @@ TEST_F(FileTest, readline_unicode_nonewline) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

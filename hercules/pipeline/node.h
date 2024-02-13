@@ -29,7 +29,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class Graph;
@@ -148,4 +148,4 @@ struct Node {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

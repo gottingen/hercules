@@ -31,7 +31,7 @@
 
 #include "hercules/runtime/runtime_port.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace utf8_details {
 //--------------------------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ class DFADecoder {
 //--------------------------------------------------------------------------------------------------
 //
 template <int32_t size>
-MATXSCRIPT_ALWAYS_INLINE void DFADecoder::AdvanceWithTable(char8_t const*& pSrc,
+HERCULES_ALWAYS_INLINE void DFADecoder::AdvanceWithTable(char8_t const*& pSrc,
                                                            int32_t curr,
                                                            char32_t& cdpt) noexcept {
   char32_t unit;  //- The current UTF-8 code unit
@@ -183,7 +183,7 @@ MATXSCRIPT_ALWAYS_INLINE void DFADecoder::AdvanceWithTable(char8_t const*& pSrc,
   }
 }
 
-MATXSCRIPT_ALWAYS_INLINE void DFADecoder::AdvanceWithTable_2(const char8_t*& pSrc,
+HERCULES_ALWAYS_INLINE void DFADecoder::AdvanceWithTable_2(const char8_t*& pSrc,
                                                              int32_t curr,
                                                              char32_t& cdpt) noexcept {
   char32_t unit2;  //- The second UTF-8 code unit
@@ -203,7 +203,7 @@ MATXSCRIPT_ALWAYS_INLINE void DFADecoder::AdvanceWithTable_2(const char8_t*& pSr
   }
 }
 
-MATXSCRIPT_ALWAYS_INLINE void DFADecoder::AdvanceWithTable_3(const char8_t*& pSrc,
+HERCULES_ALWAYS_INLINE void DFADecoder::AdvanceWithTable_3(const char8_t*& pSrc,
                                                              int32_t curr,
                                                              char32_t& cdpt) noexcept {
   char32_t unit2;  //- The second UTF-8 code unit
@@ -227,7 +227,7 @@ MATXSCRIPT_ALWAYS_INLINE void DFADecoder::AdvanceWithTable_3(const char8_t*& pSr
   }
 }
 
-MATXSCRIPT_ALWAYS_INLINE void DFADecoder::AdvanceWithTable_4(const char8_t*& pSrc,
+HERCULES_ALWAYS_INLINE void DFADecoder::AdvanceWithTable_4(const char8_t*& pSrc,
                                                              int32_t curr,
                                                              char32_t& cdpt) noexcept {
   char32_t unit2;  //- The second UTF-8 code unit
@@ -274,7 +274,7 @@ MATXSCRIPT_ALWAYS_INLINE void DFADecoder::AdvanceWithTable_4(const char8_t*& pSr
 ///     An internal flag describing the current DFA state.
 //--------------------------------------------------------------------------------------------------
 //
-MATXSCRIPT_ALWAYS_INLINE DFADecoder::State DFADecoder::AdvanceWithTrace(char8_t const*& pSrc,
+HERCULES_ALWAYS_INLINE DFADecoder::State DFADecoder::AdvanceWithTrace(char8_t const*& pSrc,
                                                                         char8_t const* pSrcEnd,
                                                                         char32_t& cdpt) noexcept {
   char32_t unit;   //- The current UTF-8 code unit
@@ -307,4 +307,4 @@ MATXSCRIPT_ALWAYS_INLINE DFADecoder::State DFADecoder::AdvanceWithTrace(char8_t 
 
 }  // namespace utf8_details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

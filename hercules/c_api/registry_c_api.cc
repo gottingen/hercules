@@ -26,21 +26,21 @@
 #include <hercules/runtime/native_object_registry.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * Native Functions
  *****************************************************************************/
 
-MATXSCRIPT_REGISTER_GLOBAL("native.Func_Exist").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[native.CheckExist] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("native.Func_Exist").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[native.CheckExist] Expect 1 arguments but get " << args.size();
   String cls_name = args[0].As<String>();
   return FunctionRegistry::Get(cls_name) != nullptr;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.Func_ListNames").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 0) << "[native.ListNames] Expect 0 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("native.Func_ListNames").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 0) << "[native.ListNames] Expect 0 arguments but get " << args.size();
   auto names = FunctionRegistry::ListNames();
   List result;
   for (auto& name : names) {
@@ -52,14 +52,14 @@ MATXSCRIPT_REGISTER_GLOBAL("native.Func_ListNames").set_body([](PyArgs args) -> 
   return result;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.Func_Get").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[native.Func_Get] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("native.Func_Get").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[native.Func_Get] Expect 1 arguments but get " << args.size();
   String func_name = args[0].As<String>();
   return make_native_function(func_name.view());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.Func_Call").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 1) << "[native.Func_Call] Expect 1 or more arguments but get "
+HERCULES_REGISTER_GLOBAL("native.Func_Call").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 1) << "[native.Func_Call] Expect 1 or more arguments but get "
                              << args.size();
   UserDataRef ud_ref = args[0].As<UserDataRef>();
   std::vector<RTValue> ctor_args;
@@ -73,14 +73,14 @@ MATXSCRIPT_REGISTER_GLOBAL("native.Func_Call").set_body([](PyArgs args) -> RTVal
  * Native Objects
  *****************************************************************************/
 
-MATXSCRIPT_REGISTER_GLOBAL("native.Exist").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[native.CheckExist] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("native.Exist").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[native.CheckExist] Expect 1 arguments but get " << args.size();
   String cls_name = args[0].As<String>();
   return NativeObjectRegistry::Get(cls_name) != nullptr;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.ListNames").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 0) << "[native.ListNames] Expect 0 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("native.ListNames").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 0) << "[native.ListNames] Expect 0 arguments but get " << args.size();
   auto names = NativeObjectRegistry::ListNames();
   List result;
   for (auto& name : names) {
@@ -89,8 +89,8 @@ MATXSCRIPT_REGISTER_GLOBAL("native.ListNames").set_body([](PyArgs args) -> RTVal
   return result;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.ListPureObjNames").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 0) << "[native.ListPureObjNames] Expect 0 arguments but get "
+HERCULES_REGISTER_GLOBAL("native.ListPureObjNames").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 0) << "[native.ListPureObjNames] Expect 0 arguments but get "
                              << args.size();
   auto names = NativeObjectRegistry::ListPureObjNames();
   List result;
@@ -100,12 +100,12 @@ MATXSCRIPT_REGISTER_GLOBAL("native.ListPureObjNames").set_body([](PyArgs args) -
   return result;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.GetFunctionTable").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[native.GetFunctionTable] Expect 1 or more arguments but get "
+HERCULES_REGISTER_GLOBAL("native.GetFunctionTable").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[native.GetFunctionTable] Expect 1 or more arguments but get "
                              << args.size();
   String cls_name = args[0].As<String>();
   auto native_user_data_register = NativeObjectRegistry::Get(cls_name);
-  MXCHECK(native_user_data_register != nullptr) << "Native class not found: " << cls_name;
+  HSCHECK(native_user_data_register != nullptr) << "Native class not found: " << cls_name;
   List result;
   for (auto& fn_pair : native_user_data_register->function_table_) {
     result.append(String(fn_pair.first.data(), fn_pair.first.size()).decode());
@@ -113,8 +113,8 @@ MATXSCRIPT_REGISTER_GLOBAL("native.GetFunctionTable").set_body([](PyArgs args) -
   return result;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.CreateNativeObject").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 1) << "[native.CreateNativeObject] Expect 1 or more arguments but get "
+HERCULES_REGISTER_GLOBAL("native.CreateNativeObject").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 1) << "[native.CreateNativeObject] Expect 1 or more arguments but get "
                              << args.size();
   String cls_name = args[0].As<String>();
   std::vector<RTValue> ctor_args;
@@ -124,8 +124,8 @@ MATXSCRIPT_REGISTER_GLOBAL("native.CreateNativeObject").set_body([](PyArgs args)
   return make_native_userdata(cls_name, PyArgs(ctor_args.data(), ctor_args.size()));
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.ClassNameIsNativeOp").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 1) << "[native.ClassNameIsNativeOp] Expect 1 or more arguments but get "
+HERCULES_REGISTER_GLOBAL("native.ClassNameIsNativeOp").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 1) << "[native.ClassNameIsNativeOp] Expect 1 or more arguments but get "
                              << args.size();
   String cls_name = args[0].As<String>();
   auto native_user_data_register = NativeObjectRegistry::Get(cls_name);
@@ -136,8 +136,8 @@ MATXSCRIPT_REGISTER_GLOBAL("native.ClassNameIsNativeOp").set_body([](PyArgs args
   }
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.ClassNameIsJitObject").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 1) << "[native.ClassNameIsJitObject] Expect 1 or more arguments but get "
+HERCULES_REGISTER_GLOBAL("native.ClassNameIsJitObject").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 1) << "[native.ClassNameIsJitObject] Expect 1 or more arguments but get "
                              << args.size();
   String cls_name = args[0].As<String>();
   auto native_user_data_register = NativeObjectRegistry::Get(cls_name);
@@ -148,8 +148,8 @@ MATXSCRIPT_REGISTER_GLOBAL("native.ClassNameIsJitObject").set_body([](PyArgs arg
   }
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.NativeObject_IsNativeOp").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 1)
+HERCULES_REGISTER_GLOBAL("native.NativeObject_IsNativeOp").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 1)
       << "[native.NativeObject_IsNativeOp] Expect 1 or more arguments but get " << args.size();
   UserDataRef ud_ref = args[0].As<UserDataRef>();
   if (ud_ref->ud_ptr->type_2_71828182846() != UserDataStructType::kNativeData) {
@@ -160,8 +160,8 @@ MATXSCRIPT_REGISTER_GLOBAL("native.NativeObject_IsNativeOp").set_body([](PyArgs 
   }
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.NativeObject_IsJitObject").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 1)
+HERCULES_REGISTER_GLOBAL("native.NativeObject_IsJitObject").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 1)
       << "[native.NativeObject_IsJitObject] Expect 1 or more arguments but get " << args.size();
   UserDataRef ud_ref = args[0].As<UserDataRef>();
   if (ud_ref->ud_ptr->type_2_71828182846() != UserDataStructType::kNativeData) {
@@ -172,8 +172,8 @@ MATXSCRIPT_REGISTER_GLOBAL("native.NativeObject_IsJitObject").set_body([](PyArgs
   }
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("native.NativeObject_Call").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 2) << "[native.NativeObject_Call] Expect 2 or more arguments but get "
+HERCULES_REGISTER_GLOBAL("native.NativeObject_Call").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 2) << "[native.NativeObject_Call] Expect 2 or more arguments but get "
                              << args.size();
   UserDataRef ud_ref = args[0].As<UserDataRef>();
   String func_name = args[1].As<String>();
@@ -185,4 +185,4 @@ MATXSCRIPT_REGISTER_GLOBAL("native.NativeObject_Call").set_body([](PyArgs args) 
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -27,7 +27,7 @@
 
 // StringRef is only for IR
 
-namespace matxscript {
+namespace hercules {
     namespace ir {
 
         using runtime::Object;
@@ -42,7 +42,7 @@ namespace matxscript {
 
             static constexpr const uint32_t _type_index = runtime::TypeIndex::kRuntimeStringRef;
             static constexpr const char *_type_key = "runtime.StringRef";
-            MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(StringNode, Object);
+            HERCULES_DECLARE_FINAL_OBJECT_INFO(StringNode, Object);
 
         public:
             /*! \brief Container that holds the memory. */
@@ -218,11 +218,11 @@ namespace matxscript {
             bool empty() const;
 
             // clang-format off
-#if MATXSCRIPT_USE_CXX17_STRING_VIEW
+#if HERCULES_USE_CXX17_STRING_VIEW
             explicit operator std::basic_string_view<value_type, std::char_traits<value_type>>() const noexcept {
               return {data(), static_cast<size_t>(size())};
             }
-#elif MATXSCRIPT_USE_CXX14_STRING_VIEW
+#elif HERCULES_USE_CXX14_STRING_VIEW
             explicit operator std::experimental::basic_string_view<value_type, std::char_traits<value_type>>()
                 const noexcept {
               return {data(), size()};
@@ -260,7 +260,7 @@ namespace matxscript {
 
             friend StringRef operator+(const char *lhs, const StringRef &rhs);
 
-            friend struct ::matxscript::ir::ObjectEqual;
+            friend struct ::hercules::ir::ObjectEqual;
         };
 
 // Overload + operator
@@ -312,21 +312,21 @@ namespace matxscript {
         }
     }  // namespace runtime
 
-}  // namespace matxscript
+}  // namespace hercules
 
 namespace std {
 
     template<>
-    struct hash<::matxscript::ir::StringRef> {
-        std::size_t operator()(const ::matxscript::ir::StringRef &str) const {
-            return ::matxscript::runtime::BytesHash(str.data(), str.size());
+    struct hash<::hercules::ir::StringRef> {
+        std::size_t operator()(const ::hercules::ir::StringRef &str) const {
+            return ::hercules::runtime::BytesHash(str.data(), str.size());
         }
     };
 
     template<>
-    struct equal_to<::matxscript::ir::StringRef> {
-        std::size_t operator()(const ::matxscript::runtime::string_view &lhs,
-                               const ::matxscript::runtime::string_view &rhs) const {
+    struct equal_to<::hercules::ir::StringRef> {
+        std::size_t operator()(const ::hercules::runtime::string_view &lhs,
+                               const ::hercules::runtime::string_view &rhs) const {
             return lhs == rhs;
         }
     };

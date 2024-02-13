@@ -29,7 +29,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*! \brief list node content in array */
@@ -68,65 +68,65 @@ class ListNode : public Object {
 
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeList;
   static constexpr const char* _type_key = "List";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ListNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ListNode, Object);
 
  public:
   // iterators
-  MATXSCRIPT_ALWAYS_INLINE iterator begin() {
+  HERCULES_ALWAYS_INLINE iterator begin() {
     return data_container.begin();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const_iterator begin() const {
+  HERCULES_ALWAYS_INLINE const_iterator begin() const {
     return data_container.begin();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE iterator end() {
+  HERCULES_ALWAYS_INLINE iterator end() {
     return data_container.end();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const_iterator end() const {
+  HERCULES_ALWAYS_INLINE const_iterator end() const {
     return data_container.end();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE reverse_iterator rbegin() {
+  HERCULES_ALWAYS_INLINE reverse_iterator rbegin() {
     return data_container.rbegin();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const_reverse_iterator rbegin() const {
+  HERCULES_ALWAYS_INLINE const_reverse_iterator rbegin() const {
     return data_container.rbegin();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE reverse_iterator rend() {
+  HERCULES_ALWAYS_INLINE reverse_iterator rend() {
     return data_container.rend();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const_reverse_iterator rend() const {
+  HERCULES_ALWAYS_INLINE const_reverse_iterator rend() const {
     return data_container.rend();
   }
 
  public:
   // const methods in std::vector
-  MATXSCRIPT_ALWAYS_INLINE const value_type& operator[](int64_t i) const {
-    MXCHECK(i < data_container.size()) << "ValueError: index overflow";
+  HERCULES_ALWAYS_INLINE const value_type& operator[](int64_t i) const {
+    HSCHECK(i < data_container.size()) << "ValueError: index overflow";
     return data_container[i];
   }
 
-  MATXSCRIPT_ALWAYS_INLINE value_type& operator[](int64_t i) {
-    MXCHECK(i >= 0 && i < data_container.size()) << "ValueError: index overflow";
+  HERCULES_ALWAYS_INLINE value_type& operator[](int64_t i) {
+    HSCHECK(i >= 0 && i < data_container.size()) << "ValueError: index overflow";
     return data_container[i];
   }
 
-  MATXSCRIPT_ALWAYS_INLINE size_t size() const {
+  HERCULES_ALWAYS_INLINE size_t size() const {
     return data_container.size();
   }
 
   /*! \return The capacity of the array */
-  MATXSCRIPT_ALWAYS_INLINE int64_t capacity() const {
+  HERCULES_ALWAYS_INLINE int64_t capacity() const {
     return data_container.capacity();
   }
 
   /*! \return Whether array is empty */
-  MATXSCRIPT_ALWAYS_INLINE bool empty() const {
+  HERCULES_ALWAYS_INLINE bool empty() const {
     return data_container.empty();
   }
 
@@ -155,40 +155,40 @@ class ListNode : public Object {
    * \brief push a new item to the back of the list
    * \param item The item to be pushed.
    */
-  MATXSCRIPT_ALWAYS_INLINE void push_back(value_type item) {
+  HERCULES_ALWAYS_INLINE void push_back(value_type item) {
     data_container.push_back(std::move(item));
   }
 
   template <class... Args>
-  MATXSCRIPT_ALWAYS_INLINE void emplace_back(Args&&... args) {
+  HERCULES_ALWAYS_INLINE void emplace_back(Args&&... args) {
     data_container.emplace_back(std::forward<Args>(args)...);
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void pop_back() {
+  HERCULES_ALWAYS_INLINE void pop_back() {
     data_container.pop_back();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void reserve(int64_t new_size) {
+  HERCULES_ALWAYS_INLINE void reserve(int64_t new_size) {
     data_container.reserve(new_size > 0 ? new_size : 0);
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void resize(int64_t new_size) {
+  HERCULES_ALWAYS_INLINE void resize(int64_t new_size) {
     if (new_size >= 0) {
       data_container.resize(new_size);
     }
   }
 
   template <typename U>
-  MATXSCRIPT_ALWAYS_INLINE void append(U&& item) {
+  HERCULES_ALWAYS_INLINE void append(U&& item) {
     push_back(GenericValueConverter<value_type>{}(std::forward<U>(item)));
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void clear() {
+  HERCULES_ALWAYS_INLINE void clear() {
     data_container.clear();
   }
 
   template <typename U>
-  MATXSCRIPT_ALWAYS_INLINE void insert(int64_t index, U&& item) {
+  HERCULES_ALWAYS_INLINE void insert(int64_t index, U&& item) {
     index = index_correction(index, data_container.size());
     if (index < 0) {  // To sync with Python insert result
       index = 0;
@@ -210,15 +210,15 @@ class ListNode : public Object {
       data_container.erase(itr);
     } else {
       if (data_container.empty()) {
-        MXTHROW << "[List.pop] IndexError: pop from empty list";
+        HSTHROW << "[List.pop] IndexError: pop from empty list";
       } else {
-        MXTHROW << "[List.pop] IndexError: pop index out of range";
+        HSTHROW << "[List.pop] IndexError: pop index out of range";
       }
     }
     return ret;
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void remove(const Any& item) {
+  HERCULES_ALWAYS_INLINE void remove(const Any& item) {
     auto first = data_container.begin();
     auto last = data_container.end();
     for (; first != last; ++first) {
@@ -227,10 +227,10 @@ class ListNode : public Object {
         return;
       }
     }
-    MXTHROW << "[list.remove] " << item << " not in list";
+    HSTHROW << "[list.remove] " << item << " not in list";
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void reverse() {
+  HERCULES_ALWAYS_INLINE void reverse() {
     std::reverse(data_container.begin(), data_container.end());
   }
 
@@ -244,4 +244,4 @@ class ListNode : public Object {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

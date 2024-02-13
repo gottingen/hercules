@@ -22,7 +22,7 @@
  */
 
 /*!
- * \file matx/ir/stmt.cc
+ * \file hvm/ir/stmt.cc
  */
 #include <hercules/ir/stmt.h>
 
@@ -40,13 +40,13 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using ::matxscript::runtime::Downcast;
-using ::matxscript::runtime::make_object;
-using ::matxscript::runtime::String;
-using namespace ::matxscript::ir::printer;
+using ::hercules::runtime::Downcast;
+using ::hercules::runtime::make_object;
+using ::hercules::runtime::String;
+using namespace ::hercules::ir::printer;
 
 // ExprStmt
 ExprStmt::ExprStmt(BaseExpr expr, Span span) {
@@ -56,13 +56,13 @@ ExprStmt::ExprStmt(BaseExpr expr, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ExprStmt").set_body_typed([](BaseExpr expr, Span span = Span()) {
+HERCULES_REGISTER_GLOBAL("ir.ExprStmt").set_body_typed([](BaseExpr expr, Span span = Span()) {
   return ExprStmt(std::move(expr), span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ExprStmtNode);
+HERCULES_REGISTER_NODE_TYPE(ExprStmtNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ExprStmt>("", [](ExprStmt stmt, ObjectPath p, IRDocsifier d) -> Doc {
       auto expr = d->AsDoc<Doc>(stmt->expr, p->Attr("expr"));
       if (expr->IsInstance<StmtDocNode>()) {
@@ -85,18 +85,18 @@ AllocaVarStmt::AllocaVarStmt(StringRef name, Type ty, BaseExpr init_value, Span 
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.AllocaVarStmt")
+HERCULES_REGISTER_GLOBAL("ir.AllocaVarStmt")
     .set_body_typed([](StringRef name, Type ty, BaseExpr init_value, Span span = Span()) {
       return AllocaVarStmt(name, ty, init_value, span);
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir._GetVarFromAllocaVarStmt").set_body_typed([](AllocaVarStmt stmt) {
+HERCULES_REGISTER_GLOBAL("ir._GetVarFromAllocaVarStmt").set_body_typed([](AllocaVarStmt stmt) {
   return stmt->var;
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(AllocaVarStmtNode);
+HERCULES_REGISTER_NODE_TYPE(AllocaVarStmtNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<AllocaVarStmt>("", [](AllocaVarStmt s, ObjectPath p, IRDocsifier d) -> Doc {
       ObjectPath var_p = p->Attr("var");
       auto lhs = d->AsDoc<ExprDoc>(s->var, var_p);
@@ -111,8 +111,8 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // AssignStmt
 AssignStmt::AssignStmt(BaseExpr lhs, BaseExpr rhs, Span span) {
-  MXCHECK(lhs.defined());
-  MXCHECK(rhs.defined());
+  HSCHECK(lhs.defined());
+  HSCHECK(rhs.defined());
 
   ObjectPtr<AssignStmtNode> node = make_object<AssignStmtNode>();
   node->lhs = std::move(lhs);
@@ -121,14 +121,14 @@ AssignStmt::AssignStmt(BaseExpr lhs, BaseExpr rhs, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.AssignStmt")
+HERCULES_REGISTER_GLOBAL("ir.AssignStmt")
     .set_body_typed([](BaseExpr lhs, BaseExpr rhs, Span span = Span()) {
       return AssignStmt(lhs, rhs, span);
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(AssignStmtNode);
+HERCULES_REGISTER_NODE_TYPE(AssignStmtNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<AssignStmt>("", [](AssignStmt stmt, ObjectPath p, IRDocsifier d) -> Doc {
       auto lhs = d->AsDoc<ExprDoc>(stmt->lhs, p->Attr("lhs"));
       Optional<ExprDoc> rhs = d->AsDoc<ExprDoc>(stmt->rhs, p->Attr("rhs"));
@@ -143,13 +143,13 @@ ReturnStmt::ReturnStmt(BaseExpr value, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ReturnStmt").set_body_typed([](BaseExpr value, Span span = Span()) {
+HERCULES_REGISTER_GLOBAL("ir.ReturnStmt").set_body_typed([](BaseExpr value, Span span = Span()) {
   return ReturnStmt(value, span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ReturnStmtNode);
+HERCULES_REGISTER_NODE_TYPE(ReturnStmtNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ReturnStmt>("", [](ReturnStmt stmt, ObjectPath p, IRDocsifier d) -> Doc {
       auto value = d->AsDoc<ExprDoc>(stmt->value, p->Attr("value"));
       return ReturnDoc(value);
@@ -157,8 +157,8 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // AssertStmt
 AssertStmt::AssertStmt(BaseExpr condition, BaseExpr message, Stmt body, Span span) {
-  MXCHECK(condition.defined());
-  MXCHECK(message->checked_type() == PrimType(runtime::DataType::Int(32)) ||
+  HSCHECK(condition.defined());
+  HSCHECK(message->checked_type() == PrimType(runtime::DataType::Int(32)) ||
           message.as<StringImmNode>())
       << "TypeError: AssertStmt message must be an int or string:" << message << "\n";
 
@@ -170,14 +170,14 @@ AssertStmt::AssertStmt(BaseExpr condition, BaseExpr message, Stmt body, Span spa
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(AssertStmtNode);
+HERCULES_REGISTER_NODE_TYPE(AssertStmtNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.AssertStmt")
+HERCULES_REGISTER_GLOBAL("ir.AssertStmt")
     .set_body_typed([](BaseExpr condition, ObjectRef message, Stmt body, Span span = Span()) {
       return AssertStmt(condition, Downcast<BaseExpr>(message), body, span);
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::AssertStmt>("", [](ir::AssertStmt stmt, ObjectPath p, IRDocsifier d) -> Doc {
       bool concise = AllowConciseScoping(d);
       ExprDoc cond = d->AsDoc<ExprDoc>(stmt->condition, p->Attr("condition"));
@@ -200,36 +200,36 @@ For::For(PrimVar loop_var,
          ForType for_type,
          Stmt body,
          Span span) {
-  MXCHECK(min.defined());
-  MXCHECK(max.defined());
-  MXCHECK(step.defined());
-  MXCHECK(loop_var.dtype().is_scalar());
-  MXCHECK(body.defined());
+  HSCHECK(min.defined());
+  HSCHECK(max.defined());
+  HSCHECK(step.defined());
+  HSCHECK(loop_var.dtype().is_scalar());
+  HSCHECK(body.defined());
   if (auto* min_node = min.as<PrimExprNode>()) {
-    MXCHECK(min_node->dtype.is_scalar());
+    HSCHECK(min_node->dtype.is_scalar());
   } else {
     auto hlo_min = Downcast<HLOExpr>(min);
-    MXCHECK(hlo_min->checked_type().defined());
+    HSCHECK(hlo_min->checked_type().defined());
     auto min_type_node = hlo_min->checked_type().as<PrimTypeNode>();
-    MXCHECK(min_type_node != nullptr && min_type_node->dtype.is_scalar())
+    HSCHECK(min_type_node != nullptr && min_type_node->dtype.is_scalar())
         << "[ir.For] min is not Prim scalar";
   }
   if (auto* max_node = max.as<PrimExprNode>()) {
-    MXCHECK(max_node->dtype.is_scalar());
+    HSCHECK(max_node->dtype.is_scalar());
   } else {
     auto hlo_max = Downcast<HLOExpr>(max);
-    MXCHECK(hlo_max->checked_type().defined());
+    HSCHECK(hlo_max->checked_type().defined());
     auto max_type_node = hlo_max->checked_type().as<PrimTypeNode>();
-    MXCHECK(max_type_node != nullptr && max_type_node->dtype.is_scalar())
+    HSCHECK(max_type_node != nullptr && max_type_node->dtype.is_scalar())
         << "[ir.For] max is not Prim scalar";
   }
   if (auto* step_node = step.as<PrimExprNode>()) {
-    MXCHECK(step_node->dtype.is_scalar());
+    HSCHECK(step_node->dtype.is_scalar());
   } else {
     auto hlo_step = Downcast<HLOExpr>(step);
-    MXCHECK(hlo_step->checked_type().defined());
+    HSCHECK(hlo_step->checked_type().defined());
     auto step_type_node = hlo_step->checked_type().as<PrimTypeNode>();
-    MXCHECK(step_type_node != nullptr && step_type_node->dtype.is_scalar())
+    HSCHECK(step_type_node != nullptr && step_type_node->dtype.is_scalar())
         << "[ir.For] step is not Prim scalar";
   }
 
@@ -245,7 +245,7 @@ For::For(PrimVar loop_var,
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.For").set_body_typed([](PrimVar loop_var,
+HERCULES_REGISTER_GLOBAL("ir.For").set_body_typed([](PrimVar loop_var,
                                                        BaseExpr min,
                                                        BaseExpr max,
                                                        BaseExpr step,
@@ -255,7 +255,7 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.For").set_body_typed([](PrimVar loop_var,
   return For(loop_var, min, max, step, static_cast<ForType>(for_type), body, span);
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ForNode);
+HERCULES_REGISTER_NODE_TYPE(ForNode);
 
 std::ostream& operator<<(std::ostream& out, ForType type) {  // NOLINT(*)
   switch (type) {
@@ -275,7 +275,7 @@ std::ostream& operator<<(std::ostream& out, ForType type) {  // NOLINT(*)
   return out;
 }
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::For>("", [](ir::For loop, ObjectPath loop_p, IRDocsifier d) -> Doc {
       With<IRFrame> f(d, loop);
       ExprDoc lhs = DefineVar(loop->loop_var, *f, d);
@@ -306,9 +306,9 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 const char* AutoFor::TEMP_VALUE_VAR_KEY = "value_var";
 const char* AutoFor::TEMP_ENUMERATE_POS_VAR_KEY = "enumerate_pos_var";
 AutoFor::AutoFor(Array<BaseExpr> loop_vars, BaseExpr container, Stmt body, Span span) {
-  MXCHECK(loop_vars.defined() && !loop_vars.empty());
-  MXCHECK(container.defined());
-  MXCHECK(body.defined());
+  HSCHECK(loop_vars.defined() && !loop_vars.empty());
+  HSCHECK(container.defined());
+  HSCHECK(body.defined());
 
   auto gen_var_name = [](const StringRef& prefix, const StringRef& seed, int i) -> StringRef {
     uint16_t hash_val = static_cast<uint16_t>(std::hash<StringRef>()(prefix + seed));
@@ -427,7 +427,7 @@ AutoFor::AutoFor(Array<BaseExpr> loop_vars, BaseExpr container, Stmt body, Span 
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.AutoFor")
+HERCULES_REGISTER_GLOBAL("ir.AutoFor")
     .set_body_typed([](Array<BaseExpr> loop_var,
                        BaseExpr container,
                        Stmt body,
@@ -435,9 +435,9 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.AutoFor")
       return AutoFor(std::move(loop_var), std::move(container), std::move(body), std::move(span));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(AutoForNode);
+HERCULES_REGISTER_NODE_TYPE(AutoForNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::AutoFor>("", [](ir::AutoFor loop, ObjectPath loop_p, IRDocsifier d) -> Doc {
       With<IRFrame> f(d, loop);
       ExprDoc lhs{nullptr};
@@ -460,15 +460,15 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // While
 While::While(BaseExpr cond, Stmt body, Span span) {
-  MXCHECK(cond.defined());
-  MXCHECK(body.defined());
+  HSCHECK(cond.defined());
+  HSCHECK(body.defined());
   if (auto* cond_node = cond.as<PrimExprNode>()) {
-    MXCHECK(cond_node->dtype.is_scalar());
+    HSCHECK(cond_node->dtype.is_scalar());
   } else {
     auto hlo_cond = Downcast<HLOExpr>(cond);
-    MXCHECK(hlo_cond->checked_type().defined());
+    HSCHECK(hlo_cond->checked_type().defined());
     auto cond_type_node = hlo_cond->checked_type().as<PrimTypeNode>();
-    MXCHECK(cond_type_node != nullptr && cond_type_node->dtype.is_scalar())
+    HSCHECK(cond_type_node != nullptr && cond_type_node->dtype.is_scalar())
         << "[ir.While] cond is not Prim scalar";
   }
 
@@ -479,14 +479,14 @@ While::While(BaseExpr cond, Stmt body, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.While")
+HERCULES_REGISTER_GLOBAL("ir.While")
     .set_body_typed([](BaseExpr cond, Stmt body, Span span = Span()) {
       return While(cond, body, span);
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(WhileNode);
+HERCULES_REGISTER_NODE_TYPE(WhileNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::While>("", [](ir::While loop, ObjectPath loop_p, IRDocsifier d) -> Doc {
       With<IRFrame> f(d, loop);
       ExprDoc cond = d->AsDoc<ExprDoc>(loop->cond, loop_p->Attr("cond"));
@@ -499,10 +499,10 @@ Break::Break() {
   data_ = make_object<BreakNode>();
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Break").set_body_typed([]() { return Break(); });
-MATXSCRIPT_REGISTER_NODE_TYPE(BreakNode);
+HERCULES_REGISTER_GLOBAL("ir.Break").set_body_typed([]() { return Break(); });
+HERCULES_REGISTER_NODE_TYPE(BreakNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::Break>("", [](ir::Break n, ObjectPath p, IRDocsifier d) -> Doc {
       return BreakDoc();
     });
@@ -512,10 +512,10 @@ Continue::Continue() {
   data_ = make_object<ContinueNode>();
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Continue").set_body_typed([]() { return Continue(); });
-MATXSCRIPT_REGISTER_NODE_TYPE(ContinueNode);
+HERCULES_REGISTER_GLOBAL("ir.Continue").set_body_typed([]() { return Continue(); });
+HERCULES_REGISTER_NODE_TYPE(ContinueNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::Continue>("", [](ir::Continue n, ObjectPath p, IRDocsifier d) -> Doc {
       return ContinueDoc();
     });
@@ -528,13 +528,13 @@ SeqStmt::SeqStmt(Array<Stmt> seq, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.SeqStmt").set_body_typed([](Array<Stmt> seq, Span span = Span()) {
+HERCULES_REGISTER_GLOBAL("ir.SeqStmt").set_body_typed([](Array<Stmt> seq, Span span = Span()) {
   return SeqStmt(std::move(seq), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(SeqStmtNode);
+HERCULES_REGISTER_NODE_TYPE(SeqStmtNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::SeqStmt>("", [](ir::SeqStmt stmt, ObjectPath p, IRDocsifier d) -> Doc {
       With<IRFrame> f(d, stmt);
       AsDocBody(stmt, p, f->get(), d);
@@ -543,8 +543,8 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // IfThenElse
 IfThenElse::IfThenElse(BaseExpr condition, Stmt then_case, Stmt else_case, Span span) {
-  MXCHECK(condition.defined());
-  MXCHECK(then_case.defined());
+  HSCHECK(condition.defined());
+  HSCHECK(then_case.defined());
   // else_case may be null.
   ObjectPtr<IfThenElseNode> node = make_object<IfThenElseNode>();
   node->condition = std::move(condition);
@@ -554,14 +554,14 @@ IfThenElse::IfThenElse(BaseExpr condition, Stmt then_case, Stmt else_case, Span 
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(IfThenElseNode);
+HERCULES_REGISTER_NODE_TYPE(IfThenElseNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.IfThenElse")
+HERCULES_REGISTER_GLOBAL("ir.IfThenElse")
     .set_body_typed([](BaseExpr condition, Stmt then_case, Stmt else_case, Span span = Span()) {
       return IfThenElse(condition, then_case, else_case, span);
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::IfThenElse>(  //
         "",
         [](ir::IfThenElse stmt, ObjectPath p, IRDocsifier d) -> Doc {
@@ -583,8 +583,8 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // ExceptionHandler
 ExceptionHandler::ExceptionHandler(BaseExpr e, Stmt body, Span span) {
-  MXCHECK(body.defined()) << "body is not defined!!!";
-  MXCHECK(!e.defined()) << "specific exception is not supported now!!!";
+  HSCHECK(body.defined()) << "body is not defined!!!";
+  HSCHECK(!e.defined()) << "specific exception is not supported now!!!";
   ObjectPtr<ExceptionHandlerNode> node = make_object<ExceptionHandlerNode>();
   node->body = std::move(body);
   node->e = std::move(e);
@@ -592,17 +592,17 @@ ExceptionHandler::ExceptionHandler(BaseExpr e, Stmt body, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ExceptionHandlerNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.ExceptionHandler")
+HERCULES_REGISTER_NODE_TYPE(ExceptionHandlerNode);
+HERCULES_REGISTER_GLOBAL("ir.ExceptionHandler")
     .set_body_typed([](BaseExpr e, Stmt body, Span span = Span()) {
       return ExceptionHandler(std::move(e), std::move(body), std::move(span));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::ExceptionHandler>(  //
         "",
         [](ir::ExceptionHandler stmt, ObjectPath p, IRDocsifier d) -> Doc {
-          MXCHECK(!stmt->e.defined()) << "specific exception is not supported now!!!";
+          HSCHECK(!stmt->e.defined()) << "specific exception is not supported now!!!";
           Array<StmtDoc> body_branch;
           if (stmt->body.defined()) {
             With<IRFrame> f(d, stmt->body);
@@ -614,8 +614,8 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // TryExcept
 TryExcept::TryExcept(Stmt body, Array<ExceptionHandler> handlers, Span span) {
-  MXCHECK(body.defined()) << "body is not defined!!!";
-  MXCHECK(handlers.defined() && handlers.size() == 1)
+  HSCHECK(body.defined()) << "body is not defined!!!";
+  HSCHECK(handlers.defined() && handlers.size() == 1)
       << "only one except handler is supported now!!!";
   ObjectPtr<TryExceptNode> node = make_object<TryExceptNode>();
   node->body = std::move(body);
@@ -624,13 +624,13 @@ TryExcept::TryExcept(Stmt body, Array<ExceptionHandler> handlers, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(TryExceptNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.TryExcept")
+HERCULES_REGISTER_NODE_TYPE(TryExceptNode);
+HERCULES_REGISTER_GLOBAL("ir.TryExcept")
     .set_body_typed([](Stmt body, Array<ExceptionHandler> handlers, Span span = Span()) {
       return TryExcept(std::move(body), std::move(handlers), std::move(span));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::TryExcept>(  //
         "",
         [](ir::TryExcept stmt, ObjectPath p, IRDocsifier d) -> Doc {
@@ -659,12 +659,12 @@ Raise::Raise(BaseExpr exc, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(RaiseNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.Raise").set_body_typed([](BaseExpr exc, Span span = Span()) {
+HERCULES_REGISTER_NODE_TYPE(RaiseNode);
+HERCULES_REGISTER_GLOBAL("ir.Raise").set_body_typed([](BaseExpr exc, Span span = Span()) {
   return Raise(std::move(exc), std::move(span));
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::Raise>(  //
         "",
         [](ir::Raise stmt, ObjectPath p, IRDocsifier d) -> Doc {
@@ -688,13 +688,13 @@ HLOYield::HLOYield(BaseExpr symbol, BaseExpr label, Span span) {
 HLOYield::HLOYield(BaseExpr symbol, Span span)
     : HLOYield(std::move(symbol), IntImm(runtime::DataType::Int(64), 0), std::move(span)){};
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOYieldNode);
+HERCULES_REGISTER_NODE_TYPE(HLOYieldNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOYield").set_body_typed([](BaseExpr symbol, Span span = Span()) {
+HERCULES_REGISTER_GLOBAL("ir.HLOYield").set_body_typed([](BaseExpr symbol, Span span = Span()) {
   return HLOYield(std::move(symbol), span);
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::HLOYield>(  //
         "",
         [](ir::HLOYield stmt, ObjectPath p, IRDocsifier d) -> Doc {
@@ -703,4 +703,4 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
         });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -19,10 +19,10 @@
  */
 #include <hercules/runtime/memory.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_DLL MemoryPoolAllocator global_memory_allocator;
+HERCULES_DLL MemoryPoolAllocator global_memory_allocator;
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

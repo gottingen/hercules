@@ -31,7 +31,7 @@
 #include <hercules/ir/struct_info.h>
 #include <hercules/ir/struct_info_functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 //--------------------------
@@ -66,7 +66,7 @@ Type GetStaticType(const StructInfo& info) {
   return StaticTypeDeriver()(info);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("relax.analysis.GetStaticType")
+HERCULES_REGISTER_GLOBAL("relax.analysis.GetStaticType")
     .set_body_typed([](const StructInfo& info) { return GetStaticType(info); });
 
 //--------------------------
@@ -89,13 +89,13 @@ StructInfo StructInfoFromType(const Type& type) {
     }
     return TupleStructInfo(fields, type->span);
   } else if (const FuncTypeNode* func_type = type.as<FuncTypeNode>()) {
-    MXLOG(FATAL) << "Unsupported type: " << type;
+    HSLOG(FATAL) << "Unsupported type: " << type;
     return StructInfo();
   } else {
-    MXLOG(FATAL) << "Unsupported type: " << type;
+    HSLOG(FATAL) << "Unsupported type: " << type;
     return StructInfo();
   }
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -29,14 +29,14 @@
 
 #include <gtest/gtest.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 using namespace runtime;
 
 TEST(IR, ForRange) {
   DataType f64_ty = DataType::Float(64);
   DataType i64_ty = DataType::Int(64);
-  const auto* printer = ::matxscript::runtime::FunctionRegistry::Get("node.IRTextPrinter_Print");
+  const auto* printer = ::hercules::runtime::FunctionRegistry::Get("node.IRTextPrinter_Print");
 
   PrimVar arg_ib("ib", i64_ty);
   AllocaVarStmt alloca_result("result", PrimType(f64_ty), FloatImm(f64_ty, 0.0));
@@ -59,4 +59,4 @@ TEST(IR, ForRange) {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

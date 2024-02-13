@@ -22,7 +22,7 @@
  */
 
 /*!
- * \file matx/ir/type_functor.h
+ * \file hvm/ir/type_functor.h
  * \brief A way to defined arbitrary function signature with dispatch on types.
  */
 #pragma once
@@ -36,19 +36,19 @@
 #include <hercules/runtime/container.h>
 #include <hercules/runtime/functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using ::matxscript::runtime::NodeFunctor;
+using ::hercules::runtime::NodeFunctor;
 
 template <typename FType>
 class TypeFunctor;
 
 // functions to be overridden.
-#define MATXSCRIPT_TYPE_FUNCTOR_DEFAULT \
+#define HERCULES_TYPE_FUNCTOR_DEFAULT \
   { return VisitTypeDefault_(op, std::forward<Args>(args)...); }
 
-#define MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(OP)                                               \
+#define HERCULES_TYPE_FUNCTOR_DISPATCH(OP)                                               \
   vtable.template set_dispatch<OP>([](const ObjectRef& n, TSelf* self, Args... args) {     \
     return self->VisitType_(static_cast<const OP*>(n.get()), std::forward<Args>(args)...); \
   });
@@ -81,38 +81,38 @@ class TypeFunctor<R(const Type& n, Args...)> {
    * \return The result of the call
    */
   virtual R VisitType(const Type& n, Args... args) {
-    MXCHECK(n.defined());
+    HSCHECK(n.defined());
     static FType vtable = InitVTable();
     return vtable(n, this, std::forward<Args>(args)...);
   }
   // Functions that can be overriden by subclass
-  virtual R VisitType_(const TypeVarNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const TypeConstraintNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const FuncTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const RangeTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const TupleTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const GlobalTypeVarNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const PrimTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const PointerTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const TypeVarNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const TypeConstraintNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const FuncTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const RangeTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const TupleTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const GlobalTypeVarNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const PrimTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const PointerTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
 
-  virtual R VisitType_(const ObjectTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const UnicodeTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const StringTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const ListTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const DictTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const SetTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const IteratorTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const ExceptionTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const FileTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const ShapeTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const DynTensorTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const ClassTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const UserDataTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const ObjectTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const UnicodeTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const StringTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const ListTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const DictTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const SetTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const IteratorTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const ExceptionTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const FileTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const ShapeTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const DynTensorTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const ClassTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const UserDataTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
   virtual R VisitType_(const OpaqueObjectTypeNode* op,
-                       Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
-  virtual R VisitType_(const RefTypeNode* op, Args... args) MATXSCRIPT_TYPE_FUNCTOR_DEFAULT;
+                       Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
+  virtual R VisitType_(const RefTypeNode* op, Args... args) HERCULES_TYPE_FUNCTOR_DEFAULT;
   virtual R VisitTypeDefault_(const Object* op, Args...) {
-    MXLOG(FATAL) << "Do not have a default for " << op->GetTypeKey();
+    HSLOG(FATAL) << "Do not have a default for " << op->GetTypeKey();
     throw;  // unreachable, written to stop compiler warning
   }
 
@@ -121,40 +121,40 @@ class TypeFunctor<R(const Type& n, Args...)> {
   static FType InitVTable() {
     FType vtable;
     // Set dispatch
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(TypeVarNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(TypeConstraintNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(FuncTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(RangeTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(TupleTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(GlobalTypeVarNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(PrimTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(PointerTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(TypeVarNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(TypeConstraintNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(FuncTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(RangeTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(TupleTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(GlobalTypeVarNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(PrimTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(PointerTypeNode);
 
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(ObjectTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(UnicodeTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(StringTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(ListTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(DictTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(SetTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(IteratorTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(ExceptionTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(FileTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(ShapeTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(DynTensorTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(ClassTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(UserDataTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(OpaqueObjectTypeNode);
-    MATXSCRIPT_TYPE_FUNCTOR_DISPATCH(RefTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(ObjectTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(UnicodeTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(StringTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(ListTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(DictTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(SetTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(IteratorTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(ExceptionTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(FileTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(ShapeTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(DynTensorTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(ClassTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(UserDataTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(OpaqueObjectTypeNode);
+    HERCULES_TYPE_FUNCTOR_DISPATCH(RefTypeNode);
     return vtable;
   }
 };
 
-#undef MATXSCRIPT_TYPE_FUNCTOR_DISPATCH
+#undef HERCULES_TYPE_FUNCTOR_DISPATCH
 
 /*!
  * \brief A type visitor that recursively visit types.
  */
-class MATX_DLL TypeVisitor : public TypeFunctor<void(const Type& n)> {
+class HERCULES_DLL TypeVisitor : public TypeFunctor<void(const Type& n)> {
  public:
   void VisitType_(const TypeVarNode* op) override;
   void VisitType_(const FuncTypeNode* op) override;
@@ -184,7 +184,7 @@ class MATX_DLL TypeVisitor : public TypeFunctor<void(const Type& n)> {
 /*!
  * \brief TypeMutator that mutates expressions.
  */
-class MATX_DLL TypeMutator : public TypeFunctor<Type(const Type& n)> {
+class HERCULES_DLL TypeMutator : public TypeFunctor<Type(const Type& n)> {
  public:
   Type VisitType(const Type& t) override;
   Type VisitType_(const TypeVarNode* op) override;
@@ -223,4 +223,4 @@ class MATX_DLL TypeMutator : public TypeFunctor<Type(const Type& n)> {
 Type Bind(const Type& type, const Map<TypeVar, Type>& args_map);
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -25,7 +25,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/singleton.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class UserDataCache : public Singleton<UserDataCache> {
@@ -193,4 +193,4 @@ class UserDataCache : public Singleton<UserDataCache> {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

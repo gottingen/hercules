@@ -40,7 +40,7 @@
 #include <hercules/runtime/container/unicode_view.h>
 #include <hercules/runtime/exceptions/exceptions.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /* ------------- Previous-version API ------------------------------------- */
@@ -214,4 +214,4 @@ class PyUnicodeData {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

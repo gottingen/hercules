@@ -22,7 +22,7 @@
 #endif
 #endif
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace serialization {
 
@@ -466,4 +466,4 @@ static const execute_fn read_map_header = &unpack_container_header<0x80, 0xde>;
 // clang-format on
 }  // namespace serialization
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

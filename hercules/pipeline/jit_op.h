@@ -23,7 +23,7 @@
 #include <hercules/pipeline/op_kernel.h>
 #include <hercules/runtime/module.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // JitOp is a pipeline op with uniq function entry UserCodegenResource
@@ -51,4 +51,4 @@ class JitOp : public OpKernel {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

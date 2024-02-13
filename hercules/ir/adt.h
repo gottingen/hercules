@@ -2,7 +2,7 @@
 /*
  * Taken from https://github.com/apache/tvm/blob/v0.7/include/tvm/ir/adt.h
  * with fixes applied:
- * - add namespace matx::ir for fix conflict with tvm
+ * - add namespace hvm::ir for fix conflict with tvm
  * - remove TypeData
  * - add ClassType
  *
@@ -25,7 +25,7 @@
  */
 
 /*!
- * \file matx/ir/adt.h
+ * \file hvm/ir/adt.h
  * \brief Algebraic data type definitions.
  *
  * We adopt tvm relay's ADT definition as a unified class
@@ -41,7 +41,7 @@
 #include <hercules/runtime/container.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -85,7 +85,7 @@ class ConstructorNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.Constructor";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ConstructorNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ConstructorNode, HLOExprNode);
 };
 
 /*!
@@ -100,12 +100,12 @@ class Constructor : public HLOExpr {
    * \param inputs The input types.
    * \param belong_to The data type var the constructor will construct.
    */
-  MATX_DLL Constructor(Type ret_type,
+  HERCULES_DLL Constructor(Type ret_type,
                        StringRef name_hint,
                        Array<Type> inputs,
                        GlobalTypeVar belong_to);
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Constructor, HLOExpr, ConstructorNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Constructor, HLOExpr, ConstructorNode);
 };
 
 /*! \brief ClassType container node */
@@ -175,7 +175,7 @@ class ClassTypeNode : public TypeNode {
   }
 
   static constexpr const char* _type_key = "ir.ClassType";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ClassTypeNode, TypeNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ClassTypeNode, TypeNode);
 };
 
 /*!
@@ -194,7 +194,7 @@ class ClassType : public Type {
    * @param unbound_func_names member function origin names
    * @param func_types member function types
    */
-  MATX_DLL ClassType(uint64_t py_type_id,
+  HERCULES_DLL ClassType(uint64_t py_type_id,
                      GlobalTypeVar header,
                      Type base,
                      Array<StringRef> var_names,
@@ -203,7 +203,7 @@ class ClassType : public Type {
                      Array<StringRef> unbound_func_names,
                      Array<FuncType> func_types);
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(ClassType, Type, ClassTypeNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(ClassType, Type, ClassTypeNode);
 };
 
 bool IsBaseTypeOf(const Type& base, const Type& derived, bool allow_same);
@@ -211,4 +211,4 @@ bool IsBaseTypeOf(const Type& base, const Type& derived, bool allow_same);
 const PrimVar& GetImplicitClassSessionVar();
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

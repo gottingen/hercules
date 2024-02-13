@@ -30,7 +30,7 @@
 #include <hercules/runtime/container/string.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace serialization {
 
@@ -307,7 +307,7 @@ int MessageUnpacker::custom_ext_callback(int8_t typecode,
     } break;
     case TypeIndex::kRuntimeNDArray: {
       const char* buf = pos;
-      MXCHECK(length >= (4 + sizeof(int32_t))) << "Msgpack: Invalid NDArray Data Format";
+      HSCHECK(length >= (4 + sizeof(int32_t))) << "Msgpack: Invalid NDArray Data Format";
       // dtype
       DLDataType dtype;
       std::memcpy(&dtype.code, buf, 1);
@@ -320,7 +320,7 @@ int MessageUnpacker::custom_ext_callback(int8_t typecode,
       int32_t ndim;
       std::memcpy(&ndim, buf, sizeof(int32_t));
       buf += sizeof(int32_t);
-      MXCHECK(length >= (4 + sizeof(int32_t) + ndim * sizeof(int64_t)))
+      HSCHECK(length >= (4 + sizeof(int32_t) + ndim * sizeof(int64_t)))
           << "Msgpack: Invalid NDArray Data Format";
       std::vector<int64_t> shapes;
       shapes.reserve(ndim);
@@ -333,7 +333,7 @@ int MessageUnpacker::custom_ext_callback(int8_t typecode,
         size *= static_cast<size_t>(shape);
       }
       size *= (dtype.bits * dtype.lanes + 7) / 8;
-      MXCHECK_EQ(length, (4 + sizeof(int32_t) + ndim * sizeof(int64_t) + size))
+      HSCHECK_EQ(length, (4 + sizeof(int32_t) + ndim * sizeof(int64_t) + size))
           << "Msgpack: Invalid NDArray Data Format";
       // data
       DLDevice device{kDLCPU, 0};
@@ -395,4 +395,4 @@ String msgpack_dumps(const Any& obj) {
 
 }  // namespace serialization
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

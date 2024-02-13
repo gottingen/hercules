@@ -25,7 +25,7 @@
 */
 #include <hercules/runtime/builtins_modules/_base64_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -115,4 +115,4 @@ String base64_decode(string_view encoded_string) {
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

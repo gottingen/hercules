@@ -35,7 +35,7 @@
 #include <hercules/runtime/memory.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::Object;
@@ -105,7 +105,7 @@ class Optional : public ObjectRef {
    * \note This function performs not-null checking.
    */
   T value() const {
-    MXCHECK(data_ != nullptr);
+    HSCHECK(data_ != nullptr);
     return T(data_);
   }
   /*!
@@ -189,4 +189,4 @@ class Optional : public ObjectRef {
 constexpr NullOptType NullOpt{};
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

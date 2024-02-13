@@ -28,7 +28,7 @@
 
 #include <hercules/runtime/container/unicode_view.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class Unicode;
@@ -51,4 +51,4 @@ inline bool py_unicode_isspace(Py_UCS4 c) noexcept {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -21,7 +21,7 @@
 
 #include <hercules/pipeline/global_unique_index.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 std::vector<std::unique_ptr<Symbol>> SymbolicExecutor::Compose(
@@ -29,7 +29,7 @@ std::vector<std::unique_ptr<Symbol>> SymbolicExecutor::Compose(
     const std::vector<const Symbol*>& args,
     const ska::flat_hash_map<String, const Symbol*>& kwargs,
     int num_output) {
-  MXCHECK(kwargs.empty()) << "named args is not unsupported";
+  HSCHECK(kwargs.empty()) << "named args is not unsupported";
   // dynamic graphs generate symbols on demand,
   // so there is no need to repeat checks in the symbol executor
 
@@ -72,4 +72,4 @@ std::vector<std::unique_ptr<Symbol>> SymbolicExecutor::Compose(
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

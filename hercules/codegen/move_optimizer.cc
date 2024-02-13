@@ -19,10 +19,10 @@
  */
 #include "move_optimizer.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.MoveOptimizer_GetMoveVarAndLineno").set_body_typed([](BaseFunc f) {
+HERCULES_REGISTER_GLOBAL("ir.MoveOptimizer_GetMoveVarAndLineno").set_body_typed([](BaseFunc f) {
   MoveOptimizerAnalysis analysis;
   MoveOptimizerCountVarUseCountAnalysis counter;
   auto& result = analysis.run(f);
@@ -41,7 +41,7 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.MoveOptimizer_GetMoveVarAndLineno").set_body_type
   return runtime::Tuple(info.begin(), info.end());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.MoveOptimizerAnalysis").set_body_typed([](BaseFunc f) {
+HERCULES_REGISTER_GLOBAL("ir.MoveOptimizerAnalysis").set_body_typed([](BaseFunc f) {
   MoveOptimizerAnalysis analysis;
   auto& result = analysis.run(f);
   Array<StringRef> pairs;
@@ -56,10 +56,10 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.MoveOptimizerAnalysis").set_body_typed([](BaseFun
   return runtime::RTValue(pairs);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.MoveOptimizerMutator").set_body_typed([](BaseFunc f) {
+HERCULES_REGISTER_GLOBAL("ir.MoveOptimizerMutator").set_body_typed([](BaseFunc f) {
   MoveOptimizerMutator optimizer;
   return runtime::RTValue(optimizer.run(f));
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

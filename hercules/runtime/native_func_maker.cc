@@ -27,7 +27,7 @@
 #include <hercules/runtime/registry.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace {
@@ -40,25 +40,25 @@ void deleter(ILightUserData* data) {
 }
 }  // namespace
 
-MATX_DLL UserDataRef make_native_function(string_view func_name) {
+HERCULES_DLL UserDataRef make_native_function(string_view func_name) {
   auto native_function_register = FunctionRegistry::Get(func_name);
-  MXCHECK(native_function_register != nullptr) << "Native Function not found: " << func_name;
+  HSCHECK(native_function_register != nullptr) << "Native Function not found: " << func_name;
   auto ret = UserDataRef(0, 0, sizeof(NativeFuncUserData), creater, deleter, nullptr);
   ((NativeFuncUserData*)(ret->ud_ptr))->__call__ = native_function_register;
   return ret;
 }
 
-MATX_DLL RTValue call_native_function(string_view func_name, PyArgs args) {
+HERCULES_DLL RTValue call_native_function(string_view func_name, PyArgs args) {
   auto native_function_register = FunctionRegistry::Get(func_name);
-  MXCHECK(native_function_register != nullptr) << "Native Function not found: " << func_name;
+  HSCHECK(native_function_register != nullptr) << "Native Function not found: " << func_name;
   return (*native_function_register)(args);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("native.call_native_function").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() >= 1);
+HERCULES_REGISTER_GLOBAL("native.call_native_function").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() >= 1);
   auto function_name = args[0].As<string_view>();
   return call_native_function(function_name, PyArgs(args.begin() + 1, args.size() - 1));
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

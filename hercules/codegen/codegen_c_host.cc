@@ -43,28 +43,28 @@
 #include "var_detect.h"
 #include "yield_detect.h"
 
-namespace matxscript {
+namespace hercules {
 namespace codegen {
 
 CodeGenCHost::CodeGenCHost() {
-  module_name_ = GetUniqueName("__matx_module_ctx");
+  module_name_ = GetUniqueName("__hvm_module_ctx");
 }
 
 void CodeGenCHost::Init(bool output_ssa, bool emit_asserts) {
   emit_asserts_ = emit_asserts;
   declared_globals_.clear();
-  decl_stream << "#include \"matxscript/runtime/codegen_all_includes.h\"\n";
+  decl_stream << "#include \"hercules/runtime/codegen_all_includes.h\"\n";
   decl_stream << "#include <math.h>\n";
-  decl_stream << "\nusing namespace ::matxscript::runtime;\n";
+  decl_stream << "\nusing namespace ::hercules::runtime;\n";
   decl_stream << "extern \"C\" void* " << symbol::library_module_ctx << " = NULL;\n\n";
-  decl_stream << "extern \"C\" MATX_DLL MATXScriptFuncRegistry " << symbol::library_func_registry
+  decl_stream << "extern \"C\" HERCULES_DLL HerculesFuncRegistry " << symbol::library_func_registry
               << ";\n\n";
   CodeGenC::Init(output_ssa);
 }
 
 void CodeGenCHost::InitTypeRegistry(const ClassStmt& cls_stmt) {
   auto class_name = cls_stmt->name;
-  this->stream << "extern \"C\" MATX_DLL MATXScriptFuncRegistry " << symbol::library_func_registry
+  this->stream << "extern \"C\" HERCULES_DLL HerculesFuncRegistry " << symbol::library_func_registry
                << class_name << ";\n";
 }
 
@@ -106,14 +106,14 @@ void CodeGenCHost::AddUserStructInitDeclaration(const ClassStmt& cls_stmt,
         this->stream, params, init_func->GetDefaultParams(), true, true, true, true);
     stream << ");\n";
     this->stream << "int " << FunctionNameRules::add_packed_suffix(wrapper_func)
-                 << "(MATXScriptAny*, int, MATXScriptAny*, void*);\n";
+                 << "(HerculesAny*, int, HerculesAny*, void*);\n";
   } else {
     auto init_func_name = FunctionNameRules::add_class_prefix(class_name, "__init__");
     auto wrapper_func = FunctionNameRules::add_wrapper_suffix(init_func_name);
     this->PrintIndent(this->stream);
     this->stream << class_view_name << " " << wrapper_func << "();\n";
     this->stream << "int " << FunctionNameRules::add_packed_suffix(wrapper_func)
-                 << "(MATXScriptAny*, int, MATXScriptAny*, void*);\n";
+                 << "(HerculesAny*, int, HerculesAny*, void*);\n";
   }
 }
 
@@ -140,7 +140,7 @@ void CodeGenCHost::DefineUserStruct(const ClassStmt& cls_stmt,
     fn = [&](const Type& base) -> void {
       if (base.defined()) {
         auto base_node = base.as<ClassTypeNode>();
-        MXCHECK(base_node) << "class base type can only be class, but get " << base;
+        HSCHECK(base_node) << "class base type can only be class, but get " << base;
         all_headers.push_back(base_node->header->name_hint);
         fn(base_node->base);
       }
@@ -154,7 +154,7 @@ void CodeGenCHost::DefineUserStruct(const ClassStmt& cls_stmt,
   String base_class = "IUserDataRoot";
   if (cls_ty->base.defined()) {
     auto base_node = cls_ty->base.as<ClassTypeNode>();
-    MXCHECK(base_node) << "class base type can only be class, but get " << cls_ty->base;
+    HSCHECK(base_node) << "class base type can only be class, but get " << cls_ty->base;
     base_class = base_node->header->name_hint.operator String();
   }
   this->stream << "struct " << class_name << " : public " << base_class << " {\n";
@@ -318,11 +318,11 @@ void CodeGenCHost::DefineUserStruct(const ClassStmt& cls_stmt,
       auto var_cls_name = var_t_node->header->name_hint;
       this->stream << "case " << i << ": { this->" << virtual_var_name_tables[i]
                    << " = static_cast<" << var_type_s
-                   << ">(MATXSCRIPT_TYPE_AS_V2(val, UserDataRef, \"" << var_cls_name
+                   << ">(HERCULES_TYPE_AS_V2(val, UserDataRef, \"" << var_cls_name
                    << "\")); } break;\n";
     } else {
       this->stream << "case " << i << ": { this->" << virtual_var_name_tables[i]
-                   << " = MATXSCRIPT_TYPE_AS(val, " << var_type_s << ")"
+                   << " = HERCULES_TYPE_AS(val, " << var_type_s << ")"
                    << "; } break;\n";
     }
   }
@@ -344,7 +344,7 @@ void CodeGenCHost::DefineUserStruct(const ClassStmt& cls_stmt,
     String fn_name = cls_ty->func_names[i];
     String unbound_fn_name = cls_ty->unbound_func_names[i];
     auto itr_fn = methods.find(unbound_fn_name);
-    MXCHECK(itr_fn != methods.end());
+    HSCHECK(itr_fn != methods.end());
     auto base_func = itr_fn->second;
     this->PrintIndent(this->stream);
     this->stream << "virtual ";
@@ -423,8 +423,8 @@ void CodeGenCHost::DefineUserStruct(const ClassStmt& cls_stmt,
   this->PrintIndent(this->stream);
   this->stream << class_view_name << "() : ptr(nullptr) {}\n";
   this->PrintIndent(this->stream);
-  this->stream << class_view_name << "(const matxscript::runtime::Any& ref) : " << class_view_name
-               << "(MATXSCRIPT_TYPE_AS_V2(ref, UserDataRef, \"" << class_name << "\")) {}\n";
+  this->stream << class_view_name << "(const hercules::runtime::Any& ref) : " << class_view_name
+               << "(HERCULES_TYPE_AS_V2(ref, UserDataRef, \"" << class_name << "\")) {}\n";
 
   this->PrintIndent(this->stream);
   this->stream << "// UserDataRef\n";
@@ -672,7 +672,7 @@ void CodeGenCHost::VisitExpr_(const NoneExprNode* op, std::ostream& os) {
 }
 
 void CodeGenCHost::VisitStmt_(const ExceptionHandlerNode* op, std::ostream& os) {
-  MXCHECK(!op->e.defined());
+  HSCHECK(!op->e.defined());
 
   this->PrintIndent(os);
   os << "catch (...) {";
@@ -786,7 +786,7 @@ void CodeGenCHost::AddFunctionDeclaration(const BaseFunc& f) {
     this->PrintLineVars(this->stream, params, f->GetDefaultParams(), false, true, true, true);
     this->stream << ");\n";
     this->stream << "int " << FunctionNameRules::add_packed_suffix(func_name)
-                 << "(MATXScriptAny*, int, MATXScriptAny*, void*);\n";
+                 << "(HerculesAny*, int, HerculesAny*, void*);\n";
   } else {
     CodeGenC::AddFunctionDeclaration(f);
   }
@@ -870,7 +870,7 @@ void CodeGenCHost::AddYieldFunction(const BaseFunc& f, const std::vector<HLOYiel
   ReserveKeywordsAsUnique();
 
   auto global_symbol = f->GetAttr<StringRef>(attr::kGlobalSymbol);
-  MXCHECK(global_symbol.defined())
+  HSCHECK(global_symbol.defined())
       << "CodeGenC: Expect Function to have the global_symbol attribute";
   auto func_name = global_symbol.value().operator String();
   String generator_name = "Generator_" + func_name;
@@ -1107,21 +1107,21 @@ void CodeGenCHost::AddYieldFunction(const BaseFunc& f, const std::vector<HLOYiel
     if (yield_prim_type.is_bool()) {
       return_object_type = "BoolGenerator";
     } else if (yield_prim_type.is_int()) {
-      MXCHECK(yield_prim_type.bits() == 32 || yield_prim_type.bits() == 64);
+      HSCHECK(yield_prim_type.bits() == 32 || yield_prim_type.bits() == 64);
       if (yield_prim_type.bits() == 32) {
         return_object_type = "Int32Generator";
       } else {
         return_object_type = "Int64Generator";
       }
     } else if (yield_prim_type.is_float()) {
-      MXCHECK(yield_prim_type.bits() == 32 || yield_prim_type.bits() == 64);
+      HSCHECK(yield_prim_type.bits() == 32 || yield_prim_type.bits() == 64);
       if (yield_prim_type.bits() == 32) {
         return_object_type = "Float32Generator";
       } else {
         return_object_type = "Float64Generator";
       }
     } else {
-      MXCHECK(false) << "yield prim type is not supported";
+      HSCHECK(false) << "yield prim type is not supported";
     }
   } else {
     return_object_type = "RTValueGenerator";
@@ -1180,7 +1180,7 @@ void CodeGenCHost::PrintPackedFunctionMacro(const String& global_symbol,
 }
 
 void CodeGenCHost::PrintFuncPrefix(ir::Type ret_type) {  // NOLINT(*)
-  stream << "MATX_DLL ";
+  stream << "HERCULES_DLL ";
   PrintType(ret_type, stream);
 }
 
@@ -1201,7 +1201,7 @@ void CodeGenCHost::PrintType(const ir::Type& t, std::ostream& os) {  // NOLINT(*
 void CodeGenCHost::PrintType(DataType t, std::ostream& os) {  // NOLINT(*)
   int lanes = t.lanes();
   if (t.is_handle()) {
-    MXCHECK_EQ(lanes, 1) << "does not support vector types";
+    HSCHECK_EQ(lanes, 1) << "does not support vector types";
     os << "void*";
     return;
   }
@@ -1262,7 +1262,7 @@ void CodeGenCHost::PrintType(DataType t, std::ostream& os) {  // NOLINT(*)
       return;
     }
   }
-  MXLOG(FATAL) << "Cannot convert type " << t << " to C type";
+  HSLOG(FATAL) << "Cannot convert type " << t << " to C type";
 }
 
 void CodeGenCHost::VisitExpr_(const PrimCallNode* op, std::ostream& os) {  // NOLINT(*)
@@ -1305,7 +1305,7 @@ static Stmt BuildForStmtFromComprehension(const ComprehensionNode* op, Stmt body
     BaseExpr start = fn_eval_iter(range_node->start, "start");
     BaseExpr stop = fn_eval_iter(range_node->stop, "stop");
     BaseExpr step = fn_eval_iter(range_node->step, "step");
-    MXCHECK(op->target->IsInstance<PrimVarNode>()) << "internal error";
+    HSCHECK(op->target->IsInstance<PrimVarNode>()) << "internal error";
     For loop_stmt(Downcast<PrimVar>(op->target),
                   std::move(start),
                   std::move(stop),
@@ -1351,7 +1351,7 @@ void CodeGenCHost::VisitExpr_(const ListCompNode* op, std::ostream& os) {
   Array<Stmt> body;
   {
     auto const* li_ty_node = op->checked_type_.as<ListTypeNode>();
-    MXCHECK(li_ty_node) << "internal error";
+    HSCHECK(li_ty_node) << "internal error";
     AllocaVarStmt alloc_stmt(
         "__reserved_list_comp_result", op->checked_type_, BaseExpr{nullptr}, op->span);
     body.push_back(alloc_stmt);
@@ -1405,7 +1405,7 @@ void CodeGenCHost::VisitExpr_(const SetCompNode* op, std::ostream& os) {
   Array<Stmt> body;
   {
     auto const* set_ty_node = op->checked_type_.as<SetTypeNode>();
-    MXCHECK(set_ty_node) << "internal error";
+    HSCHECK(set_ty_node) << "internal error";
     AllocaVarStmt alloc_stmt(
         "__reserved_set_comp_result", op->checked_type_, BaseExpr{nullptr}, op->span);
     body.push_back(alloc_stmt);
@@ -1458,7 +1458,7 @@ void CodeGenCHost::VisitExpr_(const DictCompNode* op, std::ostream& os) {
   Array<Stmt> body;
   {
     auto const* dict_ty_node = op->checked_type_.as<DictTypeNode>();
-    MXCHECK(dict_ty_node) << "internal error";
+    HSCHECK(dict_ty_node) << "internal error";
     AllocaVarStmt alloc_stmt(
         "__reserved_dict_comp_result", op->checked_type_, BaseExpr{nullptr}, op->span);
     body.push_back(alloc_stmt);
@@ -1515,15 +1515,15 @@ inline void CodeGenCHost::PrintTernaryCondExpr(const T* op,
 void CodeGenCHost::GenerateFuncRegistry(const std::vector<String>& func_names,
                                         const String& class_name) {
   stream << "extern \"C\" {\n\n";
-  stream << "MATX_DLL MATXScriptBackendPackedCFunc " << symbol::library_func_array << class_name
+  stream << "HERCULES_DLL HerculesBackendPackedCFunc " << symbol::library_func_array << class_name
          << "[] = {\n";
   for (auto& f : func_names) {
-    stream << "    (MATXScriptBackendPackedCFunc)" << FunctionNameRules::add_packed_suffix(f)
+    stream << "    (HerculesBackendPackedCFunc)" << FunctionNameRules::add_packed_suffix(f)
            << ",\n";
   }
   stream << "};\n";
   auto registry = GenerateFuncRegistryNames(func_names);
-  stream << "MATX_DLL MATXScriptFuncRegistry " << symbol::library_func_registry << class_name
+  stream << "HERCULES_DLL HerculesFuncRegistry " << symbol::library_func_registry << class_name
          << " = {\n"
          << "    \"" << runtime::BytesEscape(registry.data(), registry.size(), true) << "\","
          << "    " << symbol::library_func_array << class_name << ",\n"
@@ -1533,18 +1533,18 @@ void CodeGenCHost::GenerateFuncRegistry(const std::vector<String>& func_names,
 
 void CodeGenCHost::GenerateClosuresNames(const std::vector<String>& func_names) {
   stream << "extern \"C\" {\n\n";
-  stream << "MATX_DLL const char* " << symbol::library_closures_names << " = ";
+  stream << "HERCULES_DLL const char* " << symbol::library_closures_names << " = ";
   auto registry = GenerateFuncRegistryNames(func_names);
   stream << "\"" << runtime::BytesEscape(registry.data(), registry.size(), true) << "\";\n";
   stream << "\n} // extern C\n\n";
 }
 
 void CodeGenCHost::GenerateCrtSystemLib() {
-  stream << "static const MATXModule _matx_system_lib = {\n"
-         << "    &_matx_func_registry,\n"
+  stream << "static const HVMModule _hvm_system_lib = {\n"
+         << "    &_hvm_func_registry,\n"
          << "};\n"
-         << "const MATXModule* MATXSystemLibEntryPoint(void) {\n"
-         << "    return &_matx_system_lib;\n"
+         << "const HVMModule* HVMSystemLibEntryPoint(void) {\n"
+         << "    return &_hvm_system_lib;\n"
          << "}\n";
 }
 
@@ -1556,7 +1556,7 @@ StringRef BuildPrimFuncCHost(PrimFunc f, StringRef func_name = "__main__") {
   return code;
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("codegen.build.c").set_body_typed(BuildPrimFuncCHost);
+HERCULES_REGISTER_GLOBAL("codegen.build.c").set_body_typed(BuildPrimFuncCHost);
 
 static void TypeVisitFunc(ClassType input,
                           std::vector<ClassType>& outputs,
@@ -1564,12 +1564,12 @@ static void TypeVisitFunc(ClassType input,
                           const std::unordered_map<StringRef, ClassType>& defines) {
   for (auto& var_t : input->var_types) {
     if (auto* node = var_t.as<ClassTypeNode>()) {
-      MXCHECK(defines.count(node->header->name_hint));
+      HSCHECK(defines.count(node->header->name_hint));
       TypeVisitFunc(defines.at(node->header->name_hint), outputs, visited, defines);
     }
   }
   if (auto* node = input->base.as<ClassTypeNode>()) {
-    MXCHECK(defines.count(node->header->name_hint));
+    HSCHECK(defines.count(node->header->name_hint));
     TypeVisitFunc(defines.at(node->header->name_hint), outputs, visited, defines);
   }
   if (!visited.count(input->header->name_hint)) {
@@ -1587,7 +1587,7 @@ static Function GetUnboundFunction(const Function& f) {
     return Function{};
   }
   auto self_node = params[0].as<HLOVarNode>();
-  MXCHECK(self_node != nullptr);
+  HSCHECK(self_node != nullptr);
   auto new_self_node = runtime::make_object<HLOVarNode>(*self_node);
   new_self_node->vid = Id("self");
   HLOVar self(new_self_node);
@@ -1625,7 +1625,7 @@ static BaseFunc RunOptimizations(BaseFunc func) {
 }
 
 runtime::Module BuildCHost(IRModule mod) {
-  using ::matxscript::runtime::FunctionRegistry;
+  using ::hercules::runtime::FunctionRegistry;
 
   // TODO: clean code
   Array<BaseFunc> mod_functions;
@@ -1635,7 +1635,7 @@ runtime::Module BuildCHost(IRModule mod) {
       auto cls_stmt = runtime::GetRef<ClassStmt>(cls_node);
       Array<Stmt> cls_new_body;
       for (auto cls_stmt : cls_node->body) {
-        MXCHECK(cls_stmt->IsInstance<BaseFuncNode>()) << "internal error";
+        HSCHECK(cls_stmt->IsInstance<BaseFuncNode>()) << "internal error";
         cls_new_body.push_back(RunOptimizations(Downcast<BaseFunc>(cls_stmt)));
       }
       cls_stmt.CopyOnWrite()->body = cls_new_body;
@@ -1644,7 +1644,7 @@ runtime::Module BuildCHost(IRModule mod) {
       auto func = RunOptimizations(GetRef<BaseFunc>(fn_node));
       mod_functions.push_back(func);
     } else {
-      MXTHROW << "[BuildCHost] unsupported stmt: " << stmt;
+      HSTHROW << "[BuildCHost] unsupported stmt: " << stmt;
     }
   }
 
@@ -1769,7 +1769,7 @@ runtime::Module BuildCHost(IRModule mod) {
       if (fn->IsClassConstructor()) {
         auto wrapper_func = FunctionNameRules::add_wrapper_suffix(fn->GetGlobalName());
         auto raw_params = fn->GetParams();
-        MXCHECK((!raw_params.empty())) << "__init__ function has no self arg ???";
+        HSCHECK((!raw_params.empty())) << "__init__ function has no self arg ???";
         auto new_params = Array<BaseExpr>();
         for (auto i = 1; i < raw_params.size(); ++i) {
           new_params.push_back(raw_params[i]);
@@ -1804,8 +1804,8 @@ runtime::Module BuildEembeddedCHost(String code) {
   return CSourceModuleCreate(code, "c");
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("module.build.c").set_body_typed(BuildCHost);
-MATXSCRIPT_REGISTER_GLOBAL("embedded.build.c").set_body_typed(BuildEembeddedCHost);
+HERCULES_REGISTER_GLOBAL("module.build.c").set_body_typed(BuildCHost);
+HERCULES_REGISTER_GLOBAL("embedded.build.c").set_body_typed(BuildEembeddedCHost);
 
 }  // namespace codegen
-}  // namespace matxscript
+}  // namespace hercules

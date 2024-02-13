@@ -28,7 +28,7 @@
 #include <hercules/ir/type.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::Object;
@@ -76,7 +76,7 @@ class StructInfoNode : public Object {
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
   static constexpr const uint32_t _type_child_slots = 5;
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(StructInfoNode, Object);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(StructInfoNode, Object);
 };
 
 /*!
@@ -85,7 +85,7 @@ class StructInfoNode : public Object {
  */
 class StructInfo : public ObjectRef {
  public:
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(StructInfo, ObjectRef, StructInfoNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(StructInfo, ObjectRef, StructInfoNode);
 };
 
 /*!
@@ -141,7 +141,7 @@ class BaseExprNode : public Object {
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
   static constexpr const uint32_t _type_child_slots = 58;
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(BaseExprNode, Object);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(BaseExprNode, Object);
 };
 
 /*!
@@ -150,7 +150,7 @@ class BaseExprNode : public Object {
  */
 class BaseExpr : public ObjectRef {
  public:
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(BaseExpr, ObjectRef, BaseExprNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(BaseExpr, ObjectRef, BaseExprNode);
 };
 
 /*!
@@ -199,7 +199,7 @@ class PrimExprNode : public BaseExprNode {
 
   static constexpr const char* _type_key = "PrimExpr";
   static constexpr const uint32_t _type_child_slots = 34;
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(PrimExprNode, BaseExprNode);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(PrimExprNode, BaseExprNode);
 };
 
 /*!
@@ -212,19 +212,19 @@ class PrimExpr : public BaseExpr {
    * \brief construct from integer.
    * \param value The value to be constructed.
    */
-  MATX_DLL PrimExpr(int32_t value);  // NOLINT(*)
+  HERCULES_DLL PrimExpr(int32_t value);  // NOLINT(*)
   /*!
    * \brief construct from float.
    * \param value The value to be constructed.
    */
-  MATX_DLL PrimExpr(float value);  // NOLINT(*)
+  HERCULES_DLL PrimExpr(float value);  // NOLINT(*)
 
   /*! \return the data type of this expression. */
   runtime::DataType dtype() const {
     return static_cast<const PrimExprNode*>(get())->dtype;
   }
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimExpr, BaseExpr, PrimExprNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimExpr, BaseExpr, PrimExprNode);
 };
 
 /*!
@@ -261,7 +261,7 @@ class HLOExprNode : public BaseExprNode {
 
   static constexpr const char* _type_key = "HLOExpr";
   static constexpr const uint32_t _type_child_slots = 22;
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(HLOExprNode, BaseExprNode);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(HLOExprNode, BaseExprNode);
 };
 
 /*!
@@ -270,7 +270,7 @@ class HLOExprNode : public BaseExprNode {
  */
 class HLOExpr : public BaseExpr {
  public:
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOExpr, BaseExpr, HLOExprNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOExpr, BaseExpr, HLOExprNode);
 };
 
 /*! \brief Base node of all statements. */
@@ -282,23 +282,23 @@ class StmtNode : public Object {
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
   static constexpr const uint32_t _type_child_slots = 15;
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(StmtNode, Object);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(StmtNode, Object);
 };
 
 /*! \brief Container of all statements */
 class Stmt : public ObjectRef {
  public:
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Stmt, ObjectRef, StmtNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Stmt, ObjectRef, StmtNode);
 };
 
 template <typename TTypeNode>
 inline const TTypeNode* BaseExprNode::type_as() const {
   static_assert(std::is_base_of<TypeNode, TTypeNode>::value,
                 "TType must be a special case of type");
-  MXCHECK(checked_type_.defined())
+  HSCHECK(checked_type_.defined())
       << "Type inference for this Expr has not completed. Try to call infer_type pass.";
   const TTypeNode* node = checked_type_.as<TTypeNode>();
-  MXCHECK(node != nullptr) << "Expected type to be " << TTypeNode::_type_key << ", but get "
+  HSCHECK(node != nullptr) << "Expected type to be " << TTypeNode::_type_key << ", but get "
                            << checked_type_->GetTypeKey();
   return node;
 }
@@ -349,4 +349,4 @@ inline bool IsFileType(const BaseExpr& t) {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

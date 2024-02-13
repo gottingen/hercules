@@ -22,7 +22,7 @@
 #include <hercules/runtime/runtime_value.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Runtime, Printer) {
@@ -59,4 +59,4 @@ TEST(Runtime, Printer) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

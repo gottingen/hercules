@@ -22,14 +22,14 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
 // time
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(time, time)  //
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(time, time)  //
     .set_num_inputs(0);
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

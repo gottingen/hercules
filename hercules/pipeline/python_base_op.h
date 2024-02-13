@@ -24,7 +24,7 @@
 
 #include <hercules/pipeline/op_kernel.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class PythonBaseOp : public OpKernel {
@@ -42,4 +42,4 @@ class PythonBaseOp : public OpKernel {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

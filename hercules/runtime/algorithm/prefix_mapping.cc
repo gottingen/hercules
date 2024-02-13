@@ -22,7 +22,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/utf8_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 PrefixMapping::PrefixMapping(const std::map<String, int>& dic) {
@@ -42,7 +42,7 @@ PrefixMapping::PrefixMapping(const std::map<String, int>& dic) {
   }
   auto rc =
       trie_->build(key.size(), const_cast<const char**>(&key[0]), key_len.data(), values.data());
-  MXCHECK_EQ(rc, 0) << "build trie failed!!!";
+  HSCHECK_EQ(rc, 0) << "build trie failed!!!";
 }
 
 int PrefixMapping::PrefixSearch(const char* w, size_t w_len, int* val) const {
@@ -69,4 +69,4 @@ int PrefixMapping::PrefixSearch(const char* w, size_t w_len, int* val) const {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -32,7 +32,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::Object;
@@ -109,7 +109,7 @@ class StructuralEqual : public BaseValueEqual {
    * \param rhs The right operand.
    * \return The comparison result.
    */
-  MATX_DLL bool operator()(const ObjectRef& lhs, const ObjectRef& rhs) const;
+  HERCULES_DLL bool operator()(const ObjectRef& lhs, const ObjectRef& rhs) const;
 };
 
 /*!
@@ -237,7 +237,7 @@ class SEqualReducer {
    * \return the immediate check result.
    */
   bool operator()(const ObjectRef& lhs, const ObjectRef& rhs, const ObjectPathPair& paths) const {
-    MXCHECK(IsPathTracingEnabled()) << "Path tracing must be enabled when calling this function";
+    HSCHECK(IsPathTracingEnabled()) << "Path tracing must be enabled when calling this function";
     return ObjectAttrsEqual(lhs, rhs, map_free_vars_, &paths);
   }
 
@@ -392,4 +392,4 @@ class SEqualHandlerDefault : public SEqualReducer::Handler {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -25,7 +25,7 @@
 #include <hercules/runtime/generic/generic_funcs.h>
 #include <hercules/runtime/native_object_maker.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct NativeObjectRegistry::Manager {
@@ -47,7 +47,7 @@ NativeObjectRegistry& NativeObjectRegistry::Register(string_view name,
   Manager* m = Manager::Global();
   std::lock_guard<std::mutex> lock(m->mutex);
   if (m->fmap.count(name)) {
-    MXCHECK(can_override) << "Global Class " << name << " is already registered";
+    HSCHECK(can_override) << "Global Class " << name << " is already registered";
   }
 
   NativeObjectRegistry* r = new NativeObjectRegistry();
@@ -99,4 +99,4 @@ std::vector<string_view> NativeObjectRegistry::ListPureObjNames() {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

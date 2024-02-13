@@ -22,7 +22,7 @@
 
 #include <hercules/ir/base.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -43,7 +43,7 @@ class ObjectStructInfoNode : public StructInfoNode {
   }
 
   static constexpr const char* _type_key = "ir.ObjectStructInfo";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ObjectStructInfoNode, StructInfoNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ObjectStructInfoNode, StructInfoNode);
 };
 
 /*!
@@ -52,9 +52,9 @@ class ObjectStructInfoNode : public StructInfoNode {
  */
 class ObjectStructInfo : public StructInfo {
  public:
-  MATX_DLL ObjectStructInfo(Span span = Span());
+  HERCULES_DLL ObjectStructInfo(Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ObjectStructInfo,
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ObjectStructInfo,
                                                    StructInfo,
                                                    ObjectStructInfoNode);
 };
@@ -81,7 +81,7 @@ class PrimStructInfoNode : public StructInfoNode {
   }
 
   static constexpr const char* _type_key = "ir.PrimStructInfo";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PrimStructInfoNode, StructInfoNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PrimStructInfoNode, StructInfoNode);
 };
 
 /*!
@@ -90,9 +90,9 @@ class PrimStructInfoNode : public StructInfoNode {
  */
 class PrimStructInfo : public StructInfo {
  public:
-  MATX_DLL PrimStructInfo(runtime::DataType dtype, Span span = Span());
+  HERCULES_DLL PrimStructInfo(runtime::DataType dtype, Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(PrimStructInfo, StructInfo, PrimStructInfoNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(PrimStructInfo, StructInfo, PrimStructInfoNode);
 };
 
 /*!
@@ -129,7 +129,7 @@ class ShapeStructInfoNode : public StructInfoNode {
   }
 
   static constexpr const char* _type_key = "ir.ShapeStructInfo";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ShapeStructInfoNode, StructInfoNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ShapeStructInfoNode, StructInfoNode);
 };
 
 /*!
@@ -143,15 +143,15 @@ class ShapeStructInfo : public StructInfo {
    * \param values The symbolic shape values
    * \param span The span of the AST.
    */
-  MATX_DLL ShapeStructInfo(Array<PrimExpr> values, Span span = Span());
+  HERCULES_DLL ShapeStructInfo(Array<PrimExpr> values, Span span = Span());
   /*!
    * \brief Construction with known unknown symbolic shape patterns.
    * \param ndim Number of dimensions -- can be kUnknownNDim
    * \param span The span of the AST.
    */
-  MATX_DLL ShapeStructInfo(int ndim, Span span = Span());
+  HERCULES_DLL ShapeStructInfo(int ndim, Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ShapeStructInfo,
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ShapeStructInfo,
                                                    StructInfo,
                                                    ShapeStructInfoNode);
 };
@@ -211,7 +211,7 @@ class TensorStructInfoNode : public StructInfoNode {
   }
 
   static constexpr const char* _type_key = "ir.TensorStructInfo";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TensorStructInfoNode, StructInfoNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(TensorStructInfoNode, StructInfoNode);
 };
 
 /*!
@@ -228,7 +228,7 @@ class TensorStructInfo : public StructInfo {
    *
    * \note shape must already be normalized.
    */
-  MATX_DLL TensorStructInfo(HLOExpr shape, runtime::DataType dtype, Span span = Span());
+  HERCULES_DLL TensorStructInfo(HLOExpr shape, runtime::DataType dtype, Span span = Span());
 
   /*!
    * \brief Construction with an unknown shape expression.
@@ -236,9 +236,9 @@ class TensorStructInfo : public StructInfo {
    * \param ndim The number of dimensions
    * \param span The span of the AST.
    */
-  MATX_DLL TensorStructInfo(runtime::DataType dtype, int ndim, Span span = Span());
+  HERCULES_DLL TensorStructInfo(runtime::DataType dtype, int ndim, Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TensorStructInfo,
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TensorStructInfo,
                                                    StructInfo,
                                                    TensorStructInfoNode);
 };
@@ -265,7 +265,7 @@ class TupleStructInfoNode : public StructInfoNode {
   }
 
   static constexpr const char* _type_key = "ir.TupleStructInfo";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TupleStructInfoNode, StructInfoNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(TupleStructInfoNode, StructInfoNode);
 };
 
 /*!
@@ -279,9 +279,9 @@ class TupleStructInfo : public StructInfo {
    * \param fields Struct info of tuple fields.
    * \param span The span of the AST.
    */
-  MATX_DLL TupleStructInfo(Array<StructInfo> fields, Span span = Span());
+  HERCULES_DLL TupleStructInfo(Array<StructInfo> fields, Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TupleStructInfo,
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TupleStructInfo,
                                                    StructInfo,
                                                    TupleStructInfoNode);
 };
@@ -312,7 +312,7 @@ inline Optional<T> MatchStructInfo(const HLOExpr& expr) {
  */
 template <typename T>
 inline const T* GetStructInfoAs(const HLOExpr& expr) {
-  MXCHECK(expr->struct_info_.defined())
+  HSCHECK(expr->struct_info_.defined())
       << "The struct_info is not populated, check if you have normalized the expr";
   return expr->struct_info_.as<T>();
 }
@@ -325,7 +325,7 @@ inline const T* GetStructInfoAs(const HLOExpr& expr) {
  */
 inline StructInfo GetStructInfo(const HLOExpr& expr) {
   auto* ptr = expr->struct_info_.as<StructInfoNode>();
-  MXCHECK(ptr) << "The struct_info is not populated, check if you have normalized the expr";
+  HSCHECK(ptr) << "The struct_info is not populated, check if you have normalized the expr";
   return runtime::GetRef<StructInfo>(ptr);
 }
 
@@ -347,7 +347,7 @@ inline bool HasVoidStructInfo(const HLOExpr& expr) {
  * \note We ensure idempotence, that is we can only update the struct_info of an HLOExpr only
  *  if the original one is nullptr.
  */
-MATX_DLL void UpdateStructInfo(HLOExpr expr, StructInfo struct_info);
+HERCULES_DLL void UpdateStructInfo(HLOExpr expr, StructInfo struct_info);
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -23,12 +23,12 @@
 
 namespace {
 
-using namespace ::matxscript::runtime;
+using namespace ::hercules::runtime;
 
 static String MyNativeFunctionExample(const String& a, int64_t b = 0) {
   return String("hello: ") + a + ", " + std::to_string(b);
 }
 
-MATX_REGISTER_NATIVE_FUNC(MyNativeFunctionExample);
+HVM_REGISTER_NATIVE_FUNC(MyNativeFunctionExample);
 
 }  // namespace

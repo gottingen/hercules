@@ -146,7 +146,7 @@
 #include <hercules/runtime/py_commons/dtoa.h>
 #include <hercules/runtime/py_commons/pyport.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -2655,4 +2655,4 @@ failed_malloc:
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

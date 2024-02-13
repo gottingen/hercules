@@ -28,7 +28,7 @@
 #include "_variadic_fwd.h"
 #include "iterator_utils.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace details {
@@ -189,4 +189,4 @@ builtins_zip(Iterables&&... seq) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

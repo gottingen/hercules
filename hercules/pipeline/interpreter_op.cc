@@ -27,10 +27,10 @@
 #include <hercules/runtime/generic/generic_funcs.h>
 #include <hercules/runtime/generic/generic_hlo_arith_funcs.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_REGISTER_NATIVE_OP(InterpreterOp).SetThreadSafety(false);
+HVM_REGISTER_NATIVE_OP(InterpreterOp).SetThreadSafety(false);
 
 string_view InterpreterOp::OpCode2Str(int op_code) {
   if (op_code < int(OpCode::OP_CODE_BEGIN) || op_code >= int(OpCode::OP_CODE_END)) {
@@ -328,13 +328,13 @@ String InterpreterOp::GetHumanName(bool with_debug_info) const {
   String op_code_s;
   switch (static_cast<OpCode>(opcode_)) {
     case OpCode::ParallelMap: {
-      op_code_s = "matx.pmap";
+      op_code_s = "hvm.pmap";
     } break;
     case OpCode::ParallelStarMap: {
-      op_code_s = "matx.pstarmap";
+      op_code_s = "hvm.pstarmap";
     } break;
     case OpCode::ApplyAsync: {
-      op_code_s = "matx.apply_async";
+      op_code_s = "hvm.apply_async";
     } break;
     default: {
       op_code_s = OpCode2Str(opcode_);
@@ -351,128 +351,128 @@ String InterpreterOp::GetHumanName(bool with_debug_info) const {
 
 RTValue InterpreterOp::Process(PyArgs inputs) const {
   if (opcode_ < int(OpCode::OP_CODE_BEGIN) || opcode_ >= int(OpCode::OP_CODE_END)) {
-    MXTHROW << "[InterpreterOp::Process] unknown op_code: " << opcode_;
+    HSTHROW << "[InterpreterOp::Process] unknown op_code: " << opcode_;
   }
   auto code = OpCode(opcode_);
   switch (code) {
     case OpCode::__add__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return ArithOps::add(inputs[0], inputs[1]);
     } break;
     case OpCode::__sub__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return ArithOps::sub(inputs[0], inputs[1]);
     } break;
     case OpCode::__mul__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return ArithOps::mul(inputs[0], inputs[1]);
     } break;
     case OpCode::__floordiv__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return ArithOps::floordiv(inputs[0], inputs[1]);
     } break;
     case OpCode::__truediv__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return RTValue(inputs[0].As<double>() / inputs[1].As<double>());
     } break;
     case OpCode::__mod__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
     case OpCode::__neg__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
     case OpCode::__pos__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
     case OpCode::__pow__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
     case OpCode::__abs__: {
-      MXCHECK(inputs.size() == 1) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 1) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 1 arguments but get " << inputs.size();
       return ArithOps::abs(inputs[0]);
     } break;
     case OpCode::__index__: {
-      MXCHECK(inputs.size() == 1) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 1) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 1 arguments but get " << inputs.size();
       return Kernel_int64_t::make(inputs[0]);
     } break;
 
     // logical ops
     case OpCode::__gt__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return ArithOps::gt(inputs[0], inputs[1]);
     } break;
     case OpCode::__ge__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return ArithOps::ge(inputs[0], inputs[1]);
     } break;
     case OpCode::__lt__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return ArithOps::lt(inputs[0], inputs[1]);
     } break;
     case OpCode::__le__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return ArithOps::le(inputs[0], inputs[1]);
     } break;
     case OpCode::__eq__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return ArithOps::eq(inputs[0], inputs[1]);
     } break;
     case OpCode::__ne__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return ArithOps::ne(inputs[0], inputs[1]);
     } break;
 
     // bitwise ops
     case OpCode::__invert__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
     case OpCode::__lshift__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
     case OpCode::__rshift__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
     case OpCode::__xor__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
     case OpCode::__and__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
     case OpCode::__or__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
 
     // functions
     case OpCode::__bool__: {
-      MXCHECK(inputs.size() == 1) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 1) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 1 arguments but get " << inputs.size();
       return Kernel_bool::make(inputs[0]);
     } break;
     case OpCode::__len__: {
-      MXCHECK(inputs.size() == 1) << this->GenDebugMessage()
+      HSCHECK(inputs.size() == 1) << this->GenDebugMessage()
                                   << "\nTypeError: [InterpreterOp::Process][opcode: "
                                   << OpCode2Str(opcode_) << "] Expect 1 arguments but get "
                                   << inputs.size();
@@ -486,17 +486,17 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
       }
     } break;
     case OpCode::__contains__: {
-      MXCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 2) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 2 arguments but get " << inputs.size();
       return kernel_object___contains__(inputs[0], inputs[1]);
     } break;
     case OpCode::__setitem__: {
-      MXCHECK(inputs.size() == 3) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 3) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 3 arguments but get " << inputs.size();
       return kernel_object___setitem__(inputs[0], inputs[1], inputs[2]);
     } break;
     case OpCode::__getitem__: {
-      MXCHECK(inputs.size() == 2) << this->GenDebugMessage()
+      HSCHECK(inputs.size() == 2) << this->GenDebugMessage()
                                   << "\nTypeError: [InterpreterOp::Process][opcode: "
                                   << OpCode2Str(opcode_) << "] Expect 2 arguments but get "
                                   << inputs.size();
@@ -511,11 +511,11 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
       }
     } break;
     case OpCode::__delitem__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
     case OpCode::__setslice__: {
-      MXCHECK(inputs.size() == 4) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 4) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 4 arguments but get " << inputs.size();
       return kernel_object___setslice__(inputs[0], inputs[1], inputs[2], inputs[3]);
     } break;
@@ -533,16 +533,16 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
         THROW_PY_TypeError(this->GenDebugMessage(),
                            "\nTypeError: execute __getitem__ failed: internal error");
       }
-      MXTHROW << this->GenDebugMessage()
+      HSTHROW << this->GenDebugMessage()
               << "\nTypeError: [InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
               << "] Expect 3 or 4 arguments but get " << inputs.size();
     } break;
     case OpCode::__delslice__: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
     case OpCode::__getattr__: {
-      MXCHECK(inputs.size() == 2) << this->GenDebugMessage()
+      HSCHECK(inputs.size() == 2) << this->GenDebugMessage()
                                   << "\nTypeError: [InterpreterOp::Process][opcode: "
                                   << OpCode2Str(opcode_) << "] Expect 2 arguments but get "
                                   << inputs.size();
@@ -552,7 +552,7 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
                            inputs[0].type_name(),
                            ".",
                            inputs[1].As<string_view>(),
-                           " is not supported by matx.trace");
+                           " is not supported by hvm.trace");
       }
       try {
         return kernel_object___getattr__(inputs[0], inputs[1].As<string_view>());
@@ -565,7 +565,7 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
       }
     } break;
     case OpCode::__setattr__: {
-      MXCHECK(inputs.size() == 3) << this->GenDebugMessage()
+      HSCHECK(inputs.size() == 3) << this->GenDebugMessage()
                                   << "\nTypeError: [InterpreterOp::Process][opcode: "
                                   << OpCode2Str(opcode_) << "] Expect 3 arguments but get "
                                   << inputs.size();
@@ -580,7 +580,7 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
       }
     } break;
     case OpCode::__call__: {
-      MXCHECK(inputs.size() >= 1) << this->GenDebugMessage()
+      HSCHECK(inputs.size() >= 1) << this->GenDebugMessage()
                                   << "\nTypeError: [InterpreterOp::Process][opcode: "
                                   << OpCode2Str(opcode_) << "] Expect 1 or more arguments but get "
                                   << inputs.size();
@@ -602,12 +602,12 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
       }
     } break;
     case OpCode::__iter__: {
-      MXCHECK(inputs.size() == 1) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() == 1) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 1 arguments but get " << inputs.size();
       return Kernel_Iterable::make(inputs[0]);
     } break;
     case OpCode::__iter_and_check_len__: {
-      MXCHECK(inputs.size() == 2) << this->GenDebugMessage()
+      HSCHECK(inputs.size() == 2) << this->GenDebugMessage()
                                   << "\nTypeError: [InterpreterOp::Process][opcode: "
                                   << OpCode2Str(opcode_) << "] Expect 2 arguments but get "
                                   << inputs.size();
@@ -642,7 +642,7 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
     } break;
     case OpCode::__next__: {
       // the second argument is the last element for fix trace order
-      MXCHECK(inputs.size() == 1 || inputs.size() == 2)
+      HSCHECK(inputs.size() == 1 || inputs.size() == 2)
           << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
           << "] Expect 1 or 2 arguments but get " << inputs.size();
       auto iterable_view = inputs[0].AsObjectView<Iterator>();
@@ -655,7 +655,7 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
       return List(inputs.begin(), inputs.end());
     } break;
     case OpCode::DictConstructor: {
-      MXCHECK(inputs.size() % 2 == 0)
+      HSCHECK(inputs.size() % 2 == 0)
           << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
           << "] Expect even number of arguments but get " << inputs.size();
       Dict ret;
@@ -672,7 +672,7 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
       return Tuple(inputs.begin(), inputs.end());
     } break;
     case OpCode::ParallelMap: {
-      MXCHECK(inputs.size() == 2) << this->GenDebugMessage()
+      HSCHECK(inputs.size() == 2) << this->GenDebugMessage()
                                   << "\nTypeError: [InterpreterOp::Process][opcode: "
                                   << OpCode2Str(opcode_) << "] Expect 2 arguments but get "
                                   << inputs.size();
@@ -681,14 +681,14 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
         return ParallelMap(user_func.data(), inputs[1], belong_to_);
       } catch (const std::exception& e) {
         THROW_PY_TypeError(
-            this->GenDebugMessage(), "\nTypeError: execute matx.pmap failed: ", e.what());
+            this->GenDebugMessage(), "\nTypeError: execute hvm.pmap failed: ", e.what());
       } catch (...) {
         THROW_PY_TypeError(this->GenDebugMessage(),
-                           "\nTypeError: execute matx.pmap failed: internal error");
+                           "\nTypeError: execute hvm.pmap failed: internal error");
       }
     } break;
     case OpCode::ParallelStarMap: {
-      MXCHECK(inputs.size() == 2) << this->GenDebugMessage()
+      HSCHECK(inputs.size() == 2) << this->GenDebugMessage()
                                   << "\nTypeError: [InterpreterOp::Process][opcode: "
                                   << OpCode2Str(opcode_) << "] Expect 2 arguments but get "
                                   << inputs.size();
@@ -697,14 +697,14 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
         return ParallelStarMap(user_func.data(), inputs[1], belong_to_);
       } catch (const std::exception& e) {
         THROW_PY_TypeError(
-            this->GenDebugMessage(), "\nTypeError: execute matx.pstarmap failed: ", e.what());
+            this->GenDebugMessage(), "\nTypeError: execute hvm.pstarmap failed: ", e.what());
       } catch (...) {
         THROW_PY_TypeError(this->GenDebugMessage(),
-                           "\nTypeError: execute matx.pstarmap failed: internal error");
+                           "\nTypeError: execute hvm.pstarmap failed: internal error");
       }
     } break;
     case OpCode::ApplyAsync: {
-      MXCHECK(inputs.size() >= 1) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
+      HSCHECK(inputs.size() >= 1) << "[InterpreterOp::Process][opcode: " << OpCode2Str(opcode_)
                                   << "] Expect 1 or more arguments but get " << inputs.size()
                                   << "\n"
                                   << this->GenDebugMessage();
@@ -714,14 +714,14 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
             user_func.data(), PyArgs(inputs.begin() + 1, inputs.size() - 1), belong_to_);
       } catch (const std::exception& e) {
         THROW_PY_TypeError(
-            this->GenDebugMessage(), "\nTypeError: execute matx.apply_async failed: ", e.what());
+            this->GenDebugMessage(), "\nTypeError: execute hvm.apply_async failed: ", e.what());
       } catch (...) {
         THROW_PY_TypeError(this->GenDebugMessage(),
-                           "\nTypeError: execute matx.apply_async failed: internal error");
+                           "\nTypeError: execute hvm.apply_async failed: internal error");
       }
     } break;
     default: {
-      MXTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
+      HSTHROW << "[InterpreterOp::Process] unsupported opcode: " << opcode_
               << ", name: " << OpCode2Str(opcode_);
     } break;
   }
@@ -729,4 +729,4 @@ RTValue InterpreterOp::Process(PyArgs inputs) const {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

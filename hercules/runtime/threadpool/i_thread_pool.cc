@@ -2,7 +2,7 @@
 #include <hercules/runtime/threadpool/i_thread_pool.h>
 #include <exception>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace internal {
 
@@ -24,4 +24,4 @@ void IThreadPool::WaitBulk(std::vector<IRunnablePtr>& runners) {
 
 }  // namespace internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

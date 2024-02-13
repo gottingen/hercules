@@ -25,7 +25,7 @@
 
 #include <hercules/runtime/utf8/encoders.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace {
@@ -145,4 +145,4 @@ TEST(UTF8Lib, Encoder) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

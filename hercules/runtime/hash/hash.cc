@@ -21,7 +21,7 @@
 #include <hercules/runtime/hash/hash.h>
 #include <hercules/runtime/hash/wy_hash.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <bool B, typename T, typename F>
@@ -69,7 +69,7 @@ uint64_t Hasher::LargeImpl64(uint64_t state, const unsigned char* first, size_t 
 std::pair<uint64_t, uint64_t> Hasher::Read9To16(const unsigned char* p, size_t len) noexcept {
   uint64_t low_mem = base_internal::UnalignedLoad64(p);
   uint64_t high_mem = base_internal::UnalignedLoad64(p + len - 8);
-#ifdef MATXSCRIPT_IS_LITTLE_ENDIAN
+#ifdef HERCULES_IS_LITTLE_ENDIAN
   uint64_t most_significant = high_mem;
   uint64_t least_significant = low_mem;
 #else
@@ -83,7 +83,7 @@ std::pair<uint64_t, uint64_t> Hasher::Read9To16(const unsigned char* p, size_t l
 uint64_t Hasher::Read4To8(const unsigned char* p, size_t len) noexcept {
   uint32_t low_mem = base_internal::UnalignedLoad32(p);
   uint32_t high_mem = base_internal::UnalignedLoad32(p + len - 4);
-#ifdef MATXSCRIPT_IS_LITTLE_ENDIAN
+#ifdef HERCULES_IS_LITTLE_ENDIAN
   uint32_t most_significant = high_mem;
   uint32_t least_significant = low_mem;
 #else
@@ -98,7 +98,7 @@ uint32_t Hasher::Read1To3(const unsigned char* p, size_t len) noexcept {
   unsigned char mem0 = p[0];
   unsigned char mem1 = p[len / 2];
   unsigned char mem2 = p[len - 1];
-#ifdef MATXSCRIPT_IS_LITTLE_ENDIAN
+#ifdef HERCULES_IS_LITTLE_ENDIAN
   unsigned char significant2 = mem2;
   unsigned char significant1 = mem1;
   unsigned char significant0 = mem0;
@@ -113,7 +113,7 @@ uint32_t Hasher::Read1To3(const unsigned char* p, size_t len) noexcept {
 }
 
 uint64_t Hasher::Hash64(const unsigned char* data, size_t len) noexcept {
-#ifdef MATXSCRIPT_HAVE_INTRINSIC_INT128
+#ifdef HERCULES_HAVE_INTRINSIC_INT128
   return WyhashImpl(data, len);
 #else
   return hash_internal::CityHash64(reinterpret_cast<const char*>(data), len);
@@ -127,7 +127,7 @@ uint64_t Hasher::Mix(uint64_t state, uint64_t v) noexcept {
   // halves of the result.
   using MultType = uint64_t;
 #else
-#ifndef MATXSCRIPT_HAVE_INTRINSIC_INT128
+#ifndef HERCULES_HAVE_INTRINSIC_INT128
   return v;
 #else
   typedef __uint128_t uint128;
@@ -157,7 +157,7 @@ uint64_t Hasher::HashImpl(uint64_t state,
   // multiplicative hash.
   uint64_t v;
   if (len > 8) {
-    if (MATXSCRIPT_PREDICT_FALSE(len > PiecewiseChunkSize())) {
+    if (HERCULES_PREDICT_FALSE(len > PiecewiseChunkSize())) {
       return LargeImpl32(state, first, len);
     }
     v = hash_internal::CityHash32(reinterpret_cast<const char*>(first), len);
@@ -179,7 +179,7 @@ uint64_t Hasher::HashImpl(uint64_t state,
                           /* sizeof_size_t */) noexcept {
   uint64_t v;
   if (len > 16) {
-    if (MATXSCRIPT_PREDICT_FALSE(len > PiecewiseChunkSize())) {
+    if (HERCULES_PREDICT_FALSE(len > PiecewiseChunkSize())) {
       return LargeImpl64(state, first, len);
     }
     v = Hash64(first, len);
@@ -199,4 +199,4 @@ uint64_t Hasher::HashImpl(uint64_t state,
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

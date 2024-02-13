@@ -35,7 +35,7 @@
 #include <hercules/ir/expr.h>
 #include <hercules/ir/op_expr.h>
 
-namespace matxscript {
+namespace hercules {
 namespace arith {
 
 using namespace ir;
@@ -80,14 +80,14 @@ inline bool IsIndexType(const DataType& type) {
   return type.is_int() && type.lanes() == 1 && (type.bits() == 32 || type.bits() == 64);
 }
 
-#define MATXSCRIPT_ARITH_CONST_PROPAGATION(BODY)         \
+#define HERCULES_ARITH_CONST_PROPAGATION(BODY)         \
   const ir::IntImmNode* pa = a.as<ir::IntImmNode>();     \
   const ir::IntImmNode* pb = b.as<ir::IntImmNode>();     \
   const ir::FloatImmNode* fa = a.as<ir::FloatImmNode>(); \
   const ir::FloatImmNode* fb = b.as<ir::FloatImmNode>(); \
   BODY;
 
-#define MATXSCRIPT_INDEX_CONST_PROPAGATION(BODY)          \
+#define HERCULES_INDEX_CONST_PROPAGATION(BODY)          \
   const ir::IntImmNode* pa = a.as<ir::IntImmNode>();      \
   const ir::IntImmNode* pb = b.as<ir::IntImmNode>();      \
   const runtime::DataType& ta = a.dtype();                \
@@ -99,7 +99,7 @@ inline bool IsIndexType(const DataType& type) {
 // specialization of constant folders.
 template <>
 inline PrimExpr TryConstFold<ir::PrimAdd>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb)
       return ir::IntImm(rtype, pa->value + pb->value);
@@ -119,7 +119,7 @@ inline PrimExpr TryConstFold<ir::PrimAdd>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimSub>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb)
       return ir::IntImm(rtype, pa->value - pb->value);
@@ -135,7 +135,7 @@ inline PrimExpr TryConstFold<ir::PrimSub>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimMul>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb)
       return ir::IntImm(rtype, pa->value * pb->value);
@@ -171,12 +171,12 @@ inline PrimExpr TryConstFold<ir::PrimMul>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimDiv>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb) {
       // due to division and mod can have different modes
       // NOTE: this will assumes truc div.
-      MXCHECK_NE(pb->value, 0) << "Divide by zero";
+      HSCHECK_NE(pb->value, 0) << "Divide by zero";
       return ir::IntImm(rtype, pa->value / pb->value);
     }
     if (pa) {
@@ -186,7 +186,7 @@ inline PrimExpr TryConstFold<ir::PrimDiv>(PrimExpr a, PrimExpr b) {
     if (pb) {
       if (pb->value == 1)
         return a;
-      MXCHECK_NE(pb->value, 0) << "Divide by zero";
+      HSCHECK_NE(pb->value, 0) << "Divide by zero";
     }
     if (fa && fb && fb->value != 0) {
       return ir::FloatImm(rtype, fa->value / fb->value);
@@ -196,7 +196,7 @@ inline PrimExpr TryConstFold<ir::PrimDiv>(PrimExpr a, PrimExpr b) {
     if (fb) {
       if (fb->value == 1)
         return a;
-      MXCHECK_NE(fb->value, 0) << "Divide by zero";
+      HSCHECK_NE(fb->value, 0) << "Divide by zero";
     }
   });
   return PrimExpr{nullptr};
@@ -204,10 +204,10 @@ inline PrimExpr TryConstFold<ir::PrimDiv>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimMod>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_INDEX_CONST_PROPAGATION({
+  HERCULES_INDEX_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb) {
-      MXCHECK_NE(pb->value, 0) << "Divide by zero";
+      HSCHECK_NE(pb->value, 0) << "Divide by zero";
       return ir::IntImm(rtype, pa->value % pb->value);
     }
     if (pa) {
@@ -217,7 +217,7 @@ inline PrimExpr TryConstFold<ir::PrimMod>(PrimExpr a, PrimExpr b) {
     if (pb) {
       if (pb->value == 1)
         return ir::make_zero(rtype);
-      MXCHECK_NE(pb->value, 0) << "Divide by zero";
+      HSCHECK_NE(pb->value, 0) << "Divide by zero";
     }
   });
   return PrimExpr{nullptr};
@@ -225,10 +225,10 @@ inline PrimExpr TryConstFold<ir::PrimMod>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimFloorDiv>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb) {
-      MXCHECK_NE(pb->value, 0) << "Divide by zero";
+      HSCHECK_NE(pb->value, 0) << "Divide by zero";
       return ir::IntImm(rtype, arith::floordiv(pa->value, pb->value));
     }
     if (pa) {
@@ -245,7 +245,7 @@ inline PrimExpr TryConstFold<ir::PrimFloorDiv>(PrimExpr a, PrimExpr b) {
       // if a constant needs to be evaluated
       // if (pb->value == 1)
       //   return a;
-      MXCHECK_NE(pb->value, 0) << "Divide by zero";
+      HSCHECK_NE(pb->value, 0) << "Divide by zero";
     }
     if (fa && fb && fb->value != 0) {
       return ir::FloatImm(rtype, runtime::ArithOps::floordiv(fa->value, fb->value));
@@ -262,7 +262,7 @@ inline PrimExpr TryConstFold<ir::PrimFloorDiv>(PrimExpr a, PrimExpr b) {
           return cast(b.dtype(), a);
         }
       } */
-      MXCHECK_NE(fb->value, 0) << "Divide by zero";
+      HSCHECK_NE(fb->value, 0) << "Divide by zero";
     }
   });
   return PrimExpr{nullptr};
@@ -270,10 +270,10 @@ inline PrimExpr TryConstFold<ir::PrimFloorDiv>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimFloorMod>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_INDEX_CONST_PROPAGATION({
+  HERCULES_INDEX_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb) {
-      MXCHECK_NE(pb->value, 0) << "Divide by zero";
+      HSCHECK_NE(pb->value, 0) << "Divide by zero";
       return ir::IntImm(rtype, floormod(pa->value, pb->value));
     }
     if (pa) {
@@ -288,7 +288,7 @@ inline PrimExpr TryConstFold<ir::PrimFloorMod>(PrimExpr a, PrimExpr b) {
     if (pb) {
       if (pb->value == 1)
         return ir::make_zero(rtype);
-      MXCHECK_NE(pb->value, 0) << "Divide by zero";
+      HSCHECK_NE(pb->value, 0) << "Divide by zero";
     }
   });
   return PrimExpr{nullptr};
@@ -296,7 +296,7 @@ inline PrimExpr TryConstFold<ir::PrimFloorMod>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimMin>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb)
       return ir::IntImm(rtype, std::min(pa->value, pb->value));
@@ -310,7 +310,7 @@ inline PrimExpr TryConstFold<ir::PrimMin>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimMax>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb)
       return ir::IntImm(rtype, std::max(pa->value, pb->value));
@@ -324,7 +324,7 @@ inline PrimExpr TryConstFold<ir::PrimMax>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimGT>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     if (pa && pb)
       return ir::IntImm(DataType::UInt(1), pa->value > pb->value);
     if (fa && fb)
@@ -335,7 +335,7 @@ inline PrimExpr TryConstFold<ir::PrimGT>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimGE>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     if (pa && pb)
       return ir::IntImm(DataType::UInt(1), pa->value >= pb->value);
     if (fa && fb)
@@ -346,7 +346,7 @@ inline PrimExpr TryConstFold<ir::PrimGE>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimLT>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     if (pa && pb)
       return ir::IntImm(DataType::UInt(1), pa->value < pb->value);
     if (fa && fb)
@@ -357,7 +357,7 @@ inline PrimExpr TryConstFold<ir::PrimLT>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimLE>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     if (pa && pb)
       return ir::IntImm(DataType::UInt(1), pa->value <= pb->value);
     if (fa && fb)
@@ -368,7 +368,7 @@ inline PrimExpr TryConstFold<ir::PrimLE>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimEQ>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     if (pa && pb)
       return ir::IntImm(DataType::UInt(1), pa->value == pb->value);
     if (fa && fb)
@@ -379,7 +379,7 @@ inline PrimExpr TryConstFold<ir::PrimEQ>(PrimExpr a, PrimExpr b) {
 
 template <>
 inline PrimExpr TryConstFold<ir::PrimNE>(PrimExpr a, PrimExpr b) {
-  MATXSCRIPT_ARITH_CONST_PROPAGATION({
+  HERCULES_ARITH_CONST_PROPAGATION({
     if (pa && pb)
       return ir::IntImm(DataType::UInt(1), pa->value != pb->value);
     if (fa && fb)
@@ -486,4 +486,4 @@ inline bool is_neg_inf(const PrimExpr& value) {
 }
 
 }  // namespace arith
-}  // namespace matxscript
+}  // namespace hercules

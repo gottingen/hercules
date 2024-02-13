@@ -2,7 +2,7 @@
 /*
  * Taken from https://github.com/apache/tvm/blob/v0.7/src/ir/attr_functor.h
  * with fixes applied:
- * - add namespace matx::ir for fix conflict with tvm
+ * - add namespace hvm::ir for fix conflict with tvm
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -39,10 +39,10 @@
 #include <hercules/ir/expr.h>
 #include <hercules/runtime/functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using ::matxscript::runtime::NodeFunctor;
+using ::hercules::runtime::NodeFunctor;
 
 template <typename FType>
 class AttrFunctor;
@@ -110,7 +110,7 @@ class AttrFunctor<R(const ObjectRef& n, Args...)> {
   virtual R VisitAttr_(const PrimCastNode* op, Args... args) ATTR_FUNCTOR_DEFAULT;
   virtual R VisitAttr_(const PrimCallNode* op, Args... args) ATTR_FUNCTOR_DEFAULT;
   virtual R VisitAttr_(const PrimSelectNode* op, Args... args) ATTR_FUNCTOR_DEFAULT;
-  // TODO(matx4): add more attrs support
+  // TODO(hvm4): add more attrs support
 
  private:
   // initialize the vtable.
@@ -148,4 +148,4 @@ class AttrFunctor<R(const ObjectRef& n, Args...)> {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -23,7 +23,7 @@
 #include <hercules/runtime/threadpool/lock_based_thread_pool.h>
 #include <hercules/runtime/threadpool/lock_free_thread_pool.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 void ThreadPoolOp::AtForkBefore() {
@@ -49,11 +49,11 @@ void ThreadPoolOp::Init() {
 }
 
 RTValue ThreadPoolOp::Process(PyArgs inputs) const {
-  MXTHROW << "ThreadPoolOp can not be call directly!!!";
+  HSTHROW << "ThreadPoolOp can not be call directly!!!";
   return None;
 }
 
-MATX_REGISTER_NATIVE_OP(ThreadPoolOp);
+HVM_REGISTER_NATIVE_OP(ThreadPoolOp);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

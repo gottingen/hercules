@@ -8,7 +8,7 @@
 #include <hercules/runtime/utf8/utf8_dfa_decoder.h>
 
 #include <cstdio>
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace utf8_details {
 // clang-format off
@@ -267,7 +267,7 @@ char const*     DFADecoder::smStateNames[9] =
 ///     indicate an error was encountered.
 //--------------------------------------------------------------------------------------------------
 //
-MATXSCRIPT_ALIGN_FUNCTION std::ptrdiff_t DFADecoder::Convert(char8_t const* pSrc,
+HERCULES_ALIGN_FUNCTION std::ptrdiff_t DFADecoder::Convert(char8_t const* pSrc,
                                                              char8_t const* pSrcEnd,
                                                              char32_t* pDst) noexcept {
   char32_t* pDstOrig = pDst;
@@ -413,4 +413,4 @@ void DFADecoder::PrintStateData(State curr, CharClass type, uint32_t unit, State
 
 }  // namespace utf8_details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

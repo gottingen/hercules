@@ -22,7 +22,7 @@
  */
 
 /*!
- * \file matx/ir/stmt_functor.h
+ * \file hvm/ir/stmt_functor.h
  *
  * \brief Functors for tir stmts
  *        utility functions to call common functors.
@@ -40,10 +40,10 @@
 #include <hercules/runtime/container.h>
 #include <hercules/runtime/functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using ::matxscript::runtime::NodeFunctor;
+using ::hercules::runtime::NodeFunctor;
 
 /*!
  * \brief Same as ExprFunctor except it is applied on statements
@@ -120,7 +120,7 @@ class StmtFunctor<R(const Stmt& n, Args... args)> {
   virtual R VisitStmt_(const AllocateNode* op, Args... args) STMT_FUNCTOR_DEFAULT;
 
   virtual R VisitStmtDefault_(const Object* op, Args...) {
-    MXLOG(FATAL) << "Do not have a default for " << op->GetTypeKey();
+    HSLOG(FATAL) << "Do not have a default for " << op->GetTypeKey();
     return R();
   }
 
@@ -163,7 +163,7 @@ class StmtFunctor<R(const Stmt& n, Args... args)> {
 /*!
  * \brief StmtVisitor.
  */
-class MATX_DLL StmtVisitor : protected StmtFunctor<void(const Stmt&)> {
+class HERCULES_DLL StmtVisitor : protected StmtFunctor<void(const Stmt&)> {
  public:
   using StmtFunctor::operator();
 
@@ -203,7 +203,7 @@ class MATX_DLL StmtVisitor : protected StmtFunctor<void(const Stmt&)> {
 /*!
  * \brief StmtMutator that mutates the statements.
  */
-class MATX_DLL StmtMutator : protected StmtFunctor<Stmt(const Stmt&)> {
+class HERCULES_DLL StmtMutator : protected StmtFunctor<Stmt(const Stmt&)> {
  public:
   /*!
    * \brief Mutate stmt.
@@ -383,7 +383,7 @@ class StmtExprMutator : public StmtMutator, public ExprMutator {
  *          If it is not null, preorder/postorder will only be called
  *          when the IRNode's type key is in the list.
  */
-MATX_DLL Stmt IRTransform(Stmt stmt,
+HERCULES_DLL Stmt IRTransform(Stmt stmt,
                           const runtime::NativeFunction& preorder,
                           const runtime::NativeFunction& postorder,
                           Optional<Array<StringRef>> only_enable = NullOpt);
@@ -394,7 +394,7 @@ MATX_DLL Stmt IRTransform(Stmt stmt,
  * \param node The ir to be visited.
  * \param fvisit The visitor function to be applied.
  */
-MATX_DLL void PostOrderVisit(const ObjectRef& node, std::function<void(const ObjectRef&)> fvisit);
+HERCULES_DLL void PostOrderVisit(const ObjectRef& node, std::function<void(const ObjectRef&)> fvisit);
 
 /*!
  * \brief Substitute the var specified by vmap.
@@ -402,9 +402,9 @@ MATX_DLL void PostOrderVisit(const ObjectRef& node, std::function<void(const Obj
  * \param vmap returns a new value if re-mapping is needed, otherwise returns nullptr.
  * \return The converted form.
  */
-MATX_DLL Stmt Substitute(Stmt stmt, std::function<Optional<PrimExpr>(const PrimVar& var)> vmap);
-MATX_DLL Stmt Substitute(Stmt stmt, std::function<Optional<HLOExpr>(const HLOVar& var)> vmap);
-MATX_DLL Stmt Substitute(Stmt stmt, std::function<Optional<BaseExpr>(const BaseExpr& var)> vmap);
+HERCULES_DLL Stmt Substitute(Stmt stmt, std::function<Optional<PrimExpr>(const PrimVar& var)> vmap);
+HERCULES_DLL Stmt Substitute(Stmt stmt, std::function<Optional<HLOExpr>(const HLOVar& var)> vmap);
+HERCULES_DLL Stmt Substitute(Stmt stmt, std::function<Optional<BaseExpr>(const BaseExpr& var)> vmap);
 
 /*!
  * \brief Substitute the var specified by vmap.
@@ -412,12 +412,12 @@ MATX_DLL Stmt Substitute(Stmt stmt, std::function<Optional<BaseExpr>(const BaseE
  * \param vmap returns a new value if re-mapping is needed, otherwise returns nullptr.
  * \return The result.
  */
-MATX_DLL PrimExpr Substitute(PrimExpr expr,
+HERCULES_DLL PrimExpr Substitute(PrimExpr expr,
                              std::function<Optional<PrimExpr>(const PrimVar& var)> vmap);
 
-MATX_DLL HLOExpr Substitute(HLOExpr expr, std::function<Optional<HLOExpr>(const HLOVar& var)> vmap);
+HERCULES_DLL HLOExpr Substitute(HLOExpr expr, std::function<Optional<HLOExpr>(const HLOVar& var)> vmap);
 
-MATX_DLL BaseExpr Substitute(BaseExpr expr,
+HERCULES_DLL BaseExpr Substitute(BaseExpr expr,
                              std::function<Optional<BaseExpr>(const BaseExpr& var)> vmap);
 
 /*!
@@ -479,4 +479,4 @@ inline T Substitute(T input, const std::unordered_map<const HLOVarNode*, HLOExpr
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

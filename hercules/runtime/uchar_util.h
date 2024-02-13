@@ -24,7 +24,7 @@
 
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /* Argument must be a char or an int in [-128, 127] or [0, 255]. */
@@ -38,7 +38,7 @@ namespace runtime {
 #define UCHAR_CTF_SPACE 0x08
 #define UCHAR_CTF_XDIGIT 0x10
 
-extern MATX_DLL const unsigned int __uchar_type_table[256];
+extern HERCULES_DLL const unsigned int __uchar_type_table[256];
 
 /* Unlike their C counterparts, the following macros are not meant to
  * handle an int with any of the values [EOF, 0-UCHAR_MAX]. The argument
@@ -51,11 +51,11 @@ extern MATX_DLL const unsigned int __uchar_type_table[256];
 #define UCHAR_ISALNUM(c) (__uchar_type_table[UCHAR_MASK(c)] & UCHAR_CTF_ALNUM)
 #define UCHAR_ISSPACE(c) (__uchar_type_table[UCHAR_MASK(c)] & UCHAR_CTF_SPACE)
 
-extern MATX_DLL const unsigned char __uchar_tolower_index[256];
-extern MATX_DLL const unsigned char __uchar_toupper_index[256];
+extern HERCULES_DLL const unsigned char __uchar_tolower_index[256];
+extern HERCULES_DLL const unsigned char __uchar_toupper_index[256];
 
 #define UCHAR_TOLOWER(c) (__uchar_tolower_index[UCHAR_MASK(c)])
 #define UCHAR_TOUPPER(c) (__uchar_toupper_index[UCHAR_MASK(c)])
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -33,11 +33,11 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::runtime;
+using namespace ::hercules::ir::printer;
 
 StringImm::StringImm(StringRef value, Span span) {
   ObjectPtr<StringImmNode> node = runtime::make_object<StringImmNode>();
@@ -46,12 +46,12 @@ StringImm::StringImm(StringRef value, Span span) {
   node->span = std::move(span);
   data_ = std::move(node);
 }
-MATXSCRIPT_REGISTER_NODE_TYPE(StringImmNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.StringImm").set_body_typed([](StringRef s, Span span) {
+HERCULES_REGISTER_NODE_TYPE(StringImmNode);
+HERCULES_REGISTER_GLOBAL("ir.StringImm").set_body_typed([](StringRef s, Span span) {
   return StringImm(std::move(s), std::move(span));
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<StringImm>("", [](StringImm s, ObjectPath p, IRDocsifier d) -> Doc {
       // TODO: fix bytes print
       return LiteralDoc::Str(s->value, p->Attr("value"));
@@ -64,13 +64,13 @@ UnicodeImm::UnicodeImm(StringRef value, Span span) {
   node->span = std::move(span);
   data_ = std::move(node);
 }
-MATXSCRIPT_REGISTER_NODE_TYPE(UnicodeImmNode);
+HERCULES_REGISTER_NODE_TYPE(UnicodeImmNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.UnicodeImm").set_body_typed([](StringRef s, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.UnicodeImm").set_body_typed([](StringRef s, Span span) {
   return UnicodeImm(std::move(s), std::move(span));
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<UnicodeImm>("", [](UnicodeImm s, ObjectPath p, IRDocsifier d) -> Doc {
       // TODO: fix unicode
       return LiteralDoc::Str(s->value, p->Attr("value"));
@@ -87,12 +87,12 @@ DataTypeImm::DataTypeImm(DataType value, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(DataTypeImmNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.DataTypeImm").set_body_typed([](DataType value, Span span) {
+HERCULES_REGISTER_NODE_TYPE(DataTypeImmNode);
+HERCULES_REGISTER_GLOBAL("ir.DataTypeImm").set_body_typed([](DataType value, Span span) {
   return DataTypeImm(value, span);
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<DataTypeImm>("", [](DataTypeImm n, ObjectPath p, IRDocsifier d) -> Doc {
       return Dialect(d, "dtype")->Call({LiteralDoc::DataType(n->value, p->Attr("value"))});
     });
@@ -104,7 +104,7 @@ ShapeExpr::ShapeExpr(Array<PrimExpr> values, Span span) {
     if (value->IsInstance<IntImmNode>()) {
       return cast(DataType::Int(64), value);
     }
-    MXCHECK(value.dtype() == DataType::Int(64))
+    HSCHECK(value.dtype() == DataType::Int(64))
         << "the value in ShapeStructInfo can only have dtype of int64";
     return value;
   });
@@ -114,12 +114,12 @@ ShapeExpr::ShapeExpr(Array<PrimExpr> values, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ShapeExprNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.ShapeExpr").set_body_typed([](Array<PrimExpr> values, Span span) {
+HERCULES_REGISTER_NODE_TYPE(ShapeExprNode);
+HERCULES_REGISTER_GLOBAL("ir.ShapeExpr").set_body_typed([](Array<PrimExpr> values, Span span) {
   return ShapeExpr(values, span);
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ShapeExpr>("", [](ShapeExpr n, ObjectPath p, IRDocsifier d) -> Doc {
       Array<ExprDoc> values_doc;
       ObjectPath values_p = p->Attr("values");
@@ -130,12 +130,12 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
       return Dialect(d, "shape")->Call({ListDoc(values_doc)});
     });
 
-#define MATXSCRIPT_DEFINE_CMPOP_CONSTRUCTOR(Name)                       \
+#define HERCULES_DEFINE_CMPOP_CONSTRUCTOR(Name)                       \
   Name::Name(BaseExpr a, BaseExpr b, Span span) {                       \
     using T = Name::ContainerType;                                      \
-    MXCHECK(a.defined()) << "ValueError: a is undefined\n";             \
-    MXCHECK(b.defined()) << "ValueError: b is undefined\n";             \
-    MXCHECK(a.dtype() == b.dtype()) << "TypeError: mismatched types\n"; \
+    HSCHECK(a.defined()) << "ValueError: a is undefined\n";             \
+    HSCHECK(b.defined()) << "ValueError: b is undefined\n";             \
+    HSCHECK(a.dtype() == b.dtype()) << "TypeError: mismatched types\n"; \
     ObjectPtr<T> node = make_object<T>();                               \
     node->dtype = DataType::Bool(a.dtype().lanes());                    \
     node->checked_type_ = PrimType(node->dtype);                        \
@@ -151,24 +151,24 @@ static Type InferAddOpType(const Type& lhs_raw, const Type& rhs_raw) {
   // TODO: check class methods: __add__ __radd__ __iadd__
   if (IsStringType(lhs_type)) {
     if (!(IsStringType(rhs_type) || IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: can't concat '" << rhs_type->GetPythonTypeName() << "' to bytes";
+      HSTHROW << "TypeError: can't concat '" << rhs_type->GetPythonTypeName() << "' to bytes";
     }
     return StringType();
   } else if (IsStringType(rhs_type)) {
     if (!(IsStringType(lhs_type) || IsObjectType(lhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
               << "' and 'bytes'";
     }
     return StringType();
   } else if (IsUnicodeType(lhs_type)) {
     if (!(IsUnicodeType(rhs_type) || IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: can only concatenate str (not \"" << rhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: can only concatenate str (not \"" << rhs_type->GetPythonTypeName()
               << "\") to str";
     }
     return UnicodeType();
   } else if (IsUnicodeType(rhs_type)) {
     if (!(IsUnicodeType(lhs_type) || IsObjectType(lhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
               << "' and 'str'";
     }
     return UnicodeType();
@@ -183,7 +183,7 @@ static Type InferAddOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(rhs_type)) {
       return ListType();
     } else {
-      MXTHROW << "TypeError: can only concatenate list (not \"" << rhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: can only concatenate list (not \"" << rhs_type->GetPythonTypeName()
               << "\") to list";
       return ListType();
     }
@@ -198,7 +198,7 @@ static Type InferAddOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(lhs_type)) {
       return ListType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
               << "' and 'list'";
       return ListType();
     }
@@ -209,7 +209,7 @@ static Type InferAddOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(rhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: can only concatenate tuple (not \"" << rhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: can only concatenate tuple (not \"" << rhs_type->GetPythonTypeName()
               << "\") to tuple";
       return ObjectType();
     }
@@ -220,19 +220,19 @@ static Type InferAddOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(lhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
               << "' and 'tuple'";
       return ObjectType();
     }
   } else if (IsFloatType(lhs_type)) {
     if (!(IsPrimType(rhs_type) || IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for +: 'float' and '"
+      HSTHROW << "TypeError: unsupported operand type(s) for +: 'float' and '"
               << rhs_type->GetPythonTypeName() << "'";
     }
     return PrimType(runtime::DataType::Float(64));
   } else if (IsFloatType(rhs_type)) {
     if (!(IsPrimType(lhs_type) || IsObjectType(lhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
               << "' and 'float'";
     }
     return PrimType(runtime::DataType::Float(64));
@@ -242,7 +242,7 @@ static Type InferAddOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(rhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
       return ObjectType();
     }
@@ -252,21 +252,21 @@ static Type InferAddOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(lhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
       return ObjectType();
     }
   } else {
     if (!(IsObjectType(lhs_type) && IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for +: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
     }
   }
   return ObjectType();
 }
 
-#define MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(NodeType, OpKind)                                \
-  MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)                                               \
+#define HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(NodeType, OpKind)                                \
+  HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)                                               \
       .set_dispatch<ir::NodeType>("", [](ir::NodeType node, ObjectPath p, IRDocsifier d) -> Doc { \
         ExprDoc a = d->AsDoc<ExprDoc>(node->a, p->Attr("a"));                                     \
         ExprDoc b = d->AsDoc<ExprDoc>(node->b, p->Attr("b"));                                     \
@@ -275,9 +275,9 @@ static Type InferAddOpType(const Type& lhs_raw, const Type& rhs_raw) {
 
 // HLOAdd
 HLOAdd::HLOAdd(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
-  MXCHECK(!(IsPrimType(RemoveReference(a->checked_type_)) &&
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(!(IsPrimType(RemoveReference(a->checked_type_)) &&
             IsPrimType(RemoveReference(b->checked_type_))))
       << "TypeError: should use PrimAdd";
   ObjectPtr<HLOAddNode> node = make_object<HLOAddNode>();
@@ -288,13 +288,13 @@ HLOAdd::HLOAdd(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOAdd").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOAdd").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
   return HLOAdd(std::move(a), std::move(b), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOAddNode);
+HERCULES_REGISTER_NODE_TYPE(HLOAddNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOAdd, kAdd);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOAdd, kAdd);
 
 // HLOSub
 static Type InferSubOpType(const Type& lhs_raw, const Type& rhs_raw) {
@@ -305,7 +305,7 @@ static Type InferSubOpType(const Type& lhs_raw, const Type& rhs_raw) {
     if (IsSetType(rhs_type) || IsObjectType(rhs_type)) {
       return lhs_type;
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for -: 'set' and '"
+      HSTHROW << "TypeError: unsupported operand type(s) for -: 'set' and '"
               << rhs_type->GetPythonTypeName() << "'";
       return lhs_type;
     }
@@ -314,19 +314,19 @@ static Type InferSubOpType(const Type& lhs_raw, const Type& rhs_raw) {
       // only support set - set
       return SetType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for -: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for -: '" << lhs_type->GetPythonTypeName()
               << "' and 'set'";
       return SetType();
     }
   } else if (IsFloatType(lhs_type)) {
     if (!(IsPrimType(rhs_type) || IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for -: 'float' and '"
+      HSTHROW << "TypeError: unsupported operand type(s) for -: 'float' and '"
               << rhs_type->GetPythonTypeName() << "'";
     }
     return PrimType(runtime::DataType::Float(64));
   } else if (IsFloatType(rhs_type)) {
     if (!(IsPrimType(lhs_type) || IsObjectType(lhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for -: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for -: '" << lhs_type->GetPythonTypeName()
               << "' and 'float'";
     }
     return PrimType(runtime::DataType::Float(64));
@@ -336,7 +336,7 @@ static Type InferSubOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(rhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for -: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for -: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
       return ObjectType();
     }
@@ -346,13 +346,13 @@ static Type InferSubOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(lhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for -: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for -: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
       return ObjectType();
     }
   } else {
     if (!(IsObjectType(lhs_type) && IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for -: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for -: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
     }
   }
@@ -360,9 +360,9 @@ static Type InferSubOpType(const Type& lhs_raw, const Type& rhs_raw) {
 }
 
 HLOSub::HLOSub(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
-  MXCHECK(!(IsPrimType(RemoveReference(a->checked_type_)) &&
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(!(IsPrimType(RemoveReference(a->checked_type_)) &&
             IsPrimType(RemoveReference(b->checked_type_))))
       << "TypeError: should use PrimSub";
   ObjectPtr<HLOSubNode> node = make_object<HLOSubNode>();
@@ -373,13 +373,13 @@ HLOSub::HLOSub(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOSub").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOSub").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
   return HLOSub(std::move(a), std::move(b), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOSubNode);
+HERCULES_REGISTER_NODE_TYPE(HLOSubNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOSub, kSub);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOSub, kSub);
 
 // HLOMul
 static Type InferMulOpType(const Type& lhs_raw, const Type& rhs_raw) {
@@ -388,61 +388,61 @@ static Type InferMulOpType(const Type& lhs_raw, const Type& rhs_raw) {
   // TODO: check class methods: __mul__ __rmul__ __imul__
   if (IsStringType(lhs_type)) {
     if (!(IsIntegerType(rhs_type) || IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: can't multiply sequence by non-int of type '"
+      HSTHROW << "TypeError: can't multiply sequence by non-int of type '"
               << rhs_type->GetPythonTypeName() << "'";
     }
     return StringType();
   } else if (IsStringType(rhs_type)) {
     if (!(IsIntegerType(lhs_type) || IsObjectType(lhs_type))) {
-      MXTHROW << "TypeError: can't multiply sequence by non-int of type '"
+      HSTHROW << "TypeError: can't multiply sequence by non-int of type '"
               << lhs_type->GetPythonTypeName() << "'";
     }
     return StringType();
   } else if (IsUnicodeType(lhs_type)) {
     if (!(IsIntegerType(rhs_type) || IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: can't multiply sequence by non-int of type '"
+      HSTHROW << "TypeError: can't multiply sequence by non-int of type '"
               << rhs_type->GetPythonTypeName() << "'";
     }
     return UnicodeType();
   } else if (IsUnicodeType(rhs_type)) {
     if (!(IsIntegerType(lhs_type) || IsObjectType(lhs_type))) {
-      MXTHROW << "TypeError: can't multiply sequence by non-int of type '"
+      HSTHROW << "TypeError: can't multiply sequence by non-int of type '"
               << lhs_type->GetPythonTypeName() << "'";
     }
     return UnicodeType();
   } else if (lhs_type.as<ListTypeNode>()) {
     if (!(IsIntegerType(rhs_type) || IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: can't multiply sequence by non-int of type '"
+      HSTHROW << "TypeError: can't multiply sequence by non-int of type '"
               << rhs_type->GetPythonTypeName() << "'";
     }
     return lhs_type;
   } else if (rhs_type.as<ListTypeNode>()) {
     if (!(IsIntegerType(lhs_type) || IsObjectType(lhs_type))) {
-      MXTHROW << "TypeError: can't multiply sequence by non-int of type '"
+      HSTHROW << "TypeError: can't multiply sequence by non-int of type '"
               << lhs_type->GetPythonTypeName() << "'";
     }
     return rhs_type;
   } else if (auto* lhs_tup_node = lhs_type.as<TupleTypeNode>()) {
     if (!(IsIntegerType(rhs_type) || IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: can't multiply sequence by non-int of type '"
+      HSTHROW << "TypeError: can't multiply sequence by non-int of type '"
               << rhs_type->GetPythonTypeName() << "'";
     }
     return ObjectType();
   } else if (auto* rhs_tup_node = rhs_type.as<TupleTypeNode>()) {
     if (!(IsIntegerType(lhs_type) || IsObjectType(lhs_type))) {
-      MXTHROW << "TypeError: can't multiply sequence by non-int of type '"
+      HSTHROW << "TypeError: can't multiply sequence by non-int of type '"
               << lhs_type->GetPythonTypeName() << "'";
     }
     return ObjectType();
   } else if (IsFloatType(lhs_type)) {
     if (!(IsPrimType(rhs_type) || IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for *: 'float' and '"
+      HSTHROW << "TypeError: unsupported operand type(s) for *: 'float' and '"
               << rhs_type->GetPythonTypeName() << "'";
     }
     return PrimType(runtime::DataType::Float(64));
   } else if (IsFloatType(rhs_type)) {
     if (!(IsPrimType(lhs_type) || IsObjectType(lhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for *: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for *: '" << lhs_type->GetPythonTypeName()
               << "' and 'float'";
     }
     return PrimType(runtime::DataType::Float(64));
@@ -452,7 +452,7 @@ static Type InferMulOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(rhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for *: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for *: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
       return ObjectType();
     }
@@ -462,22 +462,22 @@ static Type InferMulOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(lhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for *: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for *: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
       return ObjectType();
     }
   } else {
     if (!(IsObjectType(lhs_type) && IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for *: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for *: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
     }
   }
   return ObjectType();
 }
 HLOMul::HLOMul(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
-  MXCHECK(!(IsPrimType(RemoveReference(a->checked_type_)) &&
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(!(IsPrimType(RemoveReference(a->checked_type_)) &&
             IsPrimType(RemoveReference(b->checked_type_))))
       << "TypeError: should use PrimMul";
   ObjectPtr<HLOMulNode> node = make_object<HLOMulNode>();
@@ -487,13 +487,13 @@ HLOMul::HLOMul(BaseExpr a, BaseExpr b, Span span) {
   node->span = std::move(span);
   data_ = std::move(node);
 }
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOMul").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOMul").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
   return HLOMul(std::move(a), std::move(b), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOMulNode);
+HERCULES_REGISTER_NODE_TYPE(HLOMulNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOMul, kMult);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOMul, kMult);
 
 // HLOFloorDiv
 static Type InferFloorDivOpType(const Type& lhs_raw, const Type& rhs_raw) {
@@ -502,13 +502,13 @@ static Type InferFloorDivOpType(const Type& lhs_raw, const Type& rhs_raw) {
   // TODO: check class methods: __floordiv__ __rfloordiv__ __ifloordiv__
   if (IsFloatType(lhs_type)) {
     if (!(IsPrimType(rhs_type) || IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for -: 'float' and '"
+      HSTHROW << "TypeError: unsupported operand type(s) for -: 'float' and '"
               << rhs_type->GetPythonTypeName() << "'";
     }
     return PrimType(runtime::DataType::Float(64));
   } else if (IsFloatType(rhs_type)) {
     if (!(IsPrimType(lhs_type) || IsObjectType(lhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
               << "' and 'float'";
     }
     return PrimType(runtime::DataType::Float(64));
@@ -518,7 +518,7 @@ static Type InferFloorDivOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(rhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
       return ObjectType();
     }
@@ -528,13 +528,13 @@ static Type InferFloorDivOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(lhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
       return ObjectType();
     }
   } else {
     if (!(IsObjectType(lhs_type) && IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
     }
   }
@@ -542,8 +542,8 @@ static Type InferFloorDivOpType(const Type& lhs_raw, const Type& rhs_raw) {
 }
 
 HLOFloorDiv::HLOFloorDiv(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
   ObjectPtr<HLOFloorDivNode> node = make_object<HLOFloorDivNode>();
   node->checked_type_ = InferFloorDivOpType(a->checked_type_, b->checked_type_);
   node->a = std::move(a);
@@ -552,13 +552,13 @@ HLOFloorDiv::HLOFloorDiv(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOFloorDiv").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOFloorDiv").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
   return HLOFloorDiv(std::move(a), std::move(b), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOFloorDivNode);
+HERCULES_REGISTER_NODE_TYPE(HLOFloorDivNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOFloorDiv, kFloorDiv);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOFloorDiv, kFloorDiv);
 
 // HLOFloorMod
 static Type InferFloorModOpType(const Type& lhs_raw, const Type& rhs_raw) {
@@ -567,13 +567,13 @@ static Type InferFloorModOpType(const Type& lhs_raw, const Type& rhs_raw) {
   // TODO: check class methods: __mod__ __rmod__ __imod__
   if (IsFloatType(lhs_type)) {
     if (!(IsPrimType(rhs_type) || IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for -: 'float' and '"
+      HSTHROW << "TypeError: unsupported operand type(s) for -: 'float' and '"
               << rhs_type->GetPythonTypeName() << "'";
     }
     return PrimType(runtime::DataType::Float(64));
   } else if (IsFloatType(rhs_type)) {
     if (!(IsPrimType(lhs_type) || IsObjectType(lhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
               << "' and 'float'";
     }
     return PrimType(runtime::DataType::Float(64));
@@ -583,7 +583,7 @@ static Type InferFloorModOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(rhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
       return ObjectType();
     }
@@ -593,13 +593,13 @@ static Type InferFloorModOpType(const Type& lhs_raw, const Type& rhs_raw) {
     } else if (IsObjectType(lhs_type)) {
       return ObjectType();
     } else {
-      MXTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
       return ObjectType();
     }
   } else {
     if (!(IsObjectType(lhs_type) && IsObjectType(rhs_type))) {
-      MXTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
+      HSTHROW << "TypeError: unsupported operand type(s) for //: '" << lhs_type->GetPythonTypeName()
               << "' and '" << rhs_type->GetPythonTypeName() << "'";
     }
   }
@@ -607,8 +607,8 @@ static Type InferFloorModOpType(const Type& lhs_raw, const Type& rhs_raw) {
 }
 
 HLOFloorMod::HLOFloorMod(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
   ObjectPtr<HLOFloorModNode> node = make_object<HLOFloorModNode>();
   node->checked_type_ = InferFloorModOpType(a->checked_type_, b->checked_type_);
   node->a = std::move(a);
@@ -617,18 +617,18 @@ HLOFloorMod::HLOFloorMod(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOFloorMod").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOFloorMod").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
   return HLOFloorMod(std::move(a), std::move(b), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOFloorModNode);
+HERCULES_REGISTER_NODE_TYPE(HLOFloorModNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOFloorMod, kMod);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOFloorMod, kMod);
 
 // HLOEqual
 HLOEqual::HLOEqual(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
   ObjectPtr<HLOEqualNode> node = make_object<HLOEqualNode>();
   node->checked_type_ = BoolType();
   node->a = std::move(a);
@@ -637,18 +637,18 @@ HLOEqual::HLOEqual(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOEqual").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOEqual").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
   return HLOEqual(std::move(a), std::move(b), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOEqualNode);
+HERCULES_REGISTER_NODE_TYPE(HLOEqualNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOEqual, kEq);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOEqual, kEq);
 
 // HLONotEqual
 HLONotEqual::HLONotEqual(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
   ObjectPtr<HLONotEqualNode> node = make_object<HLONotEqualNode>();
   node->checked_type_ = BoolType();
   node->a = std::move(a);
@@ -657,18 +657,18 @@ HLONotEqual::HLONotEqual(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLONotEqual").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLONotEqual").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
   return HLONotEqual(std::move(a), std::move(b), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLONotEqualNode);
+HERCULES_REGISTER_NODE_TYPE(HLONotEqualNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLONotEqual, kNotEq);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLONotEqual, kNotEq);
 
 // HLOLessThan
 HLOLessThan::HLOLessThan(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
   ObjectPtr<HLOLessThanNode> node = make_object<HLOLessThanNode>();
   node->checked_type_ = BoolType();
   node->a = std::move(a);
@@ -677,18 +677,18 @@ HLOLessThan::HLOLessThan(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOLessThan").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOLessThan").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
   return HLOLessThan(std::move(a), std::move(b), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOLessThanNode);
+HERCULES_REGISTER_NODE_TYPE(HLOLessThanNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOLessThan, kLt);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOLessThan, kLt);
 
 // HLOLessEqual
 HLOLessEqual::HLOLessEqual(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
   ObjectPtr<HLOLessEqualNode> node = make_object<HLOLessEqualNode>();
   node->checked_type_ = BoolType();
   node->a = std::move(a);
@@ -697,18 +697,18 @@ HLOLessEqual::HLOLessEqual(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOLessEqual").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOLessEqual").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
   return HLOLessEqual(std::move(a), std::move(b), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOLessEqualNode);
+HERCULES_REGISTER_NODE_TYPE(HLOLessEqualNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOLessEqual, kLtE);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOLessEqual, kLtE);
 
 // HLOGreaterThan
 HLOGreaterThan::HLOGreaterThan(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
   ObjectPtr<HLOGreaterThanNode> node = make_object<HLOGreaterThanNode>();
   node->checked_type_ = BoolType();
   node->a = std::move(a);
@@ -717,19 +717,19 @@ HLOGreaterThan::HLOGreaterThan(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOGreaterThan")
+HERCULES_REGISTER_GLOBAL("ir.HLOGreaterThan")
     .set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
       return HLOGreaterThan(std::move(a), std::move(b), std::move(span));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOGreaterThanNode);
+HERCULES_REGISTER_NODE_TYPE(HLOGreaterThanNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOGreaterThan, kGt);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOGreaterThan, kGt);
 
 // HLOGreaterEqual
 HLOGreaterEqual::HLOGreaterEqual(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined\n";
-  MXCHECK(b.defined()) << "ValueError: b is undefined\n";
+  HSCHECK(a.defined()) << "ValueError: a is undefined\n";
+  HSCHECK(b.defined()) << "ValueError: b is undefined\n";
   ObjectPtr<HLOGreaterEqualNode> node = make_object<HLOGreaterEqualNode>();
   node->checked_type_ = BoolType();
   node->a = std::move(a);
@@ -738,19 +738,19 @@ HLOGreaterEqual::HLOGreaterEqual(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOGreaterEqual")
+HERCULES_REGISTER_GLOBAL("ir.HLOGreaterEqual")
     .set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
       return HLOGreaterEqual(std::move(a), std::move(b), std::move(span));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOGreaterEqualNode);
+HERCULES_REGISTER_NODE_TYPE(HLOGreaterEqualNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOGreaterEqual, kGtE);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOGreaterEqual, kGtE);
 
 // HLOAnd
 HLOAnd::HLOAnd(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined";
-  MXCHECK(b.defined()) << "ValueError: b is undefined";
+  HSCHECK(a.defined()) << "ValueError: a is undefined";
+  HSCHECK(b.defined()) << "ValueError: b is undefined";
   const auto& a_type = RemoveReference(a->checked_type_);
   const auto& b_type = RemoveReference(b->checked_type_);
   ObjectPtr<HLOAndNode> node = make_object<HLOAndNode>();
@@ -771,18 +771,18 @@ HLOAnd::HLOAnd(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOAnd").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOAnd").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
   return HLOAnd(std::move(a), std::move(b), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOAndNode);
+HERCULES_REGISTER_NODE_TYPE(HLOAndNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOAnd, kAnd);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOAnd, kAnd);
 
 // HLOOr
 HLOOr::HLOOr(BaseExpr a, BaseExpr b, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined";
-  MXCHECK(b.defined()) << "ValueError: b is undefined";
+  HSCHECK(a.defined()) << "ValueError: a is undefined";
+  HSCHECK(b.defined()) << "ValueError: b is undefined";
 
   ObjectPtr<HLOOrNode> node = make_object<HLOOrNode>();
   if (a->checked_type_ == b->checked_type_) {
@@ -796,19 +796,19 @@ HLOOr::HLOOr(BaseExpr a, BaseExpr b, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOOr").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOOr").set_body_typed([](BaseExpr a, BaseExpr b, Span span) {
   return HLOOr(std::move(a), std::move(b), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOOrNode);
+HERCULES_REGISTER_NODE_TYPE(HLOOrNode);
 
-MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOOr, kOr);
+HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY(HLOOr, kOr);
 
-#undef MATXSCRIPT_SCRIPT_PRINTER_DEF_HLO_BINARY
+#undef HERCULES_SCRIPT_PRINTER_DEF_HLO_BINARY
 
 // HLONot
 HLONot::HLONot(BaseExpr a, Span span) {
-  MXCHECK(a.defined()) << "ValueError: a is undefined";
+  HSCHECK(a.defined()) << "ValueError: a is undefined";
 
   ObjectPtr<HLONotNode> node = make_object<HLONotNode>();
   node->checked_type_ = BoolType();
@@ -817,13 +817,13 @@ HLONot::HLONot(BaseExpr a, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLONot").set_body_typed([](BaseExpr a, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLONot").set_body_typed([](BaseExpr a, Span span) {
   return HLONot(std::move(a), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLONotNode);
+HERCULES_REGISTER_NODE_TYPE(HLONotNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::HLONot>("", [](ir::HLONot node, ObjectPath p, IRDocsifier d) -> Doc {
       ExprDoc a = d->AsDoc<ExprDoc>(node->a, p->Attr("a"));
       return OperationDoc(OperationDocNode::Kind::kNot, {a});
@@ -840,9 +840,9 @@ Call::Call(Type ret_type, HLOExpr op, Array<BaseExpr> args, Span span, Array<Obj
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(CallNode);
+HERCULES_REGISTER_NODE_TYPE(CallNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Call").set_body_typed([](Type ret_type,
+HERCULES_REGISTER_GLOBAL("ir.Call").set_body_typed([](Type ret_type,
                                                         HLOExpr op,
                                                         Array<BaseExpr> args,
                                                         Span span,
@@ -868,7 +868,7 @@ static inline Array<DocType> build_arrays(const Array<AST>& ast_list,
 };
 
 static Doc BuiltinsPrintToDoc(ir::Call call, ObjectPath p, IRDocsifier d) {
-  MXCHECK(call->args.size() >= 3) << "internal error";
+  HSCHECK(call->args.size() >= 3) << "internal error";
   Array<StringRef> kw_keys;
   Array<ExprDoc> kw_values;
   bool fill_sep = true;
@@ -909,26 +909,26 @@ static Doc CallFunctionToDoc(StringRef fn_name, ir::Call call, ObjectPath p, IRD
 static Doc CallMethodToDoc(StringRef method_name, ir::Call call, ObjectPath p, IRDocsifier d) {
   Array<StringRef> kw_keys;
   Array<ExprDoc> kw_values;
-  MXCHECK(call->args.size() >= 1) << "internal error";
+  HSCHECK(call->args.size() >= 1) << "internal error";
   auto self = d->AsDoc<ExprDoc>(call->args[0], p->Attr("args")->ArrayIndex(0));
   int arg_pos = 1;
   if (method_name.view() == "__getitem__") {
     Array<ExprDoc> args = build_arrays<ExprDoc>(call->args, p, d, arg_pos);
     return self[Downcast<Array<Doc>>(args)];
   } else if (method_name.view() == "__getslice__") {
-    MXCHECK(call->args.size() == 4) << "internal error";
+    HSCHECK(call->args.size() == 4) << "internal error";
     Array<ExprDoc> args = build_arrays<ExprDoc>(call->args, p, d, arg_pos);
     return self[{SliceDoc(args[0], args[1], args[2])}];
   } else if (method_name.view() == "__setitem__") {
-    MXCHECK(call->args.size() == 3) << "internal error";
+    HSCHECK(call->args.size() == 3) << "internal error";
     auto lhs = d->AsDoc<Doc>(call->args[1], p->Attr("args")->ArrayIndex(1));
     auto rhs = d->AsDoc<ExprDoc>(call->args[2], p->Attr("args")->ArrayIndex(2));
     return AssignDoc(self[{lhs}], rhs, NullOpt);
   } else if (method_name.view() == "__len__") {
-    MXCHECK(call->args.size() == 1) << "internal error";
+    HSCHECK(call->args.size() == 1) << "internal error";
     return IdDoc("len")->Call({self});
   } else if (method_name.view() == "__contains__") {
-    MXCHECK(call->args.size() == 2) << "internal error";
+    HSCHECK(call->args.size() == 2) << "internal error";
     auto lhs = d->AsDoc<ExprDoc>(call->args[1], p->Attr("args")->ArrayIndex(1));
     return OperationDoc(OperationDocNode::Kind::kIn, {lhs, self});
   }
@@ -936,7 +936,7 @@ static Doc CallMethodToDoc(StringRef method_name, ir::Call call, ObjectPath p, I
   return self->Attr(method_name)->Call(args, kw_keys, kw_values);
 }
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::Call>("", [](ir::Call call, ObjectPath call_p, IRDocsifier d) -> Doc {
       ExprDoc prefix{nullptr};
       Array<StringRef> kw_keys;
@@ -949,7 +949,7 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
         auto op_ref = GetRef<Op>(op);
         if (op_ref.same_as(builtin::call_lambda())) {
-          MXCHECK(call->args.size() == 1);
+          HSCHECK(call->args.size() == 1);
           return d->AsDoc<ExprDoc>(call->args[0], call_p->Attr("args")->ArrayIndex(0));
         } else if (op_ref.same_as(builtin::builtins_print())) {
           return BuiltinsPrintToDoc(call, call_p, d);
@@ -981,9 +981,9 @@ HLOIterator::HLOIterator(BaseExpr container, IntImm method, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOIteratorNode);
+HERCULES_REGISTER_NODE_TYPE(HLOIteratorNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOIterator")
+HERCULES_REGISTER_GLOBAL("ir.HLOIterator")
     .set_body_typed([](BaseExpr container, int64_t method, Span span) {
       return HLOIterator(
           std::move(container), IntImm(runtime::DataType::Int(64), method), std::move(span));
@@ -1017,14 +1017,14 @@ InitializerList::InitializerList(Array<BaseExpr> fields, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(InitializerListNode);
+HERCULES_REGISTER_NODE_TYPE(InitializerListNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.InitializerList")
+HERCULES_REGISTER_GLOBAL("ir.InitializerList")
     .set_body_typed([](Array<BaseExpr> fields, Span span) {
       return InitializerList(std::move(fields), std::move(span));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::InitializerList>(
         "", [](ir::InitializerList li, ObjectPath li_p, IRDocsifier d) -> Doc {
           return d->AsDoc<ExprDoc>(li->fields, li_p->Attr("fields"));
@@ -1073,14 +1073,14 @@ InitializerDict::InitializerDict(Map<BaseExpr, BaseExpr> fields, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(InitializerDictNode);
+HERCULES_REGISTER_NODE_TYPE(InitializerDictNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.InitializerDict")
+HERCULES_REGISTER_GLOBAL("ir.InitializerDict")
     .set_body_typed([](Map<BaseExpr, BaseExpr> fields, Span span) {
       return InitializerDict(std::move(fields), std::move(span));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::InitializerDict>(
         "", [](ir::InitializerDict di, ObjectPath di_p, IRDocsifier d) -> Doc {
           return d->AsDoc<ExprDoc>(di->fields, di_p->Attr("fields"));
@@ -1095,13 +1095,13 @@ EnumAttr::EnumAttr(StringRef enum_str, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(EnumAttrNode);
+HERCULES_REGISTER_NODE_TYPE(EnumAttrNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.EnumAttr").set_body_typed([](StringRef enum_str, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.EnumAttr").set_body_typed([](StringRef enum_str, Span span) {
   return EnumAttr(std::move(enum_str), std::move(span));
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::EnumAttr>("", [](ir::EnumAttr en, ObjectPath en_p, IRDocsifier d) -> Doc {
       // TODO: fixme
       return d->AsDoc<ExprDoc>(en->enum_str, en_p->Attr("enum_str"));
@@ -1122,14 +1122,14 @@ ClassGetItem::ClassGetItem(HLOExpr self, StringImm attr, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ClassGetItemNode);
+HERCULES_REGISTER_NODE_TYPE(ClassGetItemNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassGetItem")
+HERCULES_REGISTER_GLOBAL("ir.ClassGetItem")
     .set_body_typed([](HLOExpr self, StringImm attr, Span span) {
       return ClassGetItem(std::move(self), std::move(attr), std::move(span));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::ClassGetItem>(
         "", [](ir::ClassGetItem cls_getitem, ObjectPath cls_getitem_p, IRDocsifier d) -> Doc {
           auto self = d->AsDoc<ExprDoc>(cls_getitem->self, cls_getitem_p->Attr("self"));
@@ -1149,7 +1149,7 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // HLOCast
 HLOCast::HLOCast(Type t, BaseExpr value, Span span) {
-  MXCHECK(value.defined());
+  HSCHECK(value.defined());
   ObjectPtr<HLOCastNode> node = make_object<HLOCastNode>();
   node->checked_type_ = std::move(t);
   node->value = std::move(value);
@@ -1157,13 +1157,13 @@ HLOCast::HLOCast(Type t, BaseExpr value, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOCast").set_body_typed([](Type ty, BaseExpr value, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOCast").set_body_typed([](Type ty, BaseExpr value, Span span) {
   return HLOCast(std::move(ty), std::move(value), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOCastNode);
+HERCULES_REGISTER_NODE_TYPE(HLOCastNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::HLOCast>("", [](ir::HLOCast e, ObjectPath p, IRDocsifier d) -> Doc {
       ExprDoc value = d->AsDoc<ExprDoc>(e->value, p->Attr("value"));
       if (d->cfg->ignore_type_cast) {
@@ -1175,7 +1175,7 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // HLOMove
 HLOMove::HLOMove(BaseExpr value, Span span) {
-  MXCHECK(value.defined());
+  HSCHECK(value.defined());
   ObjectPtr<HLOMoveNode> node = make_object<HLOMoveNode>();
   node->checked_type_ = value->checked_type_;
   node->value = std::move(value);
@@ -1183,13 +1183,13 @@ HLOMove::HLOMove(BaseExpr value, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOMove").set_body_typed([](BaseExpr value, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOMove").set_body_typed([](BaseExpr value, Span span) {
   return HLOMove(std::move(value), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOMoveNode);
+HERCULES_REGISTER_NODE_TYPE(HLOMoveNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::HLOMove>("", [](ir::HLOMove e, ObjectPath p, IRDocsifier d) -> Doc {
       ExprDoc value = d->AsDoc<ExprDoc>(e->value, p->Attr("value"));
       return Dialect(d, "move")->Call({value});
@@ -1197,7 +1197,7 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // HLOEnumerate
 HLOEnumerate::HLOEnumerate(BaseExpr value, BaseExpr start, Span span) {
-  MXCHECK(value.defined());
+  HSCHECK(value.defined());
   ObjectPtr<HLOEnumerateNode> node = make_object<HLOEnumerateNode>();
   Type value_type = TupleType(
       {PrimType(runtime::DataType::Int(64)), InferIteratorValueType(value->checked_type())});
@@ -1213,14 +1213,14 @@ HLOEnumerate::HLOEnumerate(BaseExpr value, BaseExpr start, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOEnumerate")
+HERCULES_REGISTER_GLOBAL("ir.HLOEnumerate")
     .set_body_typed([](BaseExpr value, BaseExpr start, Span span) {
       return HLOEnumerate(std::move(value), std::move(start), std::move(span));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOEnumerateNode);
+HERCULES_REGISTER_NODE_TYPE(HLOEnumerateNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::HLOEnumerate>("", [](ir::HLOEnumerate e, ObjectPath p, IRDocsifier d) -> Doc {
       ExprDoc value = d->AsDoc<ExprDoc>(e->value, p->Attr("value"));
       return IdDoc("enumerate")->Call({value});
@@ -1228,7 +1228,7 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 
 // HLOZip
 HLOZip::HLOZip(Array<BaseExpr> values, Span span) {
-  MXCHECK(values.defined());
+  HSCHECK(values.defined());
   ObjectPtr<HLOZipNode> node = make_object<HLOZipNode>();
   Array<Type> sub_value_types;
   bool has_begin_end = true;
@@ -1245,13 +1245,13 @@ HLOZip::HLOZip(Array<BaseExpr> values, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.HLOZip").set_body_typed([](Array<BaseExpr> value, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.HLOZip").set_body_typed([](Array<BaseExpr> value, Span span) {
   return HLOZip(std::move(value), std::move(span));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(HLOZipNode);
+HERCULES_REGISTER_NODE_TYPE(HLOZipNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::HLOZip>("", [](ir::HLOZip e, ObjectPath p, IRDocsifier d) -> Doc {
       int n = e->values.size();
       Array<ExprDoc> results;
@@ -1272,13 +1272,13 @@ Comprehension::Comprehension(BaseExpr target, BaseExpr iter, Array<BaseExpr> ifs
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Comprehension")
+HERCULES_REGISTER_GLOBAL("ir.Comprehension")
     .set_body_typed([](BaseExpr target, BaseExpr iter, Array<BaseExpr> ifs) {
       return Comprehension(target, std::move(iter), std::move(ifs));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ComprehensionNode);
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_REGISTER_NODE_TYPE(ComprehensionNode);
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::Comprehension>(
         "", [](ir::Comprehension e, ObjectPath p, IRDocsifier d) -> Doc {
           ExprDoc target = d->AsDoc<ExprDoc>(e->target, p->Attr("target"));
@@ -1311,13 +1311,13 @@ ListComp::ListComp(Type ann_typed, BaseExpr elt, Array<Comprehension> generators
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ListComp")
+HERCULES_REGISTER_GLOBAL("ir.ListComp")
     .set_body_typed([](Type ann_typed, BaseExpr elt, Array<Comprehension> generators, Span span) {
       return ListComp(std::move(ann_typed), std::move(elt), std::move(generators), std::move(span));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ListCompNode);
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_REGISTER_NODE_TYPE(ListCompNode);
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::ListComp>("", [](ir::ListComp e, ObjectPath p, IRDocsifier d) -> Doc {
       ExprDoc elt = d->AsDoc<ExprDoc>(e->elt, p->Attr("elt"));
       p = p->Attr("generators");
@@ -1344,13 +1344,13 @@ SetComp::SetComp(Type ann_typed, BaseExpr elt, Array<Comprehension> generators, 
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.SetComp")
+HERCULES_REGISTER_GLOBAL("ir.SetComp")
     .set_body_typed([](Type ann_typed, BaseExpr elt, Array<Comprehension> generators, Span span) {
       return SetComp(std::move(ann_typed), std::move(elt), std::move(generators), std::move(span));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(SetCompNode);
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_REGISTER_NODE_TYPE(SetCompNode);
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::SetComp>("", [](ir::SetComp e, ObjectPath p, IRDocsifier d) -> Doc {
       ExprDoc elt = d->AsDoc<ExprDoc>(e->elt, p->Attr("elt"));
       p = p->Attr("generators");
@@ -1379,7 +1379,7 @@ DictComp::DictComp(
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.DictComp")
+HERCULES_REGISTER_GLOBAL("ir.DictComp")
     .set_body_typed([](Type ann_typed,
                        BaseExpr key,
                        BaseExpr value,
@@ -1392,8 +1392,8 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.DictComp")
                       std::move(span));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(DictCompNode);
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_REGISTER_NODE_TYPE(DictCompNode);
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::DictComp>("", [](ir::DictComp e, ObjectPath p, IRDocsifier d) -> Doc {
       ExprDoc key = d->AsDoc<ExprDoc>(e->key, p->Attr("key"));
       ExprDoc value = d->AsDoc<ExprDoc>(e->value, p->Attr("value"));
@@ -1408,4 +1408,4 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

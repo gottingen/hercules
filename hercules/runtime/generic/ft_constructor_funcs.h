@@ -21,39 +21,39 @@
 
 #include <hercules/runtime/ft_container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace Kernel_FTList {
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTList<T> make() {
+HERCULES_ALWAYS_INLINE FTList<T> make() {
   return FTList<T>();
 }
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTList<T> make(std::initializer_list<T> init_args) {
+HERCULES_ALWAYS_INLINE FTList<T> make(std::initializer_list<T> init_args) {
   return FTList<T>(init_args);
 }
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTList<T> make(const FTList<T>& c) {
+HERCULES_ALWAYS_INLINE FTList<T> make(const FTList<T>& c) {
   return FTList<T>(c.begin(), c.end());
 }
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTList<T> make(const FTSet<T>& c) {
-  return FTList<T>(c.begin(), c.end());
-}
-
-template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTList<T> make(const List& c) {
+HERCULES_ALWAYS_INLINE FTList<T> make(const FTSet<T>& c) {
   return FTList<T>(c.begin(), c.end());
 }
 
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTList<T> make(const Set& c) {
+HERCULES_ALWAYS_INLINE FTList<T> make(const List& c) {
   return FTList<T>(c.begin(), c.end());
 }
 
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTList<T> make(const Iterator& itr) {
+HERCULES_ALWAYS_INLINE FTList<T> make(const Set& c) {
+  return FTList<T>(c.begin(), c.end());
+}
+
+template <typename T>
+HERCULES_ALWAYS_INLINE FTList<T> make(const Iterator& itr) {
   FTList<T> d;
   bool has_next = itr.HasNext();
   while (has_next) {
@@ -62,7 +62,7 @@ MATXSCRIPT_ALWAYS_INLINE FTList<T> make(const Iterator& itr) {
   return d;
 }
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTList<T> make(const RTValue& c) {
+HERCULES_ALWAYS_INLINE FTList<T> make(const RTValue& c) {
   switch (c.type_code()) {
     case TypeIndex::kRuntimeList: {
       return make<T>(c.AsObjectViewNoCheck<List>().data());
@@ -82,34 +82,34 @@ MATXSCRIPT_ALWAYS_INLINE FTList<T> make(const RTValue& c) {
 
 namespace Kernel_FTSet {
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTSet<T> make() {
+HERCULES_ALWAYS_INLINE FTSet<T> make() {
   return FTSet<T>();
 }
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTSet<T> make(std::initializer_list<T> init_args) {
+HERCULES_ALWAYS_INLINE FTSet<T> make(std::initializer_list<T> init_args) {
   return FTSet<T>(init_args);
 }
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTSet<T> make(const FTSet<T>& c) {
+HERCULES_ALWAYS_INLINE FTSet<T> make(const FTSet<T>& c) {
   return FTSet<T>(c.begin(), c.end());
 }
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTSet<T> make(const FTList<T>& c) {
-  return FTSet<T>(c.begin(), c.end());
-}
-
-template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTSet<T> make(const List& c) {
+HERCULES_ALWAYS_INLINE FTSet<T> make(const FTList<T>& c) {
   return FTSet<T>(c.begin(), c.end());
 }
 
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTSet<T> make(const Set& c) {
+HERCULES_ALWAYS_INLINE FTSet<T> make(const List& c) {
   return FTSet<T>(c.begin(), c.end());
 }
 
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTSet<T> make(const Iterator& itr) {
+HERCULES_ALWAYS_INLINE FTSet<T> make(const Set& c) {
+  return FTSet<T>(c.begin(), c.end());
+}
+
+template <typename T>
+HERCULES_ALWAYS_INLINE FTSet<T> make(const Iterator& itr) {
   FTSet<T> d;
   bool has_next = itr.HasNext();
   while (has_next) {
@@ -119,7 +119,7 @@ MATXSCRIPT_ALWAYS_INLINE FTSet<T> make(const Iterator& itr) {
 }
 
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE FTSet<T> make(const RTValue& c) {
+HERCULES_ALWAYS_INLINE FTSet<T> make(const RTValue& c) {
   switch (c.type_code()) {
     case TypeIndex::kRuntimeSet: {
       return make<T>(c.AsObjectViewNoCheck<Set>().data());
@@ -136,16 +136,16 @@ MATXSCRIPT_ALWAYS_INLINE FTSet<T> make(const RTValue& c) {
 
 namespace Kernel_FTDict {
 template <typename K, typename V>
-MATXSCRIPT_ALWAYS_INLINE FTDict<K, V> make() {
+HERCULES_ALWAYS_INLINE FTDict<K, V> make() {
   return FTDict<K, V>{};
 }
 template <typename K, typename V>
-MATXSCRIPT_ALWAYS_INLINE FTDict<K, V> make(
+HERCULES_ALWAYS_INLINE FTDict<K, V> make(
     std::initializer_list<typename FTDict<K, V>::value_type> init_args) {
   return FTDict<K, V>(init_args);
 }
 template <typename K, typename V>
-MATXSCRIPT_ALWAYS_INLINE FTDict<K, V> make(const FTDict<K, V>& c) {
+HERCULES_ALWAYS_INLINE FTDict<K, V> make(const FTDict<K, V>& c) {
   FTDict<K, V> r;
   r.reserve(c.size());
   for (auto& value_type : c.items()) {
@@ -154,7 +154,7 @@ MATXSCRIPT_ALWAYS_INLINE FTDict<K, V> make(const FTDict<K, V>& c) {
   return r;
 }
 template <typename K, typename V>
-MATXSCRIPT_ALWAYS_INLINE FTDict<K, V> make(const Dict& c) {
+HERCULES_ALWAYS_INLINE FTDict<K, V> make(const Dict& c) {
   FTDict<K, V> r;
   r.reserve(c.size());
   for (auto& value_type : c.items()) {
@@ -163,13 +163,13 @@ MATXSCRIPT_ALWAYS_INLINE FTDict<K, V> make(const Dict& c) {
   return r;
 }
 template <typename K, typename V>
-MATXSCRIPT_ALWAYS_INLINE FTDict<K, V> make(const RTValue& c) {
+HERCULES_ALWAYS_INLINE FTDict<K, V> make(const RTValue& c) {
   switch (c.type_code()) {
     case TypeIndex::kRuntimeDict: {
       return make<K, V>(c.AsObjectViewNoCheck<Dict>().data());
     } break;
     default: {
-      MXTHROW << "TypeError: dict(...) not support '" << c.type_name() << "'";
+      HSTHROW << "TypeError: dict(...) not support '" << c.type_name() << "'";
       return {};
     } break;
   }
@@ -177,4 +177,4 @@ MATXSCRIPT_ALWAYS_INLINE FTDict<K, V> make(const RTValue& c) {
 }  // namespace Kernel_FTDict
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

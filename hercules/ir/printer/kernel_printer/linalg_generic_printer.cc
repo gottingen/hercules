@@ -45,14 +45,14 @@
 #include <hercules/ir/type_functor.h>
 #include <hercules/runtime/data_type.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
-using namespace ::matxscript::ir;
-using namespace ::matxscript::runtime;
+using namespace ::hercules::ir;
+using namespace ::hercules::runtime;
 
-void LinalgGenericPrinter::VisitBufferRegionArray_(const Array<matxscript::ir::BufferRegion>& arr_,
+void LinalgGenericPrinter::VisitBufferRegionArray_(const Array<hercules::ir::BufferRegion>& arr_,
                                                    std::ostream& os) {
   // region is ignored for now, and IMHO it should be ignored in this stage.
   std::stringstream types;
@@ -79,7 +79,7 @@ void LinalgGenericPrinter::VisitBufferRegionArray_(const Array<matxscript::ir::B
   }
 }
 
-bool isInt(const matxscript::ir::PrimExpr& expr, const int expect) {
+bool isInt(const hercules::ir::PrimExpr& expr, const int expect) {
   if (expr->IsInstance<IntImmNode>()) {
     const auto& node = runtime::Downcast<IntImm>(expr);
     return node->value == expect;
@@ -87,17 +87,17 @@ bool isInt(const matxscript::ir::PrimExpr& expr, const int expect) {
   return false;
 }
 
-void LinalgGenericPrinter::VisitRangeExpr_(const matxscript::ir::BufferRegion& buffer,
-                                           const matxscript::ir::RangeExpr& rng,
+void LinalgGenericPrinter::VisitRangeExpr_(const hercules::ir::BufferRegion& buffer,
+                                           const hercules::ir::RangeExpr& rng,
                                            std::ostream& os) {
   const auto& start = rng->start;
   const auto& end = rng->stop;
   const auto& step = rng->step;
   // start has to be 0
-  MXCHECK(isInt(start, 0)) << "The start (" << start << ") of range (" << rng << ") of buffer ("
+  HSCHECK(isInt(start, 0)) << "The start (" << start << ") of range (" << rng << ") of buffer ("
                            << buffer << ") is not 0";
   // step has to be 1
-  MXCHECK(isInt(step, 1)) << "The step (" << step << ") of range (" << rng << ") of buffer ("
+  HSCHECK(isInt(step, 1)) << "The step (" << step << ") of range (" << rng << ") of buffer ("
                           << buffer << ") is not 1";
   // end
   if (end->IsInstance<PrimVarNode>()) {
@@ -105,12 +105,12 @@ void LinalgGenericPrinter::VisitRangeExpr_(const matxscript::ir::BufferRegion& b
     // todo check if it is iter var
     os << node->name_hint;
   } else {
-    MXTHROW << "The end (" << end << ") of range (" << rng << ") of buffer (" << buffer
+    HSTHROW << "The end (" << end << ") of range (" << rng << ") of buffer (" << buffer
             << ") is not a iter var";
   }
 }
 
-void LinalgGenericPrinter::PrintBufferArray(const Array<matxscript::ir::BufferRegion>& bufferArray,
+void LinalgGenericPrinter::PrintBufferArray(const Array<hercules::ir::BufferRegion>& bufferArray,
                                             const std::string& prefix_str,
                                             std::ostream& os) {
   for (int i = 0; i < bufferArray.size(); i++) {
@@ -132,9 +132,9 @@ void LinalgGenericPrinter::PrintBufferArray(const Array<matxscript::ir::BufferRe
   }
 }
 
-void LinalgGenericPrinter::GenAffineMap_(const Array<matxscript::ir::PrimIterVar>& iter_vars,
-                                         const Array<matxscript::ir::BufferRegion>& reads,
-                                         const Array<matxscript::ir::BufferRegion>& writes,
+void LinalgGenericPrinter::GenAffineMap_(const Array<hercules::ir::PrimIterVar>& iter_vars,
+                                         const Array<hercules::ir::BufferRegion>& reads,
+                                         const Array<hercules::ir::BufferRegion>& writes,
                                          std::ostream& os) {
   os << "indexing_maps = [";
 
@@ -147,14 +147,14 @@ void LinalgGenericPrinter::GenAffineMap_(const Array<matxscript::ir::PrimIterVar
     const auto& stop = iter_vars[i]->dom->stop;
     const auto& step = iter_vars[i]->dom->step;
     // start has to be 0
-    MXCHECK(isInt(start, 0)) << "The start (" << start << ") of iter_var (" << iter_vars[i]
+    HSCHECK(isInt(start, 0)) << "The start (" << start << ") of iter_var (" << iter_vars[i]
                              << ") is not 0";
     // step has to be 1
-    MXCHECK(isInt(step, 1)) << "The step (" << step << ") of iter_var (" << iter_vars[i]
+    HSCHECK(isInt(step, 1)) << "The step (" << step << ") of iter_var (" << iter_vars[i]
                             << ")  is not 1";
     // stop has to be predefined symbol.
     if (!stop->IsInstance<PrimVarNode>()) {
-      MXTHROW << "The end (" << stop << ") of iter_var (" << iter_vars[i]
+      HSTHROW << "The end (" << stop << ") of iter_var (" << iter_vars[i]
               << ") is not a pre defined symbol";
     }
     perfix << stop;
@@ -194,11 +194,11 @@ std::string LinalgGenericPrinter::GetPrimVarName(const BufferLoadNode* op) {
     visitCounter[bufferPtr]++;
     return "%_" + element_name;
   }
-  MXTHROW << "[Linalg.generic] the corresponding buffer has not been recroded.";
+  HSTHROW << "[Linalg.generic] the corresponding buffer has not been recroded.";
   return "";
 }
 
-void LinalgGenericPrinter::VisitComputBlockBody_(const matxscript::ir::Stmt& body,
+void LinalgGenericPrinter::VisitComputBlockBody_(const hercules::ir::Stmt& body,
                                                  std::ostream& os) {
   os << "^bb0(";
 
@@ -236,12 +236,12 @@ void LinalgGenericPrinter::ComputeBlockToLinalgGeneric(const ComputeBlockNode* o
    *   Stmt body;
    */
   if (op->reads.empty()) {
-    MXTHROW << "Not able to convert to linalg.generic. The reads in the compute block is empty";
+    HSTHROW << "Not able to convert to linalg.generic. The reads in the compute block is empty";
     return;
   }
 
   if (op->writes.empty()) {
-    MXTHROW << "Not able to convert to linalg.generic. The writes in the compute block is empty";
+    HSTHROW << "Not able to convert to linalg.generic. The writes in the compute block is empty";
     return;
   }
 
@@ -268,4 +268,4 @@ void LinalgGenericPrinter::ComputeBlockToLinalgGeneric(const ComputeBlockNode* o
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

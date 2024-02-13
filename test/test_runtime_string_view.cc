@@ -21,7 +21,7 @@
 #include <hercules/runtime/container.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(StringView, ConstChars) {
@@ -124,4 +124,4 @@ TEST(StringView, SmallConverter) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

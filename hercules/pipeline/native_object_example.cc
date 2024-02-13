@@ -31,7 +31,7 @@
 
 namespace {
 
-using namespace ::matxscript::runtime;
+using namespace ::hercules::runtime;
 
 class MySimpleNativeDataExample {
  public:
@@ -47,7 +47,7 @@ class MySimpleNativeDataExample {
   String content;
 };
 
-MATX_REGISTER_NATIVE_OBJECT(MySimpleNativeDataExample)
+HVM_REGISTER_NATIVE_OBJECT(MySimpleNativeDataExample)
     .SetConstructor<MySimpleNativeDataExample()>()
     .def("get_content", [](void* self) -> String {
       return reinterpret_cast<MySimpleNativeDataExample*>(self)->get_content();
@@ -58,7 +58,7 @@ class MyNativeDataExample : public OpKernel {
   void Init() override {
     location_ = GetAttr<Unicode>("location").encode();
     abs_path_ = resource_path_ + location_;
-    MXCHECK(FileUtil::Exists(abs_path_)) << "location is not valid, location: " << abs_path_;
+    HSCHECK(FileUtil::Exists(abs_path_)) << "location is not valid, location: " << abs_path_;
   }
 
   RTValue Process(PyArgs inputs) const override {
@@ -92,7 +92,7 @@ class MyNativeDataExample : public OpKernel {
   std::string abs_path_;
 };
 
-MATX_REGISTER_NATIVE_OBJECT(MyNativeDataExample)
+HVM_REGISTER_NATIVE_OBJECT(MyNativeDataExample)
     .SetConstructor([](Unicode location) -> std::shared_ptr<void> {
       Attributes attrs;
       attrs.SetAttr<Unicode>("location", std::move(location));
@@ -134,7 +134,7 @@ class MyDeviceOpExample {
   internal::IThreadPool* pool_;
 };
 
-MATX_REGISTER_NATIVE_OBJECT(MyDeviceOpExample)
+HVM_REGISTER_NATIVE_OBJECT(MyDeviceOpExample)
     .SetConstructor([](PyArgs args) -> std::shared_ptr<void> {
       return std::make_shared<MyDeviceOpExample>(args);
     })
@@ -159,7 +159,7 @@ class EchoServiceExample {
   }
 };
 
-MATX_REGISTER_NATIVE_OBJECT(EchoServiceExample)
+HVM_REGISTER_NATIVE_OBJECT(EchoServiceExample)
     .SetConstructor([](PyArgs args) -> std::shared_ptr<void> {
       return std::make_shared<EchoServiceExample>();
     })

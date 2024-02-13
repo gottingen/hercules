@@ -29,7 +29,7 @@
 
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <typename Converter, typename IterType>
@@ -152,4 +152,4 @@ class ReverseIteratorAdapter {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

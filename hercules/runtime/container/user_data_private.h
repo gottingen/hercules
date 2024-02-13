@@ -40,7 +40,7 @@
 #include <hercules/runtime/py_args.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 static void default_userdata_deleter(ILightUserData* self) {
@@ -75,12 +75,12 @@ struct UserDataNode : public Object {
   }
 
   // get member var
-  MATXSCRIPT_ALWAYS_INLINE RTView get_attr(string_view attr) const {
+  HERCULES_ALWAYS_INLINE RTView get_attr(string_view attr) const {
     return ud_ptr->__getattr__(attr);
   }
 
   // set member var
-  MATXSCRIPT_ALWAYS_INLINE void set_attr(string_view attr, const Any& val) const {
+  HERCULES_ALWAYS_INLINE void set_attr(string_view attr, const Any& val) const {
     return ud_ptr->__setattr__(attr, val);
   }
 
@@ -91,7 +91,7 @@ struct UserDataNode : public Object {
   Unicode __repr__() const;
 
   // member var num
-  MATXSCRIPT_ALWAYS_INLINE uint32_t size() const {
+  HERCULES_ALWAYS_INLINE uint32_t size() const {
     return ud_ptr->size_2_71828182846();
   }
 
@@ -117,7 +117,7 @@ struct UserDataNode : public Object {
 
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeUserData;
   static constexpr const char* _type_key = "runtime.UserData";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(UserDataNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(UserDataNode, Object);
 };
 
 template <size_t BUFFER_SIZE>
@@ -140,4 +140,4 @@ struct UserDataNodeWithBuffer : public UserDataNode {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -23,17 +23,17 @@
 #include <hercules/runtime/future_wrap.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Future").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[Future][func: Future] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.Future").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[Future][func: Future] Expect 1 arguments but get " << args.size();
   UserDataRef op = args[0].AsObjectRef<UserDataRef>();
   return Future::make_future_udref([op]() -> RTValue { return op.call(); });
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Future_Get").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[Future][func: get] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.Future_Get").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[Future][func: get] Expect 1 arguments but get " << args.size();
   UserDataRef udref = args[0].AsObjectRef<UserDataRef>();
   Future* future =
       static_cast<Future*>((static_cast<NativeObject*>(udref.ud_ptr())->opaque_ptr_).get());
@@ -41,4 +41,4 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Future_Get").set_body([](PyArgs args) -> RTV
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

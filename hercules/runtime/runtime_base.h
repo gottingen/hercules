@@ -32,7 +32,7 @@
 #define API_END()                                  \
   }                                                \
   catch (std::runtime_error & _except_) {          \
-    return MATXScriptAPIHandleException(_except_); \
+    return HerculesAPIHandleException(_except_); \
   }                                                \
   return 0;  // NOLINT(*)
 /*!
@@ -44,7 +44,7 @@
   }                                                \
   catch (std::runtime_error & _except_) {          \
     Finalize;                                      \
-    return MATXScriptAPIHandleException(_except_); \
+    return HerculesAPIHandleException(_except_); \
   }                                                \
   return 0;  // NOLINT(*)
 
@@ -53,4 +53,4 @@
  * \param e the exception
  * \return the return value of API after exception is handled
  */
-int MATXScriptAPIHandleException(const std::runtime_error& e);
+int HerculesAPIHandleException(const std::runtime_error& e);

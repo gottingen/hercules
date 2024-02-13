@@ -27,7 +27,7 @@
 #include <hercules/runtime/generic/generic_constructor_funcs.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(KernelConstructor, bool) {
@@ -591,4 +591,4 @@ TEST(KernelConstructor, Regex) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -22,7 +22,7 @@
 
 #include "./base_doc_printer.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -398,7 +398,7 @@ void DocPrinter::PrintDoc(const Doc& doc) {
   } else if (const auto* doc_node = doc.as<DocStringDocNode>()) {
     PrintTypedDoc(GetRef<DocStringDoc>(doc_node));
   } else {
-    MXLOG(FATAL) << "Do not know how to print " << doc->GetTypeKey();
+    HSLOG(FATAL) << "Do not know how to print " << doc->GetTypeKey();
     throw;
   }
 
@@ -424,4 +424,4 @@ void DocPrinter::MarkSpan(const ByteSpan& span, const ObjectPath& path) {
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

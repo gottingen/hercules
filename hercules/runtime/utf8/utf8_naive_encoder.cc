@@ -22,7 +22,7 @@
 #include <cstring>
 #include <string>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace utf8_details {
 
@@ -96,4 +96,4 @@ ptrdiff_t NaiveEncoder(const uint32_t* s_ptr,
 
 }  // namespace utf8_details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

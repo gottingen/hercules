@@ -24,13 +24,13 @@
 
 #include "userdata_mutator.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_REGISTER_NATIVE_OP(ConstantOp);
+HVM_REGISTER_NATIVE_OP(ConstantOp);
 
 void ConstantOp::Init() {
-  MXCHECK(HasAttr("data"));
+  HSCHECK(HasAttr("data"));
   data = GetAttr<RTValue>("data");
   UserDataMutator::Mutate(&data, this);
 }
@@ -53,4 +53,4 @@ RTValue ConstantOp::Process(PyArgs inputs) const {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

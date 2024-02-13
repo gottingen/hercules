@@ -31,7 +31,7 @@
 #include <utility>
 #include <vector>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -351,4 +351,4 @@ class DocPrinter {
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

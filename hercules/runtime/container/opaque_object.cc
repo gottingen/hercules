@@ -23,7 +23,7 @@
 #include <hercules/runtime/memory.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
@@ -72,4 +72,4 @@ std::ostream& operator<<(std::ostream& os, OpaqueObject const& n) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -21,7 +21,7 @@
 #include <hercules/runtime/container.h>
 #include "hercules/runtime/logging.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Set, Constructor) {
@@ -86,4 +86,4 @@ TEST(Set, clear) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -35,7 +35,7 @@
 #include <utility>
 #include <vector>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -68,7 +68,7 @@ class FrameNode : public Object {
   }
 
   static constexpr const char* _type_key = "ir.printer.Frame";
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(FrameNode, Object);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(FrameNode, Object);
 
  public:
   virtual ~FrameNode() = default;
@@ -118,7 +118,7 @@ class Frame : public ObjectRef {
     static_cast<FrameNode*>(data_.get())->ExitWithScope();
   }
 
-  MATXSCRIPT_DEFINE_MUTABLE_NOTNULLABLE_OBJECT_REF_METHODS(Frame, ObjectRef, FrameNode);
+  HERCULES_DEFINE_MUTABLE_NOTNULLABLE_OBJECT_REF_METHODS(Frame, ObjectRef, FrameNode);
 };
 
 //////////////////////// IRDocsifier ////////////////////////
@@ -177,7 +177,7 @@ class IRDocsifierNode : public Object {
   }
 
   static constexpr const char* _type_key = "ir.printer.IRDocsifier";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(IRDocsifierNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(IRDocsifierNode, Object);
 
  public:
   /*!
@@ -255,9 +255,9 @@ class IRDocsifier : public ObjectRef {
   /*! \brief Create a IRDocsifier. */
   explicit IRDocsifier(const PrinterConfig& cfg);
   /*! \brief The registration table for IRDocsifier. */
-  MATX_DLL static FType& vtable();
+  HERCULES_DLL static FType& vtable();
 
-  MATXSCRIPT_DEFINE_MUTABLE_NOTNULLABLE_OBJECT_REF_METHODS(IRDocsifier, ObjectRef, IRDocsifierNode);
+  HERCULES_DEFINE_MUTABLE_NOTNULLABLE_OBJECT_REF_METHODS(IRDocsifier, ObjectRef, IRDocsifierNode);
 };
 
 //////////////////////// Implementation ////////////////////////
@@ -291,7 +291,7 @@ inline static void AddDocDecoration(const Doc& d,
         stmt->comment = cfg->obj_to_annotate.at(obj);
       }
     } else {
-      MXLOG(WARNING) << "Expect StmtDoc to be annotated for object " << obj << ", but got "
+      HSLOG(WARNING) << "Expect StmtDoc to be annotated for object " << obj << ", but got "
                      << runtime::Downcast<TDoc>(d)->_type_key;
     }
   }
@@ -311,7 +311,7 @@ inline static void AddDocDecoration(const Doc& d,
           stmt->comment = attn;
         }
       } else {
-        MXLOG(WARNING) << "Expect StmtDoc to be annotated at object path " << p << ", but got "
+        HSLOG(WARNING) << "Expect StmtDoc to be annotated at object path " << p << ", but got "
                        << runtime::Downcast<TDoc>(d)->_type_key;
       }
     }
@@ -335,12 +335,12 @@ inline void FrameNode::AddDispatchToken(const IRDocsifier& d, const StringRef& t
   this->AddExitCallback([doc = d.get()]() { doc->dispatch_tokens.pop_back(); });
 }
 
-/*! \brief Creates the matx common prefix, which is by default `T` */
+/*! \brief Creates the hvm common prefix, which is by default `T` */
 inline ExprDoc Dialect(const IRDocsifier& d, const StringRef& attr) {
-  d->ir_usage.insert("matx");
+  d->ir_usage.insert("hvm");
   return IdDoc(d->cfg->dialect_prefix)->Attr(attr);
 }
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

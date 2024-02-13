@@ -25,7 +25,7 @@
 
 #include <hercules/runtime/future_wrap.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 RTValue Future::get() const {
@@ -36,9 +36,9 @@ void Future::set_body(std::function<RTValue()> body) {
   this->body_ = std::move(body);
 }
 
-MATX_REGISTER_NATIVE_OBJECT(Future)
+HVM_REGISTER_NATIVE_OBJECT(Future)
     .SetConstructor([](PyArgs args) -> std::shared_ptr<void> {
-      MXCHECK_LT(args.size(), 2) << "[Lazy Construction] Expect 0 or 1 arguments but get "
+      HSCHECK_LT(args.size(), 2) << "[Lazy Construction] Expect 0 or 1 arguments but get "
                                  << args.size();
       if (args.size() == 0) {
         return std::make_shared<Future>();
@@ -51,12 +51,12 @@ MATX_REGISTER_NATIVE_OBJECT(Future)
     })
     .RegisterFunction("get",
                       [](void* self, PyArgs args) -> RTValue {
-                        MXCHECK_EQ(args.size(), 0)
+                        HSCHECK_EQ(args.size(), 0)
                             << "[Future][func: get] Expect 0 arguments but get " << args.size();
                         return reinterpret_cast<Future*>(self)->get();
                       })
     .RegisterFunction("__call__", [](void* self, PyArgs args) -> RTValue {
-      MXCHECK_EQ(args.size(), 0) << "[Future][func: get] Expect 0 arguments but get "
+      HSCHECK_EQ(args.size(), 0) << "[Future][func: get] Expect 0 arguments but get "
                                  << args.size();
       return reinterpret_cast<Future*>(self)->get();
     });
@@ -70,4 +70,4 @@ UserDataRef Future::make_future_udref(std::function<RTValue()> body) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

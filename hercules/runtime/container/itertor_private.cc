@@ -19,14 +19,14 @@
  */
 #include <hercules/runtime/container/itertor_private.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * Iterator
  *****************************************************************************/
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(IteratorNode);
+HERCULES_REGISTER_OBJECT_TYPE(IteratorNode);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -22,38 +22,38 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(math, min)  //
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(math, min)  //
     .set_num_inputs(1)
     .add_argument("args", "*args", "python min(...)");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(math, int_min)  //
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(math, int_min)  //
     .set_num_inputs(-1);
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(math, double_min)  //
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(math, double_min)  //
     .set_num_inputs(-1);
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(math, iterable_min)  //
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(math, iterable_min)  //
     .set_num_inputs(1)
     .add_argument("args", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(math, int_max)  //
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(math, int_max)  //
     .set_num_inputs(-1);
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(math, double_max)  //
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(math, double_max)  //
     .set_num_inputs(-1);
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(math, iterable_max)  //
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(math, iterable_max)  //
     .set_num_inputs(1)
     .add_argument("args", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(math, max)  //
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(math, max)  //
     .set_num_inputs(1)
     .add_argument("args", "*args", "python max(...)");
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

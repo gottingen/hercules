@@ -27,15 +27,15 @@
 
 #include <sstream>
 
-#ifndef MATXSCRIPT_HAVE_PTHREAD_ATFORK
-#define MATXSCRIPT_HAVE_PTHREAD_ATFORK (!(defined(_WIN32) || defined(WIN32)))
+#ifndef HERCULES_HAVE_PTHREAD_ATFORK
+#define HERCULES_HAVE_PTHREAD_ATFORK (!(defined(_WIN32) || defined(WIN32)))
 #endif
 
-#ifdef MATXSCRIPT_HAVE_PTHREAD_ATFORK
+#ifdef HERCULES_HAVE_PTHREAD_ATFORK
 #include <pthread.h>
 #endif
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace internal {
 
@@ -204,7 +204,7 @@ thread_local bool SkipAtForkHandlers::value;
 
 void invoke_pthread_atfork(void (*prepare)(), void (*parent)(), void (*child)()) {
   int ret = 0;
-#ifdef MATXSCRIPT_HAVE_PTHREAD_ATFORK  // if no pthread_atfork, probably no fork either
+#ifdef HERCULES_HAVE_PTHREAD_ATFORK  // if no pthread_atfork, probably no fork either
   ret = pthread_atfork(prepare, parent, child);
 #endif
   if (ret != 0) {
@@ -268,4 +268,4 @@ void AtFork::UnregisterHandler(void const* handle) {
 
 }  // namespace internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

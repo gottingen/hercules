@@ -22,7 +22,7 @@
 #include <hercules/runtime/generic/generic_constructor_funcs.h>
 #include <hercules/runtime/json_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Pipeline, pickle) {
@@ -41,7 +41,7 @@ TEST(Pipeline, pickle) {
 }
 
 TEST(Pickle, ndarray) {
-  auto arr = ::matxscript::runtime::Kernel_NDArray::make({1.0, 2.0, 3.0, 4.0}, {2, 2}, U"float32");
+  auto arr = ::hercules::runtime::Kernel_NDArray::make({1.0, 2.0, 3.0, 4.0}, {2, 2}, U"float32");
   auto json_doc = pickle::ToJsonStruct(RTView(arr));
 
   auto new_arr = pickle::FromJsonStruct(json_doc).AsObjectRefNoCheck<NDArray>();
@@ -50,7 +50,7 @@ TEST(Pickle, ndarray) {
 }
 
 TEST(Pickle, serialzation) {
-  auto arr = ::matxscript::runtime::Kernel_NDArray::make({1.0, 2.0, 3.0, 4.0}, {2, 2}, U"float32");
+  auto arr = ::hercules::runtime::Kernel_NDArray::make({1.0, 2.0, 3.0, 4.0}, {2, 2}, U"float32");
   auto json_doc = pickle::ToJsonStruct(RTView(arr));
 
   auto str = pickle::Serialize(RTView(arr));
@@ -61,4 +61,4 @@ TEST(Pickle, serialzation) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

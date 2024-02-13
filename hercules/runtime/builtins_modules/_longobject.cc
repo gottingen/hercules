@@ -27,17 +27,17 @@
 #include <cassert>
 #include <cmath>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
 int64_t fast_mod_i64_i64(int64_t a, int64_t b) {
   int64_t mod;
-  if (MATXSCRIPT_UNLIKELY(b == 0)) {
+  if (HERCULES_UNLIKELY(b == 0)) {
     THROW_PY_ZeroDivisionError("integer division or modulo by zero");
     return NAN;
   }
-  if (MATXSCRIPT_UNLIKELY(a == 0)) {
+  if (HERCULES_UNLIKELY(a == 0)) {
     return 0;
   }
 
@@ -60,11 +60,11 @@ int64_t fast_mod_i64_i64(int64_t a, int64_t b) {
 int64_t fast_mod_u64_i64(uint64_t a, int64_t b) {
   int64_t mod;
 
-  if (MATXSCRIPT_UNLIKELY(b == 0)) {
+  if (HERCULES_UNLIKELY(b == 0)) {
     THROW_PY_ZeroDivisionError("integer division or modulo by zero");
     return NAN;
   }
-  if (MATXSCRIPT_UNLIKELY(a == 0)) {
+  if (HERCULES_UNLIKELY(a == 0)) {
     return 0;
   }
 
@@ -85,11 +85,11 @@ int64_t fast_mod_u64_i64(uint64_t a, int64_t b) {
 
 int64_t fast_mod_i64_u64(int64_t a, uint64_t b) {
   int64_t mod;
-  if (MATXSCRIPT_UNLIKELY(b == 0)) {
+  if (HERCULES_UNLIKELY(b == 0)) {
     THROW_PY_ZeroDivisionError("integer division or modulo by zero");
     return NAN;
   }
-  if (MATXSCRIPT_UNLIKELY(a == 0)) {
+  if (HERCULES_UNLIKELY(a == 0)) {
     return 0;
   }
 
@@ -109,11 +109,11 @@ int64_t fast_mod_i64_u64(int64_t a, uint64_t b) {
 }
 
 int64_t fast_mod_u64_u64(uint64_t a, uint64_t b) {
-  if (MATXSCRIPT_UNLIKELY(b == 0)) {
+  if (HERCULES_UNLIKELY(b == 0)) {
     THROW_PY_ZeroDivisionError("integer division or modulo by zero");
     return NAN;
   }
-  if (MATXSCRIPT_UNLIKELY(a == 0)) {
+  if (HERCULES_UNLIKELY(a == 0)) {
     return 0;
   }
   return a % b;
@@ -123,11 +123,11 @@ int64_t fast_mod_u64_u64(uint64_t a, uint64_t b) {
 int64_t fast_floor_div_i64_i64(int64_t a, int64_t b) {
   int64_t div;
 
-  if (MATXSCRIPT_UNLIKELY(b == 0)) {
+  if (HERCULES_UNLIKELY(b == 0)) {
     THROW_PY_ZeroDivisionError("integer division or modulo by zero");
     return NAN;
   }
-  if (MATXSCRIPT_UNLIKELY(a == 0)) {
+  if (HERCULES_UNLIKELY(a == 0)) {
     return 0;
   }
 
@@ -149,4 +149,4 @@ int64_t fast_floor_div_i64_i64(int64_t a, int64_t b) {
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

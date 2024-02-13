@@ -46,7 +46,7 @@
 #include <hercules/runtime/generic/generic_constructor_funcs.h>
 #include <hercules/runtime/generic/generic_funcs.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 static const char ThreadPoolOpClassName[] = "ThreadPoolOp";
@@ -145,7 +145,7 @@ TXSession::TXSession(TXSessionOptions opt) {
   // set default devices is cpu
   device_ = NONE_DEVICE;
   device_type_ = kDLCPU;
-  device_api_ = DeviceAPI::Get(MATXScriptDevice{device_type_, 0});
+  device_api_ = DeviceAPI::Get(HerculesDevice{device_type_, 0});
   if (this->options_.enable_graph_parallel) {
     SetOpParallelismThreads(
         options_.scheduling_pool_thread_nums > 0 ? options_.scheduling_pool_thread_nums : 0,
@@ -179,20 +179,20 @@ void TXSession::SetSchedulingThreads(int32_t num, bool share) {
     } else {
       options_.scheduling_pool_thread_nums = num;
     }
-    MXCHECK_GT(options_.scheduling_pool_thread_nums, 0);
-    MXCHECK_LT(options_.scheduling_pool_thread_nums, 256);
+    HSCHECK_GT(options_.scheduling_pool_thread_nums, 0);
+    HSCHECK_LT(options_.scheduling_pool_thread_nums, 256);
     if (options_.share_scheduling_pool) {
       // use thread_pool_op
       Dict attrs;
       attrs["lock_free"] = false;
       attrs["thread_nums"] = options_.scheduling_pool_thread_nums;
-      attrs["thread_name"] = Unicode(U"matx.schedule");
+      attrs["thread_name"] = Unicode(U"hvm.schedule");
       auto op = this->CreateOp(ThreadPoolOpClassName, attrs, ScheduleThreadPoolOpName);
       auto pool_op = std::dynamic_pointer_cast<ThreadPoolOp>(op);
       scheduling_pool_ = pool_op->GetPool();
     } else {
       scheduling_pool_ = std::make_shared<internal::LockBasedThreadPool>(
-          options_.scheduling_pool_thread_nums, "matx.schedule");
+          options_.scheduling_pool_thread_nums, "hvm.schedule");
     }
     scheduling_pool_executor_ = std::make_shared<ThreadPoolExecutor>(scheduling_pool_, false);
   } else {
@@ -225,20 +225,20 @@ void TXSession::SetOpComputeThreads(int32_t num, bool share) {
     } else {
       options_.compute_pool_thread_nums = num;
     }
-    MXCHECK_GT(options_.compute_pool_thread_nums, 0);
-    MXCHECK_LT(options_.compute_pool_thread_nums, 256);
+    HSCHECK_GT(options_.compute_pool_thread_nums, 0);
+    HSCHECK_LT(options_.compute_pool_thread_nums, 256);
     if (options_.share_compute_pool) {
       // use thread_pool_op
       Dict attrs;
       attrs["lock_free"] = false;
       attrs["thread_nums"] = options_.compute_pool_thread_nums;
-      attrs["thread_name"] = Unicode(U"matx.compute");
+      attrs["thread_name"] = Unicode(U"hvm.compute");
       auto op = this->CreateOp(ThreadPoolOpClassName, attrs, ComputeThreadPoolOpName);
       auto pool_op = std::dynamic_pointer_cast<ThreadPoolOp>(op);
       compute_pool_ = pool_op->GetPool();
     } else {
       compute_pool_ = std::make_shared<internal::LockBasedThreadPool>(
-          options_.compute_pool_thread_nums, "matx.compute");
+          options_.compute_pool_thread_nums, "hvm.compute");
     }
     compute_pool_executor_ = std::make_shared<ThreadPoolExecutor>(compute_pool_, false);
   } else {
@@ -281,7 +281,7 @@ OpKernelPtr TXSession::FindOp(string_view class_name, string_view cache_key) {
 
 OpKernelPtr TXSession::CreateOp(string_view class_name, Dict attrs, string_view cache_key) {
   auto* reg_ptr = NativeObjectRegistry::Get(class_name);
-  MXCHECK(reg_ptr != nullptr) << "Op is not registered : " << class_name;
+  HSCHECK(reg_ptr != nullptr) << "Op is not registered : " << class_name;
   UserDataRef ud = ud_cache_local_->Get(class_name, cache_key);
   if (ud.defined()) {
     return check_get_op_kernel(ud);
@@ -303,7 +303,7 @@ OpKernelPtr TXSession::CreateOp(string_view class_name, Dict attrs, string_view 
   }
   bool share = reg_ptr->threadsafety_;
   if (class_name == "JitObject") {
-#ifdef MATXSCRIPT_DISABLE_SHARE_JIT_OBJECT
+#ifdef HERCULES_DISABLE_SHARE_JIT_OBJECT
     share = false;
 #else
     JitObjectPtr jit_ptr = try_get_jit_object(ud);
@@ -345,7 +345,7 @@ bool IsDevicesOp(const OpKernel* op) {
 void TXSession::SetDevice(int device) {
   device_ = device;
   device_type_ = device_ < 0 ? kDLCPU : kDLCUDA;
-  device_api_ = DeviceAPI::Get(MATXScriptDevice{device_type_, device_});
+  device_api_ = DeviceAPI::Get(HerculesDevice{device_type_, device_});
   if (graph_) {
     auto& nodes = graph_->get_topo_nodes();
     for (auto& node : nodes) {
@@ -363,12 +363,12 @@ int TXSession::GetDevice() const {
 }
 
 void TXSession::TransPythonOp(OpKernelPtr& op) {
-  MXCHECK(op->ClassName() == TypeNameTraits::Get<PythonBaseOp>());
+  HSCHECK(op->ClassName() == TypeNameTraits::Get<PythonBaseOp>());
   auto py_op = std::static_pointer_cast<PythonBaseOp>(op);
-  MXLOG(INFO) << "[TXSession] Begin op pass: " << py_op->py_op_name << " -> "
+  HSLOG(INFO) << "[TXSession] Begin op pass: " << py_op->py_op_name << " -> "
               << py_op->pass_op_name;
   auto op_copy = CreateOp(py_op->pass_op_name, py_op->pass_op_options, py_op->name_);
-  MXLOG(INFO) << "[TXSession] Finish op pass: " << py_op->py_op_name << " -> "
+  HSLOG(INFO) << "[TXSession] Finish op pass: " << py_op->py_op_name << " -> "
               << py_op->pass_op_name;
   op = op_copy;
 }
@@ -381,7 +381,7 @@ void TXSession::DFSCopyOp(OpKernelPtr& op) {
     TransPythonOp(op);
   } else {
     auto* reg_ptr = NativeObjectRegistry::Get(op->ClassName());
-    MXCHECK(reg_ptr != nullptr) << "Op is not registered : " << op->ClassName();
+    HSCHECK(reg_ptr != nullptr) << "Op is not registered : " << op->ClassName();
     bool share = reg_ptr->threadsafety_;
     if (op->ClassName() == "JitObject") {
       auto obj_ptr = std::static_pointer_cast<JitObject>(op);
@@ -399,7 +399,7 @@ void TXSession::DFSCopyOp(OpKernelPtr& op) {
   }
   if (op->ClassName() == TypeNameTraits::Get<PyTorchInferOp>()) {
     // trans impl
-    MXCHECK(op->sub_ops_.size() == 1) << "internal error";
+    HSCHECK(op->sub_ops_.size() == 1) << "internal error";
     auto& real_impl = op->sub_ops_[0];
     op->SetAttr("impl", FindUserData(real_impl->ClassName(), real_impl->name_));
     op->Init();
@@ -423,10 +423,10 @@ void TXSession::Trace(const std::vector<const Symbol*>& outputs) {
 
   // rebuild ops
   for (auto& node : graph->get_topo_nodes()) {
-    MXLOG(INFO) << "Begin Trace Op: ClassName: " << node->op->ClassName()
+    HSLOG(INFO) << "Begin Trace Op: ClassName: " << node->op->ClassName()
                 << ", Name: " << node->op->GetName();
     DFSCopyOp(node->op);
-    MXLOG(INFO) << "Finish Trace Op: ClassName: " << node->op->ClassName()
+    HSLOG(INFO) << "Finish Trace Op: ClassName: " << node->op->ClassName()
                 << ", Name: " << node->op->GetName();
   }
 
@@ -444,7 +444,7 @@ void TXSession::Trace(const std::vector<const Symbol*>& outputs) {
   }
   this->outputs_.clear();
   for (auto& raw_entry : entry_outputs) {
-    MXCHECK(name2entry.find(raw_entry->key) != name2entry.end());
+    HSCHECK(name2entry.find(raw_entry->key) != name2entry.end());
     this->outputs_.push_back(name2entry[raw_entry->key]);
   }
   BuildRunNodes();
@@ -455,7 +455,7 @@ void TXSession::BuildRunNodes() {
   parallel_nodes_.clear();
   serial_nodes_ = graph_->get_topo_nodes();
   if (serial_nodes_.empty()) {
-    MXLOG(FATAL) << "[TXSession:trace] compute node num is 0, do nothing!!!";
+    HSLOG(FATAL) << "[TXSession:trace] compute node num is 0, do nothing!!!";
     return;
   }
 
@@ -503,7 +503,7 @@ void TXSession::BuildRunNodes() {
       break;
     } else if (run_nodes.empty()) {
       // compute graph is bad for dependence loss
-      MXTHROW << "compute graph is bad for dependence loss";
+      HSTHROW << "compute graph is bad for dependence loss";
     } else {
       finish_nodes.insert(run_nodes.begin(), run_nodes.end());
       parallel_nodes_.push_back(std::move(run_nodes));
@@ -531,7 +531,7 @@ void TXSession::BuildOutputKeys() {
           default: {
             valid = false;
             break;
-            MXLOG(INFO) << "[TXSession:BuildOutputKeys] parse output_names failed!!!";
+            HSLOG(INFO) << "[TXSession:BuildOutputKeys] parse output_names failed!!!";
           } break;
         }
       }
@@ -544,7 +544,7 @@ void TXSession::BuildOutputKeys() {
 
 std::vector<std::pair<std::string, RTValue>> TXSession::Run(
     const std::unordered_map<std::string, RTValue>& feed_dict) const {
-  MXCHECK(graph_) << "forget trace? run must after trace!!!";
+  HSCHECK(graph_) << "forget trace? run must after trace!!!";
   std::vector<std::pair<std::string, RTValue>> result;
   if (options_.enable_graph_parallel && options_.enable_scheduling_pool && scheduling_pool_) {
     RunImplMultiThread(feed_dict, result);
@@ -557,7 +557,7 @@ std::vector<std::pair<std::string, RTValue>> TXSession::Run(
 std::vector<std::pair<std::string, RTValue>> TXSession::Run(
     const std::unordered_map<std::string, RTValue>& feed_dict, TXSessionRunMeta* meta) const {
   ProfilingHelper ph(meta ? &meta->time_line : nullptr);
-  MXCHECK(graph_) << "forget trace? run must after trace!!!";
+  HSCHECK(graph_) << "forget trace? run must after trace!!!";
   std::vector<std::pair<std::string, RTValue>> result;
   if (meta) {
     meta->step_stats.reserve(serial_nodes_.size());
@@ -585,11 +585,11 @@ static int TXSessionRunOneNode(const NodePtr& node,
     auto& node_input = entry->node;
     if (node_input->IsVariable()) {
       auto itr = feed_dict.find(entry->key);
-      MXCHECK(itr != feed_dict.end()) << "[" << entry->key << "] feed value not found!!!";
+      HSCHECK(itr != feed_dict.end()) << "[" << entry->key << "] feed value not found!!!";
       op_feed.emplace_back(itr->second);
     } else {
       auto itr = datapack.find(entry->key.view());
-      MXCHECK(itr != datapack.end()) << entry->key << " not found in datapack";
+      HSCHECK(itr != datapack.end()) << entry->key << " not found in datapack";
       op_feed.emplace_back(itr->second);
     }
   }
@@ -597,8 +597,8 @@ static int TXSessionRunOneNode(const NodePtr& node,
   if (step_stat) {
     step_stat->inputs = Tuple(op_feed.data(), op_feed.data() + op_feed.size());
     step_stat->output = rets;
-    if (step_stat->op.startswith("matx.pmap") || step_stat->op.startswith("matx.pstarmap") ||
-        step_stat->op.startswith("matx.apply_async")) {
+    if (step_stat->op.startswith("hvm.pmap") || step_stat->op.startswith("hvm.pstarmap") ||
+        step_stat->op.startswith("hvm.apply_async")) {
       if (op_feed.size() >= 1 && op_feed[0].IsObjectRef<UserDataRef>()) {
         auto parallel_callable = op_feed[0].AsNoCheck<UserDataRef>();
         auto parallel_op = try_get_op_kernel(parallel_callable);
@@ -629,14 +629,14 @@ static int TXSessionRunOneNode(const NodePtr& node,
     }
   }
   if (node->outputs.size() > 1) {
-    MXCHECK(rets.IsObjectRef<Tuple>()) << "expect tuple outputs, but get: " << rets.type_name();
+    HSCHECK(rets.IsObjectRef<Tuple>()) << "expect tuple outputs, but get: " << rets.type_name();
     Tuple adt_tuple = rets.MoveToObjectRefNoCheck<Tuple>();
-    MXCHECK(adt_tuple.size() == node->outputs.size());
+    HSCHECK(adt_tuple.size() == node->outputs.size());
     for (size_t e = 0; e < node->outputs.size(); ++e) {
       output_dict->emplace(node->outputs[e].source->key.view(), std::move(adt_tuple[e]));
     }
   } else {
-    MXCHECK(!node->outputs.empty());
+    HSCHECK(!node->outputs.empty());
     output_dict->emplace(node->outputs[0].source->key.view(), std::move(rets));
   }
   return 1;
@@ -651,7 +651,7 @@ void TXSession::SetOutput(const std::unordered_map<std::string, RTValue>& feed_d
   for (auto& entry : outputs_) {
     if (entry->node->IsVariable()) {
       auto itr = feed_dict.find(entry->key);
-      MXCHECK(itr != feed_dict.end()) << "[" << entry->key << "] feed value not found!!!";
+      HSCHECK(itr != feed_dict.end()) << "[" << entry->key << "] feed value not found!!!";
       if (use_sig) {
         output.emplace_back(output_keys_[i], itr->second);
       } else {
@@ -659,7 +659,7 @@ void TXSession::SetOutput(const std::unordered_map<std::string, RTValue>& feed_d
       }
     } else {
       auto itr = datapack.find(entry->key.view());
-      MXCHECK(itr != datapack.end()) << "[" << entry->key << "] feed value not found!!!";
+      HSCHECK(itr != datapack.end()) << "[" << entry->key << "] feed value not found!!!";
       if (use_sig) {
         output.emplace_back(output_keys_[i], itr->second);
       } else {
@@ -689,7 +689,7 @@ Dict TXSession::GetNestedOpAttributes(const OpKernel* op) {
             nat_obj_ptr = static_cast<NativeObject*>(ud_attr->ud_ptr);
             op_ptr = static_cast<OpKernel*>(nat_obj_ptr->opaque_ptr_.get());
           }
-          MXCHECK(op_ptr != nullptr) << "internal error!!!";
+          HSCHECK(op_ptr != nullptr) << "internal error!!!";
           Dict op_attr;
           op_attr[U"op"] = StringHelper::Decode(op_ptr->name_);
           op_attr[U"op_cls"] = StringHelper::Decode(op_ptr->class_name_);
@@ -730,7 +730,7 @@ void TXSession::RunImpl(const std::unordered_map<std::string, RTValue>& feed_dic
                         std::vector<std::pair<std::string, RTValue>>& output,
                         TXSessionRunMeta* meta) const {
   if (serial_nodes_.empty()) {
-    MXLOG(INFO) << "[TXSession:trace] compute node num is 0, do nothing!!!";
+    HSLOG(INFO) << "[TXSession:trace] compute node num is 0, do nothing!!!";
     return;
   }
   TXSessionStepStat* step_stats = nullptr;
@@ -756,9 +756,9 @@ void TXSession::RunImpl(const std::unordered_map<std::string, RTValue>& feed_dic
 
 std::vector<std::pair<std::string, RTValue>> TXSession::Warmup(
     const std::unordered_map<std::string, RTValue>& feed_dict) const {
-  MXCHECK(graph_) << "forget trace? warmup must after trace!!!";
+  HSCHECK(graph_) << "forget trace? warmup must after trace!!!";
   if (options_.enable_graph_parallel && options_.enable_scheduling_pool && scheduling_pool_) {
-    // MXLOG(INFO) << "[TXSession:Warmup] begin warmup in parallel mode...";
+    // HSLOG(INFO) << "[TXSession:Warmup] begin warmup in parallel mode...";
     // warmup in every thread at once
     int32_t num_threads = scheduling_pool_->GetThreadsNum();
     std::mutex control_mutex;
@@ -775,10 +775,10 @@ std::vector<std::pair<std::string, RTValue>> TXSession::Warmup(
     auto result = Run(feed_dict);
     // wait all tasks finish
     internal::IThreadPool::WaitBulk(tasks);
-    // MXLOG(INFO) << "[TXSession:Warmup] finish warmup in parallel mode...";
+    // HSLOG(INFO) << "[TXSession:Warmup] finish warmup in parallel mode...";
     return result;
   } else {
-    // MXLOG(INFO) << "[TXSession:Warmup] warmup in serial mode...";
+    // HSLOG(INFO) << "[TXSession:Warmup] warmup in serial mode...";
     return Run(feed_dict);
   }
 }
@@ -858,7 +858,7 @@ class TXSession::TXSessionWarmupRunnable : public internal::LockBasedRunnable {
     auto tid = std::this_thread::get_id();
     std::this_thread::sleep_for(
         std::chrono::microseconds(std::hash<std::thread::id>{}(tid) % 1000));
-    // MXLOG(INFO) << "[TXSession:Warmup] warmup in thread: " << tid;
+    // HSLOG(INFO) << "[TXSession:Warmup] warmup in thread: " << tid;
     std::vector<std::pair<std::string, RTValue>> result;
     sess_->RunImpl(feed_dict_, result);
     int32_t num_finish = 0;
@@ -881,7 +881,7 @@ class TXSession::TXSessionWarmupRunnable : public internal::LockBasedRunnable {
   int32_t* p_num_finish_;
   int32_t worker_num_;
   const TXSession* sess_;
-  MATXScriptDevice device_;
+  HerculesDevice device_;
   std::shared_ptr<void> stream_;
 };
 
@@ -906,7 +906,7 @@ class TXSession::TXSessionRunnable : public internal::LockBasedRunnable {
     stream_ = sess_->device_api_->GetSharedCurrentThreadStream(device_);
 
     if (node_num < 1) {
-      MXCHECK_GT(node_num, 1);
+      HSCHECK_GT(node_num, 1);
     }
   }
 
@@ -942,7 +942,7 @@ class TXSession::TXSessionRunnable : public internal::LockBasedRunnable {
   const ska::flat_hash_map<string_view, RTValue>* p_datapack_;
   ska::flat_hash_map<string_view, RTValue>* p_output_dict_;
   TXSessionStepStat* step_stat_ = nullptr;
-  MATXScriptDevice device_;
+  HerculesDevice device_;
   std::shared_ptr<void> stream_;
   const TXSession* sess_;
 };
@@ -951,7 +951,7 @@ void TXSession::RunImplMultiThread(const std::unordered_map<std::string, RTValue
                                    std::vector<std::pair<std::string, RTValue>>& output,
                                    TXSessionRunMeta* meta) const {
   if (parallel_nodes_.empty()) {
-    MXLOG(INFO) << "[TXSession:trace] compute node num is 0, do nothing!!!";
+    HSLOG(INFO) << "[TXSession:trace] compute node num is 0, do nothing!!!";
     return;
   }
   int32_t parallel_num = scheduling_pool_->GetThreadsNum();
@@ -1059,7 +1059,7 @@ void TXSession::DFSSaveOp(OpKernelPtr op,
     sub_op_names.push_back(generic_sub_op);
   }
   if (visited.count(op.get()) <= 0) {
-    MXLOG(INFO) << "[TXSession] begin save op: " << op->GetName();
+    HSLOG(INFO) << "[TXSession] begin save op: " << op->GetName();
     visited.emplace(op.get());
     Dict generic_op;
     generic_op["op"] = String(op->ClassName());
@@ -1068,7 +1068,7 @@ void TXSession::DFSSaveOp(OpKernelPtr op,
     op->Bundle(folder);
     generic_op["attrs"] = op->attributes_.ToDict();
     generic_ops.push_back(std::move(generic_op));
-    MXLOG(INFO) << "[TXSession] finish save op : " << op->GetName();
+    HSLOG(INFO) << "[TXSession] finish save op : " << op->GetName();
   }
 }
 
@@ -1082,28 +1082,28 @@ void TXSession::Save(string_view folder, string_view name) const {
 
   // serialization ops
   List generic_ops;
-  MXLOG(INFO) << "[TXSession] begin save ops...";
+  HSLOG(INFO) << "[TXSession] begin save ops...";
   ska::flat_hash_set<const OpKernel*> visited;
   for (auto& node : graph_->get_topo_nodes()) {
     DFSSaveOp(node->op, folder, visited, generic_ops);
   }
   generic_session["ops"] = std::move(generic_ops);
-  MXLOG(INFO) << "[TXSession] finish save ops";
+  HSLOG(INFO) << "[TXSession] finish save ops";
 
   // serialization graph
-  MXLOG(INFO) << "[TXSession] begin save graph...";
+  HSLOG(INFO) << "[TXSession] begin save graph...";
   List generic_graph = graph_->ToGenericList();
   generic_session["graph"] = std::move(generic_graph);
-  MXLOG(INFO) << "[TXSession] finish save graph...";
+  HSLOG(INFO) << "[TXSession] finish save graph...";
 
   // serialization outputs
-  MXLOG(INFO) << "[TXSession] begin save outputs...";
+  HSLOG(INFO) << "[TXSession] begin save outputs...";
   List generic_outputs;
   for (auto& entry : outputs_) {
     generic_outputs.push_back(entry->key);
   }
   generic_session["outputs"] = std::move(generic_outputs);
-  MXLOG(INFO) << "[TXSession] finish save outputs...";
+  HSLOG(INFO) << "[TXSession] finish save outputs...";
 
   // session attribute
   generic_session["g_attr"] = attributes_.ToDict();
@@ -1119,7 +1119,7 @@ void TXSession::Save(string_view folder, string_view name) const {
         std::string(folder.data(), folder.size()) + "/" + std::string(name.data(), name.size());
   }
   std::ofstream fc(config_path);
-  MXCHECK(!fc.fail()) << "open " << config_path << " failed!";
+  HSCHECK(!fc.fail()) << "open " << config_path << " failed!";
   fc << ss_conf;
   fc.close();
 }
@@ -1141,7 +1141,7 @@ std::unique_ptr<TXSession> TXSession::Load(string_view folder,
   }
   config_path = folder_fix + String(name);
   rapidjson::Document config;
-  MXCHECK(JsonUtil::FromFile(config_path, config));
+  HSCHECK(JsonUtil::FromFile(config_path, config));
   Dict generic_session = pickle::FromJsonStruct(config).As<Dict>();
 
   TXSessionOptions sess_opts = TXSessionOptionsReadFromDict(generic_session);
@@ -1150,10 +1150,10 @@ std::unique_ptr<TXSession> TXSession::Load(string_view folder,
 
   sess->SetDevice(device);
   // init ops
-  MXCHECK(generic_session.contains("ops")) << "ops not found in config!";
-  MXCHECK(generic_session["ops"].IsObjectRef<List>()) << "ops is not array type";
+  HSCHECK(generic_session.contains("ops")) << "ops not found in config!";
+  HSCHECK(generic_session["ops"].IsObjectRef<List>()) << "ops is not array type";
   for (const auto& generic_op : generic_session["ops"].AsObjectRef<List>()) {
-    MXCHECK(generic_op.IsObjectRef<Dict>());
+    HSCHECK(generic_op.IsObjectRef<Dict>());
     Dict op_obj = generic_op.AsObjectRef<Dict>();
     // List sub_ops = op_obj.get_item("sub_ops");
     String class_name = op_obj.get_item("op").As<String>();
@@ -1163,22 +1163,22 @@ std::unique_ptr<TXSession> TXSession::Load(string_view folder,
       op_attrs[String(PREFIX_KEY)] = String(folder_fix);
       auto op = sess->CreateOp(class_name, op_attrs, op_name);
     } catch (const std::exception& ex) {
-      MXCHECK(false) << "Initialize op " << class_name << ", name: " << op_name
+      HSCHECK(false) << "Initialize op " << class_name << ", name: " << op_name
                      << " failed. with exception:\n"
                      << ex.what();
     }
-    MXLOG(INFO) << "build and Initialize op " << op_name;
+    HSLOG(INFO) << "build and Initialize op " << op_name;
   }
 
   // init graph
-  MXCHECK(generic_session.contains("graph")) << "graph not exist in json config!";
-  MXCHECK(generic_session["graph"].IsObjectRef<List>()) << "graph is not array type";
+  HSCHECK(generic_session.contains("graph")) << "graph not exist in json config!";
+  HSCHECK(generic_session["graph"].IsObjectRef<List>()) << "graph is not array type";
   sess->graph_ = Graph::FromGenericList(sess.get(), generic_session["graph"].As<List>());
-  MXLOG(INFO) << "[INIT] init " << sess->graph_->get_topo_nodes().size() << " compute nodes";
+  HSLOG(INFO) << "[INIT] init " << sess->graph_->get_topo_nodes().size() << " compute nodes";
 
   // build output
-  MXCHECK(generic_session.contains("outputs")) << "outputs not exist in json config!";
-  MXCHECK(generic_session["outputs"].IsObjectRef<List>()) << "outputs is not array type";
+  HSCHECK(generic_session.contains("outputs")) << "outputs not exist in json config!";
+  HSCHECK(generic_session["outputs"].IsObjectRef<List>()) << "outputs is not array type";
   auto nodes = sess->graph_->get_output_nodes();
   ska::flat_hash_map<string_view, NodeEntryPtr> name2entry;
   for (auto& node : nodes) {
@@ -1189,13 +1189,13 @@ std::unique_ptr<TXSession> TXSession::Load(string_view folder,
     }
   }
   for (const auto& output : generic_session["outputs"].AsObjectRef<List>()) {
-    MXCHECK(output.IsString());
+    HSCHECK(output.IsString());
     auto out_key = output.As<String>();
-    MXCHECK(name2entry.find(out_key.view()) != name2entry.end());
+    HSCHECK(name2entry.find(out_key.view()) != name2entry.end());
     sess->outputs_.push_back(name2entry[out_key.view()]);
   }
   if (sess->outputs_.empty()) {
-    MXLOG(INFO) << "output symbol is empty, reset to last node's output symbols";
+    HSLOG(INFO) << "output symbol is empty, reset to last node's output symbols";
     // set last node as output
     for (auto& entry : nodes.back()->outputs) {
       sess->outputs_.push_back(entry.weak_ref.lock());
@@ -1252,7 +1252,7 @@ void TXSession::AtForkAfterInParentOrChild() {
       }
     } else {
       scheduling_pool_ = std::make_shared<internal::LockBasedThreadPool>(
-          options_.scheduling_pool_thread_nums, "matx.schedule");
+          options_.scheduling_pool_thread_nums, "hvm.schedule");
     }
     scheduling_pool_executor_ = std::make_shared<ThreadPoolExecutor>(scheduling_pool_, false);
   }
@@ -1266,7 +1266,7 @@ void TXSession::AtForkAfterInParentOrChild() {
       }
     } else {
       compute_pool_ = std::make_shared<internal::LockBasedThreadPool>(
-          options_.compute_pool_thread_nums, "matx.compute");
+          options_.compute_pool_thread_nums, "hvm.compute");
     }
     compute_pool_executor_ = std::make_shared<ThreadPoolExecutor>(compute_pool_, false);
   }
@@ -1330,7 +1330,7 @@ RTValue ParallelMap(const UserDataRef& func, const Any& inputs, void* session_ha
       return ParallelMap(func, inputs.AsNoCheck<List>(), session_handle);
     } break;
     default: {
-      THROW_PY_TypeError("matx.pmap: expect the second argument is list or tuple, but get'",
+      THROW_PY_TypeError("hvm.pmap: expect the second argument is list or tuple, but get'",
                          inputs.type_name(),
                          "'");
       return None;
@@ -1361,7 +1361,7 @@ static RTValue ParallelStarMap_UnpackCall(const UserDataRef& func, const InputAr
       return func.generic_call(PyArgs(args.data(), args.size()));
     } break;
     default: {
-      MXTHROW << "matx.pstarmap(f, iterable) expect iterable[i] is list or tuple, but get "
+      HSTHROW << "hvm.pstarmap(f, iterable) expect iterable[i] is list or tuple, but get "
               << d.type_name();
     } break;
   }
@@ -1408,7 +1408,7 @@ RTValue ParallelStarMap(const UserDataRef& func, const Any& inputs, void* sessio
       return ParallelStarMap(func, inputs.AsNoCheck<List>(), session_handle);
     } break;
     default: {
-      THROW_PY_TypeError("matx.pstarmap: expect the second argument is list or tuple, but get'",
+      THROW_PY_TypeError("hvm.pstarmap: expect the second argument is list or tuple, but get'",
                          inputs.type_name(),
                          "'");
       return None;
@@ -1428,4 +1428,4 @@ RTValue ApplyAsync(const UserDataRef& func, const PyArgs& inputs, void* session_
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

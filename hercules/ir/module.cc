@@ -49,11 +49,11 @@
 #include <hercules/ir/printer/ir_frame.h>
 #include <hercules/ir/printer/utils.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::runtime;
+using namespace ::hercules::ir::printer;
 
 IRModule::IRModule(Array<Stmt> body) {
   auto n = make_object<IRModuleNode>();
@@ -74,7 +74,7 @@ void IRModuleNode::SHashReduce(SHashReducer hash_reduce) const {
 void IRModuleNode::AddExportFunction(const StringRef& func_name) {
   // TODO: remove this function
   const auto* BaseFuncWithAttr =
-      ::matxscript::runtime::FunctionRegistry::Get("ir.BaseFuncWithAttr");
+      ::hercules::runtime::FunctionRegistry::Get("ir.BaseFuncWithAttr");
 
   auto fn_mutate = [&func_name, &BaseFuncWithAttr](Stmt s) -> Stmt {
     if (const auto* fn_node = s.as<BaseFuncNode>()) {
@@ -127,37 +127,37 @@ Stmt IRModuleNode::Lookup(const StringRef& name) const {
       }
     }
   }
-  MXCHECK(false) << "[IRModule] There is no definition of " << name;
+  HSCHECK(false) << "[IRModule] There is no definition of " << name;
   return Stmt{nullptr};
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(IRModuleNode);
+HERCULES_REGISTER_NODE_TYPE(IRModuleNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.IRModule").set_body_typed([](Array<Stmt> body) {
+HERCULES_REGISTER_GLOBAL("ir.IRModule").set_body_typed([](Array<Stmt> body) {
   return IRModule(std::move(body));
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Module_Add").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("ir.Module_Add").set_body([](PyArgs args) -> RTValue {
   IRModule mod = args[0].As<IRModule>();
   Stmt val = args[1].As<Stmt>();
   mod->Add(val);
   return mod;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Module_Update").set_body_typed([](IRModule mod, IRModule from) {
+HERCULES_REGISTER_GLOBAL("ir.Module_Update").set_body_typed([](IRModule mod, IRModule from) {
   mod->Update(from);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Module_Lookup").set_body_typed([](IRModule mod, StringRef name) {
+HERCULES_REGISTER_GLOBAL("ir.Module_Lookup").set_body_typed([](IRModule mod, StringRef name) {
   return mod->Lookup(name);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Module_AddExportFunction")
+HERCULES_REGISTER_GLOBAL("ir.Module_AddExportFunction")
     .set_body_typed([](IRModule mod, StringRef export_func) {
       mod->AddExportFunction(export_func);
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<IRModule>("", [](IRModule mod, ObjectPath p, IRDocsifier d) -> Doc {
       With<IRFrame> f(d, ObjectRef{nullptr});
       (*f)->AddDispatchToken(d, "ir");
@@ -179,4 +179,4 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

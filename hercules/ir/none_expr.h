@@ -24,7 +24,7 @@
 
 #include <hercules/ir/base.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class NoneExprNode : public HLOExprNode {
@@ -42,7 +42,7 @@ class NoneExprNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.NoneExpr";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(NoneExprNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(NoneExprNode, HLOExprNode);
 };
 
 class NoneExpr : public HLOExpr {
@@ -51,10 +51,10 @@ class NoneExpr : public HLOExpr {
    * \brief The constructor
    * \param span The source span of the expression.
    */
-  MATX_DLL explicit NoneExpr(Span span = Span());
+  HERCULES_DLL explicit NoneExpr(Span span = Span());
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(NoneExpr, HLOExpr, NoneExprNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(NoneExpr, HLOExpr, NoneExprNode);
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

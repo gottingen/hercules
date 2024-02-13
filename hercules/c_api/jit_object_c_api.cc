@@ -24,22 +24,22 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.JitObject_GetSelf").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[JitObject_GetSelf] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.JitObject_GetSelf").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[JitObject_GetSelf] Expect 1 arguments but get " << args.size();
   UserDataRef ud_ref = args[0].As<UserDataRef>();
   auto jit_obj_ptr = check_get_jit_object(ud_ref);
   return jit_obj_ptr->self();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.JitObject_GetFunction").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 2) << "[JitObject_GetFunction] Expect 2 arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.JitObject_GetFunction").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 2) << "[JitObject_GetFunction] Expect 2 arguments but get "
                              << args.size();
   UserDataRef ud_ref = args[0].As<UserDataRef>();
   auto jit_obj_ptr = check_get_jit_object(ud_ref);
-  MXCHECK(args[1].IsUnicode() || args[1].IsString());
+  HSCHECK(args[1].IsUnicode() || args[1].IsString());
   String name;
   if (args[1].IsUnicode()) {
     name = args[1].As<Unicode>().encode();
@@ -50,13 +50,13 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.JitObject_GetFunction").set_body([](PyArgs a
   return RTValue(new NativeFunction(ret.first), TypeIndex::kRuntimePackedFuncHandle);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.JitObject_GetFunctionSchema")
+HERCULES_REGISTER_GLOBAL("runtime.JitObject_GetFunctionSchema")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK_EQ(args.size(), 2) << "[JitObject_GetFunction] Expect 2 arguments but get "
+      HSCHECK_EQ(args.size(), 2) << "[JitObject_GetFunction] Expect 2 arguments but get "
                                  << args.size();
       UserDataRef ud_ref = args[0].As<UserDataRef>();
       auto jit_obj_ptr = check_get_jit_object(ud_ref);
-      MXCHECK(args[1].IsUnicode() || args[1].IsString());
+      HSCHECK(args[1].IsUnicode() || args[1].IsString());
       String name;
       if (args[1].IsUnicode()) {
         name = args[1].As<Unicode>().encode();
@@ -68,4 +68,4 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.JitObject_GetFunctionSchema")
     });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

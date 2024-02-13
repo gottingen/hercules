@@ -23,16 +23,16 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * Trie container
  *****************************************************************************/
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_LE(args.size(), 1) << "[runtime.Trie] Expect 0 or 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.Trie").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_LE(args.size(), 1) << "[runtime.Trie] Expect 0 or 1 arguments but get " << args.size();
   if (args.size() > 0) {
-    MXCHECK(args[0].IsObjectRef<Dict>())
+    HSCHECK(args[0].IsObjectRef<Dict>())
         << "[runtime.Trie] Expect arguments[0] is Dict type but get: type_code="
         << args[0].type_code() << " name=" << TypeIndex2Str(args[0].type_code());
     Dict d = args[0].As<Dict>();
@@ -40,10 +40,10 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie").set_body([](PyArgs args) -> RTValue {
     std::vector<String> ukeys;
     ukeys.reserve(d.size());
     for (auto& kv : d.items()) {
-      MXCHECK(kv.first.IsString() || kv.first.IsUnicode())
+      HSCHECK(kv.first.IsString() || kv.first.IsUnicode())
           << "[runtime.Trie] Expect arguments[0] is dict<str, int>, but get key mismatch: "
           << kv.first.type_name();
-      MXCHECK(kv.second.type_code() == TypeIndex::kRuntimeInteger)
+      HSCHECK(kv.second.type_code() == TypeIndex::kRuntimeInteger)
           << "[runtime.Trie] Expect arguments[0] is dict<str, int>, but get value mismatch: "
           << kv.second.type_name();
       int64_t index = kv.second.As<int64_t>();
@@ -61,19 +61,19 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie").set_body([](PyArgs args) -> RTValue {
   return Trie();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie_Update").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 2 || args.size() == 3)
+HERCULES_REGISTER_GLOBAL("runtime.Trie_Update").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 2 || args.size() == 3)
       << "[runtime.Trie_Update] Expect 2 or 3 arguments but get " << args.size();
-  MXCHECK(args[0].IsObjectRef<Trie>())
+  HSCHECK(args[0].IsObjectRef<Trie>())
       << "[runtime.Trie_Update] Expect arguments[0] is Trie, but get: "
       << TypeIndex2Str(args[0].type_code());
-  MXCHECK(args[1].IsString() || args[1].IsUnicode())
+  HSCHECK(args[1].IsString() || args[1].IsUnicode())
       << "[runtime.Trie_Update] Expect arguments[1] is str, but get: "
       << TypeIndex2Str(args[1].type_code());
   auto* trie_node = args[0].ptr<TrieNode>();
   int64_t index = -1;
   if (args.size() == 3) {
-    MXCHECK(args[2].type_code() == TypeIndex::kRuntimeInteger)
+    HSCHECK(args[2].type_code() == TypeIndex::kRuntimeInteger)
         << "[runtime.Trie_Update] Expect arguments[2] is int, but get: "
         << TypeIndex2Str(args[2].type_code());
     index = args[2].As<int64_t>();
@@ -86,16 +86,16 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie_Update").set_body([](PyArgs args) -> RT
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie_PrefixSearch").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 3) << "[runtime.Trie_PrefixSearch] Expect 3 arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.Trie_PrefixSearch").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 3) << "[runtime.Trie_PrefixSearch] Expect 3 arguments but get "
                              << args.size();
-  MXCHECK(args[0].IsObjectRef<Trie>())
+  HSCHECK(args[0].IsObjectRef<Trie>())
       << "[runtime.Trie_PrefixSearch] Expect arguments[0] is Trie, but get: "
       << TypeIndex2Str(args[0].type_code());
-  MXCHECK(args[1].IsString() || args[1].IsUnicode())
+  HSCHECK(args[1].IsString() || args[1].IsUnicode())
       << "[runtime.Trie_PrefixSearch] Expect arguments[1] is str, but get: "
       << TypeIndex2Str(args[1].type_code());
-  MXCHECK(args[2].type_code() == TypeIndex::kRuntimeInteger)
+  HSCHECK(args[2].type_code() == TypeIndex::kRuntimeInteger)
       << "[runtime.Trie_PrefixSearch] Expect arguments[2] is int, but get: "
       << TypeIndex2Str(args[2].type_code());
   auto* trie_node = args[0].ptr<TrieNode>();
@@ -104,10 +104,10 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie_PrefixSearch").set_body([](PyArgs args)
   return trie_node->prefix_search(w, pos);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie_PrefixSearchAll").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 3) << "[runtime.Trie_PrefixSearchAll] Expect 3 arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.Trie_PrefixSearchAll").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 3) << "[runtime.Trie_PrefixSearchAll] Expect 3 arguments but get "
                              << args.size();
-  MXCHECK(args[0].IsObjectRef<Trie>())
+  HSCHECK(args[0].IsObjectRef<Trie>())
       << "[runtime.Trie_PrefixSearchAll] Expect arguments[0] is Trie, but get: "
       << TypeIndex2Str(args[0].type_code());
   auto* trie_node = args[0].ptr<TrieNode>();
@@ -116,18 +116,18 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie_PrefixSearchAll").set_body([](PyArgs ar
   return trie_node->prefix_search_all(w, pos);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie_Save").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 2) << "[runtime.Trie_Save] Expect 2 arguments but get " << args.size();
-  MXCHECK(args[0].IsObjectRef<Trie>())
+HERCULES_REGISTER_GLOBAL("runtime.Trie_Save").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 2) << "[runtime.Trie_Save] Expect 2 arguments but get " << args.size();
+  HSCHECK(args[0].IsObjectRef<Trie>())
       << "[runtime.Trie_Save] Expect arguments[0] is Trie, but get: "
       << TypeIndex2Str(args[0].type_code());
   auto* trie_node = args[0].ptr<TrieNode>();
   return trie_node->save(args[1].As<Unicode>());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie_Load").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 2) << "[runtime.Trie_Load] Expect 2 arguments but get " << args.size();
-  MXCHECK(args[0].IsObjectRef<Trie>())
+HERCULES_REGISTER_GLOBAL("runtime.Trie_Load").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 2) << "[runtime.Trie_Load] Expect 2 arguments but get " << args.size();
+  HSCHECK(args[0].IsObjectRef<Trie>())
       << "[runtime.Trie_Load] Expect arguments[0] is Trie, but get: "
       << TypeIndex2Str(args[0].type_code());
   auto* trie_node = args[0].ptr<TrieNode>();
@@ -135,4 +135,4 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Trie_Load").set_body([](PyArgs args) -> RTVa
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

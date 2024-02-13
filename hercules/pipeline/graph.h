@@ -25,7 +25,7 @@
 
 #include <hercules/pipeline/node.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class TXSession;
@@ -93,4 +93,4 @@ class Graph {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

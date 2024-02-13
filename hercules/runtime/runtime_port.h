@@ -32,68 +32,68 @@
 #include <utility>
 
 #if defined(__has_feature)
-#define MATXSCRIPT_HAS_FEATURE(...) __has_feature(__VA_ARGS__)
+#define HERCULES_HAS_FEATURE(...) __has_feature(__VA_ARGS__)
 #else
-#define MATXSCRIPT_HAS_FEATURE(...) 0
+#define HERCULES_HAS_FEATURE(...) 0
 #endif
 
 /* Define a convenience macro to test when address sanitizer is being used
  * across the different compilers (e.g. clang, gcc) */
-#if MATXSCRIPT_HAS_FEATURE(address_sanitizer) || __SANITIZE_ADDRESS__
-#define MATXSCRIPT_SANITIZE_ADDRESS 1
+#if HERCULES_HAS_FEATURE(address_sanitizer) || __SANITIZE_ADDRESS__
+#define HERCULES_SANITIZE_ADDRESS 1
 #endif
 
 /*! \brief whether or not use c++11 support */
-#ifndef MATXSCRIPT_USE_CXX11
+#ifndef HERCULES_USE_CXX11
 #if defined(__GXX_EXPERIMENTAL_CXX0X__) || defined(_MSC_VER)
-#define MATXSCRIPT_USE_CXX11 1
+#define HERCULES_USE_CXX11 1
 #else
-#define MATXSCRIPT_USE_CXX11 (__cplusplus >= 201103L)
+#define HERCULES_USE_CXX11 (__cplusplus >= 201103L)
 #endif
 #endif
 
 /*! \brief strict CXX11 support */
-#ifndef MATXSCRIPT_STRICT_CXX11
+#ifndef HERCULES_STRICT_CXX11
 #if defined(_MSC_VER)
-#define MATXSCRIPT_STRICT_CXX11 1
+#define HERCULES_STRICT_CXX11 1
 #else
-#define MATXSCRIPT_STRICT_CXX11 (__cplusplus >= 201103L)
+#define HERCULES_STRICT_CXX11 (__cplusplus >= 201103L)
 #endif
 #endif
 
-#if MATXSCRIPT_USE_CXX11
-#define MATXSCRIPT_THROW_EXCEPTION noexcept(false)
-#define MATXSCRIPT_NO_EXCEPTION noexcept(true)
+#if HERCULES_USE_CXX11
+#define HERCULES_THROW_EXCEPTION noexcept(false)
+#define HERCULES_NO_EXCEPTION noexcept(true)
 #else
-#define MATXSCRIPT_THROW_EXCEPTION
-#define MATXSCRIPT_NO_EXCEPTION
+#define HERCULES_THROW_EXCEPTION
+#define HERCULES_NO_EXCEPTION
 #endif
 
 /*! \brief Whether cxx11 thread local is supported */
-#ifndef MATXSCRIPT_CXX11_THREAD_LOCAL
+#ifndef HERCULES_CXX11_THREAD_LOCAL
 #if defined(_MSC_VER)
-#define MATXSCRIPT_CXX11_THREAD_LOCAL (_MSC_VER >= 1900)
+#define HERCULES_CXX11_THREAD_LOCAL (_MSC_VER >= 1900)
 #elif defined(__clang__)
-#define MATXSCRIPT_CXX11_THREAD_LOCAL (MATXSCRIPT_HAS_FEATURE(cxx_thread_local))
+#define HERCULES_CXX11_THREAD_LOCAL (HERCULES_HAS_FEATURE(cxx_thread_local))
 #else
-#define MATXSCRIPT_CXX11_THREAD_LOCAL (__cplusplus >= 201103L)
+#define HERCULES_CXX11_THREAD_LOCAL (__cplusplus >= 201103L)
 #endif
 #endif
 
 /*! \brief Whether to use modern thread local construct */
-#ifndef MATXSCRIPT_MODERN_THREAD_LOCAL
-#define MATXSCRIPT_MODERN_THREAD_LOCAL 1
+#ifndef HERCULES_MODERN_THREAD_LOCAL
+#define HERCULES_MODERN_THREAD_LOCAL 1
 #endif
 
 /// check if g++ is before 4.6
-#if MATXSCRIPT_USE_CXX11 && defined(__GNUC__) && !defined(__clang_version__)
+#if HERCULES_USE_CXX11 && defined(__GNUC__) && !defined(__clang_version__)
 #if __GNUC__ == 4 && __GNUC_MINOR__ < 6
 #pragma message(                                 \
     "Will need g++-4.6 or higher to compile all" \
-    "the features in matx-runtime, "             \
+    "the features in hvm-runtime, "             \
     "compile without c++0x, some features may be disabled")
-#undef MATXSCRIPT_USE_CXX11
-#define MATXSCRIPT_USE_CXX11 0
+#undef HERCULES_USE_CXX11
+#define HERCULES_USE_CXX11 0
 #endif
 #endif
 
@@ -104,78 +104,78 @@
  * call-sites.
  */
 #if __GNUC__
-#define MATXSCRIPT_COLD __attribute__((__cold__))
+#define HERCULES_COLD __attribute__((__cold__))
 #else
-#define MATXSCRIPT_COLD
+#define HERCULES_COLD
 #endif
 
 // always inline
 #ifdef _MSC_VER
-#define MATXSCRIPT_ALWAYS_INLINE __forceinline
+#define HERCULES_ALWAYS_INLINE __forceinline
 #elif defined(__clang__) || defined(__GNUC__)
-#define MATXSCRIPT_ALWAYS_INLINE inline __attribute__((__always_inline__))
+#define HERCULES_ALWAYS_INLINE inline __attribute__((__always_inline__))
 #else
-#define MATXSCRIPT_ALWAYS_INLINE inline
+#define HERCULES_ALWAYS_INLINE inline
 #endif
 
 // noinline
 #if defined(_MSC_VER)
-#define MATXSCRIPT_NO_INLINE __declspec(noinline)
+#define HERCULES_NO_INLINE __declspec(noinline)
 #else
-#define MATXSCRIPT_NO_INLINE __attribute__((noinline))
+#define HERCULES_NO_INLINE __attribute__((noinline))
 #endif
 
 // attribute hidden
 #if defined(_MSC_VER)
-#define MATXSCRIPT_ATTR_VISIBILITY_HIDDEN
+#define HERCULES_ATTR_VISIBILITY_HIDDEN
 #elif defined(__GNUC__)
-#define MATXSCRIPT_ATTR_VISIBILITY_HIDDEN __attribute__((__visibility__("hidden")))
+#define HERCULES_ATTR_VISIBILITY_HIDDEN __attribute__((__visibility__("hidden")))
 #else
-#define MATXSCRIPT_ATTR_VISIBILITY_HIDDEN
+#define HERCULES_ATTR_VISIBILITY_HIDDEN
 #endif
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
-#define MATXSCRIPT_DLL EMSCRIPTEN_KEEPALIVE
+#define HERCULES_DLL EMSCRIPTEN_KEEPALIVE
 #endif
 
-#ifndef MATX_DLL
+#ifndef HERCULES_DLL
 #ifdef _WIN32
-#ifdef MATXSCRIPT_EXPORTS
-#define MATX_DLL __declspec(dllexport)
+#ifdef HERCULES_EXPORTS
+#define HERCULES_DLL __declspec(dllexport)
 #else
-#define MATX_DLL __declspec(dllimport)
+#define HERCULES_DLL __declspec(dllimport)
 #endif
 #else
-#define MATX_DLL __attribute__((visibility("default")))
+#define HERCULES_DLL __attribute__((visibility("default")))
 #endif
 #endif
 
-#define MATXSCRIPT_INLINE_VISIBILITY MATXSCRIPT_ATTR_VISIBILITY_HIDDEN MATXSCRIPT_ALWAYS_INLINE
+#define HERCULES_INLINE_VISIBILITY HERCULES_ATTR_VISIBILITY_HIDDEN HERCULES_ALWAYS_INLINE
 
 /*! \brief helper macro to supress unused warning */
 #if defined(__GNUC__)
-#define MATXSCRIPT_ATTRIBUTE_UNUSED __attribute__((unused))
+#define HERCULES_ATTRIBUTE_UNUSED __attribute__((unused))
 #else
-#define MATXSCRIPT_ATTRIBUTE_UNUSED
+#define HERCULES_ATTRIBUTE_UNUSED
 #endif
 
 // warn unused result
 #if defined(_MSC_VER) && (_MSC_VER >= 1700)
-#define MATXSCRIPT_WARN_UNUSED_RESULT _Check_return_
+#define HERCULES_WARN_UNUSED_RESULT _Check_return_
 #elif defined(__clang__) || defined(__GNUC__)
-#define MATXSCRIPT_WARN_UNUSED_RESULT __attribute__((__warn_unused_result__))
+#define HERCULES_WARN_UNUSED_RESULT __attribute__((__warn_unused_result__))
 #else
-#define MATXSCRIPT_WARN_UNUSED_RESULT
+#define HERCULES_WARN_UNUSED_RESULT
 #endif
 
 /*! \brief helper macro to supress Undefined Behavior Sanitizer for a specific function */
 #if defined(__clang__)
-#define MATXSCRIPT_SUPPRESS_UBSAN __attribute__((no_sanitize("undefined")))
+#define HERCULES_SUPPRESS_UBSAN __attribute__((no_sanitize("undefined")))
 #elif defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 409)
-#define MATXSCRIPT_SUPPRESS_UBSAN __attribute__((no_sanitize_undefined))
+#define HERCULES_SUPPRESS_UBSAN __attribute__((no_sanitize_undefined))
 #else
-#define MATXSCRIPT_SUPPRESS_UBSAN
+#define HERCULES_SUPPRESS_UBSAN
 #endif
 
 // __ubsan_xxx is copy from pytorch
@@ -195,137 +195,137 @@
 // Generalize warning push/pop.
 #if defined(__GNUC__) || defined(__clang__)
 // Clang & GCC
-#define MATXSCRIPT_PUSH_WARNING _Pragma("GCC diagnostic push")
-#define MATXSCRIPT_POP_WARNING _Pragma("GCC diagnostic pop")
-#define MATXSCRIPT_GNU_DISABLE_WARNING_INTERNAL2(warningName) #warningName
-#define MATXSCRIPT_GNU_DISABLE_WARNING(warningName) \
-  _Pragma(MATXSCRIPT_GNU_DISABLE_WARNING_INTERNAL2(GCC diagnostic ignored warningName))
+#define HERCULES_PUSH_WARNING _Pragma("GCC diagnostic push")
+#define HERCULES_POP_WARNING _Pragma("GCC diagnostic pop")
+#define HERCULES_GNU_DISABLE_WARNING_INTERNAL2(warningName) #warningName
+#define HERCULES_GNU_DISABLE_WARNING(warningName) \
+  _Pragma(HERCULES_GNU_DISABLE_WARNING_INTERNAL2(GCC diagnostic ignored warningName))
 #ifdef __clang__
-#define MATXSCRIPT_CLANG_DISABLE_WARNING(warningName) MATXSCRIPT_GNU_DISABLE_WARNING(warningName)
-#define MATXSCRIPT_GCC_DISABLE_WARNING(warningName)
+#define HERCULES_CLANG_DISABLE_WARNING(warningName) HERCULES_GNU_DISABLE_WARNING(warningName)
+#define HERCULES_GCC_DISABLE_WARNING(warningName)
 #else
-#define MATXSCRIPT_CLANG_DISABLE_WARNING(warningName)
-#define MATXSCRIPT_GCC_DISABLE_WARNING(warningName) MATXSCRIPT_GNU_DISABLE_WARNING(warningName)
+#define HERCULES_CLANG_DISABLE_WARNING(warningName)
+#define HERCULES_GCC_DISABLE_WARNING(warningName) HERCULES_GNU_DISABLE_WARNING(warningName)
 #endif
-#define MATXSCRIPT_MSVC_DISABLE_WARNING(warningNumber)
+#define HERCULES_MSVC_DISABLE_WARNING(warningNumber)
 #elif defined(_MSC_VER)
-#define MATXSCRIPT_PUSH_WARNING __pragma(warning(push))
-#define MATXSCRIPT_POP_WARNING __pragma(warning(pop))
+#define HERCULES_PUSH_WARNING __pragma(warning(push))
+#define HERCULES_POP_WARNING __pragma(warning(pop))
 // Disable the GCC warnings.
-#define MATXSCRIPT_GNU_DISABLE_WARNING(warningName)
-#define MATXSCRIPT_GCC_DISABLE_WARNING(warningName)
-#define MATXSCRIPT_CLANG_DISABLE_WARNING(warningName)
-#define MATXSCRIPT_MSVC_DISABLE_WARNING(warningNumber) __pragma(warning(disable : warningNumber))
+#define HERCULES_GNU_DISABLE_WARNING(warningName)
+#define HERCULES_GCC_DISABLE_WARNING(warningName)
+#define HERCULES_CLANG_DISABLE_WARNING(warningName)
+#define HERCULES_MSVC_DISABLE_WARNING(warningNumber) __pragma(warning(disable : warningNumber))
 #else
-#define MATXSCRIPT_PUSH_WARNING
-#define MATXSCRIPT_POP_WARNING
-#define MATXSCRIPT_GNU_DISABLE_WARNING(warningName)
-#define MATXSCRIPT_GCC_DISABLE_WARNING(warningName)
-#define MATXSCRIPT_CLANG_DISABLE_WARNING(warningName)
-#define MATXSCRIPT_MSVC_DISABLE_WARNING(warningNumber)
+#define HERCULES_PUSH_WARNING
+#define HERCULES_POP_WARNING
+#define HERCULES_GNU_DISABLE_WARNING(warningName)
+#define HERCULES_GCC_DISABLE_WARNING(warningName)
+#define HERCULES_CLANG_DISABLE_WARNING(warningName)
+#define HERCULES_MSVC_DISABLE_WARNING(warningNumber)
 #endif
 
 #ifdef __clang__
-#define _MATXSCRIPT_PRAGMA__(string) _Pragma(#string)
-#define _MATXSCRIPT_PRAGMA_(string) _MATXSCRIPT_PRAGMA__(string)
-#define MATXSCRIPT_CLANG_DIAGNOSTIC_PUSH() _Pragma("clang diagnostic push")
-#define MATXSCRIPT_CLANG_DIAGNOSTIC_POP() _Pragma("clang diagnostic pop")
-#define MATXSCRIPT_CLANG_DIAGNOSTIC_IGNORE(flag) _MATXSCRIPT_PRAGMA_(clang diagnostic ignored flag)
-#define MATXSCRIPT_CLANG_HAS_WARNING(flag) __has_warning(flag)
+#define _HERCULES_PRAGMA__(string) _Pragma(#string)
+#define _HERCULES_PRAGMA_(string) _HERCULES_PRAGMA__(string)
+#define HERCULES_CLANG_DIAGNOSTIC_PUSH() _Pragma("clang diagnostic push")
+#define HERCULES_CLANG_DIAGNOSTIC_POP() _Pragma("clang diagnostic pop")
+#define HERCULES_CLANG_DIAGNOSTIC_IGNORE(flag) _HERCULES_PRAGMA_(clang diagnostic ignored flag)
+#define HERCULES_CLANG_HAS_WARNING(flag) __has_warning(flag)
 #else
-#define MATXSCRIPT_CLANG_DIAGNOSTIC_PUSH()
-#define MATXSCRIPT_CLANG_DIAGNOSTIC_POP()
-#define MATXSCRIPT_CLANG_DIAGNOSTIC_IGNORE(flag)
-#define MATXSCRIPT_CLANG_HAS_WARNING(flag) 0
+#define HERCULES_CLANG_DIAGNOSTIC_PUSH()
+#define HERCULES_CLANG_DIAGNOSTIC_POP()
+#define HERCULES_CLANG_DIAGNOSTIC_IGNORE(flag)
+#define HERCULES_CLANG_HAS_WARNING(flag) 0
 #endif
 
-#ifdef MATXSCRIPT_HAVE_SHADOW_LOCAL_WARNINGS
-#define MATXSCRIPT_GCC_DISABLE_NEW_SHADOW_WARNINGS            \
-  MATXSCRIPT_GNU_DISABLE_WARNING("-Wshadow-compatible-local") \
-  MATXSCRIPT_GNU_DISABLE_WARNING("-Wshadow-local")            \
-  MATXSCRIPT_GNU_DISABLE_WARNING("-Wshadow")
+#ifdef HERCULES_HAVE_SHADOW_LOCAL_WARNINGS
+#define HERCULES_GCC_DISABLE_NEW_SHADOW_WARNINGS            \
+  HERCULES_GNU_DISABLE_WARNING("-Wshadow-compatible-local") \
+  HERCULES_GNU_DISABLE_WARNING("-Wshadow-local")            \
+  HERCULES_GNU_DISABLE_WARNING("-Wshadow")
 #else
-#define MATXSCRIPT_GCC_DISABLE_NEW_SHADOW_WARNINGS /* empty */
+#define HERCULES_GCC_DISABLE_NEW_SHADOW_WARNINGS /* empty */
 #endif
 
 //  and to force the compiler to optimize for the fast path, even when it is not
 //  overwhelmingly likely.
 #if __GNUC__
-#define MATXSCRIPT_DETAIL_BUILTIN_EXPECT(b, t) (__builtin_expect(b, t))
+#define HERCULES_DETAIL_BUILTIN_EXPECT(b, t) (__builtin_expect(b, t))
 #else
-#define MATXSCRIPT_DETAIL_BUILTIN_EXPECT(b, t) b
+#define HERCULES_DETAIL_BUILTIN_EXPECT(b, t) b
 #endif
-#define MATXSCRIPT_LIKELY(x) MATXSCRIPT_DETAIL_BUILTIN_EXPECT((x), 1)
-#define MATXSCRIPT_UNLIKELY(x) MATXSCRIPT_DETAIL_BUILTIN_EXPECT((x), 0)
+#define HERCULES_LIKELY(x) HERCULES_DETAIL_BUILTIN_EXPECT((x), 1)
+#define HERCULES_UNLIKELY(x) HERCULES_DETAIL_BUILTIN_EXPECT((x), 0)
 
-// MATXSCRIPT_ASSERT()
+// HERCULES_ASSERT()
 //
 // In C++11, `assert` can't be used portably within constexpr functions.
-// MATXSCRIPT_ASSERT functions as a runtime assert but works in C++11 constexpr
+// HERCULES_ASSERT functions as a runtime assert but works in C++11 constexpr
 // functions.  Example:
 //
 // constexpr double Divide(double a, double b) {
-//   return MATXSCRIPT_ASSERT(b != 0), a / b;
+//   return HERCULES_ASSERT(b != 0), a / b;
 // }
 //
 // This macro is inspired by
 // https://akrzemi1.wordpress.com/2017/05/18/asserts-in-constexpr-functions/
 #if defined(NDEBUG)
-#define MATXSCRIPT_ASSERT(expr) (false ? static_cast<void>(expr) : static_cast<void>(0))
+#define HERCULES_ASSERT(expr) (false ? static_cast<void>(expr) : static_cast<void>(0))
 #else
-#define MATXSCRIPT_ASSERT(expr) \
-  (MATXSCRIPT_LIKELY((expr)) ? static_cast<void>(0) : [] { assert(false && #expr); }())
+#define HERCULES_ASSERT(expr) \
+  (HERCULES_LIKELY((expr)) ? static_cast<void>(0) : [] { assert(false && #expr); }())
 #endif
 
 /*!
- * \brief whether throw ::matxscript::runtime::Error instead of
+ * \brief whether throw ::hercules::runtime::Error instead of
  *  directly calling abort when FATAL error occurred
  *  NOTE: this may still not be perfect.
  *  do not use FATAL and CHECK in destructors
  */
-#ifndef MATXSCRIPT_LOG_FATAL_THROW
-#define MATXSCRIPT_LOG_FATAL_THROW 1
+#ifndef HERCULES_LOG_FATAL_THROW
+#define HERCULES_LOG_FATAL_THROW 1
 #endif
 
 /*!
  * \brief whether always log a message before throw
  * This can help identify the error that cannot be catched.
  */
-#ifndef MATXSCRIPT_LOG_BEFORE_THROW
-#define MATXSCRIPT_LOG_BEFORE_THROW 0
+#ifndef HERCULES_LOG_BEFORE_THROW
+#define HERCULES_LOG_BEFORE_THROW 0
 #endif
 
 /*!
  * \brief Whether to use customized logger,
  * whose output can be decided by other libraries.
  */
-#ifndef MATXSCRIPT_LOG_CUSTOMIZE
-#define MATXSCRIPT_LOG_CUSTOMIZE 0
+#ifndef HERCULES_LOG_CUSTOMIZE
+#define HERCULES_LOG_CUSTOMIZE 0
 #endif
 
 /*!
  * \brief Whether to enable debug logging feature.
  */
-#ifndef MATXSCRIPT_LOG_DEBUG
+#ifndef HERCULES_LOG_DEBUG
 #ifdef NDEBUG
-#define MATXSCRIPT_LOG_DEBUG 0
+#define HERCULES_LOG_DEBUG 0
 #else
-#define MATXSCRIPT_LOG_DEBUG 1
+#define HERCULES_LOG_DEBUG 1
 #endif
 #endif
 
 /*!
  * \brief Whether to disable date message on the log.
  */
-#ifndef MATXSCRIPT_LOG_NODATE
-#define MATXSCRIPT_LOG_NODATE 0
+#ifndef HERCULES_LOG_NODATE
+#define HERCULES_LOG_NODATE 0
 #endif
 
 /*! \brief helper macro to generate string concat */
-#define MATXSCRIPT_STR_CONCAT_(__x, __y) __x##__y
-#define MATXSCRIPT_STR_CONCAT(__x, __y) MATXSCRIPT_STR_CONCAT_(__x, __y)
-#define MATXSCRIPT_AS_STR_(x) #x
-#define MATXSCRIPT_AS_STR(x) MATXSCRIPT_AS_STR_(x)
+#define HERCULES_STR_CONCAT_(__x, __y) __x##__y
+#define HERCULES_STR_CONCAT(__x, __y) HERCULES_STR_CONCAT_(__x, __y)
+#define HERCULES_AS_STR_(x) #x
+#define HERCULES_AS_STR(x) HERCULES_AS_STR_(x)
 
 /*!
  * \brief Disable copy constructor and assignment operator.
@@ -336,7 +336,7 @@
  * section if C++11 is not available.
  */
 #ifndef DISALLOW_COPY_AND_ASSIGN
-#if MATXSCRIPT_USE_CXX11
+#if HERCULES_USE_CXX11
 #define DISALLOW_COPY_AND_ASSIGN(T) \
   T(T const&) = delete;             \
   T(T&&) = delete;                  \
@@ -353,7 +353,7 @@
  * \brief Define the default copy/move constructor and assign operator
  * \param TypeName The class typename.
  */
-#define MATXSCRIPT_DEFINE_DEFAULT_COPY_MOVE_AND_ASSIGN(TypeName) \
+#define HERCULES_DEFINE_DEFAULT_COPY_MOVE_AND_ASSIGN(TypeName) \
   TypeName(const TypeName& other) = default;                     \
   TypeName(TypeName&& other) noexcept = default;                 \
   TypeName& operator=(const TypeName& other) = default;          \
@@ -363,44 +363,44 @@
 #include <vector>
 
 #if defined(__cpp_lib_experimental_string_view) && __cpp_lib_experimental_string_view >= 201411
-#define MATXSCRIPT_USE_CXX14_STRING_VIEW 1
+#define HERCULES_USE_CXX14_STRING_VIEW 1
 #else
-#define MATXSCRIPT_USE_CXX14_STRING_VIEW 0
+#define HERCULES_USE_CXX14_STRING_VIEW 0
 #endif
 
 // Tested with clang version 9.0.1 and c++17. It will detect string_view support
 // correctly.
 #if defined(__cpp_lib_string_view) && __cpp_lib_string_view >= 201606
-#define MATXSCRIPT_USE_CXX17_STRING_VIEW 1
+#define HERCULES_USE_CXX17_STRING_VIEW 1
 #else
-#define MATXSCRIPT_USE_CXX17_STRING_VIEW 0
+#define HERCULES_USE_CXX17_STRING_VIEW 0
 #endif
 
 // align function
 #if defined(__GNUC__) || defined(__GNUG__) || defined(__clang__)
-#define MATXSCRIPT_ALIGN_FUNCTION __attribute__((aligned(128)))
+#define HERCULES_ALIGN_FUNCTION __attribute__((aligned(128)))
 #elif defined _MSC_VER
-#define MATXSCRIPT_ALIGN_FUNCTION
+#define HERCULES_ALIGN_FUNCTION
 #else
-#define MATXSCRIPT_ALIGN_FUNCTION
+#define HERCULES_ALIGN_FUNCTION
 #endif
 
 // align address
-#ifndef MATXSCRIPT_MEMORY_ALIGNMENT
-#define MATXSCRIPT_MEMORY_ALIGNMENT sizeof(unsigned long) /* platform word */
+#ifndef HERCULES_MEMORY_ALIGNMENT
+#define HERCULES_MEMORY_ALIGNMENT sizeof(unsigned long) /* platform word */
 #endif
 
-#define matxscript_memory_align(d, a) (((d) + ((a)-1)) & ~((a)-1))
-#define matxscript_memory_align_ptr(p, a) \
+#define hercules_memory_align(d, a) (((d) + ((a)-1)) & ~((a)-1))
+#define hercules_memory_align_ptr(p, a) \
   (unsigned char*)(((uintptr_t)(p) + ((uintptr_t)(a)-1)) & ~((uintptr_t)(a)-1))
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // Endianness
 #ifdef _MSC_VER
 // It's MSVC, so we just have to guess ... and allow an override
-#ifdef MATXSCRIPT_ENDIAN_BE
+#ifdef HERCULES_ENDIAN_BE
 constexpr auto kIsLittleEndian = false;
 #else
 constexpr auto kIsLittleEndian = true;
@@ -410,7 +410,7 @@ constexpr auto kIsLittleEndian = __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__;
 #endif
 constexpr auto kIsBigEndian = !kIsLittleEndian;
 
-MATXSCRIPT_ALWAYS_INLINE void assume(bool cond) {
+HERCULES_ALWAYS_INLINE void assume(bool cond) {
 #if defined(__clang__)  // Must go first because Clang also defines __GNUC__.
   __builtin_assume(cond);
 #elif defined(__GNUC__)
@@ -424,7 +424,7 @@ MATXSCRIPT_ALWAYS_INLINE void assume(bool cond) {
 #endif
 }
 
-MATXSCRIPT_ALWAYS_INLINE void assume_unreachable() {
+HERCULES_ALWAYS_INLINE void assume_unreachable() {
   assume(false);
   // Do a bit more to get the compiler to understand
   // that this function really will never return.
@@ -486,7 +486,7 @@ inline const char* BeginPtr(const std::string& str) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 /*
  * The following code is taken from https://github.com/python/cpython/blob/main/Include/pyport.h
@@ -497,12 +497,12 @@ inline const char* BeginPtr(const std::string& str) {
      (((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)) || (__GNUC__ >= 4)))
 static_assert(false, "need gcc 4+");
 #else
-#define MATXSCRIPT_ARRAY_LENGTH(array) (sizeof(array) / sizeof((array)[0]))
+#define HERCULES_ARRAY_LENGTH(array) (sizeof(array) / sizeof((array)[0]))
 #endif
 
 /* Largest positive value of type tx_ssize_t. */
-#define MATXSCRIPT_SSIZE_T_MAX ((ssize_t)(((size_t)-1) >> 1))
+#define HERCULES_SSIZE_T_MAX ((ssize_t)(((size_t)-1) >> 1))
 /* Smallest negative value of type tx_ssize_t. */
-#define MATXSCRIPT_SSIZE_T_MIN (-MATXSCRIPT_SSIZE_T_MAX - 1)
+#define HERCULES_SSIZE_T_MIN (-HERCULES_SSIZE_T_MAX - 1)
 
-#define MATXSCRIPT_SAFE_DOWNCAST(VALUE, WIDE, NARROW) (NARROW)(VALUE)
+#define HERCULES_SAFE_DOWNCAST(VALUE, WIDE, NARROW) (NARROW)(VALUE)

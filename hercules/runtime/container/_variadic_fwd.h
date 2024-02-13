@@ -19,7 +19,7 @@
  */
 #pragma once
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace variadic_details {
 
@@ -29,4 +29,4 @@ static inline void fwd(Types const&... types) {
 
 }  // namespace variadic_details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

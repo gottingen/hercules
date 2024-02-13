@@ -24,7 +24,7 @@
 #include <hercules/runtime/utf8/decoders.h>
 #include <hercules/runtime/utf8/encoders.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 Unicode UTF8Decode(string_view input) {
@@ -122,4 +122,4 @@ String AsciiDoUpper(string_view sv) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

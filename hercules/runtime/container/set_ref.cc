@@ -26,7 +26,7 @@
 #include <hercules/runtime/runtime_value.h>
 #include <hercules/runtime/str_escape.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class SetIteratorNode : public IteratorNode {
@@ -316,4 +316,4 @@ bool IsConvertible<Set>(const Object* node) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

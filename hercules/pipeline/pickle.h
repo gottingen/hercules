@@ -29,20 +29,20 @@
 #include <hercules/runtime/container.h>
 // clang-format on
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace pickle {
 
 /******************************************************************************
  * utf-8 json, no node info
  *****************************************************************************/
-MATX_DLL RTValue FromJson(const rapidjson::Value& val, bool use_unicode = false);
+HERCULES_DLL RTValue FromJson(const rapidjson::Value& val, bool use_unicode = false);
 
-MATX_DLL void ToJson(const Any& value,
+HERCULES_DLL void ToJson(const Any& value,
                      rapidjson::Value& json_val,
                      rapidjson::MemoryPoolAllocator<>& allocator);
 
-MATX_DLL inline rapidjson::Document ToJson(const Any& value) {
+HERCULES_DLL inline rapidjson::Document ToJson(const Any& value) {
   rapidjson::Document doc;
   ToJson(value, doc, doc.GetAllocator());
   return doc;
@@ -56,20 +56,20 @@ MATX_DLL inline rapidjson::Document ToJson(const Any& value) {
  * }
  *****************************************************************************/
 // user_code is only valid for opaque handle
-MATX_DLL RTValue FromJsonStruct(const rapidjson::Value& val);
-MATX_DLL void ToJsonStruct(const Any& value,
+HERCULES_DLL RTValue FromJsonStruct(const rapidjson::Value& val);
+HERCULES_DLL void ToJsonStruct(const Any& value,
                            rapidjson::Value& json_val,
                            rapidjson::MemoryPoolAllocator<>& allocator);
 
-MATX_DLL inline rapidjson::Document ToJsonStruct(const Any& value) {
+HERCULES_DLL inline rapidjson::Document ToJsonStruct(const Any& value) {
   rapidjson::Document doc;
   ToJsonStruct(value, doc, doc.GetAllocator());
   return doc;
 }
 
-MATX_DLL String Serialize(const Any& value);
-MATX_DLL RTValue DeSerialize(const string_view& str);
+HERCULES_DLL String Serialize(const Any& value);
+HERCULES_DLL RTValue DeSerialize(const string_view& str);
 
 }  // namespace pickle
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

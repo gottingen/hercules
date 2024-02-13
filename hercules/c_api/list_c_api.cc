@@ -24,14 +24,14 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * List container
  *****************************************************************************/
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.List").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.List").set_body([](PyArgs args) -> RTValue {
   List data;
   for (int i = 0; i < args.size(); ++i) {
     data.push_back(args[i].As<RTValue>());
@@ -39,7 +39,7 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.List").set_body([](PyArgs args) -> RTValue {
   return data;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.FTList").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.FTList").set_body([](PyArgs args) -> RTValue {
   FTList<RTValue> data;
   for (int i = 0; i < args.size(); ++i) {
     data.push_back(args[i].As<RTValue>());
@@ -47,15 +47,15 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.FTList").set_body([](PyArgs args) -> RTValue
   return data;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListEqual").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "list.__eq__ expect " << 2 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.ListEqual").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "list.__eq__ expect " << 2 << " arguments but get " << args.size();
   RTValue lhs = args[0].As<RTValue>();
   RTValue rhs = args[1].As<RTValue>();
   return lhs == rhs;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListGetSlice").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(4 == args.size()) << "list.__getslice__ expect " << 4 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.ListGetSlice").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(4 == args.size()) << "list.__getslice__ expect " << 4 << " arguments but get "
                             << args.size();
   int64_t start = args[1].As<int64_t>();
   int64_t stop = args[2].As<int64_t>();
@@ -70,19 +70,19 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListGetSlice").set_body([](PyArgs args) -> R
                                                                        {start, stop, step});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.List_Iter").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.List_Iter").set_body([](PyArgs args) -> RTValue {
   List container = args[0].As<List>();
   return container.iter();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListGetItem").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "list.__getitem__ expect " << 2 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.ListGetItem").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "list.__getitem__ expect " << 2 << " arguments but get "
                             << args.size();
   int64_t i = args[1].As<int64_t>();
   const auto& self = args[0];
@@ -94,14 +94,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListGetItem").set_body([](PyArgs args) -> RT
       return self.AsObjectRef<FTObjectBase>().generic_call_attr("__getitem__", {i});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListSetItem").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(3 == args.size()) << "list.__setitem__ expect " << 3 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.ListSetItem").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(3 == args.size()) << "list.__setitem__ expect " << 3 << " arguments but get "
                             << args.size();
   const auto& self = args[0];
   int64_t i = args[1].As<int64_t>();
@@ -114,14 +114,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListSetItem").set_body([](PyArgs args) -> RT
                                                                 {i, args[2].As<RTView>()});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListSize").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 == args.size()) << "list.__len__ expect " << 1 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.ListSize").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 == args.size()) << "list.__len__ expect " << 1 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (args[0].type_code()) {
     case TypeIndex::kRuntimeList: {
@@ -131,14 +131,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListSize").set_body([](PyArgs args) -> RTVal
       return self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("__len__", {});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListAppend").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "list.append expect " << 2 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.ListAppend").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "list.append expect " << 2 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (args[0].type_code()) {
     case TypeIndex::kRuntimeList: {
@@ -148,14 +148,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListAppend").set_body([](PyArgs args) -> RTV
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("append", {args[1].As<RTView>()});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListExtend").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "list.extend expect " << 2 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.ListExtend").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "list.extend expect " << 2 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (args[0].type_code()) {
     case TypeIndex::kRuntimeList: {
@@ -165,14 +165,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListExtend").set_body([](PyArgs args) -> RTV
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("extend", {args[1].As<RTView>()});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListRepeat").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "list.__mul__ expect " << 2 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.ListRepeat").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "list.__mul__ expect " << 2 << " arguments but get " << args.size();
   const auto& self = args[0];
   int64_t times = args[1].As<int64_t>();
   switch (args[0].type_code()) {
@@ -183,14 +183,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListRepeat").set_body([](PyArgs args) -> RTV
       return self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("__mul__", {times});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListReserve").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "list.reserve expect " << 2 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.ListReserve").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "list.reserve expect " << 2 << " arguments but get " << args.size();
   int64_t i = args[1].As<int64_t>();
   const auto& self = args[0];
   switch (args[0].type_code()) {
@@ -201,25 +201,25 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListReserve").set_body([](PyArgs args) -> RT
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("reserve", {i});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListCapacity").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.ListCapacity").set_body([](PyArgs args) -> RTValue {
   List data = args[0].As<List>();
   return static_cast<int64_t>(data.capacity());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListConcat").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.ListConcat").set_body([](PyArgs args) -> RTValue {
   List data = args[0].As<List>();
   List value = args[1].As<List>();
   return List::Concat(data, value);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListContains").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "list.__contains__ expect " << 2 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.ListContains").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "list.__contains__ expect " << 2 << " arguments but get "
                             << args.size();
   const auto& self = args[0];
   switch (args[0].type_code()) {
@@ -231,14 +231,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListContains").set_body([](PyArgs args) -> R
                                                                        {args[1].As<RTView>()});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListSetSlice").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(4 == args.size()) << "list.__setslice__ expect " << 4 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.ListSetSlice").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(4 == args.size()) << "list.__setslice__ expect " << 4 << " arguments but get "
                             << args.size();
   const auto& self = args[0];
   int64_t start = args[1].As<int64_t>();
@@ -252,14 +252,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListSetSlice").set_body([](PyArgs args) -> R
                                                                 {start, end, args[3].As<RTView>()});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListPop").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 == args.size() || 2 == args.size())
+HERCULES_REGISTER_GLOBAL("runtime.ListPop").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 == args.size() || 2 == args.size())
       << "list.pop expect " << 1 << " or " << 2 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (args[0].type_code()) {
@@ -279,14 +279,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListPop").set_body([](PyArgs args) -> RTValu
       }
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListInsert").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(3 == args.size()) << "list.insert expect " << 3 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.ListInsert").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(3 == args.size()) << "list.insert expect " << 3 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (args[0].type_code()) {
     case TypeIndex::kRuntimeList: {
@@ -297,14 +297,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListInsert").set_body([](PyArgs args) -> RTV
           "insert", {args[1].As<int64_t>(), args[2].As<RTValue>()});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListRemove").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(2 == args.size()) << "list.remove expect " << 2 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.ListRemove").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(2 == args.size()) << "list.remove expect " << 2 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (args[0].type_code()) {
     case TypeIndex::kRuntimeList: {
@@ -314,14 +314,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListRemove").set_body([](PyArgs args) -> RTV
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("remove", {args[1].As<RTView>()});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListClear").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 == args.size()) << "list.clear expect " << 1 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.ListClear").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 == args.size()) << "list.clear expect " << 1 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (args[0].type_code()) {
     case TypeIndex::kRuntimeList: {
@@ -331,14 +331,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListClear").set_body([](PyArgs args) -> RTVa
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("clear", {});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListReverse").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 == args.size()) << "list.reverse expect " << 1 << " arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.ListReverse").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 == args.size()) << "list.reverse expect " << 1 << " arguments but get " << args.size();
   const auto& self = args[0];
   switch (args[0].type_code()) {
     case TypeIndex::kRuntimeList: {
@@ -348,14 +348,14 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListReverse").set_body([](PyArgs args) -> RT
       self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("reverse", {});
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListIndex").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(4 <= args.size()) << "list.index expect at least " << 4 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.ListIndex").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(4 <= args.size()) << "list.index expect at least " << 4 << " arguments but get "
                             << args.size();
   const auto& self = args[0];
   RTValue x = args[1].As<RTValue>();
@@ -379,13 +379,13 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListIndex").set_body([](PyArgs args) -> RTVa
       return self.AsObjectRefNoCheck<FTObjectBase>().generic_call_attr("index", newArgs);
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(args[0].type_code());
     } break;
   }
   return -1;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ListSort").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.ListSort").set_body([](PyArgs args) -> RTValue {
   List data = args[0].As<List>();
   if (args.size() == 1) {
     ListHelper::Sort(data);
@@ -397,4 +397,4 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ListSort").set_body([](PyArgs args) -> RTVal
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

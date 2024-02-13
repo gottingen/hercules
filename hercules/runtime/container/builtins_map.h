@@ -28,7 +28,7 @@
 #include "_variadic_fwd.h"
 #include "iterator_utils.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace details {
@@ -185,4 +185,4 @@ auto builtins_map(FLambda&& func, Iterables&&... iters) -> details::map<
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -41,7 +41,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/variadic_traits.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::Object;
@@ -97,7 +97,7 @@ class ArrayNode : public Object, public runtime::InplaceArrayBase<ArrayNode, Obj
    */
   static ObjectPtr<ArrayNode> CopyFrom(int64_t cap, ArrayNode* from) {
     int64_t size = from->size_;
-    MXCHECK_GE(cap, size) << "ValueError: not enough capacity";
+    HSCHECK_GE(cap, size) << "ValueError: not enough capacity";
     ObjectPtr<ArrayNode> p = ArrayNode::Empty(cap);
     ObjectRef* write = p->MutableBegin();
     ObjectRef* read = from->MutableBegin();
@@ -116,7 +116,7 @@ class ArrayNode : public Object, public runtime::InplaceArrayBase<ArrayNode, Obj
    */
   static ObjectPtr<ArrayNode> MoveFrom(int64_t cap, ArrayNode* from) {
     int64_t size = from->size_;
-    MXCHECK_GE(cap, size) << "ValueError: not enough capacity";
+    HSCHECK_GE(cap, size) << "ValueError: not enough capacity";
     ObjectPtr<ArrayNode> p = ArrayNode::Empty(cap);
     ObjectRef* write = p->MutableBegin();
     ObjectRef* read = from->MutableBegin();
@@ -145,7 +145,7 @@ class ArrayNode : public Object, public runtime::InplaceArrayBase<ArrayNode, Obj
 
   static constexpr const uint32_t _type_index = runtime::TypeIndex::kRuntimeArray;
   static constexpr const char* _type_key = "Array";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ArrayNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ArrayNode, Object);
 
  private:
   /*! \return Size of initialized memory, used by InplaceArrayBase. */
@@ -169,7 +169,7 @@ class ArrayNode : public Object, public runtime::InplaceArrayBase<ArrayNode, Obj
    * \return Ref-counted ArrayNode requested
    */
   static ObjectPtr<ArrayNode> Empty(int64_t n = kInitSize) {
-    MXCHECK_GE(n, 0);
+    HSCHECK_GE(n, 0);
     ObjectPtr<ArrayNode> p = runtime::make_inplace_array_object<ArrayNode, ObjectRef>(n);
     p->capacity_ = n;
     p->size_ = 0;
@@ -360,7 +360,7 @@ class Array : public ObjectRef {
   template <typename IterType>
   Array(IterType first, IterType last) {
     static_assert(is_valid_iterator<T, IterType>::value,
-                  "IterType cannot be inserted into a matxscript::ir::Array<T>");
+                  "IterType cannot be inserted into a hercules::ir::Array<T>");
     Assign(first, last);
   }
 
@@ -451,8 +451,8 @@ class Array : public ObjectRef {
    */
   const T operator[](int64_t i) const {
     ArrayNode* p = GetArrayNode();
-    MXCHECK(p != nullptr) << "ValueError: cannot index a null array";
-    MXCHECK(0 <= i && i < p->size_)
+    HSCHECK(p != nullptr) << "ValueError: cannot index a null array";
+    HSCHECK(0 <= i && i < p->size_)
         << "IndexError: indexing " << i << " on an array of size " << p->size_;
     return DowncastNoCheck<T>(*(p->begin() + i));
   }
@@ -477,16 +477,16 @@ class Array : public ObjectRef {
   /*! \return The first element of the array */
   const T front() const {
     ArrayNode* p = GetArrayNode();
-    MXCHECK(p != nullptr) << "ValueError: cannot index a null array";
-    MXCHECK_GT(p->size_, 0) << "IndexError: cannot index an empty array";
+    HSCHECK(p != nullptr) << "ValueError: cannot index a null array";
+    HSCHECK_GT(p->size_, 0) << "IndexError: cannot index an empty array";
     return DowncastNoCheck<T>(*(p->begin()));
   }
 
   /*! \return The last element of the array */
   const T back() const {
     ArrayNode* p = GetArrayNode();
-    MXCHECK(p != nullptr) << "ValueError: cannot index a null array";
-    MXCHECK_GT(p->size_, 0) << "IndexError: cannot index an empty array";
+    HSCHECK(p != nullptr) << "ValueError: cannot index a null array";
+    HSCHECK_GT(p->size_, 0) << "IndexError: cannot index an empty array";
     return DowncastNoCheck<T>(*(p->end() - 1));
   }
 
@@ -508,7 +508,7 @@ class Array : public ObjectRef {
    * \param val The element to insert
    */
   void insert(iterator position, const T& val) {
-    MXCHECK(data_ != nullptr) << "ValueError: cannot insert a null array";
+    HSCHECK(data_ != nullptr) << "ValueError: cannot insert a null array";
     int64_t idx = std::distance(begin(), position);
     int64_t size = GetArrayNode()->size_;
     auto addr = CopyOnWrite(1)                               //
@@ -527,11 +527,11 @@ class Array : public ObjectRef {
   template <typename IterType>
   void insert(iterator position, IterType first, IterType last) {
     static_assert(is_valid_iterator<T, IterType>::value,
-                  "IterType cannot be inserted into a matxscript::ir::Array<T>");
+                  "IterType cannot be inserted into a hercules::ir::Array<T>");
     if (first == last) {
       return;
     }
-    MXCHECK(data_ != nullptr) << "ValueError: cannot insert a null array";
+    HSCHECK(data_ != nullptr) << "ValueError: cannot insert a null array";
     int64_t idx = std::distance(begin(), position);
     int64_t size = GetArrayNode()->size_;
     int64_t numel = std::distance(first, last);
@@ -543,9 +543,9 @@ class Array : public ObjectRef {
 
   /*! \brief Remove the last item of the list */
   void pop_back() {
-    MXCHECK(data_ != nullptr) << "ValueError: cannot pop_back because array is null";
+    HSCHECK(data_ != nullptr) << "ValueError: cannot pop_back because array is null";
     int64_t size = GetArrayNode()->size_;
-    MXCHECK_GT(size, 0) << "ValueError: cannot pop_back because array is empty";
+    HSCHECK_GT(size, 0) << "ValueError: cannot pop_back because array is empty";
     CopyOnWrite()->ShrinkBy(1);
   }
 
@@ -554,10 +554,10 @@ class Array : public ObjectRef {
    * \param position An iterator pointing to the element to be erased
    */
   void erase(iterator position) {
-    MXCHECK(data_ != nullptr) << "ValueError: cannot erase a null array";
+    HSCHECK(data_ != nullptr) << "ValueError: cannot erase a null array";
     int64_t st = std::distance(begin(), position);
     int64_t size = GetArrayNode()->size_;
-    MXCHECK(0 <= st && st < size) << "ValueError: cannot erase at index " << st
+    HSCHECK(0 <= st && st < size) << "ValueError: cannot erase at index " << st
                                   << ", because Array size is " << size;
     CopyOnWrite()                             //
         ->MoveElementsLeft(st, st + 1, size)  //
@@ -573,12 +573,12 @@ class Array : public ObjectRef {
     if (first == last) {
       return;
     }
-    MXCHECK(data_ != nullptr) << "ValueError: cannot erase a null array";
+    HSCHECK(data_ != nullptr) << "ValueError: cannot erase a null array";
     int64_t size = GetArrayNode()->size_;
     int64_t st = std::distance(begin(), first);
     int64_t ed = std::distance(begin(), last);
-    MXCHECK_LT(st, ed) << "ValueError: cannot erase array in range [" << st << ", " << ed << ")";
-    MXCHECK(0 <= st && st <= size && 0 <= ed && ed <= size)
+    HSCHECK_LT(st, ed) << "ValueError: cannot erase array in range [" << st << ", " << ed << ")";
+    HSCHECK(0 <= st && st <= size && 0 <= ed && ed <= size)
         << "ValueError: cannot erase array in range [" << st << ", " << ed << ")"
         << ", because array size is " << size;
     CopyOnWrite()                         //
@@ -591,7 +591,7 @@ class Array : public ObjectRef {
    * \param n The new size.
    */
   void resize(int64_t n) {
-    MXCHECK_GE(n, 0) << "ValueError: cannot resize an Array to negative size";
+    HSCHECK_GE(n, 0) << "ValueError: cannot resize an Array to negative size";
     if (data_ == nullptr) {
       SwitchContainer(n);
       return;
@@ -632,7 +632,7 @@ class Array : public ObjectRef {
    */
   void Set(int64_t i, T value) {
     ArrayNode* p = this->CopyOnWrite();
-    MXCHECK(0 <= i && i < p->size_)
+    HSCHECK(0 <= i && i < p->size_)
         << "IndexError: indexing " << i << " on an array of size " << p->size_;
     *(p->MutableBegin() + i) = std::move(value);
   }
@@ -687,7 +687,7 @@ class Array : public ObjectRef {
   template <typename IterType>
   void Assign(IterType first, IterType last) {
     int64_t cap = std::distance(first, last);
-    MXCHECK_GE(cap, 0) << "ValueError: cannot construct an Array of negative size";
+    HSCHECK_GE(cap, 0) << "ValueError: cannot construct an Array of negative size";
     ArrayNode* p = GetArrayNode();
     if (p != nullptr && data_.unique() && p->capacity_ >= cap) {
       // do not have to make new space
@@ -790,7 +790,7 @@ class Array : public ObjectRef {
       return nullptr;
     }
 
-    MXCHECK(data->IsInstance<ArrayNode>());
+    HSCHECK(data->IsInstance<ArrayNode>());
 
     if (std::is_same<T, U>::value) {
       if (data.unique()) {
@@ -902,4 +902,4 @@ struct type_index_traits<ir::Array<T>> {
 }  // namespace TypeIndex
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

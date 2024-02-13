@@ -27,7 +27,7 @@
 #include <hercules/ir/stmt.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 TEST(IRTextPrinter, PrintAllocaVar) {
@@ -51,4 +51,4 @@ TEST(IRTextPrinter, PrintAllocaVar) {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

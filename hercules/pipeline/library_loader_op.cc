@@ -27,7 +27,7 @@
 #include <dlfcn.h>
 #endif
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace {
@@ -73,7 +73,7 @@ class DSOLibrary {
   // load the library
   void Load(const std::string& name) {
     lib_handle_ = dlopen(name.c_str(), RTLD_LAZY | RTLD_LOCAL);
-    MXCHECK(lib_handle_ != nullptr)
+    HSCHECK(lib_handle_ != nullptr)
         << "Failed to load dynamic shared library " << name << " " << dlerror();
   }
 
@@ -107,7 +107,7 @@ void LibraryLoaderOp::load_dl_paths(const List& dl_paths) {
 void LibraryLoaderOp::Init() {
   abi0_dl_paths_ = GetAttr<List>("abi0_dl_paths");
   abi1_dl_paths_ = GetAttr<List>("abi1_dl_paths");
-  if (MATXSCRIPT_FLAGS_GLIBCXX_USE_CXX11_ABI) {
+  if (HERCULES_FLAGS_GLIBCXX_USE_CXX11_ABI) {
     load_dl_paths(abi1_dl_paths_);
   } else {
     load_dl_paths(abi0_dl_paths_);
@@ -128,11 +128,11 @@ int LibraryLoaderOp::Bundle(string_view folder) {
 }
 
 RTValue LibraryLoaderOp::Process(PyArgs inputs) const {
-  MXCHECK(inputs.size() == 1) << "[LibcutOp] need 1 args, but receive: " << inputs.size();
+  HSCHECK(inputs.size() == 1) << "[LibcutOp] need 1 args, but receive: " << inputs.size();
   return inputs[0].As<RTValue>();
 }
 
-MATX_REGISTER_NATIVE_OP(LibraryLoaderOp);
+HVM_REGISTER_NATIVE_OP(LibraryLoaderOp);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

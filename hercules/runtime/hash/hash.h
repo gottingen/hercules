@@ -21,7 +21,7 @@
 #include <stdint.h>
 #include <stdlib.h>  // for size_t.
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 constexpr size_t PiecewiseChunkSize() noexcept {
@@ -67,4 +67,4 @@ class Hasher {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -48,7 +48,7 @@
 
 #include <hercules/runtime/unicodelib/py_unicodeobject.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // clang-format off
@@ -68,11 +68,11 @@ typedef struct {
 } _PyUnicode_TypeRecord;
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 #include "py_unicodetype_db.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 static const _PyUnicode_TypeRecord *
@@ -330,4 +330,4 @@ int _PyUnicode_IsAlpha(Py_UCS4 ch) noexcept
 
 // clang-format on
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

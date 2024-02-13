@@ -20,7 +20,7 @@
 #include <hercules/runtime/regex/regex_helper.h>
 #include <hercules/runtime/regex/regex_pattern.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace regex {
 
@@ -140,4 +140,4 @@ bool RegexPattern::MatchGSub(const string_view& subject,
 
 }  // namespace regex
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

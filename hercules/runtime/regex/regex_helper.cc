@@ -23,7 +23,7 @@
 #include <hercules/runtime/str_printf.h>
 #include <hercules/runtime/unfixed_buffer.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace regex {
 
@@ -474,4 +474,4 @@ int RegexHelper::SubHelper(regex_compile_t* re_comp,
 
 }  // namespace regex
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -27,7 +27,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class List;
@@ -39,7 +39,7 @@ class Unicode;
  */
 class NDArray : public ObjectRef {
  public:
-  /*! \brief ContainerBase used to back the MATXScriptArrayHandle */
+  /*! \brief ContainerBase used to back the HerculesArrayHandle */
   class ContainerBase;
   /*! \brief NDArray internal container type */
   class Container;
@@ -74,7 +74,7 @@ class NDArray : public ObjectRef {
    * \brief Copy data content from another array.
    * \param other The source array to be copied from.
    * \note The copy may happen asynchronously if it involves a GPU device.
-   *       MATXScriptSynchronize is necessary.
+   *       HerculesSynchronize is necessary.
    */
   void CopyFrom(const DLTensor* other);
   void CopyFrom(const NDArray& other);
@@ -83,14 +83,14 @@ class NDArray : public ObjectRef {
    * \param data The source bytes to be copied from.
    * \param nbytes The size of the buffer in bytes
    *        Must be equal to the size of the NDArray.
-   * \note The copy always triggers a MATXScriptSynchronize.
+   * \note The copy always triggers a HerculesSynchronize.
    */
-  MATX_DLL void CopyFromBytes(const void* data, size_t nbytes);
+  HERCULES_DLL void CopyFromBytes(const void* data, size_t nbytes);
   /*!
    * \brief Copy data content into another array.
    * \param other The source array to be copied from.
    * \note The copy may happen asynchronously if it involves a GPU device.
-   *       MATXScriptSynchronize is necessary.
+   *       HerculesSynchronize is necessary.
    */
   void CopyTo(DLTensor* other) const;
   void CopyTo(const NDArray& other) const;
@@ -99,9 +99,9 @@ class NDArray : public ObjectRef {
    * \param data The source bytes to be copied from.
    * \param nbytes The size of the data buffer.
    *        Must be equal to the size of the NDArray.
-   * \note The copy always triggers a MATXScriptSynchronize.
+   * \note The copy always triggers a HerculesSynchronize.
    */
-  MATX_DLL void CopyToBytes(void* data, size_t nbytes) const;
+  HERCULES_DLL void CopyToBytes(void* data, size_t nbytes) const;
   /*!
    * \brief Copy the data to another device.
    * \param device The target device.
@@ -132,8 +132,8 @@ class NDArray : public ObjectRef {
    * \param dtype The data type of the new array.
    * \note The memory size of new array must be smaller than the current one.
    */
-  MATX_DLL NDArray CreateView(std::vector<int64_t> shape, DLDataType dtype) const;
-  MATX_DLL NDArray CreateViewWithStrides(std::vector<int64_t> shape,
+  HERCULES_DLL NDArray CreateView(std::vector<int64_t> shape, DLDataType dtype) const;
+  HERCULES_DLL NDArray CreateViewWithStrides(std::vector<int64_t> shape,
                                          std::vector<int64_t> strides,
                                          DLDataType dtype) const;
   /*!
@@ -141,7 +141,7 @@ class NDArray : public ObjectRef {
    *  represents as DLManagedTensor.
    * \return A DLManagedTensor
    */
-  MATX_DLL DLManagedTensor* ToDLPack() const;
+  HERCULES_DLL DLManagedTensor* ToDLPack() const;
   /*!
    * \brief From shape to strides, only work from compact tensor
    * \param shape The shape of the Array.
@@ -155,8 +155,8 @@ class NDArray : public ObjectRef {
    * \param device The device of the Array.
    * \return The created Array
    */
-  MATX_DLL static NDArray Empty(std::vector<int64_t> shape, DLDataType dtype, DLDevice ctx);
-  MATX_DLL static NDArray Empty(const int64_t* shape, int64_t dim, DLDataType dtype, DLDevice ctx);
+  HERCULES_DLL static NDArray Empty(std::vector<int64_t> shape, DLDataType dtype, DLDevice ctx);
+  HERCULES_DLL static NDArray Empty(const int64_t* shape, int64_t dim, DLDataType dtype, DLDevice ctx);
   /*!
    * \brief Create a NDArray backed by a dlpack tensor.
    *
@@ -168,26 +168,26 @@ class NDArray : public ObjectRef {
    * \param tensor The DLPack tensor to copy from.
    * \return The created NDArray view.
    */
-  MATX_DLL static NDArray FromDLPack(DLManagedTensor* tensor);
+  HERCULES_DLL static NDArray FromDLPack(DLManagedTensor* tensor);
   /*!
    * \brief Function to copy data from one array to another.
    * \param from The source array.
    * \param to The target array.
    * \param stream The stream used in copy.
    */
-  MATX_DLL static void CopyFromTo(const DLTensor* from,
+  HERCULES_DLL static void CopyFromTo(const DLTensor* from,
                                   DLTensor* to,
-                                  MATXScriptStreamHandle stream);
+                                  HerculesStreamHandle stream);
 
   /*!
    * \brief Function to copy data from one array to another use current stream.
    * \param from The source array.
    * \param to The target array.
    */
-  MATX_DLL static void CopyFromTo(const DLTensor* from, DLTensor* to);
+  HERCULES_DLL static void CopyFromTo(const DLTensor* from, DLTensor* to);
 
-  MATX_DLL std::vector<int64_t> Shape() const;
-  MATX_DLL ::matxscript::runtime::DataType DataType() const;
+  HERCULES_DLL std::vector<int64_t> Shape() const;
+  HERCULES_DLL ::hercules::runtime::DataType DataType() const;
 
  public:
   // iterators
@@ -247,18 +247,18 @@ class NDArray : public ObjectRef {
                        const Any& item) const;
 
  public:
-  MATX_DLL List ToList() const;
-  MATX_DLL List ShapeList() const;
-  MATX_DLL Unicode DTypeUnicode() const;
-  MATX_DLL Unicode Device() const;
+  HERCULES_DLL List ToList() const;
+  HERCULES_DLL List ShapeList() const;
+  HERCULES_DLL Unicode DTypeUnicode() const;
+  HERCULES_DLL Unicode Device() const;
 
-  MATX_DLL size_t DataSize() const;
-  MATX_DLL int64_t ElementSize() const;
+  HERCULES_DLL size_t DataSize() const;
+  HERCULES_DLL int64_t ElementSize() const;
 
-  MATX_DLL const void* RawData() const;
+  HERCULES_DLL const void* RawData() const;
 
   template <typename T>
-  MATX_DLL const T* Data() const;
+  HERCULES_DLL const T* Data() const;
 
   // internal namespace
   struct Internal;
@@ -284,18 +284,18 @@ class NDArray : public ObjectRef {
    *       ContainerBase pointer in FFI.
    *       As a result, the argument is compatible to DLTensor*.
    */
-  static ObjectPtr<Object> FFIDataFromHandle(MATXScriptTensorHandle handle);
+  static ObjectPtr<Object> FFIDataFromHandle(HerculesTensorHandle handle);
   /*!
    * \brief DecRef resource managed by an FFI array handle.
    * \param handle The array handle.
    */
-  static void FFIDecRef(MATXScriptTensorHandle handle);
+  static void FFIDecRef(HerculesTensorHandle handle);
   /*!
    * \brief Get FFI Array handle from ndarray.
    * \param nd The object with ndarray type.
    * \return The result array handle.
    */
-  static MATXScriptTensorHandle FFIGetHandle(const ObjectRef& nd);
+  static HerculesTensorHandle FFIGetHandle(const ObjectRef& nd);
 };
 
 // implementations of inline functions
@@ -314,19 +314,19 @@ size_t GetDataSize(const DLTensor& arr);
  */
 bool IsContiguous(const DLTensor& arr);
 
-Object* MATXScriptArrayHandleToObjectHandle(MATXScriptTensorHandle handle);
+Object* HerculesArrayHandleToObjectHandle(HerculesTensorHandle handle);
 
 template <>
 RTValue::RTValue(NDArray val) noexcept;
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE NDArray Any::As<NDArray>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeNDArray);
+HERCULES_ALWAYS_INLINE NDArray Any::As<NDArray>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeNDArray);
   return NDArray(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE NDArray Any::AsNoCheck<NDArray>() const {
+HERCULES_ALWAYS_INLINE NDArray Any::AsNoCheck<NDArray>() const {
   return NDArray(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
@@ -348,4 +348,4 @@ const T* NDArray::Data() const {
 std::ostream& operator<<(std::ostream& os, NDArray const& n);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

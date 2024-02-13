@@ -21,7 +21,7 @@
 
 #include <hercules/runtime/demangle.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 String Demangle(const char* mangled) {
@@ -58,4 +58,4 @@ String DemangleType(const char* mangled) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

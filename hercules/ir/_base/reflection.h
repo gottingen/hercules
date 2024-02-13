@@ -34,7 +34,7 @@
 #include <hercules/runtime/memory.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -47,17 +47,17 @@ namespace ir {
 class AttrVisitor {
  public:
   //! \cond Doxygen_Suppress
-  MATX_DLL virtual ~AttrVisitor() = default;
-  MATX_DLL virtual void Visit(const char* key, double* value) = 0;
-  MATX_DLL virtual void Visit(const char* key, int64_t* value) = 0;
-  MATX_DLL virtual void Visit(const char* key, uint64_t* value) = 0;
-  MATX_DLL virtual void Visit(const char* key, int* value) = 0;
-  MATX_DLL virtual void Visit(const char* key, bool* value) = 0;
-  MATX_DLL virtual void Visit(const char* key, runtime::String* value) = 0;
-  MATX_DLL virtual void Visit(const char* key, void** value) = 0;
-  MATX_DLL virtual void Visit(const char* key, runtime::DataType* value) = 0;
-  MATX_DLL virtual void Visit(const char* key, runtime::NDArray* value) = 0;
-  MATX_DLL virtual void Visit(const char* key, ObjectRef* value) = 0;
+  HERCULES_DLL virtual ~AttrVisitor() = default;
+  HERCULES_DLL virtual void Visit(const char* key, double* value) = 0;
+  HERCULES_DLL virtual void Visit(const char* key, int64_t* value) = 0;
+  HERCULES_DLL virtual void Visit(const char* key, uint64_t* value) = 0;
+  HERCULES_DLL virtual void Visit(const char* key, int* value) = 0;
+  HERCULES_DLL virtual void Visit(const char* key, bool* value) = 0;
+  HERCULES_DLL virtual void Visit(const char* key, runtime::String* value) = 0;
+  HERCULES_DLL virtual void Visit(const char* key, void** value) = 0;
+  HERCULES_DLL virtual void Visit(const char* key, runtime::DataType* value) = 0;
+  HERCULES_DLL virtual void Visit(const char* key, runtime::NDArray* value) = 0;
+  HERCULES_DLL virtual void Visit(const char* key, ObjectRef* value) = 0;
   template <typename ENum, typename = typename std::enable_if<std::is_enum<ENum>::value>::type>
   void Visit(const char* key, ENum* ptr) {
     static_assert(std::is_same<int, typename std::underlying_type<ENum>::type>::value,
@@ -139,7 +139,7 @@ class ReflectionVTable {
    * \param type_key The type key of the object.
    * \param repr_bytes Bytes representation of the object if any.
    */
-  MATX_DLL ObjectPtr<Object> CreateInitObject(const runtime::String& type_key,
+  HERCULES_DLL ObjectPtr<Object> CreateInitObject(const runtime::String& type_key,
                                               const runtime::String& repr_bytes = "") const;
   /*!
    * \brief Create an object by giving kwargs about its fields.
@@ -148,7 +148,7 @@ class ReflectionVTable {
    * \param kwargs the arguments in format key1, value1, ..., key_n, value_n.
    * \return The created object.
    */
-  MATX_DLL ObjectRef CreateObject(const runtime::String& type_key, const runtime::PyArgs& kwargs);
+  HERCULES_DLL ObjectRef CreateObject(const runtime::String& type_key, const runtime::PyArgs& kwargs);
   /*!
    * \brief Create an object by giving kwargs about its fields.
    *
@@ -156,7 +156,7 @@ class ReflectionVTable {
    * \param kwargs The field arguments.
    * \return The created object.
    */
-  MATX_DLL ObjectRef CreateObject(const runtime::String& type_key,
+  HERCULES_DLL ObjectRef CreateObject(const runtime::String& type_key,
                                   const Map<StringRef, ObjectRef>& kwargs);
   /*!
    * \brief Get an field object by the attr name.
@@ -165,16 +165,16 @@ class ReflectionVTable {
    * \return The corresponding attribute value.
    * \note This function will throw an exception if the object does not contain the field.
    */
-  MATX_DLL runtime::RTValue GetAttr(Object* self, const StringRef& attr_name) const;
+  HERCULES_DLL runtime::RTValue GetAttr(Object* self, const StringRef& attr_name) const;
 
   /*!
    * \brief List all the fields in the object.
    * \return All the fields.
    */
-  MATX_DLL std::vector<runtime::String> ListAttrNames(Object* self) const;
+  HERCULES_DLL std::vector<runtime::String> ListAttrNames(Object* self) const;
 
   /*! \return The global singleton. */
-  MATX_DLL static ReflectionVTable* Global();
+  HERCULES_DLL static ReflectionVTable* Global();
 
   class Registry;
   template <typename T, typename TraitName>
@@ -205,7 +205,7 @@ class ReflectionVTable::Registry {
    * \return rference to self.
    */
   Registry& set_creator(FCreate f) {  // NOLINT(*)
-    MXCHECK_LT(type_index_, parent_->fcreate_.size());
+    HSCHECK_LT(type_index_, parent_->fcreate_.size());
     parent_->fcreate_[type_index_] = f;
     return *this;
   }
@@ -215,7 +215,7 @@ class ReflectionVTable::Registry {
    * \return rference to self.
    */
   Registry& set_repr_bytes(FReprBytes f) {  // NOLINT(*)
-    MXCHECK_LT(type_index_, parent_->frepr_bytes_.size());
+    HSCHECK_LT(type_index_, parent_->frepr_bytes_.size());
     parent_->frepr_bytes_[type_index_] = f;
     return *this;
   }
@@ -226,7 +226,7 @@ class ReflectionVTable::Registry {
 };
 
 #define TVM_REFLECTION_REG_VAR_DEF \
-  static MATXSCRIPT_ATTRIBUTE_UNUSED ::matxscript::ir::ReflectionVTable::Registry __make_reflectiion
+  static HERCULES_ATTRIBUTE_UNUSED ::hercules::ir::ReflectionVTable::Registry __make_reflectiion
 
 /*!
  * \brief Directly register reflection VTable.
@@ -254,28 +254,28 @@ class ReflectionVTable::Registry {
  *    }
  *  };
  *
- *  MATXSCRIPT_REGISTER_REFLECTION_VTABLE(runtime::StringObj, StringObjTrait);
+ *  HERCULES_REGISTER_REFLECTION_VTABLE(runtime::StringObj, StringObjTrait);
  *
  * \endcode
  *
- * \note This macro can be called in different place as MATXSCRIPT_REGISTER_OBJECT_TYPE.
+ * \note This macro can be called in different place as HERCULES_REGISTER_OBJECT_TYPE.
  *       And can be used to register the related reflection functions for runtime objects.
  */
-#define MATXSCRIPT_REGISTER_REFLECTION_VTABLE(TypeName, TraitName) \
-  MATXSCRIPT_STR_CONCAT(TVM_REFLECTION_REG_VAR_DEF, __COUNTER__) = \
-      ::matxscript::ir::ReflectionVTable::Global()->Register<TypeName, TraitName>()
+#define HERCULES_REGISTER_REFLECTION_VTABLE(TypeName, TraitName) \
+  HERCULES_STR_CONCAT(TVM_REFLECTION_REG_VAR_DEF, __COUNTER__) = \
+      ::hercules::ir::ReflectionVTable::Global()->Register<TypeName, TraitName>()
 
 /*!
  * \brief Register a node type to object registry and reflection registry.
  * \param TypeName The name of the type.
- * \note This macro will call MATXSCRIPT_REGISTER_OBJECT_TYPE for the type as well.
+ * \note This macro will call HERCULES_REGISTER_OBJECT_TYPE for the type as well.
  */
-#define MATXSCRIPT_REGISTER_NODE_TYPE(TypeName)                                              \
-  MATXSCRIPT_REGISTER_OBJECT_TYPE(TypeName);                                                 \
-  MATXSCRIPT_REGISTER_REFLECTION_VTABLE(TypeName,                                            \
-                                        ::matxscript::ir::detail::ReflectionTrait<TypeName>) \
-      .set_creator([](const ::matxscript::runtime::String&) -> ObjectPtr<Object> {           \
-        return ::matxscript::runtime::make_object<TypeName>();                               \
+#define HERCULES_REGISTER_NODE_TYPE(TypeName)                                              \
+  HERCULES_REGISTER_OBJECT_TYPE(TypeName);                                                 \
+  HERCULES_REGISTER_REFLECTION_VTABLE(TypeName,                                            \
+                                        ::hercules::ir::detail::ReflectionTrait<TypeName>) \
+      .set_creator([](const ::hercules::runtime::String&) -> ObjectPtr<Object> {           \
+        return ::hercules::runtime::make_object<TypeName>();                               \
       })
 
 // Implementation details
@@ -378,12 +378,12 @@ inline ReflectionVTable::Registry ReflectionVTable::Register() {
     fshash_reduce_.resize(tindex + 1, nullptr);
   }
   // functor that implemnts the redirection.
-  fvisit_attrs_[tindex] = ::matxscript::ir::detail::SelectVisitAttrs<T, TraitName>::VisitAttrs;
+  fvisit_attrs_[tindex] = ::hercules::ir::detail::SelectVisitAttrs<T, TraitName>::VisitAttrs;
 
   fsequal_reduce_[tindex] =
-      ::matxscript::ir::detail::SelectSEqualReduce<T, TraitName>::SEqualReduce;
+      ::hercules::ir::detail::SelectSEqualReduce<T, TraitName>::SEqualReduce;
 
-  fshash_reduce_[tindex] = ::matxscript::ir::detail::SelectSHashReduce<T, TraitName>::SHashReduce;
+  fshash_reduce_[tindex] = ::hercules::ir::detail::SelectSHashReduce<T, TraitName>::SHashReduce;
 
   return Registry(this, tindex);
 }
@@ -391,8 +391,8 @@ inline ReflectionVTable::Registry ReflectionVTable::Register() {
 inline void ReflectionVTable::VisitAttrs(Object* self, AttrVisitor* visitor) const {
   uint32_t tindex = self->type_index();
   if (tindex >= fvisit_attrs_.size()) {
-    MXLOG(FATAL) << "TypeError: " << self->GetTypeKey()
-                 << " is not registered via MATXSCRIPT_REGISTER_NODE_TYPE";
+    HSLOG(FATAL) << "TypeError: " << self->GetTypeKey()
+                 << " is not registered via HERCULES_REGISTER_NODE_TYPE";
   }
   if (fvisit_attrs_[tindex] != nullptr) {
     fvisit_attrs_[tindex](self, visitor);
@@ -418,4 +418,4 @@ inline bool ReflectionVTable::GetReprBytes(const Object* self, runtime::String* 
 Optional<StringRef> GetAttrKeyByAddress(const Object* object, const void* attr_address);
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

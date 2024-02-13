@@ -24,7 +24,7 @@
 #include <iostream>
 #include <random>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Unicode, CopyAssign) {
@@ -595,4 +595,4 @@ TEST(String, count) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

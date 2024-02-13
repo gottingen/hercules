@@ -30,11 +30,11 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using ::matxscript::runtime::Downcast;
-using ::matxscript::runtime::GetRef;
+using ::hercules::runtime::Downcast;
+using ::hercules::runtime::GetRef;
 
 /******************************************************************************
  * ExprVisitor
@@ -392,7 +392,7 @@ PrimExpr ExprMutator::VisitExpr_(const PrimLetNode* op) {
   if (value.same_as(op->value) && body.same_as(op->body)) {
     return GetRef<PrimExpr>(op);
   } else {
-    // TODO(matx4) : review other let bindding ?
+    // TODO(hvm4) : review other let bindding ?
     return PrimLet(op->var, value, body, op->span);
   }
 }
@@ -751,4 +751,4 @@ HLOExpr ExprMutator::VisitExpr_(const ShapeExprNode* op) {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

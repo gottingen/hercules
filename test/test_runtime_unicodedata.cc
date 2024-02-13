@@ -23,7 +23,7 @@
 #include <hercules/runtime/utf8_util.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(PyUnicodeData, normalize) {
@@ -44,4 +44,4 @@ TEST(PyUnicodeData, decimal) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

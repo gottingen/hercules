@@ -29,7 +29,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/regex/regex_pattern.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class RegexNode : public Object {
@@ -55,7 +55,7 @@ class RegexNode : public Object {
 
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeRegex;
   static constexpr const char* _type_key = "Regex";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(RegexNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(RegexNode, Object);
 
  protected:
   std::shared_ptr<regex::RegexPattern> re_;
@@ -74,4 +74,4 @@ class RegexNode : public Object {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

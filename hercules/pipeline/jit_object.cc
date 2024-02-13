@@ -34,15 +34,15 @@
 
 #include "userdata_mutator.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_REGISTER_NATIVE_OP(JitObject);
+HVM_REGISTER_NATIVE_OP(JitObject);
 
 JitObjectPtr check_get_jit_object(const UserDataRef& ud) {
-  MXCHECK(ud->ud_ptr->type_2_71828182846() == UserDataStructType::kNativeData);
+  HSCHECK(ud->ud_ptr->type_2_71828182846() == UserDataStructType::kNativeData);
   auto nud_ptr = dynamic_cast<NativeObject*>(ud->ud_ptr);
-  MXCHECK(nud_ptr && nud_ptr->is_jit_object_);
+  HSCHECK(nud_ptr && nud_ptr->is_jit_object_);
   auto obj_ptr =
       std::static_pointer_cast<JitObject>(std::static_pointer_cast<OpKernel>(nud_ptr->opaque_ptr_));
   return obj_ptr;
@@ -110,7 +110,7 @@ JitObject::ClassMeta JitObject::ClassMeta::FromDict(const Dict& config) {
   if (config.contains("init_func")) {
     init_func = FuncMeta::FromDict(config["init_func"].As<Dict>());
   } else {
-    MXLOG(INFO) << "class has no __init__ function";
+    HSLOG(INFO) << "class has no __init__ function";
   }
 
   // __init__ arguments
@@ -184,7 +184,7 @@ JitObject::Options JitObject::Options::FromDict(const Dict& config) {
   if (config.contains("captures")) {
     for (auto& cls_and_name : config["captures"].AsObjectRef<List>()) {
       auto tup = cls_and_name.As<Tuple>();
-      MXCHECK(tup.size() == 2);
+      HSCHECK(tup.size() == 2);
       jit_module_opts.captures.push_back(std::make_pair(tup[0].As<String>(), tup[1].As<String>()));
     }
   }
@@ -315,7 +315,7 @@ int JitObject::Bundle(string_view folder) {
             break;
           }
         }
-        MXCHECK_GE(arg_index, 0) << "var name not found when bundling: " << var_name;
+        HSCHECK_GE(arg_index, 0) << "var name not found when bundling: " << var_name;
         while (jsonpath[e] == U'.') {
           ++e;
         }
@@ -334,7 +334,7 @@ int JitObject::Bundle(string_view folder) {
             break;
           }
         }
-        MXCHECK_GE(arg_index, 0) << "var name not found when bundling: " << var_name;
+        HSCHECK_GE(arg_index, 0) << "var name not found when bundling: " << var_name;
         Unicode path = new_opt.class_info.init_args[arg_index].As<Unicode>();
         String path_s = path.encode();
         path_s = BundlePath(path_s, folder);
@@ -348,18 +348,18 @@ int JitObject::Bundle(string_view folder) {
 
 JitObject::NativeMethod JitObject::MakeNativeFunc(const FuncMeta& meta,
                                                   UserDataRef self,
-                                                  MATXScriptBackendPackedCFunc c_packed_func) {
+                                                  HerculesBackendPackedCFunc c_packed_func) {
   if (meta.bound_self) {
     return [self, c_packed_func](void* jit_obj, PyArgs args) -> RTValue {
       const int kNumArgs = args.size() + 1;
       const int kArraySize = kNumArgs > 0 ? kNumArgs : 1;
-      MATXScriptAny values[kArraySize];
+      HerculesAny values[kArraySize];
       // always bound self
       values[0] = RTView(self).value();
       for (size_t i = 0; i < args.size(); ++i) {
         values[i + 1] = args[i].value();
       }
-      MATXScriptAny out_ret_value;
+      HerculesAny out_ret_value;
       c_packed_func(values, kNumArgs, &out_ret_value, self->ud_ptr);
       return RTValue::MoveFromCHost(&out_ret_value);
     };
@@ -367,12 +367,12 @@ JitObject::NativeMethod JitObject::MakeNativeFunc(const FuncMeta& meta,
     return [self, c_packed_func](void* jit_obj, PyArgs args) -> RTValue {
       const int kNumArgs = args.size();
       const int kArraySize = kNumArgs > 0 ? kNumArgs : 1;
-      MATXScriptAny values[kArraySize];
+      HerculesAny values[kArraySize];
       // no need bound self
       for (size_t i = 0; i < args.size(); ++i) {
         values[i] = args[i].value();
       }
-      MATXScriptAny out_ret_value;
+      HerculesAny out_ret_value;
       c_packed_func(values, kNumArgs, &out_ret_value, self->ud_ptr);
       return RTValue::MoveFromCHost(&out_ret_value);
     };
@@ -396,22 +396,22 @@ void JitObject::Init() {
     name_ = GlobalUniqueIndex::instance()->gen_uniq_name(options_.func_info.name, seed);
   }
   String dso_path = options_.dso_path;
-#ifdef MATX_SUPPORT_ANDROID
+#ifdef HVM_SUPPORT_ANDROID
   dso_path = options_.dso_path_cxx11;
 #else
-  if (MATXSCRIPT_FLAGS_GLIBCXX_USE_CXX11_ABI) {
+  if (HERCULES_FLAGS_GLIBCXX_USE_CXX11_ABI) {
     dso_path = options_.dso_path_cxx11;
   }
 #endif
-  MXCHECK(belong_to_ != nullptr) << "belong_to_ is not set";
+  HSCHECK(belong_to_ != nullptr) << "belong_to_ is not set";
   auto abs_dso_path = resource_path_ + dso_path;
-  if (MATXSCRIPT_FLAGS_GLIBCXX_USE_CXX11_ABI) {
-    MXCHECK((!dso_path.empty()) && FileUtil::IsRegularFile(abs_dso_path) &&
+  if (HERCULES_FLAGS_GLIBCXX_USE_CXX11_ABI) {
+    HSCHECK((!dso_path.empty()) && FileUtil::IsRegularFile(abs_dso_path) &&
             FileUtil::Exists(abs_dso_path))
         << "dso path not found: " << abs_dso_path << "\n"
         << "Please check gcc8 was available when tracing a model for c++ server";
   } else {
-    MXCHECK(FileUtil::Exists(abs_dso_path)) << "dso path not found: " << abs_dso_path;
+    HSCHECK(FileUtil::Exists(abs_dso_path)) << "dso path not found: " << abs_dso_path;
   }
   module_ = Module::LoadFromFile(abs_dso_path);
   auto class_init_args = options_.class_info.init_args;
@@ -429,7 +429,7 @@ void JitObject::Init() {
             break;
           }
         }
-        MXCHECK_GE(arg_index, 0) << "var name not found when bundling: " << var_name;
+        HSCHECK_GE(arg_index, 0) << "var name not found when bundling: " << var_name;
         while (jsonpath[e] == U'.') {
           ++e;
         }
@@ -444,7 +444,7 @@ void JitObject::Init() {
             break;
           }
         }
-        MXCHECK_GE(arg_index, 0) << "var name not found when bundling: " << var_name;
+        HSCHECK_GE(arg_index, 0) << "var name not found when bundling: " << var_name;
         bundle_args[arg_index].push_back("");
       }
     }
@@ -470,7 +470,7 @@ void JitObject::Init() {
     int32_t num_args = options_.class_info.init_func.args.size();
     for (size_t i = 0; i < num_args; ++i) {
       if (options_.class_info.init_func.args[i].type_code != INT16_MIN) {
-        MXCHECK(options_.class_info.init_func.args[i].type_code == class_init_args[i].type_code())
+        HSCHECK(options_.class_info.init_func.args[i].type_code == class_init_args[i].type_code())
             << "[JitObject::Initialize][call: " << options_.class_info.init_func.name
             << "] Expect argument[" << i << "] type is "
             << TypeIndex2Str(options_.class_info.init_func.args[i].type_code) << " but get "
@@ -481,12 +481,12 @@ void JitObject::Init() {
     class_init_args.push_back(RTValue(belong_to_));
     auto rv = cons_wrapper(PyArgs(class_init_args.data(), class_init_args.size()));
     self_ = rv.MoveToObjectRef<UserDataRef>();
-    MXCHECK(self_->ud_ptr) << "UserData ptr invalid";
+    HSCHECK(self_->ud_ptr) << "UserData ptr invalid";
   } else {
     void* reg = module_.GetFunction(symbol::library_func_registry)({}).As<void*>();
-    auto* func_reg = (MATXScriptFuncRegistry*)reg;
+    auto* func_reg = (HerculesFuncRegistry*)reg;
     int idx = LookupFuncRegistryName(func_reg->names, options_.func_info.name);
-    MXCHECK(idx >= 0) << "[JitObject] function not found, name: " << options_.func_info.name;
+    HSCHECK(idx >= 0) << "[JitObject] function not found, name: " << options_.func_info.name;
     self_ = UserDataRef(
         0,
         0,
@@ -505,7 +505,7 @@ void JitObject::Init() {
           continue;
         }
         auto ft_itr = ud->function_table_2_71828182846_->find(name_bound);
-        MXCHECK(ft_itr != ud->function_table_2_71828182846_->end())
+        HSCHECK(ft_itr != ud->function_table_2_71828182846_->end())
             << "[Class:" << options_.class_info.name
             << "] member function not found: " << name_bound;
         auto native_func = MakeNativeFunc(func_meta, self_, ft_itr->second);
@@ -523,7 +523,7 @@ void JitObject::Init() {
   // captures
   for (auto& cls_and_name : options_.captures) {
     auto ud = belong_to_->FindUserData(cls_and_name.first, cls_and_name.second);
-    MXCHECK(ud.defined());
+    HSCHECK(ud.defined());
     sub_ops_.push_back(check_get_op_kernel(ud));
   }
 }
@@ -556,4 +556,4 @@ RTValue JitObject::generic_call_attr(string_view func_name, PyArgs args) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

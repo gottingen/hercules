@@ -22,7 +22,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace regex {
 
@@ -42,4 +42,4 @@ extern int c_array_init(c_array_t* array, size_t n, size_t size);
 
 }  // namespace regex
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

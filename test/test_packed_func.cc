@@ -24,10 +24,10 @@
 #include <iostream>
 #include <random>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("test.PackedFunc_FloatTensorMaker").set_body_typed([](List shape) {
+HERCULES_REGISTER_GLOBAL("test.PackedFunc_FloatTensorMaker").set_body_typed([](List shape) {
   // automatically convert arguments to desired type.
   using Converter = GenericValueConverter<int64_t>;
   using IterAdapter = IteratorAdapter<Converter, List::iterator>;
@@ -44,7 +44,7 @@ MATXSCRIPT_REGISTER_GLOBAL("test.PackedFunc_FloatTensorMaker").set_body_typed([]
 
 TEST(PackedFunc, GenericTest) {
   const auto* test_func =
-      ::matxscript::runtime::FunctionRegistry::Get("test.PackedFunc_FloatTensorMaker");
+      ::hercules::runtime::FunctionRegistry::Get("test.PackedFunc_FloatTensorMaker");
   DLContext ctx;
   ctx.device_type = kDLCPU;
   ctx.device_id = 0;
@@ -54,4 +54,4 @@ TEST(PackedFunc, GenericTest) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

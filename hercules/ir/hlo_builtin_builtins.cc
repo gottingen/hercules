@@ -23,38 +23,38 @@
 #include <hercules/ir/hlo_expr.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(builtins, print).set_num_inputs(3).set_num_inputs_max(-1);
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(builtins, print).set_num_inputs(3).set_num_inputs_max(-1);
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(builtins, ord)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(builtins, ord)
     .set_num_inputs(1)
     .add_argument("c", "bytes_view|unicode_view|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(builtins, chr).set_num_inputs(1).add_argument("i", "int", "");
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(builtins, chr).set_num_inputs(1).add_argument("i", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(builtins, sorted)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(builtins, sorted)
     .set_num_inputs(1)
     .set_num_inputs_max(3)
     .add_argument("iterable", "List|Tuple|Any|any_view", "")
     .add_argument("key", "any_view|Any", "")
     .add_argument("reverse", "bool", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(builtins, iter)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(builtins, iter)
     .set_num_inputs(1)
     .add_argument("iterable", "List", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(builtins, reversed)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(builtins, reversed)
     .set_num_inputs(1)
     .add_argument("iterable", "List", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(builtins, unpack)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(builtins, unpack)
     .set_num_inputs(1)
     .add_argument("container", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(hlo_if_then_else)
+HERCULES_IR_DEFINE_HLO_BUILTIN_FUNC(hlo_if_then_else)
     .set_num_inputs(3)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque));
 
@@ -77,15 +77,15 @@ BaseExpr hlo_if_then_else(BaseExpr cond, BaseExpr true_value, BaseExpr false_val
               std::move(span));
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir._HLOOpIfThenElse")
+HERCULES_REGISTER_GLOBAL("ir._HLOOpIfThenElse")
     .set_body_typed(
         [](BaseExpr cond, BaseExpr true_value, BaseExpr false_value, Span span = Span()) {
           return hlo_if_then_else(
               std::move(cond), std::move(true_value), std::move(false_value), std::move(span));
         });
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(builtins, isinstance).set_num_inputs(1);
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(builtins, isinstance).set_num_inputs(1);
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

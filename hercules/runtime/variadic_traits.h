@@ -21,7 +21,7 @@
 
 #include <utility>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace variadic_details {
@@ -194,4 +194,4 @@ struct partial_function_helper<0, R(Args...)> {
 
 }  // namespace variadic_details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

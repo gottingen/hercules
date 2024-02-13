@@ -21,7 +21,7 @@
 
 #include <unistd.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace internal {
 
@@ -116,4 +116,4 @@ std::vector<std::thread::id> LockBasedThreadPool::GetThreadIds() const {
 
 }  // namespace internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

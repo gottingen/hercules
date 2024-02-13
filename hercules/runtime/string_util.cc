@@ -26,7 +26,7 @@
 #include <locale>
 #include <stdexcept>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace StringUtil {
 
@@ -184,4 +184,4 @@ int Find(const char* source, size_t source_len, const char* target, size_t targe
 
 }  // namespace StringUtil
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

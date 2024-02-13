@@ -25,7 +25,7 @@
 #include <locale>
 #include <stdexcept>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 inline void StringPrintf(String* str, const char* fmt, ...) {
@@ -41,4 +41,4 @@ inline void StringPrintf(String* str, const char* fmt, ...) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -27,7 +27,7 @@
 #include <hercules/pipeline/jit_object.h>
 #include <hercules/pipeline/jit_op.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 static constexpr size_t USER_DATA_NODE_MAX_BUFFER_SIZE = 256;
@@ -55,7 +55,7 @@ int64_t IUserDataRoot::GetVarIndex_2_71828182846(string_view var_name, bool chec
 }
 
 IUserDataRoot::__FunctionTable__ IUserDataRoot::InitFuncTable_2_71828182846(
-    MATXScriptFuncRegistry* func_reg, string_view class_name) {
+    HerculesFuncRegistry* func_reg, string_view class_name) {
   __FunctionTable__ function_table;
   auto init_func_name = FunctionNameRules::add_class_prefix(class_name, "__init__");
   auto init_wrapper = FunctionNameRules::add_wrapper_suffix(init_func_name);
@@ -144,7 +144,7 @@ UserDataRef::UserDataRef(uint32_t tag,
                          FUserDataDeleter deleter,
                          void* module_node) {
   if (buf_size > 256 || buf_size == 0) {
-    MXTHROW << "[UserData] internal error: buffer size overflow or is zero expect (1, "
+    HSTHROW << "[UserData] internal error: buffer size overflow or is zero expect (1, "
             << USER_DATA_NODE_MAX_BUFFER_SIZE << ") but get " << buf_size;
   } else {
     size_t index = (((buf_size) + 8 - 1) >> 3) - 1;
@@ -237,7 +237,7 @@ unsigned char* UserDataRef::GetInternalBufferPtr() const {
   return d ? d->GetInternalBufferPtr() : nullptr;
 }
 
-UserDataRef MakeUserFunction(MATXScriptBackendPackedCFunc func, void* resource_handle) {
+UserDataRef MakeUserFunction(HerculesBackendPackedCFunc func, void* resource_handle) {
   static auto deleter = [](ILightUserData* self) -> void {
     delete reinterpret_cast<UserFunction*>(self);
   };
@@ -246,7 +246,7 @@ UserDataRef MakeUserFunction(MATXScriptBackendPackedCFunc func, void* resource_h
 }
 
 UserDataRef MakeUserFunction(const string_view& name,
-                             MATXScriptBackendPackedCFunc func,
+                             HerculesBackendPackedCFunc func,
                              void* resource_handle) {
   static auto deleter = [](ILightUserData* self) -> void {
     delete reinterpret_cast<UserFunction*>(self);
@@ -256,7 +256,7 @@ UserDataRef MakeUserFunction(const string_view& name,
 }
 
 UserDataRef MakeUserFunction(std::initializer_list<RTView> captures,
-                             MATXScriptBackendPackedCFunc func,
+                             HerculesBackendPackedCFunc func,
                              void* resource_handle) {
   static auto deleter = [](ILightUserData* self) -> void {
     delete reinterpret_cast<UserFunction*>(self);
@@ -268,7 +268,7 @@ UserDataRef MakeUserFunction(std::initializer_list<RTView> captures,
 
 UserDataRef MakeUserFunction(std::initializer_list<RTView> captures,
                              const string_view& name,
-                             MATXScriptBackendPackedCFunc func,
+                             HerculesBackendPackedCFunc func,
                              void* resource_handle) {
   static auto deleter = [](ILightUserData* self) -> void {
     delete reinterpret_cast<UserFunction*>(self);
@@ -288,4 +288,4 @@ std::ostream& operator<<(std::ostream& os, UserDataRef const& n) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

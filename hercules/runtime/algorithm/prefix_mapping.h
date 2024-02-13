@@ -27,7 +27,7 @@
 #include <hercules/runtime/container/string.h>
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // Given a list of strings, finds the longest string which is a
@@ -52,4 +52,4 @@ class PrefixMapping {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

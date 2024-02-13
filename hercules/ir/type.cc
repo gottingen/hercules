@@ -35,11 +35,11 @@
 #include <hercules/ir/printer/utils.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::runtime;
+using namespace ::hercules::ir::printer;
 
 static StringRef GetLiteralRepr(const Type& ty) {
   if (auto const* pt = ty.as<PrimTypeNode>()) {
@@ -68,7 +68,7 @@ runtime::DataType GetRuntimeDataType(const Type& type) {
   } else if (IsVoidType(type)) {
     return DataType::Void();
   } else {
-    MXLOG(FATAL) << "Type " << type << " does not have a corresponding runtime::DataType";
+    HSLOG(FATAL) << "Type " << type << " does not have a corresponding runtime::DataType";
     return DataType::Handle();
   }
 }
@@ -79,17 +79,17 @@ PrimType::PrimType(runtime::DataType dtype) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimTypeNode);
+HERCULES_REGISTER_NODE_TYPE(PrimTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimType").set_body_typed([](runtime::DataType dtype) {
+HERCULES_REGISTER_GLOBAL("ir.PrimType").set_body_typed([](runtime::DataType dtype) {
   return PrimType(dtype);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimType_GetDType").set_body_typed([](PrimType pt) {
+HERCULES_REGISTER_GLOBAL("ir.PrimType_GetDType").set_body_typed([](PrimType pt) {
   return pt->dtype;
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<PrimType>("", [](PrimType ty, ObjectPath p, IRDocsifier d) -> Doc {
       if (ty->dtype == DataType::Int(64) || ty->dtype == DataType::Bool() ||
           ty->dtype == DataType::Float(64)) {
@@ -98,8 +98,8 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
       return Dialect(d, GetLiteralRepr(ty));
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.VoidType").set_body_typed([]() { return VoidType(); });
-MATXSCRIPT_REGISTER_GLOBAL("ir.IsVoidType").set_body_typed([](const Type& type) {
+HERCULES_REGISTER_GLOBAL("ir.VoidType").set_body_typed([]() { return VoidType(); });
+HERCULES_REGISTER_GLOBAL("ir.IsVoidType").set_body_typed([](const Type& type) {
   return IsVoidType(type);
 });
 
@@ -109,13 +109,13 @@ PointerType::PointerType(Type element_type) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PointerTypeNode);
+HERCULES_REGISTER_NODE_TYPE(PointerTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PointerType").set_body_typed([](Type element_type) {
+HERCULES_REGISTER_GLOBAL("ir.PointerType").set_body_typed([](Type element_type) {
   return PointerType(element_type);
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<PointerType>("", [](PointerType ty, ObjectPath ty_p, IRDocsifier d) -> Doc {
       ExprDoc element_type{nullptr};
       if (const auto* prim_type = ty->element_type.as<PrimTypeNode>()) {
@@ -135,13 +135,13 @@ TypeVar::TypeVar(StringRef name, TypeKind kind, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(TypeVarNode);
+HERCULES_REGISTER_NODE_TYPE(TypeVarNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.TypeVar").set_body_typed([](StringRef name, int kind) {
+HERCULES_REGISTER_GLOBAL("ir.TypeVar").set_body_typed([](StringRef name, int kind) {
   return TypeVar(name, static_cast<TypeKind>(kind));
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<TypeVar>("", [](TypeVar var, ObjectPath p, IRDocsifier d) -> Doc {
       return Dialect(d, "TypeVar")
           ->Call({LiteralDoc::Str(var->name_hint, p->Attr("name_hint")),  //
@@ -156,13 +156,13 @@ GlobalTypeVar::GlobalTypeVar(StringRef name, TypeKind kind, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(GlobalTypeVarNode);
+HERCULES_REGISTER_NODE_TYPE(GlobalTypeVarNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.GlobalTypeVar").set_body_typed([](StringRef name, int kind) {
+HERCULES_REGISTER_GLOBAL("ir.GlobalTypeVar").set_body_typed([](StringRef name, int kind) {
   return GlobalTypeVar(name, static_cast<TypeKind>(kind));
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<GlobalTypeVar>(  //
         "",
         [](GlobalTypeVar var, ObjectPath p, IRDocsifier d) -> Doc {
@@ -185,9 +185,9 @@ FuncType::FuncType(Array<Type> arg_types,
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(FuncTypeNode);
+HERCULES_REGISTER_NODE_TYPE(FuncTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.FuncType")
+HERCULES_REGISTER_GLOBAL("ir.FuncType")
     .set_body_typed([](Array<Type> arg_types,
                        Type ret_type,
                        Array<TypeVar> type_params,
@@ -198,7 +198,7 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.FuncType")
                       std::move(type_constraints));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<FuncType>("", [](FuncType func_type, ObjectPath p, IRDocsifier d) -> Doc {
       return Dialect(d, "FuncType")
           ->Call({
@@ -220,21 +220,21 @@ TupleType TupleType::Empty() {
   return TupleType(Array<Type>(), false);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(TupleTypeNode);
+HERCULES_REGISTER_NODE_TYPE(TupleTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.TupleType").set_body_typed([](Array<Type> fields) {
+HERCULES_REGISTER_GLOBAL("ir.TupleType").set_body_typed([](Array<Type> fields) {
   return TupleType(std::move(fields));
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.TupleType_Len").set_body_typed([](TupleType ty) {
+HERCULES_REGISTER_GLOBAL("ir.TupleType_Len").set_body_typed([](TupleType ty) {
   return (int64_t)ty->fields.size();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.TupleType_GetItem").set_body_typed([](TupleType ty, int64_t index) {
+HERCULES_REGISTER_GLOBAL("ir.TupleType_GetItem").set_body_typed([](TupleType ty, int64_t index) {
   return ty->fields[index];
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<TupleType>("", [](TupleType ty, ObjectPath p, IRDocsifier d) -> Doc {
       if (ty->fields.empty()) {
         return LiteralDoc::None(p);
@@ -256,14 +256,14 @@ RangeType::RangeType(Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(RangeTypeNode);
+HERCULES_REGISTER_NODE_TYPE(RangeTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.RangeType").set_body_typed([]() {
+HERCULES_REGISTER_GLOBAL("ir.RangeType").set_body_typed([]() {
   static RangeType range_t{Span(nullptr)};
   return range_t;
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<RangeType>("", [](RangeType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc("range");
     });
@@ -276,13 +276,13 @@ ObjectType::ObjectType(bool is_view, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ObjectTypeNode);
+HERCULES_REGISTER_NODE_TYPE(ObjectTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ObjectType").set_body_typed([](bool is_view) {
+HERCULES_REGISTER_GLOBAL("ir.ObjectType").set_body_typed([](bool is_view) {
   return ObjectType(is_view);
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ObjectType>("", [](ObjectType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc("Any");
     });
@@ -295,13 +295,13 @@ StringType::StringType(bool is_view, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(StringTypeNode);
+HERCULES_REGISTER_NODE_TYPE(StringTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.StringType").set_body_typed([](bool is_view) {
+HERCULES_REGISTER_GLOBAL("ir.StringType").set_body_typed([](bool is_view) {
   return StringType(is_view);
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<StringType>("", [](StringType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc("bytes");
     });
@@ -314,13 +314,13 @@ UnicodeType::UnicodeType(bool is_view, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(UnicodeTypeNode);
+HERCULES_REGISTER_NODE_TYPE(UnicodeTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.UnicodeType").set_body_typed([](bool is_view) {
+HERCULES_REGISTER_GLOBAL("ir.UnicodeType").set_body_typed([](bool is_view) {
   return UnicodeType(is_view);
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<UnicodeType>("", [](UnicodeType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc("str");
     });
@@ -334,16 +334,16 @@ ListType::ListType(bool is_full_typed, Type item_type, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ListTypeNode);
+HERCULES_REGISTER_NODE_TYPE(ListTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ListType").set_body_typed([](bool is_full_typed, Type item_type) {
+HERCULES_REGISTER_GLOBAL("ir.ListType").set_body_typed([](bool is_full_typed, Type item_type) {
   return ListType(is_full_typed, std::move(item_type));
 });
-MATXSCRIPT_REGISTER_GLOBAL("ir.ListTypeGetItemType").set_body_typed([](ListType t) {
+HERCULES_REGISTER_GLOBAL("ir.ListTypeGetItemType").set_body_typed([](ListType t) {
   return t->item_type;
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ListType>("", [](ListType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(GetLiteralRepr(ty));
     });
@@ -358,14 +358,14 @@ DictType::DictType(bool is_full_typed, Type key_type, Type value_type, Span span
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(DictTypeNode);
+HERCULES_REGISTER_NODE_TYPE(DictTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.DictType")
+HERCULES_REGISTER_GLOBAL("ir.DictType")
     .set_body_typed([](bool is_full_typed, Type key_type, Type value_type) {
       return DictType(is_full_typed, std::move(key_type), std::move(value_type));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<DictType>("", [](DictType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(GetLiteralRepr(ty));
     });
@@ -379,13 +379,13 @@ SetType::SetType(bool is_full_typed, Type item_type, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(SetTypeNode);
+HERCULES_REGISTER_NODE_TYPE(SetTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.SetType").set_body_typed([](bool is_full_typed, Type item_type) {
+HERCULES_REGISTER_GLOBAL("ir.SetType").set_body_typed([](bool is_full_typed, Type item_type) {
   return SetType(is_full_typed, std::move(item_type));
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<SetType>("", [](SetType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(GetLiteralRepr(ty));
     });
@@ -409,13 +409,13 @@ IteratorType::IteratorType(Type container_type, Type value_type, bool has_begin_
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(IteratorTypeNode);
+HERCULES_REGISTER_NODE_TYPE(IteratorTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.IteratorType").set_body_typed([](Type container_type) {
+HERCULES_REGISTER_GLOBAL("ir.IteratorType").set_body_typed([](Type container_type) {
   return IteratorType(std::move(container_type));
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<IteratorType>("", [](IteratorType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(GetLiteralRepr(ty));
     });
@@ -428,12 +428,12 @@ ExceptionType::ExceptionType(StringRef name, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ExceptionTypeNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.ExceptionType").set_body_typed([](StringRef name) {
+HERCULES_REGISTER_NODE_TYPE(ExceptionTypeNode);
+HERCULES_REGISTER_GLOBAL("ir.ExceptionType").set_body_typed([](StringRef name) {
   return ExceptionType(std::move(name));
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ExceptionType>("", [](ExceptionType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(GetLiteralRepr(ty));
     });
@@ -446,13 +446,13 @@ FileType::FileType(bool binary_mode, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(FileTypeNode);
+HERCULES_REGISTER_NODE_TYPE(FileTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.FileType").set_body_typed([](bool binary_mode) {
+HERCULES_REGISTER_GLOBAL("ir.FileType").set_body_typed([](bool binary_mode) {
   return FileType(binary_mode);
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<FileType>("", [](FileType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(GetLiteralRepr(ty));
     });
@@ -464,11 +464,11 @@ TrieType::TrieType(Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(TrieTypeNode);
+HERCULES_REGISTER_NODE_TYPE(TrieTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.TrieType").set_body_typed([]() { return TrieType(); });
+HERCULES_REGISTER_GLOBAL("ir.TrieType").set_body_typed([]() { return TrieType(); });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<TrieType>("", [](TrieType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(GetLiteralRepr(ty));
     });
@@ -480,11 +480,11 @@ UserDataType::UserDataType(Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(UserDataTypeNode);
+HERCULES_REGISTER_NODE_TYPE(UserDataTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.UserDataType").set_body_typed([]() { return UserDataType(); });
+HERCULES_REGISTER_GLOBAL("ir.UserDataType").set_body_typed([]() { return UserDataType(); });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<UserDataType>("", [](UserDataType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(GetLiteralRepr(ty));
     });
@@ -497,12 +497,12 @@ ShapeType::ShapeType(int ndim, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ShapeTypeNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.ShapeType").set_body_typed([](int ndim, Span span) {
+HERCULES_REGISTER_NODE_TYPE(ShapeTypeNode);
+HERCULES_REGISTER_GLOBAL("ir.ShapeType").set_body_typed([](int ndim, Span span) {
   return ShapeType(ndim, span);
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ShapeType>(  //
         "",
         [](ShapeType n, ObjectPath n_p, IRDocsifier d) -> Doc {
@@ -538,9 +538,9 @@ DynTensorType::DynTensorType(int64_t ndim, runtime::DataType dtype, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(DynTensorTypeNode);
+HERCULES_REGISTER_NODE_TYPE(DynTensorTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.DynTensorType").set_body_typed([](int64_t ndim, const Any& dtype) {
+HERCULES_REGISTER_GLOBAL("ir.DynTensorType").set_body_typed([](int64_t ndim, const Any& dtype) {
   runtime::DataType pod_dtype = DataType::Void();
   if (!dtype.is_nullptr()) {
     if (dtype.IsObjectRef<PrimType>()) {
@@ -558,29 +558,29 @@ RegexType::RegexType(Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(RegexTypeNode);
+HERCULES_REGISTER_NODE_TYPE(RegexTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.RegexType").set_body_typed([]() { return RegexType(); });
+HERCULES_REGISTER_GLOBAL("ir.RegexType").set_body_typed([]() { return RegexType(); });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<RegexType>("", [](RegexType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(GetLiteralRepr(ty));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<DynTensorType>("", [](DynTensorType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(GetLiteralRepr(ty));
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Type_GetPythonTypeName").set_body_typed([](Type ty) {
+HERCULES_REGISTER_GLOBAL("ir.Type_GetPythonTypeName").set_body_typed([](Type ty) {
   return ty->GetPythonTypeName();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Type_IsFullTyped").set_body_typed([](Type ty) {
+HERCULES_REGISTER_GLOBAL("ir.Type_IsFullTyped").set_body_typed([](Type ty) {
   return ty->IsFullTyped();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Type_IsIterable").set_body_typed([](Type ty) {
+HERCULES_REGISTER_GLOBAL("ir.Type_IsIterable").set_body_typed([](Type ty) {
   return ty->Iterable();
 });
 
@@ -591,13 +591,13 @@ OpaqueObjectType::OpaqueObjectType(Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(OpaqueObjectTypeNode);
+HERCULES_REGISTER_NODE_TYPE(OpaqueObjectTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.OpaqueObjectType").set_body_typed([]() {
+HERCULES_REGISTER_GLOBAL("ir.OpaqueObjectType").set_body_typed([]() {
   return OpaqueObjectType();
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<OpaqueObjectType>("",
                                     [](OpaqueObjectType ty, ObjectPath p, IRDocsifier d) -> Doc {
                                       return IdDoc(GetLiteralRepr(ty));
@@ -611,13 +611,13 @@ RefType::RefType(Type value, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(RefTypeNode);
+HERCULES_REGISTER_NODE_TYPE(RefTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.RefType").set_body_typed([](Type value) {
+HERCULES_REGISTER_GLOBAL("ir.RefType").set_body_typed([](Type value) {
   return RefType(std::move(value));
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<RefType>("", [](RefType ty, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(GetLiteralRepr(ty));
     });
@@ -668,7 +668,7 @@ Type InferIteratorValueType(const Type& cons_ty) {
 
 Type InferNthItemType(const Type& cons_ty, int64_t index) {
   if (auto* ptr = cons_ty.as<TupleTypeNode>()) {
-    MXCHECK(index < ptr->fields.size());
+    HSCHECK(index < ptr->fields.size());
     return ptr->fields[index];
   } else if (auto* ptr = cons_ty.as<RefTypeNode>()) {
     return InferNthItemType(ptr->value, index);
@@ -915,21 +915,21 @@ Type InferLiftType(const Type& t1, const Type& t2) {
   return any_type;
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.InferIteratorValueType").set_body_typed([](Type value) {
+HERCULES_REGISTER_GLOBAL("ir.InferIteratorValueType").set_body_typed([](Type value) {
   return InferIteratorValueType(value);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.InferNthItemType").set_body_typed([](Type value, int64_t index) {
+HERCULES_REGISTER_GLOBAL("ir.InferNthItemType").set_body_typed([](Type value, int64_t index) {
   return InferNthItemType(value, index);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.IsTypeConvertible").set_body_typed([](Type from, Type to) {
+HERCULES_REGISTER_GLOBAL("ir.IsTypeConvertible").set_body_typed([](Type from, Type to) {
   return IsTypeConvertible(from, to);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.InferLiftType").set_body_typed([](Type t1, Type t2) {
+HERCULES_REGISTER_GLOBAL("ir.InferLiftType").set_body_typed([](Type t1, Type t2) {
   return InferLiftType(t1, t2);
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -40,7 +40,7 @@
 #include <hercules/runtime/runtime_port.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
@@ -113,7 +113,7 @@ Iterator make(const Any& obj) {
       return obj.AsObjectViewNoCheck<NDArray>().data().iter();
     } break;
     default: {
-      MXTHROW << "Type is not iterable: " << obj.type_name();
+      HSTHROW << "Type is not iterable: " << obj.type_name();
       return Iterator();
     }
   }
@@ -175,14 +175,14 @@ bool make(const Any& obj) {
  *****************************************************************************/
 
 namespace Kernel_int64_t {
-MATXSCRIPT_ALWAYS_INLINE int64_t string_to_int64(const String& input_str, int64_t base) {
+HERCULES_ALWAYS_INLINE int64_t string_to_int64(const String& input_str, int64_t base) {
   String str = input_str.rstrip();
   size_t length = str.size();
-  MXCHECK_GT(length, 0) << "empty str! should be an int-like str";
+  HSCHECK_GT(length, 0) << "empty str! should be an int-like str";
 
   // check pattern and move to digit start
   int sign = 1;
-  MXCHECK(!((base != 0 && base < 2) || base > 36)) << "int() arg 2 must be >= 2 and <= 36";
+  HSCHECK(!((base != 0 && base < 2) || base > 36)) << "int() arg 2 must be >= 2 and <= 36";
   const char* cstr = str.c_str();
   while (*cstr != '\0' && std::isspace(*cstr)) {
     cstr++;
@@ -203,14 +203,14 @@ MATXSCRIPT_ALWAYS_INLINE int64_t string_to_int64(const String& input_str, int64_
     } else if (cstr[1] == 'b' || cstr[1] == 'B') {
       base = 2;
     } else {
-      MXTHROW << "invalid literal for int() with base " << base << ": '" << input_str << "'";
+      HSTHROW << "invalid literal for int() with base " << base << ": '" << input_str << "'";
     }
   }
   if (cstr[0] == '0' && cstr[1] != '\0' && !std::isdigit(cstr[1])) {
     bool is_specific_valid = (base == 16 && (cstr[1] == 'x' || cstr[1] == 'X')) ||
                              (base == 8 && (cstr[1] == 'o' || cstr[1] == 'O')) ||
                              (base == 2 && (cstr[1] == 'b' || cstr[1] == 'B'));
-    MXCHECK(is_specific_valid) << "invalid literal for int() with base " << base << ": '"
+    HSCHECK(is_specific_valid) << "invalid literal for int() with base " << base << ": '"
                                << input_str << "'";
     cstr += 2;
     // One underscore allowed here.
@@ -219,16 +219,16 @@ MATXSCRIPT_ALWAYS_INLINE int64_t string_to_int64(const String& input_str, int64_
     }
   }
 
-  MXCHECK(AsciiIsDigit(string_view(cstr)))
+  HSCHECK(AsciiIsDigit(string_view(cstr)))
       << "invalid literal for int() with base " << base << ": '" << input_str << "'";
 
   char* end;
   int64_t ret = std::strtoll(cstr, &end, base);
   if (cstr == end) {
-    MXTHROW << "invalid literal for int() with base " << base << ": '" << input_str << "'";
+    HSTHROW << "invalid literal for int() with base " << base << ": '" << input_str << "'";
   }
   if (errno == ERANGE) {
-    MXTHROW << "invalid literal for int() with base " << base << ": '" << input_str << "'";
+    HSTHROW << "invalid literal for int() with base " << base << ": '" << input_str << "'";
   }
   return ret * sign;
 }
@@ -255,7 +255,7 @@ int64_t make(const Any& c, int64_t base) {
       return make(c.value().data.v_float64);
     } break;
     default: {
-      MXTHROW << "expected int64_t acceptable object, but receive: " << c.type_name();
+      HSTHROW << "expected int64_t acceptable object, but receive: " << c.type_name();
       return 0;
     } break;
   }
@@ -268,15 +268,15 @@ int64_t make(const Any& c, int64_t base) {
  *****************************************************************************/
 
 namespace Kernel_double {
-MATXSCRIPT_ALWAYS_INLINE double string_to_float64(const String& str) {
-  MXCHECK_GT(str.size(), 0) << "empty str! should be a float-like str";
+HERCULES_ALWAYS_INLINE double string_to_float64(const String& str) {
+  HSCHECK_GT(str.size(), 0) << "empty str! should be a float-like str";
   char* end;
   double ret = std::strtod(str.c_str(), &end);
   if (str.c_str() == end) {
-    MXTHROW << "could not convert string to float: '" << str << "'";
+    HSTHROW << "could not convert string to float: '" << str << "'";
   }
   if (errno == ERANGE) {
-    MXTHROW << "could not convert string to float: '" << str << "'";
+    HSTHROW << "could not convert string to float: '" << str << "'";
   }
   return ret;
 }
@@ -304,7 +304,7 @@ double make(const Any& c) {
       return make(c.value().data.v_float64);
     } break;
     default: {
-      MXTHROW << "expected float64 acceptable object, but receive: " << c.type_name();
+      HSTHROW << "expected float64 acceptable object, but receive: " << c.type_name();
       return 0;
     } break;
   }
@@ -318,7 +318,7 @@ double make(const Any& c) {
 namespace Kernel_String {
 
 String make(const Unicode& us, const Unicode& encoding) {
-  MXCHECK_EQ(encoding.view(), unicode_view(U"UTF-8"));
+  HSCHECK_EQ(encoding.view(), unicode_view(U"UTF-8"));
   return us.encode();
 }
 
@@ -331,7 +331,7 @@ String make(const Any& c) {
       return UnicodeHelper::Encode(c.AsNoCheck<unicode_view>());
     } break;
     default: {
-      MXTHROW << "expected bytes acceptable object, but receive: " << c.type_name();
+      HSTHROW << "expected bytes acceptable object, but receive: " << c.type_name();
       return String();
     } break;
   }
@@ -392,7 +392,7 @@ Unicode make(const Any& c) {
       return ud.__str__();
     } break;
     default: {
-      MXTHROW << "expected unicode acceptable object, but receive: " << c.type_name();
+      HSTHROW << "expected unicode acceptable object, but receive: " << c.type_name();
       return Unicode();
     } break;
   }
@@ -420,7 +420,7 @@ Dict make(const Any& c) {
       return make(c.AsObjectViewNoCheck<Dict>().data());
     } break;
     default: {
-      MXTHROW << "TypeError: dict(...) not support '" << c.type_name() << "'";
+      HSTHROW << "TypeError: dict(...) not support '" << c.type_name() << "'";
       return {};
     } break;
   }
@@ -515,9 +515,9 @@ Set make(const Any& c) {
 namespace Kernel_NDArray {
 
 namespace {
-MATXSCRIPT_ALWAYS_INLINE void copy_to(void* data, NDArray& arr) {
+HERCULES_ALWAYS_INLINE void copy_to(void* data, NDArray& arr) {
   auto* dev_api = DeviceAPI::Get(arr->device);
-  MATXScriptStreamHandle stream = dev_api->GetCurrentThreadStream(arr->device);
+  HerculesStreamHandle stream = dev_api->GetCurrentThreadStream(arr->device);
   dev_api->CopyDataFromTo(data,
                           0,
                           const_cast<void*>(arr.RawData()),
@@ -540,7 +540,7 @@ NDArray make_from_ft(const FTList<T>& list,
   std::vector<int64_t> arg_shape;
   int64_t element_num = 1;
   if (shape.empty()) {
-    MXCHECK(!list.empty()) << "NDArray: empty list and empty shape";
+    HSCHECK(!list.empty()) << "NDArray: empty list and empty shape";
     element_num = list.size();
     arg_shape.push_back(element_num);
   } else {
@@ -550,7 +550,7 @@ NDArray make_from_ft(const FTList<T>& list,
       arg_shape.push_back(shape[i].As<int64_t>());
       element_num *= arg_shape[i];
     }
-    MXCHECK(list.size() == element_num) << "NDArray: list and shape are mismatched";
+    HSCHECK(list.size() == element_num) << "NDArray: list and shape are mismatched";
   }
   // same type: direct copy
   auto arr = NDArray::Empty(arg_shape, dtype, NDArrayHelper::GetDevice(ctx_str));
@@ -564,7 +564,7 @@ NDArray make_from_ft(const FTList<T>& list,
   if (ctx_str == U"cpu") {
     FTObjectBaseNode* obj_ptr = const_cast<FTObjectBaseNode*>(list.get());
     auto& vec = static_cast<FTListNode<T>*>(obj_ptr)->data_;
-    MATX_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
+    HVM_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
       DT* data = const_cast<DT*>(arr.Data<DT>());
       for (int64_t i = 0; i < element_num; ++i) {
         data[i] = vec[i];
@@ -573,7 +573,7 @@ NDArray make_from_ft(const FTList<T>& list,
   } else {
     FTObjectBaseNode* obj_ptr = const_cast<FTObjectBaseNode*>(list.get());
     auto& vec = static_cast<FTListNode<T>*>(obj_ptr)->data_;
-    MATX_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
+    HVM_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
       ListHelper::SimpleVec<DT> data(element_num);
       for (int64_t i = 0; i < element_num; ++i) {
         data.push_back(vec[i]);
@@ -594,7 +594,7 @@ NDArray make_from_scalar(T scalar,
   std::vector<int64_t> arg_shape;
   int64_t element_num = 1;
   if (shape.empty()) {
-    THROW_PY_ValueError("matx.NDArray(scalar, shape, ...): shape should not be empty");
+    THROW_PY_ValueError("hvm.NDArray(scalar, shape, ...): shape should not be empty");
   }
   List::size_type dim = shape.size();
   arg_shape.reserve(dim);
@@ -606,14 +606,14 @@ NDArray make_from_scalar(T scalar,
   // same type: direct copy
   auto arr = NDArray::Empty(arg_shape, dtype, NDArrayHelper::GetDevice(ctx_str));
   if (ctx_str == U"cpu") {
-    MATX_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
+    HVM_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
       DT* data = const_cast<DT*>(arr.Data<DT>());
       for (int64_t i = 0; i < element_num; ++i) {
         data[i] = DT(scalar);
       }
     });
   } else {
-    MATX_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
+    HVM_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
       ListHelper::SimpleVec<DT> data(element_num);
       for (int64_t i = 0; i < element_num; ++i) {
         data.push_back(scalar);
@@ -718,30 +718,30 @@ NDArray make(const List& list,
     if (!arg_shape.empty()) {
       return NDArray::Empty(arg_shape, dtype, NDArrayHelper::GetDevice(ctx_str));
     } else {
-      MXTHROW << "invalid input: empty list and empty shape";
+      HSTHROW << "invalid input: empty list and empty shape";
     }
   }
   // check list_shape and arg_shape
-  MXCHECK(ListHelper::FirstShape(list, list_shape)) << "shape of input list is invalid";
+  HSCHECK(ListHelper::FirstShape(list, list_shape)) << "shape of input list is invalid";
   if (arg_shape.empty()) {
     arg_shape = list_shape;
   } else {
-    MXCHECK((list_shape.size() == 1 && list_shape[0] == element_num) ||
+    HSCHECK((list_shape.size() == 1 && list_shape[0] == element_num) ||
             (list_shape.size() == arg_shape.size() &&
              std::equal(list_shape.begin(), list_shape.end(), arg_shape.begin())));
   }
   auto arr = NDArray::Empty(arg_shape, dtype, NDArrayHelper::GetDevice(ctx_str));
   if (ctx_str == U"cpu") {
-    MATX_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
+    HVM_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
       auto data = ListHelper::FlatList<DT>(list, list_shape, (DT*)arr.RawData());
-      MXCHECK(data != nullptr) << "shape of input list is invalid";
+      HSCHECK(data != nullptr) << "shape of input list is invalid";
       return arr;
     });
   }
 
-  MATX_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
+  HVM_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
     auto data = ListHelper::FlatList<DT>(list, list_shape);
-    MXCHECK(data != nullptr) << "shape of input list is invalid";
+    HSCHECK(data != nullptr) << "shape of input list is invalid";
     copy_to(static_cast<void*>(data->data()), arr);
     return arr;
   });
@@ -760,10 +760,10 @@ Trie make(const Dict& d) {
   std::vector<String> ukeys;
   ukeys.reserve(d.size());
   for (auto& kv : d.items()) {
-    MXCHECK(kv.first.IsString() || kv.first.IsUnicode())
+    HSCHECK(kv.first.IsString() || kv.first.IsUnicode())
         << "[KernelTo<Trie>] Expect argument is dict<str, int>, but get key mismatch: "
         << kv.first.type_name();
-    MXCHECK(kv.second.type_code() == TypeIndex::kRuntimeInteger)
+    HSCHECK(kv.second.type_code() == TypeIndex::kRuntimeInteger)
         << "[KernelTo<Trie>] Expect argument is dict<str, int>, but get value mismatch: "
         << kv.second.type_name();
     int64_t index = kv.second.As<int64_t>();
@@ -779,4 +779,4 @@ Trie make(const Dict& d) {
 }  // namespace Kernel_Trie
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

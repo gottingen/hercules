@@ -31,7 +31,7 @@
 #include <hercules/runtime/generic/generic_hlo_arith_funcs.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
@@ -250,7 +250,7 @@ Tuple Tuple::repeat(int64_t times) const {
 }
 
 Tuple Tuple::get_slice(int64_t b, int64_t e, int64_t step) const {
-  MXCHECK_GT(step, 0) << "Tuple.slice_load step must be gt 0";
+  HSCHECK_GT(step, 0) << "Tuple.slice_load step must be gt 0";
   MX_DPTR(Tuple);
   int64_t len = size();
   b = slice_index_correction(b, len);
@@ -357,4 +357,4 @@ std::ostream& operator<<(std::ostream& os, Tuple const& n) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

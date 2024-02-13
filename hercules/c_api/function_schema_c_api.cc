@@ -21,13 +21,13 @@
 #include <hercules/ir/type.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::runtime;
+using namespace ::hercules::runtime;
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Type_GetRuntimeTypeCode").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[runtime.RTValue_GetTypeCode] Expect 1 arguments but get "
+HERCULES_REGISTER_GLOBAL("ir.Type_GetRuntimeTypeCode").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[runtime.RTValue_GetTypeCode] Expect 1 arguments but get "
                              << args.size();
   int64_t type_code = INT16_MIN;
   Type t = args[0].As<Type>();
@@ -70,4 +70,4 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.Type_GetRuntimeTypeCode").set_body([](PyArgs args
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

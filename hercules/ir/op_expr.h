@@ -21,7 +21,7 @@
  */
 
 /*!
- * \file matx/ir/op.h
+ * \file hvm/ir/op.h
  * \brief Primitive operators(builtin intrinsics)
  *        and registry for them.
  */
@@ -38,7 +38,7 @@
 #include <hercules/ir/type.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 // forward declare name.
@@ -115,7 +115,7 @@ class OpNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "Op";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(OpNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(OpNode, HLOExprNode);
 
  private:
   /*! \return the internal attr registry index. */
@@ -170,14 +170,14 @@ class Op : public HLOExpr {
    * \param attr_name The name of the attribute.
    * \return bool True if the attr is present.
    */
-  MATX_DLL static bool HasAttrMap(const StringRef& attr_name);
+  HERCULES_DLL static bool HasAttrMap(const StringRef& attr_name);
   /*!
    * \brief Get an Op for a given operator name.
    *  Will raise an error if the op has not been registered.
    * \param op_name Name of the operator.
    * \return Pointer to a Op, valid throughout program lifetime.
    */
-  MATX_DLL static const Op& Get(const StringRef& op_name);
+  HERCULES_DLL static const Op& Get(const StringRef& op_name);
 
   /*! \brief specify container node */
   using ContainerType = OpNode;
@@ -188,12 +188,12 @@ class Op : public HLOExpr {
    * \param key The attribute key
    * \return The attr map.
    */
-  MATX_DLL static const AttrRegistryMapContainerMap<Op>& GetAttrMapContainer(const StringRef& key);
+  HERCULES_DLL static const AttrRegistryMapContainerMap<Op>& GetAttrMapContainer(const StringRef& key);
 };
 
 /*!
  * \brief Helper structure to register operators
- * \sa MATXSCRIPT_IR_REGISTER_OP
+ * \sa HERCULES_IR_REGISTER_OP
  */
 class OpRegEntry {
  public:
@@ -274,7 +274,7 @@ class OpRegEntry {
    * \param name The name of the operator.
    * \return the corresponding entry.
    */
-  MATX_DLL static OpRegEntry& RegisterOrGet(const StringRef& name);
+  HERCULES_DLL static OpRegEntry& RegisterOrGet(const StringRef& name);
 
  private:
   template <typename, typename>
@@ -284,11 +284,11 @@ class OpRegEntry {
   /*! \brief The operator */
   Op op_;
   // private constructor
-  MATX_DLL OpRegEntry(uint32_t reg_index);
+  HERCULES_DLL OpRegEntry(uint32_t reg_index);
   // return internal pointer to op.
   inline OpNode* get();
   // update the attribute OpAttrMap
-  MATX_DLL void UpdateAttr(const StringRef& key, runtime::RTValue value, int plevel);
+  HERCULES_DLL void UpdateAttr(const StringRef& key, runtime::RTValue value, int plevel);
 };
 
 /*!
@@ -320,27 +320,27 @@ class OpAttrMap : public AttrRegistryMap<Op, ValueType> {
 };
 
 // internal macros to make
-#define MATXSCRIPT_IR_OP_REGISTER_VAR_DEF \
-  static MATXSCRIPT_ATTRIBUTE_UNUSED ::matxscript::ir::OpRegEntry& __make_##Op
+#define HERCULES_IR_OP_REGISTER_VAR_DEF \
+  static HERCULES_ATTRIBUTE_UNUSED ::hercules::ir::OpRegEntry& __make_##Op
 
 /*!
- * \def MATXSCRIPT_IR_REGISTER_OP
+ * \def HERCULES_IR_REGISTER_OP
  * \brief Register a new operator, or set attribute of the corresponding op.
  *
  * \param OpName The name of registry
  *
  * \code
  *
- *  MATXSCRIPT_IR_REGISTER_OP("add")
+ *  HERCULES_IR_REGISTER_OP("add")
  *  .describe("add two inputs together")
  *  .set_num_inputs(2)
  *  .set_attr<OpKernel>("gpu_kernel", AddKernel);
  *
  * \endcode
  */
-#define MATXSCRIPT_IR_REGISTER_OP(OpName)                                 \
-  MATXSCRIPT_STR_CONCAT(MATXSCRIPT_IR_OP_REGISTER_VAR_DEF, __COUNTER__) = \
-      ::matxscript::ir::OpRegEntry::RegisterOrGet(OpName).set_name()
+#define HERCULES_IR_REGISTER_OP(OpName)                                 \
+  HERCULES_STR_CONCAT(HERCULES_IR_OP_REGISTER_VAR_DEF, __COUNTER__) = \
+      ::hercules::ir::OpRegEntry::RegisterOrGet(OpName).set_name()
 
 // implementations
 inline const OpNode* Op::operator->() const {
@@ -399,7 +399,7 @@ inline OpRegEntry& OpRegEntry::set_attr(  // NOLINT(*)
     const StringRef& attr_name,
     const ValueType& value,
     int plevel) {
-  MXCHECK_GT(plevel, 0) << "plevel in set_attr must be greater than 0";
+  HSCHECK_GT(plevel, 0) << "plevel in set_attr must be greater than 0";
   runtime::RTValue rv = value;
   UpdateAttr(attr_name, rv, plevel);
   return *this;
@@ -409,7 +409,7 @@ inline OpRegEntry& OpRegEntry::set_attr(  // NOLINT(*)
 
 template <typename ValueType>
 inline ValueType OpAttrMap<ValueType>::get(const HLOExpr& expr, ValueType def_value) const {
-  MXCHECK(expr.defined());
+  HSCHECK(expr.defined());
   if (const OpNode* op = expr.as<OpNode>()) {
     return this->map_.get(runtime::GetRef<Op>(op), def_value);
   } else {
@@ -418,4 +418,4 @@ inline ValueType OpAttrMap<ValueType>::get(const HLOExpr& expr, ValueType def_va
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

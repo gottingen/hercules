@@ -23,7 +23,7 @@
 
 #include <hercules/ir/stmt_functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class YieldDetector : public StmtExprVisitor {
@@ -59,4 +59,4 @@ class YieldLabelMutator : public StmtExprMutator {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

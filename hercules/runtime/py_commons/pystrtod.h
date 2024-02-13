@@ -24,7 +24,7 @@
 
 #include <hercules/runtime/container/string.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -48,4 +48,4 @@ constexpr int64_t Py_DTST_NAN = 2;
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -36,7 +36,7 @@
 
 #include "_ft_object_base.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <class I>
@@ -157,10 +157,10 @@ struct FTDictValues {
 };
 
 template <typename K, typename V>
-class MATX_DLL FTDict;
+class HERCULES_DLL FTDict;
 
 template <typename K, typename V>
-struct MATX_DLL FTDictNode : public FTObjectBaseNode {
+struct HERCULES_DLL FTDictNode : public FTObjectBaseNode {
  public:
   // data holder
   using key_type = typename std::remove_cv<typename std::remove_reference<K>::type>::type;
@@ -169,24 +169,24 @@ struct MATX_DLL FTDictNode : public FTObjectBaseNode {
   using value_type = typename container_type::value_type;
 
  public:
-  MATXSCRIPT_INLINE_VISIBILITY ~FTDictNode() = default;
+  HERCULES_INLINE_VISIBILITY ~FTDictNode() = default;
   // constructors
-  MATXSCRIPT_INLINE_VISIBILITY FTDictNode()
+  HERCULES_INLINE_VISIBILITY FTDictNode()
       : FTObjectBaseNode(&function_table_, &std_type_index_, type_tag_) {
   }
-  MATXSCRIPT_INLINE_VISIBILITY FTDictNode(FTDictNode&& other) = default;
-  MATXSCRIPT_INLINE_VISIBILITY FTDictNode(const FTDictNode& other) = default;
-  MATXSCRIPT_INLINE_VISIBILITY FTDictNode& operator=(FTDictNode&& other) = default;
-  MATXSCRIPT_INLINE_VISIBILITY FTDictNode& operator=(const FTDictNode& other) = default;
+  HERCULES_INLINE_VISIBILITY FTDictNode(FTDictNode&& other) = default;
+  HERCULES_INLINE_VISIBILITY FTDictNode(const FTDictNode& other) = default;
+  HERCULES_INLINE_VISIBILITY FTDictNode& operator=(FTDictNode&& other) = default;
+  HERCULES_INLINE_VISIBILITY FTDictNode& operator=(const FTDictNode& other) = default;
 
   template <typename IterType>
-  MATXSCRIPT_INLINE_VISIBILITY FTDictNode(IterType first, IterType last)
+  HERCULES_INLINE_VISIBILITY FTDictNode(IterType first, IterType last)
       : FTObjectBaseNode(&function_table_, &std_type_index_, type_tag_), data_(first, last) {
   }
-  MATXSCRIPT_INLINE_VISIBILITY FTDictNode(std::initializer_list<value_type> init)
+  HERCULES_INLINE_VISIBILITY FTDictNode(std::initializer_list<value_type> init)
       : FTObjectBaseNode(&function_table_, &std_type_index_, type_tag_), data_(init) {
   }
-  MATXSCRIPT_INLINE_VISIBILITY explicit FTDictNode(container_type init)
+  HERCULES_INLINE_VISIBILITY explicit FTDictNode(container_type init)
       : FTObjectBaseNode(&function_table_, &std_type_index_, type_tag_), data_(std::move(init)) {
   }
 
@@ -196,14 +196,14 @@ struct MATX_DLL FTDictNode : public FTObjectBaseNode {
   static const FTObjectBaseNode::FunctionTable function_table_;
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeFTDict;
   static constexpr const char* _type_key = "FTDict";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(FTDictNode, FTObjectBaseNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(FTDictNode, FTObjectBaseNode);
 
  public:
   container_type data_;
 };
 
 template <typename K, typename V>
-class MATX_DLL FTDict : public FTObjectBase {
+class HERCULES_DLL FTDict : public FTObjectBase {
  public:
   // data holder
   using key_type = typename std::remove_cv<typename std::remove_reference<K>::type>::type;
@@ -249,53 +249,53 @@ class MATX_DLL FTDict : public FTObjectBase {
   using const_pointer = typename container_type::const_pointer;
 
   // iterators
-  MATXSCRIPT_INLINE_VISIBILITY iterator begin() const {
+  HERCULES_INLINE_VISIBILITY iterator begin() const {
     return typename FTDict::iterator(MutableImpl().begin());
   }
-  MATXSCRIPT_INLINE_VISIBILITY iterator end() const {
+  HERCULES_INLINE_VISIBILITY iterator end() const {
     return typename FTDict::iterator(MutableImpl().end());
   }
-  MATXSCRIPT_INLINE_VISIBILITY item_iterator item_begin() const {
+  HERCULES_INLINE_VISIBILITY item_iterator item_begin() const {
     return ft_item_iterator_adaptator<typename FTDict::container_type::iterator>(
         MutableImpl().begin());
   }
-  MATXSCRIPT_INLINE_VISIBILITY item_iterator item_end() const {
+  HERCULES_INLINE_VISIBILITY item_iterator item_end() const {
     return ft_item_iterator_adaptator<typename FTDict::container_type::iterator>(
         MutableImpl().end());
   }
-  MATXSCRIPT_INLINE_VISIBILITY key_iterator key_begin() const {
+  HERCULES_INLINE_VISIBILITY key_iterator key_begin() const {
     return ft_key_iterator_adaptator<typename FTDict::container_type::iterator>(
         MutableImpl().begin());
   }
-  MATXSCRIPT_INLINE_VISIBILITY key_iterator key_end() const {
+  HERCULES_INLINE_VISIBILITY key_iterator key_end() const {
     return ft_key_iterator_adaptator<typename FTDict::container_type::iterator>(
         MutableImpl().end());
   }
-  MATXSCRIPT_INLINE_VISIBILITY value_iterator value_begin() const {
+  HERCULES_INLINE_VISIBILITY value_iterator value_begin() const {
     return ft_value_iterator_adaptator<typename FTDict::container_type::iterator>(
         MutableImpl().begin());
   }
-  MATXSCRIPT_INLINE_VISIBILITY value_iterator value_end() const {
+  HERCULES_INLINE_VISIBILITY value_iterator value_end() const {
     return ft_value_iterator_adaptator<typename FTDict::container_type::iterator>(
         MutableImpl().end());
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY ~FTDict() noexcept = default;
+  HERCULES_INLINE_VISIBILITY ~FTDict() noexcept = default;
 
   // constructors
-  MATXSCRIPT_INLINE_VISIBILITY FTDict()
+  HERCULES_INLINE_VISIBILITY FTDict()
       : FTObjectBase(make_object<FTDictNode<key_type, mapped_type>>()) {
   }
-  MATXSCRIPT_INLINE_VISIBILITY FTDict(FTDict&& other) noexcept = default;
-  MATXSCRIPT_INLINE_VISIBILITY FTDict(const FTDict& other) noexcept = default;
-  MATXSCRIPT_INLINE_VISIBILITY FTDict& operator=(FTDict&& other) noexcept = default;
-  MATXSCRIPT_INLINE_VISIBILITY FTDict& operator=(const FTDict& other) noexcept = default;
+  HERCULES_INLINE_VISIBILITY FTDict(FTDict&& other) noexcept = default;
+  HERCULES_INLINE_VISIBILITY FTDict(const FTDict& other) noexcept = default;
+  HERCULES_INLINE_VISIBILITY FTDict& operator=(FTDict&& other) noexcept = default;
+  HERCULES_INLINE_VISIBILITY FTDict& operator=(const FTDict& other) noexcept = default;
 
   /*!
    * \brief constructor from pointer
    * \param n the container pointer
    */
-  MATXSCRIPT_INLINE_VISIBILITY explicit FTDict(ObjectPtr<Object> n) noexcept
+  HERCULES_INLINE_VISIBILITY explicit FTDict(ObjectPtr<Object> n) noexcept
       : FTObjectBase(std::move(n)) {
   }
 
@@ -306,7 +306,7 @@ class MATX_DLL FTDict : public FTObjectBase {
    * \tparam IterType The type of iterator
    */
   template <typename IterType>
-  MATXSCRIPT_INLINE_VISIBILITY FTDict(IterType first, IterType last)
+  HERCULES_INLINE_VISIBILITY FTDict(IterType first, IterType last)
       : FTObjectBase(make_object<FTDictNode<key_type, mapped_type>>(first, last)) {
   }
 
@@ -314,7 +314,7 @@ class MATX_DLL FTDict : public FTObjectBase {
    * \brief constructor from initializer FTDict
    * \param init The initializer FTDict
    */
-  MATXSCRIPT_INLINE_VISIBILITY FTDict(std::initializer_list<value_type> init)
+  HERCULES_INLINE_VISIBILITY FTDict(std::initializer_list<value_type> init)
       : FTObjectBase(make_object<FTDictNode<key_type, mapped_type>>(init)) {
   }
 
@@ -322,23 +322,23 @@ class MATX_DLL FTDict : public FTObjectBase {
    * \brief constructor from vector
    * \param init The vector
    */
-  MATXSCRIPT_INLINE_VISIBILITY FTDict(const std::vector<value_type>& init)
+  HERCULES_INLINE_VISIBILITY FTDict(const std::vector<value_type>& init)
       : FTObjectBase(make_object<FTDictNode<key_type, mapped_type>>(init.begin(), init.end())) {
   }
 
   template <class UK, class UV>
-  MATXSCRIPT_INLINE_VISIBILITY bool operator==(const FTDict<UK, UV>& other) const {
+  HERCULES_INLINE_VISIBILITY bool operator==(const FTDict<UK, UV>& other) const {
     return this->__eq__(other);
   }
 
   template <class UK, class UV>
-  MATXSCRIPT_INLINE_VISIBILITY bool operator!=(const FTDict<UK, UV>& other) const {
+  HERCULES_INLINE_VISIBILITY bool operator!=(const FTDict<UK, UV>& other) const {
     return !operator==(other);
   }
 
  public:
   // method for python
-  MATXSCRIPT_INLINE_VISIBILITY Iterator key_iter() const {
+  HERCULES_INLINE_VISIBILITY Iterator key_iter() const {
     auto iterator_ptr = std::make_shared<key_iterator>(this->key_begin());
     auto* iter_c = iterator_ptr.get();
     auto iter_end = this->key_end();
@@ -358,7 +358,7 @@ class MATX_DLL FTDict : public FTObjectBase {
         *this, std::move(has_next), std::move(next), std::move(next_and_checker));
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY Iterator value_iter() const {
+  HERCULES_INLINE_VISIBILITY Iterator value_iter() const {
     auto iterator_ptr = std::make_shared<value_iterator>(this->value_begin());
     auto* iter_c = iterator_ptr.get();
     auto iter_end = this->value_end();
@@ -378,7 +378,7 @@ class MATX_DLL FTDict : public FTObjectBase {
         *this, std::move(has_next), std::move(next), std::move(next_and_checker));
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY Iterator item_iter() const {
+  HERCULES_INLINE_VISIBILITY Iterator item_iter() const {
     auto iterator_ptr = std::make_shared<item_iterator>(this->item_begin());
     auto* iter_c = iterator_ptr.get();
     auto iter_end = this->item_end();
@@ -398,22 +398,22 @@ class MATX_DLL FTDict : public FTObjectBase {
         *this, std::move(has_next), std::move(next), std::move(next_and_checker));
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY Iterator __iter__() const {
+  HERCULES_INLINE_VISIBILITY Iterator __iter__() const {
     return this->key_iter();
   }
 
   template <class UK, class UV>
-  MATXSCRIPT_INLINE_VISIBILITY bool __eq__(const FTDict<UK, UV>& o, std::true_type) const {
+  HERCULES_INLINE_VISIBILITY bool __eq__(const FTDict<UK, UV>& o, std::true_type) const {
     return MutableImpl() == o.MutableImpl();
   }
 
   template <class UK, class UV>
-  MATXSCRIPT_INLINE_VISIBILITY bool __eq__(const FTDict<UK, UV>& o, std::false_type) const {
+  HERCULES_INLINE_VISIBILITY bool __eq__(const FTDict<UK, UV>& o, std::false_type) const {
     return Iterator::all_items_equal(item_iter(), o.item_iter());
   }
 
   template <class UK, class UV>
-  MATXSCRIPT_INLINE_VISIBILITY bool __eq__(const FTDict<UK, UV>& o) const {
+  HERCULES_INLINE_VISIBILITY bool __eq__(const FTDict<UK, UV>& o) const {
     using UK_TYPE = typename std::remove_cv<typename std::remove_reference<UK>::type>::type;
     using UV_TYPE = typename std::remove_cv<typename std::remove_reference<UK>::type>::type;
     return __eq__(o,
@@ -423,7 +423,7 @@ class MATX_DLL FTDict : public FTObjectBase {
                   std::false_type > ::type{});
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY bool __eq__(const Any& o) const {
+  HERCULES_INLINE_VISIBILITY bool __eq__(const Any& o) const {
     if (o.type_code() == TypeIndex::kRuntimeFTDict || o.type_code() == TypeIndex::kRuntimeDict) {
       return Iterator::all_items_equal(item_iter(), Iterator::MakeItemsIterator(o));
     }
@@ -431,35 +431,35 @@ class MATX_DLL FTDict : public FTObjectBase {
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type& __getitem__(KEY_U const& key, std::true_type) const {
+  HERCULES_INLINE_VISIBILITY mapped_type& __getitem__(KEY_U const& key, std::true_type) const {
     auto& data_impl = MutableImpl();
     auto iter = data_impl.find(key);
-    MXCHECK(iter != data_impl.end()) << "Dict[" << key << "] not found";
+    HSCHECK(iter != data_impl.end()) << "Dict[" << key << "] not found";
     return iter->second;
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type& __getitem__(KEY_U const& key, std::false_type) const {
-    MXTHROW << "Dict[" << key << "] not found";
+  HERCULES_INLINE_VISIBILITY mapped_type& __getitem__(KEY_U const& key, std::false_type) const {
+    HSTHROW << "Dict[" << key << "] not found";
     return MutableImpl().begin()->second;
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type& __getitem__(KEY_U const& key) const {
+  HERCULES_INLINE_VISIBILITY mapped_type& __getitem__(KEY_U const& key) const {
     using KEY_U_TYPE = typename std::remove_cv<typename std::remove_reference<KEY_U>::type>::type;
     return __getitem__(key, typename is_comparable_with_key<KEY_U_TYPE>::type{});
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type& get_item(KEY_U const& key) const {
+  HERCULES_INLINE_VISIBILITY mapped_type& get_item(KEY_U const& key) const {
     return __getitem__(key);
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type& get_item(const char* const key) const {
+  HERCULES_INLINE_VISIBILITY mapped_type& get_item(const char* const key) const {
     return this->__getitem__(string_view(key));
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type& get_item(const char32_t* const key) const {
+  HERCULES_INLINE_VISIBILITY mapped_type& get_item(const char32_t* const key) const {
     return this->__getitem__(unicode_view(key));
   }
 
@@ -469,7 +469,7 @@ class MATX_DLL FTDict : public FTObjectBase {
                 mapped_type,
                 typename std::remove_cv<typename std::remove_reference<DefaultType>::type>::type>::
                                                    value>::type>
-  MATXSCRIPT_INLINE_VISIBILITY RTValue get_default(KEY_U const& key,
+  HERCULES_INLINE_VISIBILITY RTValue get_default(KEY_U const& key,
                                                    DefaultType&& default_val,
                                                    std::true_type) const {
     auto& data_impl = MutableImpl();
@@ -486,14 +486,14 @@ class MATX_DLL FTDict : public FTObjectBase {
                 mapped_type,
                 typename std::remove_cv<typename std::remove_reference<DefaultType>::type>::type>::
                                                    value>::type>
-  MATXSCRIPT_INLINE_VISIBILITY RTValue get_default(KEY_U const& key,
+  HERCULES_INLINE_VISIBILITY RTValue get_default(KEY_U const& key,
                                                    DefaultType&& default_val,
                                                    std::false_type) const {
     return std::forward<DefaultType>(default_val);
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type const& get_default(KEY_U const& key,
+  HERCULES_INLINE_VISIBILITY mapped_type const& get_default(KEY_U const& key,
                                                               mapped_type const& default_val,
                                                               std::true_type) const {
     auto& data_impl = MutableImpl();
@@ -502,7 +502,7 @@ class MATX_DLL FTDict : public FTObjectBase {
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type const& get_default(KEY_U const& key,
+  HERCULES_INLINE_VISIBILITY mapped_type const& get_default(KEY_U const& key,
                                                               mapped_type const& default_val,
                                                               std::false_type) const {
     return default_val;
@@ -514,7 +514,7 @@ class MATX_DLL FTDict : public FTObjectBase {
                 mapped_type,
                 typename std::remove_cv<typename std::remove_reference<DefaultType>::type>::type>::
                                                    value>::type>
-  MATXSCRIPT_INLINE_VISIBILITY RTValue get_default(KEY_U const& key,
+  HERCULES_INLINE_VISIBILITY RTValue get_default(KEY_U const& key,
                                                    DefaultType&& default_val) const {
     using KEY_U_TYPE = typename std::remove_cv<typename std::remove_reference<KEY_U>::type>::type;
     return this->get_default(key,
@@ -527,7 +527,7 @@ class MATX_DLL FTDict : public FTObjectBase {
                 mapped_type,
                 typename std::remove_cv<typename std::remove_reference<DefaultType>::type>::type>::
                                                    value>::type>
-  MATXSCRIPT_INLINE_VISIBILITY RTValue get_default(const char* const key,
+  HERCULES_INLINE_VISIBILITY RTValue get_default(const char* const key,
                                                    DefaultType&& default_val) const {
     return this->get_default(string_view(key), std::forward<DefaultType>(default_val));
   }
@@ -537,39 +537,39 @@ class MATX_DLL FTDict : public FTObjectBase {
                 mapped_type,
                 typename std::remove_cv<typename std::remove_reference<DefaultType>::type>::type>::
                                                    value>::type>
-  MATXSCRIPT_INLINE_VISIBILITY RTValue get_default(const char32_t* const key,
+  HERCULES_INLINE_VISIBILITY RTValue get_default(const char32_t* const key,
                                                    DefaultType&& default_val) const {
     return this->get_default(unicode_view(key), std::forward<DefaultType>(default_val));
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type const& get_default(
+  HERCULES_INLINE_VISIBILITY mapped_type const& get_default(
       KEY_U const& key, mapped_type const& default_val) const {
     using KEY_U_TYPE = typename std::remove_cv<typename std::remove_reference<KEY_U>::type>::type;
     return this->get_default(key, default_val, typename is_comparable_with_key<KEY_U_TYPE>::type{});
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type const& get_default(
+  HERCULES_INLINE_VISIBILITY mapped_type const& get_default(
       const char* const key, mapped_type const& default_val) const {
     return this->get_default(string_view(key), default_val);
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type const& get_default(
+  HERCULES_INLINE_VISIBILITY mapped_type const& get_default(
       const char32_t* const key, mapped_type const& default_val) const {
     return this->get_default(unicode_view(key), default_val);
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY RTValue get_default(KEY_U const& key) const {
+  HERCULES_INLINE_VISIBILITY RTValue get_default(KEY_U const& key) const {
     using KEY_U_TYPE = typename std::remove_cv<typename std::remove_reference<KEY_U>::type>::type;
     return this->get_default(key, None, typename is_comparable_with_key<KEY_U_TYPE>::type{});
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY RTValue get_default(const char* const key) const {
+  HERCULES_INLINE_VISIBILITY RTValue get_default(const char* const key) const {
     return this->get_default(string_view(key), None);
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY RTValue get_default(const char32_t* const key) const {
+  HERCULES_INLINE_VISIBILITY RTValue get_default(const char32_t* const key) const {
     return this->get_default(unicode_view(key), None);
   }
 
@@ -579,7 +579,7 @@ class MATX_DLL FTDict : public FTObjectBase {
                 mapped_type,
                 typename std::remove_cv<typename std::remove_reference<DefaultType>::type>::type>::
                                                    value>::type>
-  MATXSCRIPT_INLINE_VISIBILITY RTValue pop(KEY_U const& key,
+  HERCULES_INLINE_VISIBILITY RTValue pop(KEY_U const& key,
                                            DefaultType&& default_val,
                                            std::true_type) const {
     auto& data_impl = MutableImpl();
@@ -598,7 +598,7 @@ class MATX_DLL FTDict : public FTObjectBase {
                 mapped_type,
                 typename std::remove_cv<typename std::remove_reference<DefaultType>::type>::type>::
                                                    value>::type>
-  MATXSCRIPT_INLINE_VISIBILITY RTValue pop(KEY_U const& key,
+  HERCULES_INLINE_VISIBILITY RTValue pop(KEY_U const& key,
                                            DefaultType&& default_val,
                                            std::false_type) const {
     return std::forward<DefaultType>(default_val);
@@ -610,7 +610,7 @@ class MATX_DLL FTDict : public FTObjectBase {
                 mapped_type,
                 typename std::remove_cv<typename std::remove_reference<DefaultType>::type>::type>::
                                                    value>::type>
-  MATXSCRIPT_INLINE_VISIBILITY RTValue pop(KEY_U const& key, DefaultType&& default_val) const {
+  HERCULES_INLINE_VISIBILITY RTValue pop(KEY_U const& key, DefaultType&& default_val) const {
     using KEY_U_TYPE = typename std::remove_cv<typename std::remove_reference<KEY_U>::type>::type;
     return pop(key,
                std::forward<DefaultType>(default_val),
@@ -622,7 +622,7 @@ class MATX_DLL FTDict : public FTObjectBase {
                 mapped_type,
                 typename std::remove_cv<typename std::remove_reference<DefaultType>::type>::type>::
                                                    value>::type>
-  MATXSCRIPT_INLINE_VISIBILITY RTValue pop(const char* const key, DefaultType&& default_val) const {
+  HERCULES_INLINE_VISIBILITY RTValue pop(const char* const key, DefaultType&& default_val) const {
     return pop(string_view(key), std::forward<DefaultType>(default_val));
   }
 
@@ -631,13 +631,13 @@ class MATX_DLL FTDict : public FTObjectBase {
                 mapped_type,
                 typename std::remove_cv<typename std::remove_reference<DefaultType>::type>::type>::
                                                    value>::type>
-  MATXSCRIPT_INLINE_VISIBILITY RTValue pop(const char32_t* const key,
+  HERCULES_INLINE_VISIBILITY RTValue pop(const char32_t* const key,
                                            DefaultType&& default_val) const {
     return pop(unicode_view(key), std::forward<DefaultType>(default_val));
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type pop(KEY_U const& key,
+  HERCULES_INLINE_VISIBILITY mapped_type pop(KEY_U const& key,
                                                mapped_type const& default_val,
                                                std::true_type) const {
     auto& data_impl = MutableImpl();
@@ -651,35 +651,35 @@ class MATX_DLL FTDict : public FTObjectBase {
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type pop(KEY_U const& key,
+  HERCULES_INLINE_VISIBILITY mapped_type pop(KEY_U const& key,
                                                mapped_type const& default_val,
                                                std::false_type) const {
     return default_val;
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type pop(KEY_U const& key,
+  HERCULES_INLINE_VISIBILITY mapped_type pop(KEY_U const& key,
                                                mapped_type const& default_val) const {
     using KEY_U_TYPE = typename std::remove_cv<typename std::remove_reference<KEY_U>::type>::type;
     return pop(key, default_val, typename is_comparable_with_key<KEY_U_TYPE>::type{});
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type pop(const char* const key,
+  HERCULES_INLINE_VISIBILITY mapped_type pop(const char* const key,
                                                mapped_type const& default_val) const {
     return pop(string_view(key), default_val);
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type pop(const char32_t* const key,
+  HERCULES_INLINE_VISIBILITY mapped_type pop(const char32_t* const key,
                                                mapped_type const& default_val) const {
     return pop(unicode_view(key), default_val);
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type pop(KEY_U const& key, std::true_type) const {
+  HERCULES_INLINE_VISIBILITY mapped_type pop(KEY_U const& key, std::true_type) const {
     auto& data_impl = MutableImpl();
     auto it = data_impl.find(key);
     if (it == data_impl.end()) {
-      MXTHROW << "dict.pop KeyError";
+      HSTHROW << "dict.pop KeyError";
     }
     auto ret = std::move(it->second);
     data_impl.erase(it);
@@ -687,27 +687,27 @@ class MATX_DLL FTDict : public FTObjectBase {
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type pop(KEY_U const& key, std::false_type) const {
-    MXTHROW << "dict.pop KeyError";
+  HERCULES_INLINE_VISIBILITY mapped_type pop(KEY_U const& key, std::false_type) const {
+    HSTHROW << "dict.pop KeyError";
     return MutableImpl().begin()->second;
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type pop(KEY_U const& key) const {
+  HERCULES_INLINE_VISIBILITY mapped_type pop(KEY_U const& key) const {
     using KEY_U_TYPE = typename std::remove_cv<typename std::remove_reference<KEY_U>::type>::type;
     return pop(key, typename is_comparable_with_key<KEY_U_TYPE>::type{});
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type pop(const char* const key) const {
+  HERCULES_INLINE_VISIBILITY mapped_type pop(const char* const key) const {
     return pop(string_view(key));
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type pop(const char32_t* const key) const {
+  HERCULES_INLINE_VISIBILITY mapped_type pop(const char32_t* const key) const {
     return pop(unicode_view(key));
   }
 
   template <class KEY_U, class MAPPED_U>
-  MATXSCRIPT_INLINE_VISIBILITY void set_item(KEY_U&& key, MAPPED_U&& value) const {
+  HERCULES_INLINE_VISIBILITY void set_item(KEY_U&& key, MAPPED_U&& value) const {
     GenericValueConverter<key_type> KeyConv;
     GenericValueConverter<mapped_type> MappedConv;
     auto& data_impl = MutableImpl();
@@ -716,28 +716,28 @@ class MATX_DLL FTDict : public FTObjectBase {
 
   // mutation in std::unordered_map
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY mapped_type& operator[](KEY_U&& key) const {
+  HERCULES_INLINE_VISIBILITY mapped_type& operator[](KEY_U&& key) const {
     using Converter = GenericValueConverter<key_type>;
     return MutableImpl()[Converter()(std::forward<KEY_U>(key))];
   }
 
   template <typename Key, typename... Args>
-  MATXSCRIPT_INLINE_VISIBILITY std::pair<iterator, bool> emplace(Key&& key, Args&&... args) const {
+  HERCULES_INLINE_VISIBILITY std::pair<iterator, bool> emplace(Key&& key, Args&&... args) const {
     return MutableImpl().emplace(std::forward<Key>(key), std::forward<Args>(args)...);
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY std::pair<iterator, bool> insert(const value_type& value) const {
+  HERCULES_INLINE_VISIBILITY std::pair<iterator, bool> insert(const value_type& value) const {
     return MutableImpl().insert(value);
   }
-  MATXSCRIPT_INLINE_VISIBILITY std::pair<iterator, bool> insert(value_type&& value) const {
+  HERCULES_INLINE_VISIBILITY std::pair<iterator, bool> insert(value_type&& value) const {
     return MutableImpl().insert(std::move(value));
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY void clear() const {
+  HERCULES_INLINE_VISIBILITY void clear() const {
     MutableImpl().clear();
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY void reserve(int64_t new_size) const {
+  HERCULES_INLINE_VISIBILITY void reserve(int64_t new_size) const {
     if (new_size > 0) {
       MutableImpl().reserve(new_size);
     }
@@ -745,65 +745,65 @@ class MATX_DLL FTDict : public FTObjectBase {
 
  public:
   // const methods in std::unordered_map
-  MATXSCRIPT_INLINE_VISIBILITY int64_t size() const {
+  HERCULES_INLINE_VISIBILITY int64_t size() const {
     return MutableImpl().size();
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY int64_t bucket_count() const {
+  HERCULES_INLINE_VISIBILITY int64_t bucket_count() const {
     return MutableImpl().bucket_count();
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY bool empty() const {
+  HERCULES_INLINE_VISIBILITY bool empty() const {
     return MutableImpl().empty();
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY bool __contains__(KEY_U const& key, std::true_type) const {
+  HERCULES_INLINE_VISIBILITY bool __contains__(KEY_U const& key, std::true_type) const {
     auto& data_impl = MutableImpl();
     return data_impl.find(key) != data_impl.end();
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY bool __contains__(KEY_U const& key, std::false_type) const {
+  HERCULES_INLINE_VISIBILITY bool __contains__(KEY_U const& key, std::false_type) const {
     return false;
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY bool __contains__(KEY_U const& key) const {
+  HERCULES_INLINE_VISIBILITY bool __contains__(KEY_U const& key) const {
     using KEY_U_TYPE = typename std::remove_cv<typename std::remove_reference<KEY_U>::type>::type;
     return __contains__(key, typename is_comparable_with_key<KEY_U_TYPE>::type{});
   }
 
   template <class KEY_U>
-  MATXSCRIPT_INLINE_VISIBILITY bool contains(KEY_U const& key) const {
+  HERCULES_INLINE_VISIBILITY bool contains(KEY_U const& key) const {
     return this->__contains__(key);
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY bool contains(const char* const key) const {
+  HERCULES_INLINE_VISIBILITY bool contains(const char* const key) const {
     return this->__contains__(string_view(key));
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY bool contains(const char32_t* const key) const {
+  HERCULES_INLINE_VISIBILITY bool contains(const char32_t* const key) const {
     return this->__contains__(unicode_view(key));
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY FTDictItems<FTDict> items() const {
+  HERCULES_INLINE_VISIBILITY FTDictItems<FTDict> items() const {
     return FTDictItems<FTDict>(*this);
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY FTDictKeys<FTDict> keys() const {
+  HERCULES_INLINE_VISIBILITY FTDictKeys<FTDict> keys() const {
     return FTDictKeys<FTDict>(*this);
   }
 
-  MATXSCRIPT_INLINE_VISIBILITY FTDictValues<FTDict> values() const {
+  HERCULES_INLINE_VISIBILITY FTDictValues<FTDict> values() const {
     return FTDictValues<FTDict>(*this);
   }
 
  private:
-  MATXSCRIPT_INLINE_VISIBILITY container_type& MutableImpl() const {
+  HERCULES_INLINE_VISIBILITY container_type& MutableImpl() const {
     return static_cast<FTDictNode<key_type, mapped_type>*>(data_.get())->data_;
   }
-  MATXSCRIPT_INLINE_VISIBILITY FTDictNode<key_type, mapped_type>* MutableNode() const {
+  HERCULES_INLINE_VISIBILITY FTDictNode<key_type, mapped_type>* MutableNode() const {
     return static_cast<FTDictNode<key_type, mapped_type>*>(data_.get());
   }
 };
@@ -816,8 +816,8 @@ struct type_index_traits<FTDict<K, V>> {
 }  // namespace TypeIndex
 
 // python methods
-#define MATXSCRIPT_CHECK_FT_DICT_ARGS(FuncName, NumArgs)                                  \
-  MXCHECK(NumArgs == args.size()) << "[" << DemangleType(typeid(FTDictNode<K, V>).name()) \
+#define HERCULES_CHECK_FT_DICT_ARGS(FuncName, NumArgs)                                  \
+  HSCHECK(NumArgs == args.size()) << "[" << DemangleType(typeid(FTDictNode<K, V>).name()) \
                                   << "::" << #FuncName << "] Expect " << NumArgs          \
                                   << " arguments but get " << args.size()
 
@@ -829,56 +829,56 @@ template <typename K, typename V>
 const FTObjectBaseNode::FunctionTable FTDictNode<K, V>::function_table_ = {
     {"__len__",
      [](RTView self, PyArgs args) -> RTValue {
-       MATXSCRIPT_CHECK_FT_DICT_ARGS(__len__, 0);
+       HERCULES_CHECK_FT_DICT_ARGS(__len__, 0);
        return self.AsObjectView<FTDict<K, V>>().data().size();
      }},
     {"__contains__",
      [](RTView self, PyArgs args) -> RTValue {
-       MATXSCRIPT_CHECK_FT_DICT_ARGS(__contains__, 1);
+       HERCULES_CHECK_FT_DICT_ARGS(__contains__, 1);
        return self.AsObjectView<FTDict<K, V>>().data().contains(args[0].template As<RTValue>());
      }},
     {"__getitem__",
      [](RTView self, PyArgs args) -> RTValue {
-       MATXSCRIPT_CHECK_FT_DICT_ARGS(__getitem__, 1);
+       HERCULES_CHECK_FT_DICT_ARGS(__getitem__, 1);
        return mapped_type(
            self.AsObjectView<FTDict<K, V>>().data().get_item(args[0].template As<RTValue>()));
      }},
     {"__setitem__",
      [](RTView self, PyArgs args) -> RTValue {
-       MATXSCRIPT_CHECK_FT_DICT_ARGS(__setitem__, 2);
+       HERCULES_CHECK_FT_DICT_ARGS(__setitem__, 2);
        self.AsObjectView<FTDict<K, V>>().data().set_item(args[0].template As<RTValue>(),
                                                          args[1].template As<RTValue>());
        return None;
      }},
     {"__iter__",
      [](RTView self, PyArgs args) -> RTValue {
-       MATXSCRIPT_CHECK_FT_DICT_ARGS(__iter__, 0);
+       HERCULES_CHECK_FT_DICT_ARGS(__iter__, 0);
        return self.AsObjectView<FTDict<K, V>>().data().key_iter();
      }},
     {"__eq__",
      [](RTView self, PyArgs args) -> RTValue {
-       MATXSCRIPT_CHECK_FT_DICT_ARGS(__eq__, 1);
+       HERCULES_CHECK_FT_DICT_ARGS(__eq__, 1);
        return self.AsObjectView<FTDict<K, V>>().data().__eq__(args[0].template As<RTValue>());
      }},
     {"clear",
      [](RTView self, PyArgs args) -> RTValue {
-       MATXSCRIPT_CHECK_FT_DICT_ARGS(clear, 0);
+       HERCULES_CHECK_FT_DICT_ARGS(clear, 0);
        self.AsObjectView<FTDict<K, V>>().data().clear();
        return None;
      }},
     {"items",
      [](RTView self, PyArgs args) -> RTValue {
-       MATXSCRIPT_CHECK_FT_DICT_ARGS(items, 0);
+       HERCULES_CHECK_FT_DICT_ARGS(items, 0);
        return self.AsObjectView<FTDict<K, V>>().data().item_iter();
      }},
     {"keys",
      [](RTView self, PyArgs args) -> RTValue {
-       MATXSCRIPT_CHECK_FT_DICT_ARGS(keys, 0);
+       HERCULES_CHECK_FT_DICT_ARGS(keys, 0);
        return self.AsObjectView<FTDict<K, V>>().data().key_iter();
      }},
     {"values",
      [](RTView self, PyArgs args) -> RTValue {
-       MATXSCRIPT_CHECK_FT_DICT_ARGS(values, 0);
+       HERCULES_CHECK_FT_DICT_ARGS(values, 0);
        return self.AsObjectView<FTDict<K, V>>().data().value_iter();
      }},
     {"pop",
@@ -893,14 +893,14 @@ const FTObjectBaseNode::FunctionTable FTDictNode<K, V>::function_table_ = {
            return view.data().pop(args[0].template As<RTValue>(), args[1].template As<RTValue>());
          } break;
          default: {
-           MXTHROW << "[" << cls_name << "::pop] Expect 1 or 2 arguments but get " << args.size();
+           HSTHROW << "[" << cls_name << "::pop] Expect 1 or 2 arguments but get " << args.size();
          } break;
        }
        return None;
      }},
     {"setdefault",
      [](RTView self, PyArgs args) -> RTValue {
-       MXTHROW << "dict.setdefault is not supported";
+       HSTHROW << "dict.setdefault is not supported";
        return None;
      }},
     {"get",
@@ -916,24 +916,24 @@ const FTObjectBaseNode::FunctionTable FTDictNode<K, V>::function_table_ = {
                                           args[1].template As<RTValue>());
          } break;
          default: {
-           MXTHROW << "[" << cls_name << "::get] Expect 1 or 2 arguments but get " << args.size();
+           HSTHROW << "[" << cls_name << "::get] Expect 1 or 2 arguments but get " << args.size();
          } break;
        }
        return None;
      }},
     {"popitem",
      [](RTView self, PyArgs args) -> RTValue {
-       MXTHROW << "dict.popitem is not supported";
+       HSTHROW << "dict.popitem is not supported";
        return None;
      }},
     {"update",
      [](RTView self, PyArgs args) -> RTValue {
-       MXTHROW << "dict.update is not supported";
+       HSTHROW << "dict.update is not supported";
        return None;
      }},
 };
 
-#undef MATXSCRIPT_CHECK_FT_DICT_ARGS
+#undef HERCULES_CHECK_FT_DICT_ARGS
 
 template <typename K, typename V>
 static inline std::ostream& operator<<(std::ostream& os, FTDict<K, V> const& obj) {
@@ -963,4 +963,4 @@ static inline std::ostream& operator<<(std::ostream& os, FTDict<K, V> const& obj
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -25,7 +25,7 @@
 
 #include <hercules/ir/stmt_functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class AssignOptimizerFilter : public StmtExprVisitor {
@@ -55,7 +55,7 @@ class AssignOptimizerFilter : public StmtExprVisitor {
 class AssignOptimizerExprVisitor : public ExprVisitor {
  public:
   std::unordered_set<const void*> run(const BaseExpr& expr) {
-    MXCHECK(func_args_);
+    HSCHECK(func_args_);
     matched_.clear();
     this->VisitExpr(expr);
     return matched_;
@@ -75,7 +75,7 @@ class AssignOptimizerExprVisitor : public ExprVisitor {
 class AssignOptimizerLastUsedAnalysis : public StmtExprVisitor {
  public:
   std::unordered_map<const void*, const void*> run(const BaseFunc& f) {
-    MXCHECK(func_args_);
+    HSCHECK(func_args_);
     var_checker_.func_args_ = func_args_;
     AssignOptimizerFilter filter;
     if (!filter.run(f)) {
@@ -185,4 +185,4 @@ class AssignOptimizerMutator : public StmtExprMutator {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -19,7 +19,7 @@
 
 #include "hercules/runtime/mlir/memref_cpp_interface.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace mlir {
 
@@ -65,4 +65,4 @@ void MemrefCPPInterface::set_offset(memref_size_t new_offset) {
 
 }  // namespace mlir
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -34,7 +34,7 @@ typedef DWORD pid_t;
 #include <hercules/runtime/threadpool/i_thread_pool.h>
 #include <hercules/runtime/threadpool/mpmc_bounded_queue.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace internal {
 
@@ -100,4 +100,4 @@ class SPSCLockFreeThreadPool : public IThreadPool {
 
 }  // namespace internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

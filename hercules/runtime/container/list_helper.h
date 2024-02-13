@@ -23,17 +23,17 @@
 #include <hercules/runtime/container/user_data_ref.h>
 #include <hercules/runtime/half.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace list_helper_details {
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE void AnyValue2ElementData(T* ret, const Any& from) {
+HERCULES_ALWAYS_INLINE void AnyValue2ElementData(T* ret, const Any& from) {
   *ret = from.template As<T>();
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE void AnyValue2ElementData(Half* ret, const Any& from) {
+HERCULES_ALWAYS_INLINE void AnyValue2ElementData(Half* ret, const Any& from) {
   *ret = from.template As<float>();
 }
 }  // namespace list_helper_details
@@ -178,4 +178,4 @@ struct ListHelper {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

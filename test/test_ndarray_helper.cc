@@ -23,7 +23,7 @@
 #include <hercules/runtime/generic/generic_constructor_funcs.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 bool vector_equal(const std::vector<int64_t>& x, const std::vector<int64_t>& y) {
@@ -95,4 +95,4 @@ TEST(NDArrayHelper, Sub) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

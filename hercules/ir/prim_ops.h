@@ -21,7 +21,7 @@
  */
 
 /*!
- * \file matxscript/ir/op.h
+ * \file hercules/ir/op.h
  * \brief Common operators defined for Expr.
  *
  * \note Most of the operator defined here perform simple constant folding
@@ -39,7 +39,7 @@
 #include <hercules/ir/stmt.h>
 #include <hercules/ir/type.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 // Most common operators can be overloaded by argument type(PrimExpr).
@@ -58,9 +58,9 @@ namespace ir {
  * \param expr The input parameter.
  * \return The result type.
  *
- * \sa matxscript/ir/type.h for discussion about the relation between Type and runtime::DataType.
+ * \sa hercules/ir/type.h for discussion about the relation between Type and runtime::DataType.
  */
-MATX_DLL Type GetType(const PrimExpr& expr);
+HERCULES_DLL Type GetType(const PrimExpr& expr);
 
 /*!
  * \brief Get the implied DataType for storing values with type during runtime.
@@ -68,30 +68,30 @@ MATX_DLL Type GetType(const PrimExpr& expr);
  * \param type The input type.
  * \return The result runtime::DataType.
  *
- * \sa matxscript/ir/type.h for discussion about the relation between Type and runtime::DataType.
+ * \sa hercules/ir/type.h for discussion about the relation between Type and runtime::DataType.
  */
-MATX_DLL runtime::DataType GetRuntimeDataType(const Type& type);
+HERCULES_DLL runtime::DataType GetRuntimeDataType(const Type& type);
 
 /*!
  * Query the maximum possible value of dtype.
  * \param dtype The data type.
  * \return the maximum possible value in this format.
  */
-MATX_DLL PrimExpr max_value(const runtime::DataType& dtype, Span span = Span());
+HERCULES_DLL PrimExpr max_value(const runtime::DataType& dtype, Span span = Span());
 
 /*!
  * Query the minimum possible value of dtype.
  * \param dtype The data type.
  * \return the minimum possible value in this format.
  */
-MATX_DLL PrimExpr min_value(const runtime::DataType& dtype, Span span = Span());
+HERCULES_DLL PrimExpr min_value(const runtime::DataType& dtype, Span span = Span());
 
 /*!
  * Get the value of infinity.
  * \param dtype The data type.
  * \return the infinity value in this format.
  */
-MATX_DLL PrimExpr infinity(const runtime::DataType& dtype, Span span = Span());
+HERCULES_DLL PrimExpr infinity(const runtime::DataType& dtype, Span span = Span());
 
 /*!
  * \brief cast value to type.
@@ -101,7 +101,7 @@ MATX_DLL PrimExpr infinity(const runtime::DataType& dtype, Span span = Span());
  * \return The result expression.
  * \note This function may return value if the type is the same.
  */
-MATX_DLL PrimExpr cast(const runtime::DataType& t, PrimExpr value, Span span = Span());
+HERCULES_DLL PrimExpr cast(const runtime::DataType& t, PrimExpr value, Span span = Span());
 /*!
  * \brief perform reinterpret cast value to type.
  *
@@ -110,7 +110,7 @@ MATX_DLL PrimExpr cast(const runtime::DataType& t, PrimExpr value, Span span = S
  * \return The result expression.
  * \note This function may return value if the type is the same.
  */
-MATX_DLL PrimExpr reinterpret(const runtime::DataType& t, PrimExpr value, Span span = Span());
+HERCULES_DLL PrimExpr reinterpret(const runtime::DataType& t, PrimExpr value, Span span = Span());
 /*!
  * \brief add operator
  *
@@ -120,7 +120,7 @@ MATX_DLL PrimExpr reinterpret(const runtime::DataType& t, PrimExpr value, Span s
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr add(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr add(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief subtraction operator
  *
@@ -130,7 +130,7 @@ MATX_DLL PrimExpr add(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr sub(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr sub(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief negation.
  *
@@ -139,7 +139,7 @@ MATX_DLL PrimExpr sub(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr neg(PrimExpr a, Span span = Span());
+HERCULES_DLL PrimExpr neg(PrimExpr a, Span span = Span());
 /*!
  * \brief multiplication operator
  *
@@ -149,7 +149,7 @@ MATX_DLL PrimExpr neg(PrimExpr a, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr mul(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr mul(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief division operator
  *
@@ -159,7 +159,7 @@ MATX_DLL PrimExpr mul(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr div(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr div(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief left shift operator
  *
@@ -169,7 +169,7 @@ MATX_DLL PrimExpr div(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr left_shift(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr left_shift(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief right shift operator
  *
@@ -179,7 +179,7 @@ MATX_DLL PrimExpr left_shift(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr right_shift(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr right_shift(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief greater
  *
@@ -189,7 +189,7 @@ MATX_DLL PrimExpr right_shift(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr greater_than(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr greater_than(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief greater_equal
  *
@@ -199,7 +199,7 @@ MATX_DLL PrimExpr greater_than(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr greater_or_equal(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr greater_or_equal(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief less
  *
@@ -209,7 +209,7 @@ MATX_DLL PrimExpr greater_or_equal(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr less_than(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr less_than(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief less_equal
  *
@@ -219,7 +219,7 @@ MATX_DLL PrimExpr less_than(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr less_or_equal(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr less_or_equal(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief equal
  *
@@ -229,7 +229,7 @@ MATX_DLL PrimExpr less_or_equal(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr equal(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr equal(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief not_equal
  *
@@ -239,7 +239,7 @@ MATX_DLL PrimExpr equal(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr not_equal(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr not_equal(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief and
  *
@@ -248,7 +248,7 @@ MATX_DLL PrimExpr not_equal(PrimExpr a, PrimExpr b, Span span = Span());
  * \return The result expression.
  * \note This operator does eager constant folding.
  */
-MATX_DLL PrimExpr logic_and(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr logic_and(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief or
  *
@@ -257,7 +257,7 @@ MATX_DLL PrimExpr logic_and(PrimExpr a, PrimExpr b, Span span = Span());
  * \return The result expression.
  * \note This operator does eager constant folding.
  */
-MATX_DLL PrimExpr logic_or(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr logic_or(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief not
  *
@@ -265,7 +265,7 @@ MATX_DLL PrimExpr logic_or(PrimExpr a, PrimExpr b, Span span = Span());
  * \return The result expression.
  * \note This operator does eager constant folding.
  */
-MATX_DLL PrimExpr logic_not(PrimExpr a, Span span = Span());
+HERCULES_DLL PrimExpr logic_not(PrimExpr a, Span span = Span());
 /*!
  * \brief compute trunc(a / b)
  *
@@ -277,7 +277,7 @@ MATX_DLL PrimExpr logic_not(PrimExpr a, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr truncdiv(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr truncdiv(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief compute the remainder of truncdiv
  *
@@ -289,7 +289,7 @@ MATX_DLL PrimExpr truncdiv(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr truncmod(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr truncmod(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief compute floor(a / b) where a and b are non-negative.
  *
@@ -304,7 +304,7 @@ MATX_DLL PrimExpr truncmod(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr indexdiv(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr indexdiv(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief compute the remainder floor(a / b) where a and b are non-negative.
  *
@@ -318,7 +318,7 @@ MATX_DLL PrimExpr indexdiv(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr indexmod(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr indexmod(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief a // b
  *
@@ -328,7 +328,7 @@ MATX_DLL PrimExpr indexmod(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr floordiv(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr floordiv(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief compute the remainder of floordiv
  *
@@ -338,7 +338,7 @@ MATX_DLL PrimExpr floordiv(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr floormod(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr floormod(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief take maximum of two values
  *
@@ -348,7 +348,7 @@ MATX_DLL PrimExpr floormod(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr max(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr max(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief take minimum of two values
  *
@@ -358,7 +358,7 @@ MATX_DLL PrimExpr max(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr min(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr min(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief take bitwise and of two values
  *
@@ -368,7 +368,7 @@ MATX_DLL PrimExpr min(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr bitwise_and(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr bitwise_and(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief take bitwise or of two values
  *
@@ -378,7 +378,7 @@ MATX_DLL PrimExpr bitwise_and(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr bitwise_or(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr bitwise_or(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief take bitwise xor of two values
  *
@@ -388,7 +388,7 @@ MATX_DLL PrimExpr bitwise_or(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr bitwise_xor(PrimExpr a, PrimExpr b, Span span = Span());
+HERCULES_DLL PrimExpr bitwise_xor(PrimExpr a, PrimExpr b, Span span = Span());
 /*!
  * \brief take bitwise negation of two values
  *
@@ -397,7 +397,7 @@ MATX_DLL PrimExpr bitwise_xor(PrimExpr a, PrimExpr b, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr bitwise_invert(PrimExpr a, Span span = Span());
+HERCULES_DLL PrimExpr bitwise_invert(PrimExpr a, Span span = Span());
 /*!
  * \brief Conditional expression.
  *
@@ -408,7 +408,7 @@ MATX_DLL PrimExpr bitwise_invert(PrimExpr a, Span span = Span());
  * \note this function does eager constant folding for
  *       index types(int32, int64) when possible.
  */
-MATX_DLL PrimExpr if_then_else(PrimExpr cond,
+HERCULES_DLL PrimExpr if_then_else(PrimExpr cond,
                                PrimExpr true_value,
                                PrimExpr false_value,
                                Span span = Span());
@@ -417,61 +417,61 @@ MATX_DLL PrimExpr if_then_else(PrimExpr cond,
  * \param cond The condition
  * \return The marked expression.
  */
-MATX_DLL PrimExpr likely(PrimExpr cond, Span span = Span());
+HERCULES_DLL PrimExpr likely(PrimExpr cond, Span span = Span());
 /*!
  * \brief Calculate power(x, y)
  * \param x The left operand.
  * \param y The right operand.
  */
-MATX_DLL PrimExpr pow(PrimExpr x, PrimExpr y, Span span = Span());
+HERCULES_DLL PrimExpr pow(PrimExpr x, PrimExpr y, Span span = Span());
 /*!
  * \brief Calculate absolute value of x.
  * \param x The input data
  *
  * \return The aboslute value of input data x
  */
-MATX_DLL PrimExpr abs(PrimExpr x, Span span = Span());
+HERCULES_DLL PrimExpr abs(PrimExpr x, Span span = Span());
 /*!
  * \brief Check if x is NaN.
  * \param x The input data
  * \return The result expression.
  */
-MATX_DLL PrimExpr isnan(PrimExpr x, Span span = Span());
+HERCULES_DLL PrimExpr isnan(PrimExpr x, Span span = Span());
 
 /*!
  * \brief Check if x is finite.
  * \param x The input data
  * \return The result expression.
  */
-MATX_DLL PrimExpr isfinite(PrimExpr x, Span span = Span());
+HERCULES_DLL PrimExpr isfinite(PrimExpr x, Span span = Span());
 
 /*!
  * \brief Check if x is infinite.
  * \param x The input data
  * \return The result expression.
  */
-MATX_DLL PrimExpr isinf(PrimExpr x, Span span = Span());
+HERCULES_DLL PrimExpr isinf(PrimExpr x, Span span = Span());
 
 /*!
  * \brief Calculate floor(x)
  * \param x The input expression.
  * \return The result expression.
  */
-MATX_DLL PrimExpr floor(PrimExpr x, Span span = Span());
+HERCULES_DLL PrimExpr floor(PrimExpr x, Span span = Span());
 
 /*!
  * \brief Calculate ceil(x)
  * \param x The input expression.
  * \return The result expression.
  */
-MATX_DLL PrimExpr ceil(PrimExpr x, Span span = Span());
+HERCULES_DLL PrimExpr ceil(PrimExpr x, Span span = Span());
 
 /*!
  * \brief Calculate round(x)
  * \param x The input expression.
  * \return The result expression.
  */
-MATX_DLL PrimExpr round(PrimExpr x, Span span = Span());
+HERCULES_DLL PrimExpr round(PrimExpr x, Span span = Span());
 
 /*!
  * \brief Calculates std::nearbyint(x)
@@ -479,14 +479,14 @@ MATX_DLL PrimExpr round(PrimExpr x, Span span = Span());
  * \return The result expression.
  * This is a faster alternate to round.
  */
-MATX_DLL PrimExpr nearbyint(PrimExpr x, Span span = Span());
+HERCULES_DLL PrimExpr nearbyint(PrimExpr x, Span span = Span());
 
 /*!
  * \brief Calculate trunc(x)
  * \param x The input expression.
  * \return The result expression.
  */
-MATX_DLL PrimExpr trunc(PrimExpr x, Span span = Span());
+HERCULES_DLL PrimExpr trunc(PrimExpr x, Span span = Span());
 
 /*!
  * \brief Construct a large uint constant by its low 32 bits and high 32bits.
@@ -495,7 +495,7 @@ MATX_DLL PrimExpr trunc(PrimExpr x, Span span = Span());
  * \param high The higher 32 bits.
  * \return The constructed expression.
  */
-MATX_DLL PrimExpr LargeUIntImm(runtime::DataType dtype,
+HERCULES_DLL PrimExpr LargeUIntImm(runtime::DataType dtype,
                                int64_t low,
                                int64_t high,
                                Span span = Span());
@@ -519,52 +519,52 @@ MATX_DLL PrimExpr LargeUIntImm(runtime::DataType dtype,
  * \param s integer right shift
  * \return The constructed expression.
  */
-MATX_DLL PrimExpr
+HERCULES_DLL PrimExpr
 q_multiply_shift(PrimExpr x, PrimExpr y, PrimExpr q, PrimExpr s, Span span = Span());
 
 // Intrinsic operators
-#define MATXSCRIPT_DECLARE_INTRIN_UNARY(OpName)                  \
+#define HERCULES_DECLARE_INTRIN_UNARY(OpName)                  \
   inline PrimExpr OpName(PrimExpr x, Span span) {                \
     static const Op& op = Op::Get("ir." #OpName);                \
-    return ::matxscript::ir::PrimCall(x.dtype(), op, {x}, span); \
+    return ::hercules::ir::PrimCall(x.dtype(), op, {x}, span); \
   }
 
-MATXSCRIPT_DECLARE_INTRIN_UNARY(pow);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(exp);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(exp2);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(exp10);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(erf);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(tanh);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(sigmoid);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(sqrt);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(rsqrt);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(log);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(log2);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(log10);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(popcount);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(tan);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(cos);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(cosh);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(sin);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(sinh);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(asin);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(acos);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(atan);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(acosh);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(asinh);
-MATXSCRIPT_DECLARE_INTRIN_UNARY(atanh);
+HERCULES_DECLARE_INTRIN_UNARY(pow);
+HERCULES_DECLARE_INTRIN_UNARY(exp);
+HERCULES_DECLARE_INTRIN_UNARY(exp2);
+HERCULES_DECLARE_INTRIN_UNARY(exp10);
+HERCULES_DECLARE_INTRIN_UNARY(erf);
+HERCULES_DECLARE_INTRIN_UNARY(tanh);
+HERCULES_DECLARE_INTRIN_UNARY(sigmoid);
+HERCULES_DECLARE_INTRIN_UNARY(sqrt);
+HERCULES_DECLARE_INTRIN_UNARY(rsqrt);
+HERCULES_DECLARE_INTRIN_UNARY(log);
+HERCULES_DECLARE_INTRIN_UNARY(log2);
+HERCULES_DECLARE_INTRIN_UNARY(log10);
+HERCULES_DECLARE_INTRIN_UNARY(popcount);
+HERCULES_DECLARE_INTRIN_UNARY(tan);
+HERCULES_DECLARE_INTRIN_UNARY(cos);
+HERCULES_DECLARE_INTRIN_UNARY(cosh);
+HERCULES_DECLARE_INTRIN_UNARY(sin);
+HERCULES_DECLARE_INTRIN_UNARY(sinh);
+HERCULES_DECLARE_INTRIN_UNARY(asin);
+HERCULES_DECLARE_INTRIN_UNARY(acos);
+HERCULES_DECLARE_INTRIN_UNARY(atan);
+HERCULES_DECLARE_INTRIN_UNARY(acosh);
+HERCULES_DECLARE_INTRIN_UNARY(asinh);
+HERCULES_DECLARE_INTRIN_UNARY(atanh);
 
-#define MATXSCRIPT_DECLARE_INTRIN_BINARY(OpName)                    \
+#define HERCULES_DECLARE_INTRIN_BINARY(OpName)                    \
   inline PrimExpr OpName(PrimExpr x, PrimExpr y, Span span) {       \
     static const Op& op = Op::Get("ir." #OpName);                   \
-    return ::matxscript::ir::PrimCall(x.dtype(), op, {x, y}, span); \
+    return ::hercules::ir::PrimCall(x.dtype(), op, {x, y}, span); \
   }
 
-MATXSCRIPT_DECLARE_INTRIN_BINARY(atan2);
-MATXSCRIPT_DECLARE_INTRIN_BINARY(nextafter);
-MATXSCRIPT_DECLARE_INTRIN_BINARY(copysign);
-MATXSCRIPT_DECLARE_INTRIN_BINARY(hypot);
-MATXSCRIPT_DECLARE_INTRIN_BINARY(ldexp);
+HERCULES_DECLARE_INTRIN_BINARY(atan2);
+HERCULES_DECLARE_INTRIN_BINARY(nextafter);
+HERCULES_DECLARE_INTRIN_BINARY(copysign);
+HERCULES_DECLARE_INTRIN_BINARY(hypot);
+HERCULES_DECLARE_INTRIN_BINARY(ldexp);
 
 /*!
  * \brief Check if type is a pointer to a runtime element type.
@@ -703,7 +703,7 @@ inline PrimExpr foldl(FReduce freduce,
  * \param shift The output shift if x is power of two.
  * \return whether x is constant power of two
  */
-MATX_DLL bool is_const_power_of_two_integer(const PrimExpr& x, int* shift);
+HERCULES_DLL bool is_const_power_of_two_integer(const PrimExpr& x, int* shift);
 
 // Implementation details after this
 inline bool is_const_int(const PrimExpr& x) {
@@ -767,7 +767,7 @@ inline PrimExpr MakeConstScalar(runtime::DataType t, ValueType value, Span span 
     // Use IntImm if it is a small integer
     uint64_t uval = static_cast<uint64_t>(value);
     if (value < static_cast<ValueType>(0)) {
-      MXLOG(FATAL) << "cannot make uint from negative value " << value;
+      HSLOG(FATAL) << "cannot make uint from negative value " << value;
     } else if (uval <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max())) {
       return IntImm(t, static_cast<int64_t>(value), span);
     } else {
@@ -786,13 +786,13 @@ inline PrimExpr MakeConstScalar(runtime::DataType t, ValueType value, Span span 
   if (static_cast<uint8_t>(t.code()) >= static_cast<uint8_t>(runtime::DataType::kCustomBegin)) {
     return FloatImm(t, static_cast<double>(value), span);
   }
-  MXLOG(FATAL) << "cannot make const for type " << t;
+  HSLOG(FATAL) << "cannot make const for type " << t;
   return PrimExpr();
 }
 
 template <typename ValueType, typename>
 inline PrimExpr make_const(runtime::DataType t, ValueType value, Span span) {
-  MXCHECK(t.lanes() == 1);
+  HSCHECK(t.lanes() == 1);
   return MakeConstScalar(t, value, span);
 }
 
@@ -815,13 +815,13 @@ inline PrimExpr foldl(FReduce freduce,
 }
 
 // additional const expression overloading
-#define MATXSCRIPT_DEFINE_ASSIGN_OP_OVERLOAD(Name, OpFunc)            \
+#define HERCULES_DEFINE_ASSIGN_OP_OVERLOAD(Name, OpFunc)            \
   inline PrimExpr Name(PrimExpr& a, PrimExpr b, Span span = Span()) { \
     a = OpFunc(a, b, span);                                           \
     return a;                                                         \
   }
 
-#define MATXSCRIPT_DEFINE_BINOP_CONST_VAL_OVERLOAD(Name)                                 \
+#define HERCULES_DEFINE_BINOP_CONST_VAL_OVERLOAD(Name)                                 \
   inline PrimExpr Name(const PrimExpr& a, float b, Span span = Span()) {                 \
     return Name(a, PrimExpr(b), span);                                                   \
   }                                                                                      \
@@ -829,16 +829,16 @@ inline PrimExpr foldl(FReduce freduce,
     return Name(PrimExpr(a), b, span);                                                   \
   }                                                                                      \
   inline PrimExpr Name(int a, const PrimExpr& b, Span span = Span()) {                   \
-    return Name(::matxscript::ir::make_const(b.dtype(), a), b, span);                    \
+    return Name(::hercules::ir::make_const(b.dtype(), a), b, span);                    \
   }                                                                                      \
   inline PrimExpr Name(const PrimExpr& a, int b, Span span = Span()) {                   \
-    return Name(a, ::matxscript::ir::make_const(a.dtype(), b), span);                    \
+    return Name(a, ::hercules::ir::make_const(a.dtype(), b), span);                    \
   }                                                                                      \
   inline PrimExpr Name(const PrimExpr& a, double b, Span span = Span()) {                \
-    return Name(a, ::matxscript::ir::make_const(runtime::DataType::Float(64), b), span); \
+    return Name(a, ::hercules::ir::make_const(runtime::DataType::Float(64), b), span); \
   }
 
-#define MATXSCRIPT_DEFINE_LOGICAL_OP_CONST_VAL_OVERLOAD(Name)           \
+#define HERCULES_DEFINE_LOGICAL_OP_CONST_VAL_OVERLOAD(Name)           \
   inline PrimExpr Name(const PrimExpr& a, bool b, Span span = Span()) { \
     return Name(a, PrimExpr(b), span);                                  \
   }                                                                     \
@@ -846,42 +846,42 @@ inline PrimExpr foldl(FReduce freduce,
     return Name(PrimExpr(a), b, span);                                  \
   }
 
-#define MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(Name)              \
+#define HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(Name)              \
   inline PrimExpr Name(const PrimExpr& a, int b, Span span = Span()) { \
-    return Name(a, ::matxscript::ir::make_const(a.dtype(), b), span);  \
+    return Name(a, ::hercules::ir::make_const(a.dtype(), b), span);  \
   }                                                                    \
   inline PrimExpr Name(int a, const PrimExpr& b, Span span = Span()) { \
-    return Name(::matxscript::ir::make_const(b.dtype(), a), b, span);  \
+    return Name(::hercules::ir::make_const(b.dtype(), a), b, span);  \
   }
 
-MATXSCRIPT_DEFINE_ASSIGN_OP_OVERLOAD(add_assign, add);
-MATXSCRIPT_DEFINE_ASSIGN_OP_OVERLOAD(sub_assign, sub);
-MATXSCRIPT_DEFINE_ASSIGN_OP_OVERLOAD(mul_assign, mul);
-MATXSCRIPT_DEFINE_BINOP_CONST_VAL_OVERLOAD(add);
-MATXSCRIPT_DEFINE_BINOP_CONST_VAL_OVERLOAD(sub);
-MATXSCRIPT_DEFINE_BINOP_CONST_VAL_OVERLOAD(mul);
-MATXSCRIPT_DEFINE_BINOP_CONST_VAL_OVERLOAD(max);
-MATXSCRIPT_DEFINE_BINOP_CONST_VAL_OVERLOAD(min);
-MATXSCRIPT_DEFINE_BINOP_CONST_VAL_OVERLOAD(div);
-MATXSCRIPT_DEFINE_BINOP_CONST_VAL_OVERLOAD(greater_than);  // NOLINT(*)
-MATXSCRIPT_DEFINE_BINOP_CONST_VAL_OVERLOAD(greater_or_equal);
-MATXSCRIPT_DEFINE_BINOP_CONST_VAL_OVERLOAD(less_than);  // NOLINT(*)
-MATXSCRIPT_DEFINE_BINOP_CONST_VAL_OVERLOAD(less_or_equal);
+HERCULES_DEFINE_ASSIGN_OP_OVERLOAD(add_assign, add);
+HERCULES_DEFINE_ASSIGN_OP_OVERLOAD(sub_assign, sub);
+HERCULES_DEFINE_ASSIGN_OP_OVERLOAD(mul_assign, mul);
+HERCULES_DEFINE_BINOP_CONST_VAL_OVERLOAD(add);
+HERCULES_DEFINE_BINOP_CONST_VAL_OVERLOAD(sub);
+HERCULES_DEFINE_BINOP_CONST_VAL_OVERLOAD(mul);
+HERCULES_DEFINE_BINOP_CONST_VAL_OVERLOAD(max);
+HERCULES_DEFINE_BINOP_CONST_VAL_OVERLOAD(min);
+HERCULES_DEFINE_BINOP_CONST_VAL_OVERLOAD(div);
+HERCULES_DEFINE_BINOP_CONST_VAL_OVERLOAD(greater_than);  // NOLINT(*)
+HERCULES_DEFINE_BINOP_CONST_VAL_OVERLOAD(greater_or_equal);
+HERCULES_DEFINE_BINOP_CONST_VAL_OVERLOAD(less_than);  // NOLINT(*)
+HERCULES_DEFINE_BINOP_CONST_VAL_OVERLOAD(less_or_equal);
 // integer related ops
-MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(indexdiv);
-MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(indexmod);
-MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(truncdiv);
-MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(truncmod);
-MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(floordiv);
-MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(floormod);
-MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(right_shift);  // NOLINT(*)
-MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(left_shift);   // NOLINT(*)
-MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(bitwise_and);
-MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(bitwise_or);
-MATXSCRIPT_DEFINE_INT_OP_CONST_VAL_OVERLOAD(bitwise_xor);
+HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(indexdiv);
+HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(indexmod);
+HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(truncdiv);
+HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(truncmod);
+HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(floordiv);
+HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(floormod);
+HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(right_shift);  // NOLINT(*)
+HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(left_shift);   // NOLINT(*)
+HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(bitwise_and);
+HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(bitwise_or);
+HERCULES_DEFINE_INT_OP_CONST_VAL_OVERLOAD(bitwise_xor);
 // logical ops
-MATXSCRIPT_DEFINE_LOGICAL_OP_CONST_VAL_OVERLOAD(logic_and);
-MATXSCRIPT_DEFINE_LOGICAL_OP_CONST_VAL_OVERLOAD(logic_or);
+HERCULES_DEFINE_LOGICAL_OP_CONST_VAL_OVERLOAD(logic_and);
+HERCULES_DEFINE_LOGICAL_OP_CONST_VAL_OVERLOAD(logic_or);
 
 /*!
  * \brief Helper function to raise a compiler error about division ambiguity.
@@ -892,7 +892,7 @@ template <typename TA>
 inline void DivAmbiguityError(const TA& a) {
   constexpr bool div_ambiguity = !std::is_class<TA>::value;
   static_assert(div_ambiguity,
-                "MATXScript supports multiple types of integer divisions, "
+                "Hercules supports multiple types of integer divisions, "
                 "please call div, indexdiv/indexmod, "
                 "floordiv/floormod or truncdiv/truncmod directly "
                 "to avoid ambiguity in the code. "
@@ -923,4 +923,4 @@ inline PrimExpr operator%(const PrimExpr& a, const TB& b) {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

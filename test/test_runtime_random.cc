@@ -20,7 +20,7 @@
 #include <gtest/gtest.h>
 #include <hercules/runtime/builtins_modules/_randommodule.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(random, random) {
@@ -139,4 +139,4 @@ TEST(random, weibullvariate) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

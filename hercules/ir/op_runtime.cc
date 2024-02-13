@@ -28,18 +28,18 @@
 #include <hercules/ir/op_attr_types.h>
 #include <hercules/ir/op_expr.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-MATXSCRIPT_IR_REGISTER_OP("ir.TVMBackendAllocWorkspace")
+HERCULES_IR_REGISTER_OP("ir.TVMBackendAllocWorkspace")
     .set_num_inputs(5)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "TVMBackendAllocWorkspace")
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque));
 
-MATXSCRIPT_IR_REGISTER_OP("ir.TVMBackendFreeWorkspace")
+HERCULES_IR_REGISTER_OP("ir.TVMBackendFreeWorkspace")
     .set_num_inputs(3)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "TVMBackendFreeWorkspace")
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque));
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

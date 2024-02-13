@@ -22,14 +22,14 @@
 #include <hercules/runtime/container/tuple_ref.h>
 #include <hercules/runtime/demangle.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 RTValue FTObjectBase::generic_call_attr(string_view func_name, PyArgs args) const {
   MX_CHECK_DPTR(FTObjectBase);
   auto func_iter = d->child_function_table_->find(func_name);
   if (func_iter == d->child_function_table_->end()) {
-    MXTHROW << "class method not found " << DemangleType(d->child_type_index_->name())
+    HSTHROW << "class method not found " << DemangleType(d->child_type_index_->name())
             << "::" << func_name;
   }
   return func_iter->second(*this, args);
@@ -44,21 +44,21 @@ uint32_t FTObjectBaseNode::_RegisterRuntimeTypeIndex(string_view key,
       key, static_tindex, parent_tindex, num_child_slots, child_slots_can_overflow);
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(FTObjectBaseNode);
+HERCULES_REGISTER_OBJECT_TYPE(FTObjectBaseNode);
 
-static MATXSCRIPT_ATTRIBUTE_UNUSED uint32_t __make_Object_tid_ft_list_0 =
+static HERCULES_ATTRIBUTE_UNUSED uint32_t __make_Object_tid_ft_list_0 =
     FTObjectBaseNode::_RegisterRuntimeTypeIndex("FTList",
                                                 TypeIndex::kRuntimeFTList,
                                                 FTObjectBaseNode::_GetOrAllocRuntimeTypeIndex(),
                                                 0,
                                                 true);
-static MATXSCRIPT_ATTRIBUTE_UNUSED uint32_t __make_Object_tid_ft_dict_0 =
+static HERCULES_ATTRIBUTE_UNUSED uint32_t __make_Object_tid_ft_dict_0 =
     FTObjectBaseNode::_RegisterRuntimeTypeIndex("FTDict",
                                                 TypeIndex::kRuntimeFTDict,
                                                 FTObjectBaseNode::_GetOrAllocRuntimeTypeIndex(),
                                                 0,
                                                 true);
-static MATXSCRIPT_ATTRIBUTE_UNUSED uint32_t __make_Object_tid_ft_set_0 =
+static HERCULES_ATTRIBUTE_UNUSED uint32_t __make_Object_tid_ft_set_0 =
     FTObjectBaseNode::_RegisterRuntimeTypeIndex("FTSet",
                                                 TypeIndex::kRuntimeFTSet,
                                                 FTObjectBaseNode::_GetOrAllocRuntimeTypeIndex(),
@@ -146,4 +146,4 @@ std::ostream& operator<<(std::ostream& os, FTObjectBase const& n) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

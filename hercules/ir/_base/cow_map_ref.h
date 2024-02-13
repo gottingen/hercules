@@ -43,7 +43,7 @@
 #include <hercules/runtime/memory.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::Object;
@@ -67,7 +67,7 @@ class MapNode : public Object {
 
   static constexpr const uint32_t _type_index = runtime::TypeIndex::kRuntimeMap;
   static constexpr const char* _type_key = "Map";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(MapNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(MapNode, Object);
 
   /*!
    * \brief Number of elements in the SmallMapNode
@@ -235,7 +235,7 @@ class SmallMapNode : public MapNode,
    */
   const mapped_type& at(const key_type& key) const {
     iterator itr = find(key);
-    MXCHECK(itr.index < size_) << "IndexError: key is not in Map";
+    HSCHECK(itr.index < size_) << "IndexError: key is not in Map";
     return itr->second;
   }
   /*!
@@ -245,7 +245,7 @@ class SmallMapNode : public MapNode,
    */
   mapped_type& at(const key_type& key) {
     iterator itr = find(key);
-    MXCHECK(itr.index < size_) << "IndexError: key is not in Map";
+    HSCHECK(itr.index < size_) << "IndexError: key is not in Map";
     return itr->second;
   }
   /*! \return begin iterator */
@@ -303,7 +303,7 @@ class SmallMapNode : public MapNode,
    * \return The object created
    */
   static ObjectPtr<SmallMapNode> Empty(uint64_t n = kInitSize) {
-    using ::matxscript::runtime::make_inplace_array_object;
+    using ::hercules::runtime::make_inplace_array_object;
     ObjectPtr<SmallMapNode> p = make_inplace_array_object<SmallMapNode, KVType>(n);
     p->size_ = 0;
     p->slots_ = n;
@@ -356,7 +356,7 @@ class SmallMapNode : public MapNode,
     }
     uint64_t next_size = std::max(map_node->slots_ * 2, uint64_t(kInitSize));
     next_size = std::min(next_size, uint64_t(kMaxSize));
-    MXCHECK_GT(next_size, map_node->slots_);
+    HSCHECK_GT(next_size, map_node->slots_);
     ObjectPtr<Object> new_map = CreateFromRange(next_size, map_node->begin(), map_node->end());
     InsertMaybeReHash(kv, &new_map);
     *map = std::move(new_map);
@@ -564,7 +564,7 @@ class DenseMapNode : public MapNode {
    */
   mapped_type& At(const key_type& key) const {
     ListNode iter = Search(key);
-    MXCHECK(!iter.IsNone()) << "IndexError: key is not in Map";
+    HSCHECK(!iter.IsNone()) << "IndexError: key is not in Map";
     return iter.Val();
   }
   /*!
@@ -731,8 +731,8 @@ class DenseMapNode : public MapNode {
    * \return The object created
    */
   static ObjectPtr<DenseMapNode> Empty(uint32_t fib_shift, uint64_t n_slots) {
-    MXCHECK_GT(n_slots, uint64_t(SmallMapNode::kMaxSize));
-    MXCHECK_EQ((n_slots & -n_slots), n_slots);
+    HSCHECK_GT(n_slots, uint64_t(SmallMapNode::kMaxSize));
+    HSCHECK_EQ((n_slots & -n_slots), n_slots);
     ObjectPtr<DenseMapNode> p = runtime::make_object<DenseMapNode>();
     uint64_t n_blocks = CalcNumBlocks(n_slots - 1);
     Block* block = p->data_ = new Block[n_blocks];
@@ -764,7 +764,7 @@ class DenseMapNode : public MapNode {
       for (int j = 0; j < kBlockCap;
            ++j, ++meta_ptr_from, ++data_ptr_from, ++meta_ptr_to, ++data_ptr_to) {
         uint8_t& meta = *meta_ptr_to = *meta_ptr_from;
-        MXCHECK(meta != kProtectedSlot);
+        HSCHECK(meta != kProtectedSlot);
         if (meta != uint8_t(kEmptySlot)) {
           new (data_ptr_to) KVType(*data_ptr_from);
         }
@@ -785,7 +785,7 @@ class DenseMapNode : public MapNode {
       iter.Val() = kv.second;
       return;
     }
-    MXCHECK_GT(map_node->slots_, uint64_t(SmallMapNode::kMaxSize));
+    HSCHECK_GT(map_node->slots_, uint64_t(SmallMapNode::kMaxSize));
     // Otherwise, start rehash
     ObjectPtr<Object> p = Empty(map_node->fib_shift_ - 1, map_node->slots_ * 2 + 2);
     // Insert the given `kv` into the new hash map
@@ -876,7 +876,7 @@ class DenseMapNode : public MapNode {
       shift -= 1;
       slots <<= 1;
     }
-    MXCHECK_GT(slots, cap);
+    HSCHECK_GT(slots, cap);
     if (slots < cap * 2) {
       *fib_shift = shift - 1;
       *n_slots = slots << 1;
@@ -1015,7 +1015,7 @@ class DenseMapNode : public MapNode {
   Block* data_;
   /* clang-format off */
   /*! \brief Candidates of probing distance */
-  MATX_DLL static constexpr uint64_t kNextProbeLocation[kNumJumpDists] {
+  HERCULES_DLL static constexpr uint64_t kNextProbeLocation[kNumJumpDists] {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
     // Quadratic probing with triangle numbers. See also:
     // 1) https://en.wikipedia.org/wiki/Quadratic_probing
@@ -1043,7 +1043,7 @@ class DenseMapNode : public MapNode {
   friend class MapNode;
 };
 
-#define _MATXSCRIPT_DISPATCH_MAP(base, var, body) \
+#define _HERCULES_DISPATCH_MAP(base, var, body) \
   {                                               \
     using TSmall = SmallMapNode*;                 \
     using TDense = DenseMapNode*;                 \
@@ -1057,7 +1057,7 @@ class DenseMapNode : public MapNode {
     }                                             \
   }
 
-#define _MATXSCRIPT_DISPATCH_MAP_CONST(base, var, body) \
+#define _HERCULES_DISPATCH_MAP_CONST(base, var, body) \
   {                                                     \
     using TSmall = const SmallMapNode*;                 \
     using TDense = const DenseMapNode*;                 \
@@ -1072,53 +1072,53 @@ class DenseMapNode : public MapNode {
   }
 
 inline MapNode::iterator::pointer MapNode::iterator::operator->() const {
-  _MATXSCRIPT_DISPATCH_MAP_CONST(self, p, { return p->DeRefItr(index); });
+  _HERCULES_DISPATCH_MAP_CONST(self, p, { return p->DeRefItr(index); });
 }
 
 inline MapNode::iterator& MapNode::iterator::operator++() {
-  _MATXSCRIPT_DISPATCH_MAP_CONST(self, p, {
+  _HERCULES_DISPATCH_MAP_CONST(self, p, {
     index = p->IncItr(index);
     return *this;
   });
 }
 
 inline MapNode::iterator& MapNode::iterator::operator--() {
-  _MATXSCRIPT_DISPATCH_MAP_CONST(self, p, {
+  _HERCULES_DISPATCH_MAP_CONST(self, p, {
     index = p->IncItr(index);
     return *this;
   });
 }
 
 inline size_t MapNode::count(const key_type& key) const {
-  _MATXSCRIPT_DISPATCH_MAP_CONST(this, p, { return p->count(key); });
+  _HERCULES_DISPATCH_MAP_CONST(this, p, { return p->count(key); });
 }
 
 inline const MapNode::mapped_type& MapNode::at(const MapNode::key_type& key) const {
-  _MATXSCRIPT_DISPATCH_MAP_CONST(this, p, { return p->at(key); });
+  _HERCULES_DISPATCH_MAP_CONST(this, p, { return p->at(key); });
 }
 
 inline MapNode::mapped_type& MapNode::at(const MapNode::key_type& key) {
-  _MATXSCRIPT_DISPATCH_MAP(this, p, { return p->at(key); });
+  _HERCULES_DISPATCH_MAP(this, p, { return p->at(key); });
 }
 
 inline MapNode::iterator MapNode::begin() const {
-  _MATXSCRIPT_DISPATCH_MAP_CONST(this, p, { return p->begin(); });
+  _HERCULES_DISPATCH_MAP_CONST(this, p, { return p->begin(); });
 }
 
 inline MapNode::iterator MapNode::end() const {
-  _MATXSCRIPT_DISPATCH_MAP_CONST(this, p, { return p->end(); });
+  _HERCULES_DISPATCH_MAP_CONST(this, p, { return p->end(); });
 }
 
 inline MapNode::iterator MapNode::find(const MapNode::key_type& key) const {
-  _MATXSCRIPT_DISPATCH_MAP_CONST(this, p, { return p->find(key); });
+  _HERCULES_DISPATCH_MAP_CONST(this, p, { return p->find(key); });
 }
 
 inline void MapNode::erase(const MapNode::iterator& position) {
-  _MATXSCRIPT_DISPATCH_MAP(this, p, { return p->erase(position); });
+  _HERCULES_DISPATCH_MAP(this, p, { return p->erase(position); });
 }
 
-#undef _MATXSCRIPT_DISPATCH_MAP
-#undef _MATXSCRIPT_DISPATCH_MAP_CONST
+#undef _HERCULES_DISPATCH_MAP
+#undef _HERCULES_DISPATCH_MAP_CONST
 
 inline ObjectPtr<MapNode> MapNode::Empty() {
   return SmallMapNode::Empty();
@@ -1433,4 +1433,4 @@ struct type_index_traits<ir::Map<K, V>> {
 }  // namespace TypeIndex
 }  // namespace runtime
 
-}  // namespace matxscript
+}  // namespace hercules

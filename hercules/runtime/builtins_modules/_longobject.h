@@ -27,7 +27,7 @@
 
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -40,7 +40,7 @@ template <typename LEFT,
           typename RIGHT,
           typename = typename std::enable_if<std::is_integral<LEFT>::value>::type,
           typename = typename std::enable_if<std::is_integral<RIGHT>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE int64_t fast_mod(LEFT a, RIGHT b) {
+HERCULES_ALWAYS_INLINE int64_t fast_mod(LEFT a, RIGHT b) {
   using LEFT_TYPE = typename std::remove_cv<typename std::remove_reference<LEFT>::type>::type;
   using RIGHT_TYPE = typename std::remove_cv<typename std::remove_reference<RIGHT>::type>::type;
   if (std::is_unsigned<LEFT_TYPE>::value && std::is_unsigned<RIGHT_TYPE>::value) {
@@ -65,7 +65,7 @@ template <typename LEFT,
           typename RIGHT,
           typename = typename std::enable_if<std::is_integral<LEFT>::value>::type,
           typename = typename std::enable_if<std::is_integral<RIGHT>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE int64_t fast_floor_div(LEFT a, RIGHT b) {
+HERCULES_ALWAYS_INLINE int64_t fast_floor_div(LEFT a, RIGHT b) {
   using LEFT_TYPE = typename std::remove_cv<typename std::remove_reference<LEFT>::type>::type;
   using RIGHT_TYPE = typename std::remove_cv<typename std::remove_reference<RIGHT>::type>::type;
   static_assert(
@@ -78,4 +78,4 @@ MATXSCRIPT_ALWAYS_INLINE int64_t fast_floor_div(LEFT a, RIGHT b) {
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

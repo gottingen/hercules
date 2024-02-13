@@ -18,7 +18,7 @@
  * under the License.
  */
 /*!
- * \file matxscript/ir/printer/printer.h
+ * \file hercules/ir/printer/printer.h
  * \brief Printer class to print repr string of each AST/IR nodes.
  */
 #pragma once
@@ -27,11 +27,11 @@
 
 #include <ostream>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 // default print function for all objects
 std::ostream& operator<<(std::ostream& os, const runtime::ObjectRef& n);
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

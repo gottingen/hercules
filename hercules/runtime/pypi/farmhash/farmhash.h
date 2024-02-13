@@ -2,7 +2,7 @@
 // clang-format off
 // Taken from https://github.com/veelion/python-farmhash/blob/master/src/farmhash.h
 // with fixes applied:
-// - add namespace ::matxscript::runtime for fix conflict with origin version
+// - add namespace ::hercules::runtime for fix conflict with origin version
 
 // Copyright (c) 2014 Google, Inc.
 //
@@ -54,7 +54,7 @@
 #include <cstring>   // for memcpy and memset
 #include <utility>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 #if defined(FARMHASH_UINT128_T_DEFINED)
@@ -288,6 +288,6 @@ inline uint128_t Fingerprint128(const Str& s) {
 #endif
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 // clang-format on

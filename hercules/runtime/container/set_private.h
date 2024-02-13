@@ -24,7 +24,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*! \brief Set node content in Set */
@@ -61,51 +61,51 @@ class SetNode : public Object {
 
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeSet;
   static constexpr const char* _type_key = "runtime.Set";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(SetNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(SetNode, Object);
 
   // iterators
-  MATXSCRIPT_ALWAYS_INLINE iterator begin() {
+  HERCULES_ALWAYS_INLINE iterator begin() {
     return data_container.begin();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const_iterator begin() const {
+  HERCULES_ALWAYS_INLINE const_iterator begin() const {
     return data_container.begin();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE iterator end() {
+  HERCULES_ALWAYS_INLINE iterator end() {
     return data_container.end();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const_iterator end() const {
+  HERCULES_ALWAYS_INLINE const_iterator end() const {
     return data_container.end();
   }
 
   template <typename U>
-  MATXSCRIPT_ALWAYS_INLINE iterator find(const U& key) {
+  HERCULES_ALWAYS_INLINE iterator find(const U& key) {
     return data_container.find(key);
   }
 
  public:
   // mutation in std::unordered_set
-  MATXSCRIPT_ALWAYS_INLINE auto emplace(value_type&& item) {
+  HERCULES_ALWAYS_INLINE auto emplace(value_type&& item) {
     return data_container.emplace(std::move(item));
   }
-  MATXSCRIPT_ALWAYS_INLINE auto emplace(const value_type& item) {
+  HERCULES_ALWAYS_INLINE auto emplace(const value_type& item) {
     return data_container.emplace(item);
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void add(value_type&& item) {
+  HERCULES_ALWAYS_INLINE void add(value_type&& item) {
     data_container.emplace(std::move(item));
   }
-  MATXSCRIPT_ALWAYS_INLINE void add(const value_type& item) {
+  HERCULES_ALWAYS_INLINE void add(const value_type& item) {
     data_container.emplace(item);
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void clear() {
+  HERCULES_ALWAYS_INLINE void clear() {
     data_container.clear();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void reserve(int64_t new_size) {
+  HERCULES_ALWAYS_INLINE void reserve(int64_t new_size) {
     if (new_size > 0) {
       data_container.reserve(static_cast<size_t>(new_size));
     }
@@ -113,20 +113,20 @@ class SetNode : public Object {
 
  public:
   // const methods in std::unordered_map
-  MATXSCRIPT_ALWAYS_INLINE size_t size() const {
+  HERCULES_ALWAYS_INLINE size_t size() const {
     return data_container.size();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE int64_t bucket_count() const {
+  HERCULES_ALWAYS_INLINE int64_t bucket_count() const {
     return data_container.bucket_count();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE bool empty() const {
+  HERCULES_ALWAYS_INLINE bool empty() const {
     return data_container.empty();
   }
 
   template <typename U>
-  MATXSCRIPT_ALWAYS_INLINE bool contains(const U& key) const {
+  HERCULES_ALWAYS_INLINE bool contains(const U& key) const {
     return data_container.find(key) != data_container.end();
   }
 
@@ -139,4 +139,4 @@ class SetNode : public Object {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

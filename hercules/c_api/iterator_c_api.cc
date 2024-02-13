@@ -23,18 +23,18 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * Iterator container
  *****************************************************************************/
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Iterator_HasNext").set_body_typed([](Iterator iterator) {
+HERCULES_REGISTER_GLOBAL("runtime.Iterator_HasNext").set_body_typed([](Iterator iterator) {
   return iterator.HasNext();
 });
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Iterator_Next").set_body_typed([](Iterator iterator) {
+HERCULES_REGISTER_GLOBAL("runtime.Iterator_Next").set_body_typed([](Iterator iterator) {
   return iterator.Next();
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

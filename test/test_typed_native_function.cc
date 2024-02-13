@@ -22,7 +22,7 @@
 #include <hercules/runtime/typed_native_function.h>
 #include <hercules/runtime/variadic_traits.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <typename FLambda, typename... DefaultArgs>
@@ -94,4 +94,4 @@ TEST(TypedNativeFunction, binding_defaults) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

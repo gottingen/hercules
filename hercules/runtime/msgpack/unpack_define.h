@@ -25,7 +25,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace serialization {
 
@@ -91,4 +91,4 @@ typedef enum {
 
 }  // namespace serialization
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

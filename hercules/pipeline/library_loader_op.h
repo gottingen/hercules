@@ -21,7 +21,7 @@
 
 #include <hercules/pipeline/op_kernel.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class LibraryLoaderOp : public OpKernel {
@@ -40,4 +40,4 @@ class LibraryLoaderOp : public OpKernel {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

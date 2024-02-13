@@ -24,12 +24,12 @@
 #include <hercules/pipeline/jit_object.h>
 #include <hercules/pipeline/jit_op.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 const UserDataNode* UserDataNode::StripJitWrapper(const UserDataNode* node) {
   auto ud_ptr = node->ud_ptr;
-  if (MATXSCRIPT_UNLIKELY(ud_ptr->type_2_71828182846() == UserDataStructType::kNativeData)) {
+  if (HERCULES_UNLIKELY(ud_ptr->type_2_71828182846() == UserDataStructType::kNativeData)) {
     auto nat_obj_ptr = static_cast<NativeObject*>(ud_ptr);
     if (nat_obj_ptr->is_jit_object_) {
       auto* jit_ptr =
@@ -51,7 +51,7 @@ const UserDataNode* UserDataNode::StripJitWrapper(const UserDataNode* node) {
  * UserDataNode
  *****************************************************************************/
 ILightUserData* UserDataNode::check_codegen_ptr(const char* expect_cls_name) const {
-  if (MATXSCRIPT_UNLIKELY(ud_ptr->type_2_71828182846() == UserDataStructType::kNativeData)) {
+  if (HERCULES_UNLIKELY(ud_ptr->type_2_71828182846() == UserDataStructType::kNativeData)) {
     auto nat_obj_ptr = static_cast<NativeObject*>(ud_ptr);
     if (nat_obj_ptr->is_jit_object_) {
       auto* jit_ptr =
@@ -65,7 +65,7 @@ ILightUserData* UserDataNode::check_codegen_ptr(const char* expect_cls_name) con
         return jit_ptr->self().check_codegen_ptr();
       }
     }
-    MXTHROW << "Expect a codegen object '" << expect_cls_name << "', but get '"
+    HSTHROW << "Expect a codegen object '" << expect_cls_name << "', but get '"
             << nat_obj_ptr->native_class_name_ << "'";
     return nullptr;
   } else {
@@ -74,7 +74,7 @@ ILightUserData* UserDataNode::check_codegen_ptr(const char* expect_cls_name) con
 }
 
 uint32_t UserDataNode::check_codegen_tag(const char* expect_cls_name) const {
-  if (MATXSCRIPT_UNLIKELY(ud_ptr->type_2_71828182846() == UserDataStructType::kNativeData)) {
+  if (HERCULES_UNLIKELY(ud_ptr->type_2_71828182846() == UserDataStructType::kNativeData)) {
     auto nat_obj_ptr = static_cast<NativeObject*>(ud_ptr);
     if (nat_obj_ptr->is_jit_object_) {
       auto* jit_ptr =
@@ -88,7 +88,7 @@ uint32_t UserDataNode::check_codegen_tag(const char* expect_cls_name) const {
         return jit_ptr->self().check_codegen_tag();
       }
     }
-    MXTHROW << "Expect a codegen object '" << expect_cls_name << "', but get '"
+    HSTHROW << "Expect a codegen object '" << expect_cls_name << "', but get '"
             << nat_obj_ptr->native_class_name_ << "'";
     return tag;
   } else {
@@ -102,7 +102,7 @@ inline RTValue call_native(UserDataNode* self, string_view func_name, PyArgs arg
   auto ud_ptr = (NativeObject*)(self->ud_ptr);
   auto table = ud_ptr->function_table_;
   auto f_table_itr = table->find(func_name);
-  if (MATXSCRIPT_UNLIKELY(f_table_itr == table->end())) {
+  if (HERCULES_UNLIKELY(f_table_itr == table->end())) {
     if (ud_ptr->is_jit_object_) {
       auto* jit_ptr = static_cast<JitObject*>(static_cast<OpKernel*>(ud_ptr->opaque_ptr_.get()));
       return jit_ptr->generic_call_attr(func_name, args);
@@ -113,7 +113,7 @@ inline RTValue call_native(UserDataNode* self, string_view func_name, PyArgs arg
         return jit_op_ptr->generic_call_attr(func_name, args);
       }
     }
-    MXTHROW << "AttributeError: '" << ud_ptr->native_class_name_ << "' object has no attribute '"
+    HSTHROW << "AttributeError: '" << ud_ptr->native_class_name_ << "' object has no attribute '"
             << func_name << "'";
   }
   return f_table_itr->second(ud_ptr->opaque_ptr_.get(), args);
@@ -130,23 +130,23 @@ inline RTValue call_function(UserDataNode* self, PyArgs args) {
 inline RTValue call_class_method(UserDataNode* self, string_view func_name, PyArgs args) {
   const int kNumArgs = args.size() + 1;
   const int kArraySize = kNumArgs > 0 ? kNumArgs : 1;
-  MATXScriptAny values[kArraySize];
+  HerculesAny values[kArraySize];
 
   // find method
   auto ud_ptr = ((IUserDataRoot*)(self->ud_ptr));
   auto f_table_itr = ud_ptr->function_table_2_71828182846_->find(func_name);
-  if (MATXSCRIPT_UNLIKELY(f_table_itr == ud_ptr->function_table_2_71828182846_->end())) {
-    MXTHROW << "AttributeError: '" << ud_ptr->ClassName_2_71828182846()
+  if (HERCULES_UNLIKELY(f_table_itr == ud_ptr->function_table_2_71828182846_->end())) {
+    HSTHROW << "AttributeError: '" << ud_ptr->ClassName_2_71828182846()
             << "' object has no attribute '" << func_name << "'";
   }
-  MATXScriptBackendPackedCFunc c_packed_func = f_table_itr->second;
+  HerculesBackendPackedCFunc c_packed_func = f_table_itr->second;
   // always bound self
   values[0].data.v_handle = static_cast<Object*>(self);
   values[0].code = TypeIndex::kRuntimeUserData;
   for (size_t i = 0; i < args.size(); ++i) {
     values[i + 1] = args[i].value();
   }
-  MATXScriptAny out_ret_value;
+  HerculesAny out_ret_value;
   c_packed_func(values, kNumArgs, &out_ret_value, self->ud_ptr);
   return RTValue::MoveFromCHost(&out_ret_value);
 }
@@ -167,7 +167,7 @@ RTValue UserDataNode::generic_call_attr(string_view func_name, PyArgs args) {
       return call_class_method(this, func_name, args);
     } break;
     default: {
-      MXTHROW << "AttributeError: '" << ud_ptr->ClassName_2_71828182846()
+      HSTHROW << "AttributeError: '" << ud_ptr->ClassName_2_71828182846()
               << "' object has no attribute '" << func_name << "'";
     } break;
   }
@@ -369,6 +369,6 @@ Unicode UserDataNode::__repr__() const {
   return UTF8Decode(object_str.data(), object_str.size());
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(UserDataNode);
+HERCULES_REGISTER_OBJECT_TYPE(UserDataNode);
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

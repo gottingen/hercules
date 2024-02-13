@@ -30,7 +30,7 @@
 #include <hercules/ir/_base/structural_equal.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class DeepCmpSEqualHandler : public SEqualReducer::Handler {
@@ -88,10 +88,10 @@ bool ExprDeepEqual::operator()(const PrimExpr& lhs, const PrimExpr& rhs) const {
   return DeepCmpSEqualHandler().SEqualReduce(lhs, rhs, false, NullOpt);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.analysis.expr_deep_equal")
+HERCULES_REGISTER_GLOBAL("ir.analysis.expr_deep_equal")
     .set_body_typed([](const PrimExpr& lhs, const PrimExpr& rhs) {
       return ExprDeepEqual()(lhs, rhs);
     });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

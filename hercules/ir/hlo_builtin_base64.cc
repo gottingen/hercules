@@ -22,17 +22,17 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
 // base64
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(base64, b64encode)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(base64, b64encode)
     .set_num_inputs(2)
     .add_argument("s", "bytes_view", "")
     .add_argument("altchars", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(base64, b64decode)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(base64, b64decode)
     .set_num_inputs(3)
     .add_argument("s", "bytes_view", "")
     .add_argument("altchars", "any_view", "")
@@ -40,4 +40,4 @@ MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(base64, b64decode)
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

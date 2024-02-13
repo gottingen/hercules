@@ -30,7 +30,7 @@
 #include <hercules/ghc//filesystem.hpp>
 #include <gtest/gtest.h>
 
-namespace matxscript {
+namespace hercules {
 namespace test {
 
 namespace fs = ghc::filesystem;
@@ -104,4 +104,4 @@ static std::string perm_to_str(fs::perms prms) {
   return result;
 }
 }  // namespace test
-}  // namespace matxscript
+}  // namespace hercules

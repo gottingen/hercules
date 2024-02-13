@@ -28,7 +28,7 @@
 #include <hercules/runtime/container/string.h>
 #include <hercules/runtime/container/unicode.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -46,4 +46,4 @@ String base64_decode(string_view encoded_string);
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

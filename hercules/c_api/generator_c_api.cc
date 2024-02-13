@@ -23,33 +23,33 @@
 #include <hercules/runtime/generator/generator_ref.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.BoolGenerator_Iter").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.BoolGenerator_Iter").set_body([](PyArgs args) -> RTValue {
   BoolGenerator container = args[0].As<BoolGenerator>();
   return container.iter();
 });
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Int32Generator_Iter").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.Int32Generator_Iter").set_body([](PyArgs args) -> RTValue {
   Int32Generator container = args[0].As<Int32Generator>();
   return container.iter();
 });
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Int64Generator_Iter").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.Int64Generator_Iter").set_body([](PyArgs args) -> RTValue {
   Int64Generator container = args[0].As<Int64Generator>();
   return container.iter();
 });
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Float32Generator_Iter").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.Float32Generator_Iter").set_body([](PyArgs args) -> RTValue {
   Float32Generator container = args[0].As<Float32Generator>();
   return container.iter();
 });
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Float64Generator_Iter").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.Float64Generator_Iter").set_body([](PyArgs args) -> RTValue {
   Float64Generator container = args[0].As<Float64Generator>();
   return container.iter();
 });
-MATXSCRIPT_REGISTER_GLOBAL("runtime.RTValueGenerator_Iter").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.RTValueGenerator_Iter").set_body([](PyArgs args) -> RTValue {
   RTValueGenerator container = args[0].As<RTValueGenerator>();
   return container.iter();
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

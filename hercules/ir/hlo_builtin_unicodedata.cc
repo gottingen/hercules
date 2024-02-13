@@ -22,20 +22,20 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
 // unicodedata
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(unicodedata, normalize)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(unicodedata, normalize)
     .set_num_inputs(2)
     .add_argument("form", "int|unicode_view", "")
     .add_argument("input", "unicode_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(unicodedata, category)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(unicodedata, category)
     .set_num_inputs(1)
     .add_argument("chr", "unicode_view", "");
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

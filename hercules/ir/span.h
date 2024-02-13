@@ -27,7 +27,7 @@
 #include <hercules/runtime/container.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::Object;
@@ -56,7 +56,7 @@ class SourceNameNode : public Object {
   }
 
   static constexpr const char* _type_key = "SourceName";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(SourceNameNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(SourceNameNode, Object);
 };
 
 /*!
@@ -71,9 +71,9 @@ class SourceName : public ObjectRef {
    * \param name Name of the operator.
    * \return SourceName valid throughout program lifetime.
    */
-  MATX_DLL static SourceName Get(const StringRef& name);
+  HERCULES_DLL static SourceName Get(const StringRef& name);
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(SourceName, ObjectRef, SourceNameNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(SourceName, ObjectRef, SourceNameNode);
 };
 
 /*!
@@ -117,15 +117,15 @@ class SpanNode : public Object {
   static constexpr const char* _type_key = "Span";
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(SpanNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(SpanNode, Object);
 };
 
 class Span : public ObjectRef {
  public:
-  MATX_DLL Span(StringRef file_name, int64_t lineno, StringRef func_name, StringRef source_code);
+  HERCULES_DLL Span(StringRef file_name, int64_t lineno, StringRef func_name, StringRef source_code);
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Span, ObjectRef, SpanNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Span, ObjectRef, SpanNode);
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

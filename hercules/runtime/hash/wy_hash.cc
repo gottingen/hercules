@@ -18,24 +18,24 @@
 #include <hercules/runtime/hash/base/unaligned_access.h>
 #include <hercules/runtime/hash/wy_hash.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace hash_internal {
 
-#ifdef MATXSCRIPT_HAVE_INTRINSIC_INT128
+#ifdef HERCULES_HAVE_INTRINSIC_INT128
 
 inline uint64_t Uint128Low64(uint128 v) noexcept {
-#if defined(MATXSCRIPT_IS_LITTLE_ENDIAN)
+#if defined(HERCULES_IS_LITTLE_ENDIAN)
   return static_cast<uint64_t>(v & ~uint64_t{0});
-#elif defined(MATXSCRIPT_IS_BIG_ENDIAN)
+#elif defined(HERCULES_IS_BIG_ENDIAN)
   return static_cast<uint64_t>(v >> 64);
 #endif
 }
 
 inline uint64_t Uint128High64(uint128 v) noexcept {
-#if defined(MATXSCRIPT_IS_LITTLE_ENDIAN)
+#if defined(HERCULES_IS_LITTLE_ENDIAN)
   return static_cast<uint64_t>(v >> 64);
-#elif defined(MATXSCRIPT_IS_BIG_ENDIAN)
+#elif defined(HERCULES_IS_BIG_ENDIAN)
   return static_cast<uint64_t>(v & ~uint64_t{0});
 #endif
 }
@@ -128,4 +128,4 @@ uint64_t Wyhash(const void* data, size_t len, uint64_t seed, const uint64_t salt
 
 }  // namespace hash_internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

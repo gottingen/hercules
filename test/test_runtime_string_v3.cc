@@ -33,7 +33,7 @@
 #include <gtest/gtest.h>
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 static const int seed = 201208;
@@ -1733,4 +1733,4 @@ TEST(Unicode, compareToStdU32TStringLong) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

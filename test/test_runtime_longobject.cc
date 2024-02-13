@@ -20,7 +20,7 @@
 #include <gtest/gtest.h>
 #include <hercules/runtime/builtins_modules/_longobject.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(PythonBuiltins, longobject_fast_mod) {
@@ -83,4 +83,4 @@ TEST(PythonBuiltins, longobject_fast_floor_div) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

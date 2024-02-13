@@ -29,7 +29,7 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -64,7 +64,7 @@ class IdNode : public Object {
   static constexpr const char* _type_key = "Id";
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(IdNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(IdNode, Object);
 };
 
 class Id : public ObjectRef {
@@ -73,15 +73,15 @@ class Id : public ObjectRef {
    * \brief The constructor
    * \param name_hint The name of the variable.
    */
-  MATX_DLL explicit Id(StringRef name_hint);
+  HERCULES_DLL explicit Id(StringRef name_hint);
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Id, ObjectRef, IdNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Id, ObjectRef, IdNode);
 };
 
 /*!
  * \brief Local variables used in the let expression.
  *
- * Its semantics are similar to matx.Var node used in TVM's low level
+ * Its semantics are similar to hvm.Var node used in TVM's low level
  * tensor expression language.
  *
  * \note Each Var is bind only once and is immutable.
@@ -134,7 +134,7 @@ class HLOVarNode : public HLOExprNode {
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
   static constexpr const uint32_t _type_child_slots = 1;
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(HLOVarNode, HLOExprNode);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(HLOVarNode, HLOExprNode);
 };
 
 class HLOVar : public HLOExpr {
@@ -145,7 +145,7 @@ class HLOVar : public HLOExpr {
    * \param type_annotation The type annotation of a variable.
    * \param span The source span of the expression.
    */
-  MATX_DLL HLOVar(StringRef name_hint, Type type_annotation, Span span = Span())
+  HERCULES_DLL HLOVar(StringRef name_hint, Type type_annotation, Span span = Span())
       : HLOVar(Id(name_hint), type_annotation, span) {
   }
 
@@ -155,9 +155,9 @@ class HLOVar : public HLOExpr {
    * \param type_annotation The type annotation of a variable.
    * \param span The source span of the expression.
    */
-  MATX_DLL HLOVar(Id vid, Type type_annotation, Span span = Span());
+  HERCULES_DLL HLOVar(Id vid, Type type_annotation, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOVar, HLOExpr, HLOVarNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOVar, HLOExpr, HLOVarNode);
 };
 
 class GlobalVar;
@@ -192,7 +192,7 @@ class GlobalVarNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "GlobalVar";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(GlobalVarNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(GlobalVarNode, HLOExprNode);
 };
 
 /*!
@@ -201,10 +201,10 @@ class GlobalVarNode : public HLOExprNode {
  */
 class GlobalVar : public HLOExpr {
  public:
-  MATX_DLL explicit GlobalVar(StringRef name_hint, Span span = Span());
+  HERCULES_DLL explicit GlobalVar(StringRef name_hint, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(GlobalVar, HLOExpr, GlobalVarNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(GlobalVar, HLOExpr, GlobalVarNode);
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

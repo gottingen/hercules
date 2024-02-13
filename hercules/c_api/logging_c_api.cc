@@ -21,21 +21,21 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SetLoggingLevel").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[SetLoggingLevel] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.SetLoggingLevel").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[SetLoggingLevel] Expect 1 arguments but get " << args.size();
   auto logging_level = args[0].As<int64_t>();
   SetLoggingLevel(logging_level);
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.GetLoggingLevel").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 0) << "[GetLoggingLevel] Expect 0 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("runtime.GetLoggingLevel").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 0) << "[GetLoggingLevel] Expect 0 arguments but get " << args.size();
   auto logging_level = GetLoggingLevel();
   return logging_level;
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

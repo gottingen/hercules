@@ -23,7 +23,7 @@
 #include <hercules/ir/_base/string_ref.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 size_t ObjectHash::operator()(const ObjectRef& a) const {
@@ -39,13 +39,13 @@ size_t ObjectHash::operator()(const ObjectRef& a) const {
   }
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ObjectRefHash").set_body_typed([](ObjectRef obj) {
+HERCULES_REGISTER_GLOBAL("runtime.ObjectRefHash").set_body_typed([](ObjectRef obj) {
   return static_cast<int64_t>(ObjectHash()(obj));
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ObjectPtrHash").set_body_typed([](ObjectRef obj) {
+HERCULES_REGISTER_GLOBAL("runtime.ObjectPtrHash").set_body_typed([](ObjectRef obj) {
   return static_cast<int64_t>(runtime::ObjectPtrHash()(obj));
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

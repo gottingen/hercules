@@ -30,12 +30,12 @@
 
 #include "test_util.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(filesystem, du) {
   namespace fs = ghc::filesystem;
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
 
   fs::path dir{"."};
 
@@ -67,7 +67,7 @@ TEST(filesystem, du) {
 
 TEST(filesystem, dir) {
   namespace fs = ghc::filesystem;
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
 
   fs::path dir{"."};
   for (auto de : fs::directory_iterator(dir)) {
@@ -83,7 +83,7 @@ TEST(filesystem, dir) {
 TEST(filesystem, copy_R_case1) {
   // source is a regular dir and subdir has symlink.
   namespace fs = ghc::filesystem;
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
   TemporaryDirectory t(TempOpt::change_path);
   std::cout << t.path() << std::endl;
 
@@ -107,7 +107,7 @@ TEST(filesystem, copy_R_case1) {
 
 TEST(filesystem, copy_R_case2) {
   // source is a symlink and subdir has symlink.
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
   TemporaryDirectory t(TempOpt::change_path);
   std::cout << t.path() << std::endl;
 
@@ -143,7 +143,7 @@ TEST(filesystem, copy_R_case2) {
 }
 
 TEST(filesystem, copy_rd_case1) {
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
   TemporaryDirectory t(TempOpt::change_path);
   std::cout << t.path() << std::endl;
 
@@ -170,7 +170,7 @@ TEST(filesystem, copy_rd_case1) {
 }
 
 TEST(filesystem, copy_rd_case2) {
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
   TemporaryDirectory t(TempOpt::change_path);
   std::cout << t.path() << std::endl;
 
@@ -201,7 +201,7 @@ TEST(filesystem, copy_rd_case2) {
 }
 
 TEST(filesystem, create_directories) {
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
   TemporaryDirectory t(TempOpt::change_path);
   std::cout << t.path() << std::endl;
 
@@ -218,4 +218,4 @@ TEST(filesystem, create_directories) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

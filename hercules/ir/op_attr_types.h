@@ -22,19 +22,19 @@
  */
 
 /*!
- * \file matx/ir/op_attr_types.h
+ * \file hvm/ir/op_attr_types.h
  * \brief Attribute types in the Op registry for TIR ops.
  *
  * These attributes can be set via OpRegEntry::set_attr
  *
- * \sa matx/ir/op.h
+ * \sa hvm/ir/op.h
  */
 #pragma once
 
 #include <hercules/ir/prim_expr.h>
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -88,4 +88,4 @@ enum class CallEffectKind : int {
 using TCallEffectKind = Integer;
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

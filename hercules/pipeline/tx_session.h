@@ -37,7 +37,7 @@
 #include <hercules/runtime/threadpool/i_thread_pool.h>
 #include <hercules/runtime/threadpool/thread_pool_executor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct TXSessionOptions {
@@ -142,7 +142,7 @@ struct TXSession {
 
   std::unique_ptr<Symbol> CreateVariable(std::string name, RTValue value = RTValue()) {
     auto var_op = GetVariableOp();
-    MXCHECK(!name.empty()) << "variable name must be specified by user!!!";
+    HSCHECK(!name.empty()) << "variable name must be specified by user!!!";
     return VariableOp::make_symbol(var_op, std::move(name), std::move(value));
   }
 
@@ -235,4 +235,4 @@ struct TXSession {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

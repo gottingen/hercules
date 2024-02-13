@@ -19,7 +19,7 @@
  */
 #include <hercules/runtime/utf8/utf8_greedy_table_decoder.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace utf8_details {
 // clang-format off
@@ -172,7 +172,7 @@ GreedyTableDecoder::LookupTables const GreedyTableDecoder::smTables = {
 
 // clang-format on
 
-MATXSCRIPT_ALIGN_FUNCTION std::ptrdiff_t GreedyTableDecoder::Convert(const char8_t* pSrc,
+HERCULES_ALIGN_FUNCTION std::ptrdiff_t GreedyTableDecoder::Convert(const char8_t* pSrc,
                                                                      const char8_t* pSrcEnd,
                                                                      char32_t* pDst) noexcept {
   char32_t* pDstOrig = pDst;
@@ -308,4 +308,4 @@ size_t GreedyTableDecoder::CountUnitSize(const char8_t* pSrc, const char8_t* pSr
 
 }  // namespace utf8_details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

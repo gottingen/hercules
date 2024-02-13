@@ -20,10 +20,10 @@
 #include <hercules/runtime/container/set_private.h>
 #include <hercules/runtime/container/set_ref.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(SetNode);
+HERCULES_REGISTER_OBJECT_TYPE(SetNode);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

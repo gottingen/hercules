@@ -25,7 +25,7 @@
 #include <hercules/runtime/generator/generator_ref.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 #define DEFINE_GENERATOR_OBJECT_NODE(Name, ResultType)                             \
@@ -41,7 +41,7 @@ namespace runtime {
     ~Name##Node() = default;                                                       \
     static constexpr const uint32_t _type_index = TypeIndex::kRuntime##Name;       \
     static constexpr const char* _type_key = #Name;                                \
-    MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(Name##Node, Object);                      \
+    HERCULES_DECLARE_FINAL_OBJECT_INFO(Name##Node, Object);                      \
                                                                                    \
    private:                                                                        \
     GAdapter generator_;                                                           \
@@ -58,4 +58,4 @@ DEFINE_GENERATOR_OBJECT_NODE(RTValueGenerator, RTValue);
 
 #undef DEFINE_GENERATOR_OBJECT_NODE
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

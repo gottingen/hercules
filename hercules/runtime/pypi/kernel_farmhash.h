@@ -29,7 +29,7 @@
 #include <hercules/runtime/container/tuple_ref.h>
 #include <hercules/runtime/container/unicode_view.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
@@ -38,35 +38,35 @@ namespace runtime {
 
 uint32_t kernel_farmhash_hash32(const string_view& s);
 uint32_t kernel_farmhash_hash32(const unicode_view& s);
-MATXSCRIPT_ALWAYS_INLINE uint32_t kernel_farmhash_hash32(const Any& s) {
+HERCULES_ALWAYS_INLINE uint32_t kernel_farmhash_hash32(const Any& s) {
   return s.Is<string_view>() ? kernel_farmhash_hash32(s.AsNoCheck<string_view>())
                              : kernel_farmhash_hash32(s.As<unicode_view>());
 }
 
 uint32_t kernel_farmhash_hash32withseed(const string_view& s, uint32_t seed);
 uint32_t kernel_farmhash_hash32withseed(const unicode_view& s, uint32_t seed);
-MATXSCRIPT_ALWAYS_INLINE uint32_t kernel_farmhash_hash32withseed(const Any& s, uint32_t seed) {
+HERCULES_ALWAYS_INLINE uint32_t kernel_farmhash_hash32withseed(const Any& s, uint32_t seed) {
   return s.Is<string_view>() ? kernel_farmhash_hash32withseed(s.AsNoCheck<string_view>(), seed)
                              : kernel_farmhash_hash32withseed(s.As<unicode_view>(), seed);
 }
 
 uint64_t kernel_farmhash_hash64(const string_view& s);
 uint64_t kernel_farmhash_hash64(const unicode_view& s);
-MATXSCRIPT_ALWAYS_INLINE uint64_t kernel_farmhash_hash64(const Any& s) {
+HERCULES_ALWAYS_INLINE uint64_t kernel_farmhash_hash64(const Any& s) {
   return s.Is<string_view>() ? kernel_farmhash_hash64(s.AsNoCheck<string_view>())
                              : kernel_farmhash_hash64(s.As<unicode_view>());
 }
 
 uint64_t kernel_farmhash_hash64withseed(const string_view& s, uint64_t seed);
 uint64_t kernel_farmhash_hash64withseed(const unicode_view& s, uint64_t seed);
-MATXSCRIPT_ALWAYS_INLINE uint64_t kernel_farmhash_hash64withseed(const Any& s, uint64_t seed) {
+HERCULES_ALWAYS_INLINE uint64_t kernel_farmhash_hash64withseed(const Any& s, uint64_t seed) {
   return s.Is<string_view>() ? kernel_farmhash_hash64withseed(s.AsNoCheck<string_view>(), seed)
                              : kernel_farmhash_hash64withseed(s.As<unicode_view>(), seed);
 }
 
 Tuple kernel_farmhash_hash128(const string_view& s);
 Tuple kernel_farmhash_hash128(const unicode_view& s);
-MATXSCRIPT_ALWAYS_INLINE Tuple kernel_farmhash_hash128(const Any& s) {
+HERCULES_ALWAYS_INLINE Tuple kernel_farmhash_hash128(const Any& s) {
   return s.Is<string_view>() ? kernel_farmhash_hash128(s.AsNoCheck<string_view>())
                              : kernel_farmhash_hash128(s.As<unicode_view>());
 }
@@ -77,7 +77,7 @@ Tuple kernel_farmhash_hash128withseed(const string_view& s,
 Tuple kernel_farmhash_hash128withseed(const unicode_view& s,
                                       uint64_t seedlow64,
                                       uint64_t seedhigh64);
-MATXSCRIPT_ALWAYS_INLINE Tuple kernel_farmhash_hash128withseed(const Any& s,
+HERCULES_ALWAYS_INLINE Tuple kernel_farmhash_hash128withseed(const Any& s,
                                                                uint64_t seedlow64,
                                                                uint64_t seedhigh64) {
   return s.Is<string_view>()
@@ -87,21 +87,21 @@ MATXSCRIPT_ALWAYS_INLINE Tuple kernel_farmhash_hash128withseed(const Any& s,
 
 uint32_t kernel_farmhash_fingerprint32(const string_view& s);
 uint32_t kernel_farmhash_fingerprint32(const unicode_view& s);
-MATXSCRIPT_ALWAYS_INLINE uint32_t kernel_farmhash_fingerprint32(const Any& s) {
+HERCULES_ALWAYS_INLINE uint32_t kernel_farmhash_fingerprint32(const Any& s) {
   return s.Is<string_view>() ? kernel_farmhash_fingerprint32(s.AsNoCheck<string_view>())
                              : kernel_farmhash_fingerprint32(s.As<unicode_view>());
 }
 
 uint64_t kernel_farmhash_fingerprint64(const string_view& s);
 uint64_t kernel_farmhash_fingerprint64(const unicode_view& s);
-MATXSCRIPT_ALWAYS_INLINE uint64_t kernel_farmhash_fingerprint64(const Any& s) {
+HERCULES_ALWAYS_INLINE uint64_t kernel_farmhash_fingerprint64(const Any& s) {
   return s.Is<string_view>() ? kernel_farmhash_fingerprint64(s.AsNoCheck<string_view>())
                              : kernel_farmhash_fingerprint64(s.As<unicode_view>());
 }
 
 Tuple kernel_farmhash_fingerprint128(const string_view& s);
 Tuple kernel_farmhash_fingerprint128(const unicode_view& s);
-MATXSCRIPT_ALWAYS_INLINE Tuple kernel_farmhash_fingerprint128(const Any& s) {
+HERCULES_ALWAYS_INLINE Tuple kernel_farmhash_fingerprint128(const Any& s) {
   return s.Is<string_view>() ? kernel_farmhash_fingerprint128(s.AsNoCheck<string_view>())
                              : kernel_farmhash_fingerprint128(s.As<unicode_view>());
 }
@@ -109,28 +109,28 @@ MATXSCRIPT_ALWAYS_INLINE Tuple kernel_farmhash_fingerprint128(const Any& s) {
 /******************************************************************************
  * for fix overflow, some sugar
  *****************************************************************************/
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_farmhash_hash64_mod(const string_view& s, int64_t y) {
+HERCULES_ALWAYS_INLINE int64_t kernel_farmhash_hash64_mod(const string_view& s, int64_t y) {
   return py_builtins::fast_mod(kernel_farmhash_hash64(s), y);
 }
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_farmhash_hash64_mod(const unicode_view& s, int64_t y) {
+HERCULES_ALWAYS_INLINE int64_t kernel_farmhash_hash64_mod(const unicode_view& s, int64_t y) {
   return py_builtins::fast_mod(kernel_farmhash_hash64(s), y);
 }
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_farmhash_hash64_mod(const Any& s, int64_t y) {
+HERCULES_ALWAYS_INLINE int64_t kernel_farmhash_hash64_mod(const Any& s, int64_t y) {
   return s.Is<string_view>() ? kernel_farmhash_hash64_mod(s.AsNoCheck<string_view>(), y)
                              : kernel_farmhash_hash64_mod(s.As<unicode_view>(), y);
 }
 
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_farmhash_hash64withseed_mod(const string_view& s,
+HERCULES_ALWAYS_INLINE int64_t kernel_farmhash_hash64withseed_mod(const string_view& s,
                                                                     uint64_t seed,
                                                                     int64_t y) {
   return py_builtins::fast_mod(kernel_farmhash_hash64withseed(s, seed), y);
 }
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_farmhash_hash64withseed_mod(const unicode_view& s,
+HERCULES_ALWAYS_INLINE int64_t kernel_farmhash_hash64withseed_mod(const unicode_view& s,
                                                                     uint64_t seed,
                                                                     int64_t y) {
   return py_builtins::fast_mod(kernel_farmhash_hash64withseed(s, seed), y);
 }
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_farmhash_hash64withseed_mod(const Any& s,
+HERCULES_ALWAYS_INLINE int64_t kernel_farmhash_hash64withseed_mod(const Any& s,
                                                                     uint64_t seed,
                                                                     int64_t y) {
   return s.Is<string_view>()
@@ -138,25 +138,25 @@ MATXSCRIPT_ALWAYS_INLINE int64_t kernel_farmhash_hash64withseed_mod(const Any& s
              : kernel_farmhash_hash64withseed_mod(s.As<unicode_view>(), seed, y);
 }
 
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_farmhash_fingerprint64_mod(const string_view& s,
+HERCULES_ALWAYS_INLINE int64_t kernel_farmhash_fingerprint64_mod(const string_view& s,
                                                                    int64_t y) {
   return py_builtins::fast_mod(kernel_farmhash_fingerprint64(s), y);
 }
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_farmhash_fingerprint64_mod(const unicode_view& s,
+HERCULES_ALWAYS_INLINE int64_t kernel_farmhash_fingerprint64_mod(const unicode_view& s,
                                                                    int64_t y) {
   return py_builtins::fast_mod(kernel_farmhash_fingerprint64(s), y);
 }
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_farmhash_fingerprint64_mod(const Any& s, int64_t y) {
+HERCULES_ALWAYS_INLINE int64_t kernel_farmhash_fingerprint64_mod(const Any& s, int64_t y) {
   return s.Is<string_view>() ? kernel_farmhash_fingerprint64_mod(s.AsNoCheck<string_view>(), y)
                              : kernel_farmhash_fingerprint64_mod(s.As<unicode_view>(), y);
 }
 
 int64_t kernel_farmhash_fingerprint128_mod(const string_view& s, int64_t y);
 int64_t kernel_farmhash_fingerprint128_mod(const unicode_view& s, int64_t y);
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_farmhash_fingerprint128_mod(const Any& s, int64_t y) {
+HERCULES_ALWAYS_INLINE int64_t kernel_farmhash_fingerprint128_mod(const Any& s, int64_t y) {
   return s.Is<string_view>() ? kernel_farmhash_fingerprint128_mod(s.AsNoCheck<string_view>(), y)
                              : kernel_farmhash_fingerprint128_mod(s.As<unicode_view>(), y);
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

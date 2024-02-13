@@ -27,7 +27,7 @@
 #include <hercules/runtime/container/unicode.h>
 #include <hercules/runtime/utf8_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace {
@@ -202,4 +202,4 @@ constexpr unicode_view::size_type unicode_view::npos;
 constexpr unicode_view::size_type unicode_view::kMaxSize;
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

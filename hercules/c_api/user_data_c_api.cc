@@ -23,28 +23,28 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.UserData").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 0) << "[runtime.UserData] no need argument";
+HERCULES_REGISTER_GLOBAL("runtime.UserData").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 0) << "[runtime.UserData] no need argument";
   return UserDataRef();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.UserData___getattr__").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 2) << "[runtime.UserData] __getattr__ need 2 arguments, but get "
+HERCULES_REGISTER_GLOBAL("runtime.UserData___getattr__").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 2) << "[runtime.UserData] __getattr__ need 2 arguments, but get "
                             << args.size();
   auto ud = args[0].AsObjectView<UserDataRef>();
   auto name = args[1].As<string_view>();
   return ud.data().__getattr__(name);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.UserData___call__").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() >= 1) << "[runtime.UserData] __call__ need 1 or more arguments, but get "
+HERCULES_REGISTER_GLOBAL("runtime.UserData___call__").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() >= 1) << "[runtime.UserData] __call__ need 1 or more arguments, but get "
                             << args.size();
   auto ud_view = args[0].AsObjectView<UserDataRef>();
   return ud_view.data().generic_call(PyArgs(args.begin() + 1, args.size() - 1));
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

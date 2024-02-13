@@ -21,7 +21,7 @@
 #include <hercules/runtime/generic/generic_funcs_template_args.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Generic, kernel_object___len__) {
@@ -446,4 +446,4 @@ TEST(Generic, kernel_print) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

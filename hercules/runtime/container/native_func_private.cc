@@ -19,17 +19,17 @@
  */
 #include <hercules/runtime/container/native_func_private.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 RTView NativeFuncUserData::__getattr__(string_view var_name) const {
-  MXCHECK(false) << "[NativeFuncUserData] get_attr is disabled";
+  HSCHECK(false) << "[NativeFuncUserData] get_attr is disabled";
   return None;
 }
 
 void NativeFuncUserData::__setattr__(string_view var_name, const Any& val) {
-  MXCHECK(false) << "[NativeFuncUserData] set_attr is disabled";
+  HSCHECK(false) << "[NativeFuncUserData] set_attr is disabled";
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -23,7 +23,7 @@
 #include <hercules/runtime/container/builtins_zip.h>
 #include <hercules/runtime/container/generic_zip.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Builtins, zip_list) {
@@ -93,4 +93,4 @@ TEST(Builtins, map_str) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

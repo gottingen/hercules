@@ -22,7 +22,7 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
@@ -30,37 +30,37 @@ namespace builtin {
  * Tuple builtin methods
  *****************************************************************************/
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(tuple, __len__, size)
+HERCULES_IR_DEFINE_HLO_METHOD(tuple, __len__, size)
     .set_num_inputs(1)
     .add_argument("self", "Tuple", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(tuple, __getitem__, get_item)
+HERCULES_IR_DEFINE_HLO_METHOD(tuple, __getitem__, get_item)
     .set_num_inputs(2)
     .add_argument("self", "Tuple", "")
     .add_argument("idx", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(tuple, __contains__, contains)
+HERCULES_IR_DEFINE_HLO_METHOD(tuple, __contains__, contains)
     .set_num_inputs(2)
     .add_argument("self", "Tuple", "")
     .add_argument("item", "<template>", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(tuple, __getslice__, get_slice)
+HERCULES_IR_DEFINE_HLO_METHOD(tuple, __getslice__, get_slice)
     .set_num_inputs(4)
     .add_argument("self", "Tuple", "")
     .add_argument("b", "int", "")
     .add_argument("e", "int", "")
     .add_argument("step", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(tuple, repeat, repeat)
+HERCULES_IR_DEFINE_HLO_METHOD(tuple, repeat, repeat)
     .set_num_inputs(2)
     .add_argument("self", "Tuple", "")
     .add_argument("times", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(tuple, count, count)
+HERCULES_IR_DEFINE_HLO_METHOD(tuple, count, count)
     .set_num_inputs(2)
     .add_argument("self", "Tuple", "")
     .add_argument("item", "<template>", "");
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

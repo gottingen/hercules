@@ -26,7 +26,7 @@
 #include <hercules/runtime/container/tuple_ref.h>
 #include <hercules/runtime/py_args.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 double kernel_random_random();
@@ -51,4 +51,4 @@ double kernel_random_paretovariate(double alpha);
 double kernel_random_weibullvariate(double alpha, double beta);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

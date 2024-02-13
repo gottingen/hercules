@@ -28,11 +28,11 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using namespace runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::ir::printer;
 
 TupleExpr::TupleExpr(Array<BaseExpr> fields, Span span) {
   ObjectPtr<TupleExprNode> n = make_object<TupleExprNode>();
@@ -41,13 +41,13 @@ TupleExpr::TupleExpr(Array<BaseExpr> fields, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(TupleExprNode);
+HERCULES_REGISTER_NODE_TYPE(TupleExprNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.TupleExpr").set_body_typed([](Array<BaseExpr> fields, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.TupleExpr").set_body_typed([](Array<BaseExpr> fields, Span span) {
   return TupleExpr(std::move(fields), std::move(span));
 });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
     .set_dispatch<TupleExpr>("", [](TupleExpr t, ObjectPath p, IRDocsifier d) -> Doc {
       int n = t->fields.size();
       Array<ExprDoc> results;
@@ -60,4 +60,4 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
     });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -21,7 +21,7 @@
  * under the License.
  */
 /*!
- * \file matx/ir/hlo_builtin.h
+ * \file hvm/ir/hlo_builtin.h
  * \brief high level ir builtin intrinsics.
  *
  */
@@ -29,23 +29,23 @@
 
 #include <hercules/ir/base.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-MATX_DLL BaseExpr add(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr sub(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr mul(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr floordiv(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr floormod(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr greater_than(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr greater_or_equal(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr less_than(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr less_or_equal(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr equal(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr not_equal(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr logic_and(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr logic_or(BaseExpr a, BaseExpr b, Span span = Span());
-MATX_DLL BaseExpr logic_not(BaseExpr a, Span span = Span());
+HERCULES_DLL BaseExpr add(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr sub(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr mul(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr floordiv(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr floormod(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr greater_than(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr greater_or_equal(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr less_than(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr less_or_equal(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr equal(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr not_equal(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr logic_and(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr logic_or(BaseExpr a, BaseExpr b, Span span = Span());
+HERCULES_DLL BaseExpr logic_not(BaseExpr a, Span span = Span());
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

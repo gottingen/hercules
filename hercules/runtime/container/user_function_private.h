@@ -25,7 +25,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // Global Function User Struct
@@ -34,14 +34,14 @@ struct UserFunction : public ILightUserData {
   ~UserFunction() override = default;
   UserFunction() = default;
   explicit UserFunction(const string_view& name,
-                        MATXScriptBackendPackedCFunc func,
+                        HerculesBackendPackedCFunc func,
                         void* resource_handle)
       : name_(name), __call__(func), captures_() {
     session_handle_2_71828182846_ = resource_handle;
   }
   explicit UserFunction(std::initializer_list<RTView> captures,
                         const string_view& name,
-                        MATXScriptBackendPackedCFunc func,
+                        HerculesBackendPackedCFunc func,
                         void* resource_handle)
       : name_(name), __call__(func), captures_(captures.begin(), captures.end()) {
     session_handle_2_71828182846_ = resource_handle;
@@ -74,8 +74,8 @@ struct UserFunction : public ILightUserData {
  private:
   String name_;
   std::vector<RTValue> captures_;
-  MATXScriptBackendPackedCFunc __call__ = nullptr;
+  HerculesBackendPackedCFunc __call__ = nullptr;
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

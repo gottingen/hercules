@@ -32,11 +32,11 @@
 #include <hercules/ir/printer/utils.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::runtime;
+using namespace ::hercules::ir::printer;
 
 void DictAttrsNode::VisitAttrs(AttrVisitor* v) {
   v->Visit("__dict__", &dict);
@@ -56,22 +56,22 @@ DictAttrs::DictAttrs(Map<StringRef, ObjectRef> dict) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<DictAttrs>("", [](DictAttrs attrs, ObjectPath p, IRDocsifier d) -> Doc {
       return d->AsDoc(attrs->dict, p->Attr("dict"));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(DictAttrsNode);
+HERCULES_REGISTER_NODE_TYPE(DictAttrsNode);
 
-MATXSCRIPT_REGISTER_NODE_TYPE(AttrFieldInfoNode);
+HERCULES_REGISTER_NODE_TYPE(AttrFieldInfoNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.DictAttrsGetDict").set_body_typed([](DictAttrs attrs) {
+HERCULES_REGISTER_GLOBAL("ir.DictAttrsGetDict").set_body_typed([](DictAttrs attrs) {
   return attrs->dict;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.AttrsListFieldInfo").set_body_typed([](Attrs attrs) {
+HERCULES_REGISTER_GLOBAL("ir.AttrsListFieldInfo").set_body_typed([](Attrs attrs) {
   return attrs->ListFieldInfo();
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

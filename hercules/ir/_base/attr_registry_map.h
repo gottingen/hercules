@@ -20,7 +20,7 @@
  * under the License.
  */
 /*!
- * \file matx/runtime/attr_registry_map.h
+ * \file hvm/runtime/attr_registry_map.h
  * \brief Attribute map used in registry.
  */
 #pragma once
@@ -31,7 +31,7 @@
 #include <hercules/ir/_base/string_ref.h>
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -60,9 +60,9 @@ class AttrRegistryMapContainerMap {
    * \return the const reference to the content value.
    */
   const runtime::RTValue& operator[](const KeyType& key) const {
-    MXCHECK(key.defined());
+    HSCHECK(key.defined());
     const uint32_t idx = key->AttrRegistryIndex();
-    MXCHECK(idx < data_.size() && data_[idx].second != 0)
+    HSCHECK(idx < data_.size() && data_[idx].second != 0)
         << "Attribute " << attr_name_ << " has not been registered for " << key->name;
     return data_[idx].first;
   }
@@ -75,7 +75,7 @@ class AttrRegistryMapContainerMap {
    */
   template <typename ValueType>
   ValueType get(const KeyType& key, ValueType def_value) const {
-    MXCHECK(key.defined());
+    HSCHECK(key.defined());
     const uint32_t idx = key->AttrRegistryIndex();
     if (idx < data_.size() && data_[idx].second != 0) {
       return data_[idx].first.template As<ValueType>();
@@ -142,4 +142,4 @@ class AttrRegistryMap {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -23,7 +23,7 @@
 #include <memory>
 #include <thread>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace internal {
 
@@ -68,4 +68,4 @@ using IRunnablePtr = std::shared_ptr<IRunnable>;
 
 }  // namespace internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

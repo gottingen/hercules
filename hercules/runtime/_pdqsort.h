@@ -2,8 +2,8 @@
 // clang-format off
 // Taken from https://github.com/skarupke/flat_hash_map/blob/2c4687431f978f02a3780e24b8b701d22aa32d9c/flat_hash_map.hpp
 // with fixes applied:
-// - rename MATXSCRIPT_PDQSORT_PREFER_MOVE to MATXSCRIPT_PDQSORT_PREFER_MOVE
-// - add namespace ::matxscript::runtime::sort for fix conflict with others
+// - rename HERCULES_PDQSORT_PREFER_MOVE to HERCULES_PDQSORT_PREFER_MOVE
+// - add namespace ::hercules::runtime::sort for fix conflict with others
 /*
 pdqsort.hpp - Pattern-defeating quicksort.
 
@@ -43,12 +43,12 @@ following restrictions:
 #if __cplusplus >= 201103L
 #include <cstdint>
 #include <type_traits>
-#define MATXSCRIPT_PDQSORT_PREFER_MOVE(x) std::move(x)
+#define HERCULES_PDQSORT_PREFER_MOVE(x) std::move(x)
 #else
-#define MATXSCRIPT_PDQSORT_PREFER_MOVE(x) (x)
+#define HERCULES_PDQSORT_PREFER_MOVE(x) (x)
 #endif
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace sort {
 
@@ -112,13 +112,13 @@ namespace pdqsort_detail
       // Compare first so we can avoid 2 moves for an element already positioned
       // correctly.
       if (comp(*sift, *sift_1)) {
-        T tmp = MATXSCRIPT_PDQSORT_PREFER_MOVE(*sift);
+        T tmp = HERCULES_PDQSORT_PREFER_MOVE(*sift);
 
         do {
-          *sift-- = MATXSCRIPT_PDQSORT_PREFER_MOVE(*sift_1);
+          *sift-- = HERCULES_PDQSORT_PREFER_MOVE(*sift_1);
         } while (sift != begin && comp(tmp, *--sift_1));
 
-        *sift = MATXSCRIPT_PDQSORT_PREFER_MOVE(tmp);
+        *sift = HERCULES_PDQSORT_PREFER_MOVE(tmp);
       }
     }
   }
@@ -141,13 +141,13 @@ namespace pdqsort_detail
       // Compare first so we can avoid 2 moves for an element already positioned
       // correctly.
       if (comp(*sift, *sift_1)) {
-        T tmp = MATXSCRIPT_PDQSORT_PREFER_MOVE(*sift);
+        T tmp = HERCULES_PDQSORT_PREFER_MOVE(*sift);
 
         do {
-          *sift-- = MATXSCRIPT_PDQSORT_PREFER_MOVE(*sift_1);
+          *sift-- = HERCULES_PDQSORT_PREFER_MOVE(*sift_1);
         } while (comp(tmp, *--sift_1));
 
-        *sift = MATXSCRIPT_PDQSORT_PREFER_MOVE(tmp);
+        *sift = HERCULES_PDQSORT_PREFER_MOVE(tmp);
       }
     }
   }
@@ -172,13 +172,13 @@ namespace pdqsort_detail
       // Compare first so we can avoid 2 moves for an element already positioned
       // correctly.
       if (comp(*sift, *sift_1)) {
-        T tmp = MATXSCRIPT_PDQSORT_PREFER_MOVE(*sift);
+        T tmp = HERCULES_PDQSORT_PREFER_MOVE(*sift);
 
         do {
-          *sift-- = MATXSCRIPT_PDQSORT_PREFER_MOVE(*sift_1);
+          *sift-- = HERCULES_PDQSORT_PREFER_MOVE(*sift_1);
         } while (sift != begin && comp(tmp, *--sift_1));
 
-        *sift = MATXSCRIPT_PDQSORT_PREFER_MOVE(tmp);
+        *sift = HERCULES_PDQSORT_PREFER_MOVE(tmp);
         limit += cur - sift;
       }
 
@@ -231,15 +231,15 @@ namespace pdqsort_detail
     } else if (num > 0) {
       Iter l = first + offsets_l[0];
       Iter r = last - offsets_r[0];
-      T tmp(MATXSCRIPT_PDQSORT_PREFER_MOVE(*l));
-      *l = MATXSCRIPT_PDQSORT_PREFER_MOVE(*r);
+      T tmp(HERCULES_PDQSORT_PREFER_MOVE(*l));
+      *l = HERCULES_PDQSORT_PREFER_MOVE(*r);
       for (int i = 1; i < num; ++i) {
         l = first + offsets_l[i];
-        *r = MATXSCRIPT_PDQSORT_PREFER_MOVE(*l);
+        *r = HERCULES_PDQSORT_PREFER_MOVE(*l);
         r = last - offsets_r[i];
-        *l = MATXSCRIPT_PDQSORT_PREFER_MOVE(*r);
+        *l = HERCULES_PDQSORT_PREFER_MOVE(*r);
       }
-      *r = MATXSCRIPT_PDQSORT_PREFER_MOVE(tmp);
+      *r = HERCULES_PDQSORT_PREFER_MOVE(tmp);
     }
   }
 
@@ -258,7 +258,7 @@ namespace pdqsort_detail
     typedef typename std::iterator_traits<Iter>::value_type T;
 
     // Move pivot into local for speed.
-    T pivot(MATXSCRIPT_PDQSORT_PREFER_MOVE(*begin));
+    T pivot(HERCULES_PDQSORT_PREFER_MOVE(*begin));
     Iter first = begin;
     Iter last = end;
 
@@ -432,8 +432,8 @@ namespace pdqsort_detail
 
     // Put the pivot in the right place.
     Iter pivot_pos = first - 1;
-    *begin = MATXSCRIPT_PDQSORT_PREFER_MOVE(*pivot_pos);
-    *pivot_pos = MATXSCRIPT_PDQSORT_PREFER_MOVE(pivot);
+    *begin = HERCULES_PDQSORT_PREFER_MOVE(*pivot_pos);
+    *pivot_pos = HERCULES_PDQSORT_PREFER_MOVE(pivot);
 
     return std::make_pair(pivot_pos, already_partitioned);
   }
@@ -453,7 +453,7 @@ namespace pdqsort_detail
     typedef typename std::iterator_traits<Iter>::value_type T;
 
     // Move pivot into local for speed.
-    T pivot(MATXSCRIPT_PDQSORT_PREFER_MOVE(*begin));
+    T pivot(HERCULES_PDQSORT_PREFER_MOVE(*begin));
 
     Iter first = begin;
     Iter last = end;
@@ -494,8 +494,8 @@ namespace pdqsort_detail
 
     // Put the pivot in the right place.
     Iter pivot_pos = first - 1;
-    *begin = MATXSCRIPT_PDQSORT_PREFER_MOVE(*pivot_pos);
-    *pivot_pos = MATXSCRIPT_PDQSORT_PREFER_MOVE(pivot);
+    *begin = HERCULES_PDQSORT_PREFER_MOVE(*pivot_pos);
+    *pivot_pos = HERCULES_PDQSORT_PREFER_MOVE(pivot);
 
     return std::make_pair(pivot_pos, already_partitioned);
   }
@@ -512,7 +512,7 @@ namespace pdqsort_detail
   {
     typedef typename std::iterator_traits<Iter>::value_type T;
 
-    T pivot(MATXSCRIPT_PDQSORT_PREFER_MOVE(*begin));
+    T pivot(HERCULES_PDQSORT_PREFER_MOVE(*begin));
     Iter first = begin;
     Iter last = end;
 
@@ -535,8 +535,8 @@ namespace pdqsort_detail
     }
 
     Iter pivot_pos = last;
-    *begin = MATXSCRIPT_PDQSORT_PREFER_MOVE(*pivot_pos);
-    *pivot_pos = MATXSCRIPT_PDQSORT_PREFER_MOVE(pivot);
+    *begin = HERCULES_PDQSORT_PREFER_MOVE(*pivot_pos);
+    *pivot_pos = HERCULES_PDQSORT_PREFER_MOVE(pivot);
 
     return pivot_pos;
   }
@@ -696,7 +696,7 @@ inline void pdqsort_branchless(Iter begin, Iter end)
 
 } // namespace sort
 } // namespace runtime
-} // namespace matxscript
+} // namespace hercules
 
-#undef MATXSCRIPT_PDQSORT_PREFER_MOVE
+#undef HERCULES_PDQSORT_PREFER_MOVE
 // clang-format on

@@ -29,7 +29,7 @@
 #include <hercules/runtime/py_args.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct FTObjectBaseNode : public Object {
@@ -61,7 +61,7 @@ struct FTObjectBaseNode : public Object {
 
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeFTObjectBase;
   static constexpr const char* _type_key = "FTContainerBase";
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(FTObjectBaseNode, Object);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(FTObjectBaseNode, Object);
 };
 
 struct FTObjectBase : public ObjectRef {
@@ -143,4 +143,4 @@ struct traits {
 }  // namespace type_relation
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

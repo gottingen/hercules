@@ -26,11 +26,11 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::runtime;
+using namespace ::hercules::ir::printer;
 
 // PrimVar
 PrimVar::PrimVar(StringRef name_hint, DataType dtype, Span span) {
@@ -52,7 +52,7 @@ PrimVar::PrimVar(StringRef name_hint, Type type_annotation, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimVar")
+HERCULES_REGISTER_GLOBAL("ir.PrimVar")
     .set_body_typed([](StringRef name_hint, runtime::RTValue type, Span span) {
       if (type.IsObjectRef<Type>()) {
         return PrimVar(name_hint, type.As<Type>(), span);
@@ -61,9 +61,9 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.PrimVar")
       }
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimVarNode);
+HERCULES_REGISTER_NODE_TYPE(PrimVarNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
     .set_dispatch<PrimVar>("", [](PrimVar var, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(var->name_hint);
     });
@@ -71,19 +71,19 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
 // PrimIterVar
 PrimIterVar::PrimIterVar(RangeExpr dom, PrimVar var, Span span) {
   ObjectPtr<PrimIterVarNode> n = make_object<PrimIterVarNode>();
-  MXCHECK(var.dtype().is_int()) << "Expect var type is 'int' but get '" << var.dtype() << "'";
+  HSCHECK(var.dtype().is_int()) << "Expect var type is 'int' but get '" << var.dtype() << "'";
   n->dom = std::move(dom);
   n->var = std::move(var);
   n->span = std::move(span);
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimIterVar")
+HERCULES_REGISTER_GLOBAL("ir.PrimIterVar")
     .set_body_typed([](RangeExpr dom, PrimVar var, Span span) {
       return PrimIterVar(std::move(dom), std::move(var), std::move(span));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimIterVarNode);
+HERCULES_REGISTER_NODE_TYPE(PrimIterVarNode);
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

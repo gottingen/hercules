@@ -22,7 +22,7 @@
 
 /*!
  * \file module.cc
- * \brief MATX module system
+ * \brief HVM module system
  */
 #include <hercules/runtime/module.h>
 
@@ -32,7 +32,7 @@
 #include <hercules/runtime/file_util.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 void ModuleNode::Import(Module other) {
@@ -41,7 +41,7 @@ void ModuleNode::Import(Module other) {
     static const NativeFunction* fimport_ = nullptr;
     if (fimport_ == nullptr) {
       fimport_ = runtime::FunctionRegistry::Get("rpc.ImportRemoteModule");
-      MXCHECK(fimport_ != nullptr);
+      HSCHECK(fimport_ != nullptr);
     }
     (*fimport_)({GetRef<Module>(this), other});
     return;
@@ -60,7 +60,7 @@ void ModuleNode::Import(Module other) {
       stack.push_back(next);
     }
   }
-  MXCHECK(!visited.count(this)) << "Cyclic dependency detected during import";
+  HSCHECK(!visited.count(this)) << "Cyclic dependency detected during import";
   this->imports_.emplace_back(std::move(other));
 }
 
@@ -79,23 +79,23 @@ NativeFunction ModuleNode::GetFunction(const String& name, bool query_imports) {
 
 Module Module::LoadFromFile(const String& file_name, const String& format) {
   String fmt = FileUtil::GetFileFormat(file_name, format);
-  MXCHECK(fmt.length() != 0) << "Cannot deduce format of file " << file_name;
+  HSCHECK(fmt.length() != 0) << "Cannot deduce format of file " << file_name;
   if (fmt == "dll" || fmt == "dylib" || fmt == "dso") {
     fmt = "so";
   }
   String load_f_name = "runtime.module.loadfile_" + fmt;
   const NativeFunction* f = FunctionRegistry::Get(load_f_name);
-  MXCHECK(f != nullptr) << "Loader of " << format << "(" << load_f_name << ") is not presented.";
+  HSCHECK(f != nullptr) << "Loader of " << format << "(" << load_f_name << ") is not presented.";
   Module m = (*f)({String(file_name), String(format)}).As<Module>();
   return m;
 }
 
 void ModuleNode::SaveToFile(const String& file_name, const String& format) {
-  MXLOG(FATAL) << "Module[" << type_key() << "] does not support SaveToFile";
+  HSLOG(FATAL) << "Module[" << type_key() << "] does not support SaveToFile";
 }
 
 String ModuleNode::GetSource(const String& format) {
-  MXLOG(FATAL) << "Module[" << type_key() << "] does not support GetSource";
+  HSLOG(FATAL) << "Module[" << type_key() << "] does not support GetSource";
   return "";
 }
 
@@ -111,7 +111,7 @@ const NativeFunction* ModuleNode::GetFuncFromEnv(const String& name) {
   }
   if (pf == nullptr) {
     const NativeFunction* f = FunctionRegistry::Get(name);
-    MXCHECK(f != nullptr) << "Cannot find function " << name
+    HSCHECK(f != nullptr) << "Cannot find function " << name
                           << " in the imported modules or global registry";
     return f;
   } else {
@@ -120,6 +120,6 @@ const NativeFunction* ModuleNode::GetFuncFromEnv(const String& name) {
   }
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(ModuleNode);
+HERCULES_REGISTER_OBJECT_TYPE(ModuleNode);
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -22,7 +22,7 @@
  */
 
 /*!
- * \file matx/ir/function.h
+ * \file hvm/ir/function.h
  * \brief Function nodes.
  */
 #pragma once
@@ -37,7 +37,7 @@
 #include <hercules/ir/prim_var.h>
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -147,28 +147,28 @@ class BaseFuncNode : public StmtNode {
     return GetAttr<Integer>(attr_key, 0) != 0;
   }
 
-  MATX_DLL bool HasGlobalName() const;
-  MATX_DLL StringRef GetGlobalName() const;
+  HERCULES_DLL bool HasGlobalName() const;
+  HERCULES_DLL StringRef GetGlobalName() const;
 
-  MATX_DLL bool HasBoundName() const;
-  MATX_DLL StringRef GetBoundName() const;
+  HERCULES_DLL bool HasBoundName() const;
+  HERCULES_DLL StringRef GetBoundName() const;
 
-  MATX_DLL bool ExportSymbol() const;
-  MATX_DLL bool CaptureSessionHandle() const;
-  MATX_DLL bool IsClassConstructor() const;
-  MATX_DLL bool IsClassMember() const;
-  MATX_DLL StringRef GetBelongToClassName() const;
+  HERCULES_DLL bool ExportSymbol() const;
+  HERCULES_DLL bool CaptureSessionHandle() const;
+  HERCULES_DLL bool IsClassConstructor() const;
+  HERCULES_DLL bool IsClassMember() const;
+  HERCULES_DLL StringRef GetBelongToClassName() const;
 
-  MATX_DLL virtual Array<BaseExpr> GetParams() const = 0;
-  MATX_DLL virtual Array<BaseExpr> GetDefaultParams() const = 0;
-  MATX_DLL virtual Type GetReturnType() const = 0;
-  MATX_DLL virtual StringRef GetReprName() const = 0;
-  MATX_DLL virtual Stmt GetBody() const = 0;
-  MATX_DLL virtual FuncType func_type_annotation() const = 0;
+  HERCULES_DLL virtual Array<BaseExpr> GetParams() const = 0;
+  HERCULES_DLL virtual Array<BaseExpr> GetDefaultParams() const = 0;
+  HERCULES_DLL virtual Type GetReturnType() const = 0;
+  HERCULES_DLL virtual StringRef GetReprName() const = 0;
+  HERCULES_DLL virtual Stmt GetBody() const = 0;
+  HERCULES_DLL virtual FuncType func_type_annotation() const = 0;
 
   static constexpr const char* _type_key = "BaseFunc";
   static constexpr const uint32_t _type_child_slots = 2;
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(BaseFuncNode, StmtNode);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(BaseFuncNode, StmtNode);
 };
 
 /*!
@@ -177,7 +177,7 @@ class BaseFuncNode : public StmtNode {
  */
 class BaseFunc : public Stmt {
  public:
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(BaseFunc, Stmt, BaseFuncNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(BaseFunc, Stmt, BaseFuncNode);
 };
 
 /*!
@@ -271,16 +271,16 @@ class PrimFuncNode : public BaseFuncNode {
    * \note The function type annotation of PrimExpr is
    *       directly derived from the Vars without the need of type inference.
    */
-  MATX_DLL FuncType func_type_annotation() const override;
+  HERCULES_DLL FuncType func_type_annotation() const override;
 
-  MATX_DLL Array<BaseExpr> GetParams() const override;
-  MATX_DLL Array<BaseExpr> GetDefaultParams() const override;
-  MATX_DLL Type GetReturnType() const override;
-  MATX_DLL Stmt GetBody() const override;
-  MATX_DLL StringRef GetReprName() const override;
+  HERCULES_DLL Array<BaseExpr> GetParams() const override;
+  HERCULES_DLL Array<BaseExpr> GetDefaultParams() const override;
+  HERCULES_DLL Type GetReturnType() const override;
+  HERCULES_DLL Stmt GetBody() const override;
+  HERCULES_DLL StringRef GetReprName() const override;
 
   static constexpr const char* _type_key = "ir.PrimFunc";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(PrimFuncNode, BaseFuncNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(PrimFuncNode, BaseFuncNode);
 };
 
 /*!
@@ -298,15 +298,15 @@ class PrimFunc : public BaseFunc {
    * \param buffer_map The buffer map for parameter buffer unpacking.
    * \param attrs Additional function attributes.
    */
-  MATX_DLL PrimFunc(Array<PrimVar> params,
+  HERCULES_DLL PrimFunc(Array<PrimVar> params,
                     Array<PrimExpr> default_params,
                     Stmt body,
                     Type ret_type = VoidType(),
                     DictAttrs attrs = NullValue<DictAttrs>(),
                     Span span = {});
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(PrimFunc, BaseFunc, PrimFuncNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(PrimFuncNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(PrimFunc, BaseFunc, PrimFuncNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(PrimFuncNode);
 };
 
 /*!
@@ -371,16 +371,16 @@ class FunctionNode : public BaseFuncNode {
    * \return The function type annotation.
    * \note The function type annotation can contain IncompleteType.
    */
-  MATX_DLL FuncType func_type_annotation() const override;
+  HERCULES_DLL FuncType func_type_annotation() const override;
 
-  MATX_DLL Array<BaseExpr> GetParams() const override;
-  MATX_DLL Array<BaseExpr> GetDefaultParams() const override;
-  MATX_DLL Type GetReturnType() const override;
-  MATX_DLL Stmt GetBody() const override;
-  MATX_DLL StringRef GetReprName() const override;
+  HERCULES_DLL Array<BaseExpr> GetParams() const override;
+  HERCULES_DLL Array<BaseExpr> GetDefaultParams() const override;
+  HERCULES_DLL Type GetReturnType() const override;
+  HERCULES_DLL Stmt GetBody() const override;
+  HERCULES_DLL StringRef GetReprName() const override;
 
   static constexpr const char* _type_key = "ir.Function";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(FunctionNode, BaseFuncNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(FunctionNode, BaseFuncNode);
 };
 
 /*!
@@ -398,7 +398,7 @@ class Function : public BaseFunc {
    * \param attrs Additional function attributes.
    * \param span The span of the function.
    */
-  MATX_DLL Function(Array<BaseExpr> params,
+  HERCULES_DLL Function(Array<BaseExpr> params,
                     Array<BaseExpr> default_params,
                     Stmt body,
                     Type ret_type,
@@ -406,8 +406,8 @@ class Function : public BaseFunc {
                     DictAttrs attrs = NullValue<DictAttrs>(),
                     Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Function, BaseFunc, FunctionNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(FunctionNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Function, BaseFunc, FunctionNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(FunctionNode);
 };
 
 /*!
@@ -455,7 +455,7 @@ class LambdaFunctionNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.LambdaFunction";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(LambdaFunctionNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(LambdaFunctionNode, HLOExprNode);
 };
 
 /*!
@@ -472,20 +472,20 @@ class LambdaFunction : public HLOExpr {
    * \param ret_type The return type of the function.
    * \param span The span of the function.
    */
-  MATX_DLL LambdaFunction(Array<BaseExpr> captures,
+  HERCULES_DLL LambdaFunction(Array<BaseExpr> captures,
                           Array<BaseExpr> params,
                           Stmt body,
                           Type ret_type,
                           Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(LambdaFunction, HLOExpr, LambdaFunctionNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(LambdaFunctionNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(LambdaFunction, HLOExpr, LambdaFunctionNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(LambdaFunctionNode);
 };
 
 /*!
  * \brief Generic attribute names that can be attached to any function.
  *
- * \sa ::matxscript::ir::attr
+ * \sa ::hercules::ir::attr
  */
 namespace attr {
 /*!
@@ -493,7 +493,7 @@ namespace attr {
  *
  * Type: Integer
  *
- * \sa matx::CallingConv
+ * \sa hvm::CallingConv
  */
 constexpr const char* kCallingConv = "calling_conv";
 
@@ -544,4 +544,4 @@ constexpr const char* kIsEntryFunc = "ir.is_entry_func";
 }  // namespace attr
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

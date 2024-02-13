@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(PrefixMatcher, PrefixMatch) {
@@ -51,4 +51,4 @@ TEST(PrefixMatcher, PrefixMatch) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -30,7 +30,7 @@
 #include <hercules/runtime/py_args.h>
 #include <hercules/runtime/variadic_traits.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <typename FType>
@@ -81,7 +81,7 @@ class TypedNativeFunction<R(Args...)> {
    * \param args The arguments
    * \returns The return value.
    */
-  MATXSCRIPT_ALWAYS_INLINE R operator()(Args&&... args) const;
+  HERCULES_ALWAYS_INLINE R operator()(Args&&... args) const;
 
   /*!
    * \brief convert to PackedFunc
@@ -125,7 +125,7 @@ namespace native_function_details {
 template <typename R, int nleft, int index, typename F>
 struct unpack_call_dispatcher {
   template <typename... Args>
-  MATXSCRIPT_ALWAYS_INLINE static void run(const F& f,
+  HERCULES_ALWAYS_INLINE static void run(const F& f,
                                            PyArgs args_pack,
                                            RTValue* rv,
                                            Args&&... unpacked_args) {
@@ -146,7 +146,7 @@ struct unpack_call_dispatcher {
 template <typename R, int index, typename F>
 struct unpack_call_dispatcher<R, 0, index, F> {
   template <typename... Args>
-  MATXSCRIPT_ALWAYS_INLINE static void run(const F& f,
+  HERCULES_ALWAYS_INLINE static void run(const F& f,
                                            PyArgs args_pack,
                                            RTValue* rv,
                                            Args&&... unpacked_args) {
@@ -162,7 +162,7 @@ struct unpack_call_dispatcher<R, 0, index, F> {
 template <int index, typename F>
 struct unpack_call_dispatcher<void, 0, index, F> {
   template <typename... Args>
-  MATXSCRIPT_ALWAYS_INLINE static void run(const F& f,
+  HERCULES_ALWAYS_INLINE static void run(const F& f,
                                            PyArgs args_pack,
                                            RTValue* rv,
                                            Args&&... unpacked_args) {
@@ -171,14 +171,14 @@ struct unpack_call_dispatcher<void, 0, index, F> {
 };
 
 template <typename R, int nargs, typename F>
-MATXSCRIPT_ALWAYS_INLINE void unpack_call(const F& f, PyArgs args, RTValue* rv) {
+HERCULES_ALWAYS_INLINE void unpack_call(const F& f, PyArgs args, RTValue* rv) {
   unpack_call_dispatcher<R, nargs, 0, F>::run(f, args, rv);
 }
 
 template <typename R>
 struct typed_packed_call_dispatcher {
   template <typename... Args>
-  MATXSCRIPT_ALWAYS_INLINE static R run(const NativeFunction& pf, Args&&... args) {
+  HERCULES_ALWAYS_INLINE static R run(const NativeFunction& pf, Args&&... args) {
     std::initializer_list<RTView> args_pack{std::forward<Args>(args)...};
     return pf(PyArgs(args_pack)).template As<R>();
   }
@@ -187,7 +187,7 @@ struct typed_packed_call_dispatcher {
 template <>
 struct typed_packed_call_dispatcher<void> {
   template <typename... Args>
-  MATXSCRIPT_ALWAYS_INLINE static void run(const NativeFunction& pf, Args&&... args) {
+  HERCULES_ALWAYS_INLINE static void run(const NativeFunction& pf, Args&&... args) {
     std::initializer_list<RTView> args_pack{std::forward<Args>(args)...};
     pf(PyArgs(args_pack));
   }
@@ -246,7 +246,7 @@ inline void TypedNativeFunction<R(Args...)>::AssignTypedLambda(FType flambda) {
   raw_func_ = flambda;
   String func_name = function_name_;
   native_func_ = [func_name, flambda](PyArgs args) -> RTValue {
-    MXCHECK_EQ(sizeof...(Args), args.size()) << "[" << func_name << "] Expect " << sizeof...(Args)
+    HSCHECK_EQ(sizeof...(Args), args.size()) << "[" << func_name << "] Expect " << sizeof...(Args)
                                              << " arguments but get " << args.size();
     RTValue ret;
     native_function_details::unpack_call<R, sizeof...(Args)>(flambda, args, &ret);
@@ -256,7 +256,7 @@ inline void TypedNativeFunction<R(Args...)>::AssignTypedLambda(FType flambda) {
 }
 
 template <typename R, typename... Args>
-MATXSCRIPT_ALWAYS_INLINE R TypedNativeFunction<R(Args...)>::operator()(Args&&... args) const {
+HERCULES_ALWAYS_INLINE R TypedNativeFunction<R(Args...)>::operator()(Args&&... args) const {
   return native_function_details::typed_packed_call_dispatcher<R>::run(native_func_,
                                                                        std::forward<Args>(args)...);
 }
@@ -275,7 +275,7 @@ inline void TypedNativeFunction<R(Args...)>::SetDefaultArgs(TDefaultArgs... def_
   native_func_ = [func_name, all_funcs](PyArgs args) -> RTValue {
     constexpr size_t max_args = sizeof...(Args);
     constexpr size_t min_args = max_args - sizeof...(TDefaultArgs);
-    MXCHECK(args.size() <= max_args && args.size() >= min_args)
+    HSCHECK(args.size() <= max_args && args.size() >= min_args)
         << "[" << func_name << "] Expect (" << min_args << ", " << max_args
         << ") arguments but get " << args.size();
     return all_funcs[sizeof...(Args) - args.size()](args);
@@ -326,7 +326,7 @@ class TypedNativeFunction<R(void*, Args...)> {
    * \param args The arguments
    * \returns The return value.
    */
-  MATXSCRIPT_ALWAYS_INLINE R operator()(void* self, Args&&... args) const;
+  HERCULES_ALWAYS_INLINE R operator()(void* self, Args&&... args) const;
 
   /*!
    * \brief convert to PackedFunc
@@ -371,7 +371,7 @@ namespace native_method_details {
 template <typename R, int nleft, int index, typename F>
 struct unpack_call_dispatcher {
   template <typename... Args>
-  MATXSCRIPT_ALWAYS_INLINE static void run(
+  HERCULES_ALWAYS_INLINE static void run(
       const F& f, void* self, PyArgs args_pack, RTValue* rv, Args&&... unpacked_args) {
     // construct a movable argument value
     // which allows potential move of argument to the input of F.
@@ -393,7 +393,7 @@ struct unpack_call_dispatcher {
 template <typename R, int index, typename F>
 struct unpack_call_dispatcher<R, 0, index, F> {
   template <typename... Args>
-  MATXSCRIPT_ALWAYS_INLINE static void run(
+  HERCULES_ALWAYS_INLINE static void run(
       const F& f, void* self, PyArgs args_pack, RTValue* rv, Args&&... unpacked_args) {
     using RetType = decltype(f(self, std::forward<Args>(unpacked_args)...));
     if (std::is_same<RetType, R>::value) {
@@ -407,21 +407,21 @@ struct unpack_call_dispatcher<R, 0, index, F> {
 template <int index, typename F>
 struct unpack_call_dispatcher<void, 0, index, F> {
   template <typename... Args>
-  MATXSCRIPT_ALWAYS_INLINE static void run(
+  HERCULES_ALWAYS_INLINE static void run(
       const F& f, void* self, PyArgs args_pack, RTValue* rv, Args&&... unpacked_args) {
     f(self, std::forward<Args>(unpacked_args)...);
   }
 };
 
 template <typename R, int nargs, typename F>
-MATXSCRIPT_ALWAYS_INLINE void unpack_call(const F& f, void* self, PyArgs args, RTValue* rv) {
+HERCULES_ALWAYS_INLINE void unpack_call(const F& f, void* self, PyArgs args, RTValue* rv) {
   unpack_call_dispatcher<R, nargs, 0, F>::run(f, self, args, rv);
 }
 
 template <typename R>
 struct typed_packed_call_dispatcher {
   template <typename... Args>
-  MATXSCRIPT_ALWAYS_INLINE static R run(const NativeMethod& pf, void* self, Args&&... args) {
+  HERCULES_ALWAYS_INLINE static R run(const NativeMethod& pf, void* self, Args&&... args) {
     std::initializer_list<RTView> args_pack{std::forward<Args>(args)...};
     return pf(self, PyArgs(args_pack)).template As<R>();
   }
@@ -430,7 +430,7 @@ struct typed_packed_call_dispatcher {
 template <>
 struct typed_packed_call_dispatcher<void> {
   template <typename... Args>
-  MATXSCRIPT_ALWAYS_INLINE static void run(const NativeMethod& pf, void* self, Args&&... args) {
+  HERCULES_ALWAYS_INLINE static void run(const NativeMethod& pf, void* self, Args&&... args) {
     std::initializer_list<RTView> args_pack{std::forward<Args>(args)...};
     pf(self, PyArgs(args_pack));
   }
@@ -516,7 +516,7 @@ inline void TypedNativeFunction<R(void*, Args...)>::AssignTypedLambda(FLambda fl
   raw_func_ = flambda;
   String func_name = function_name_;
   native_func_ = [func_name, flambda](void* self, PyArgs args) -> RTValue {
-    MXCHECK_EQ(sizeof...(Args), args.size()) << "[" << func_name << "] Expect " << sizeof...(Args)
+    HSCHECK_EQ(sizeof...(Args), args.size()) << "[" << func_name << "] Expect " << sizeof...(Args)
                                              << " arguments but get " << args.size();
     RTValue ret;
     native_method_details::unpack_call<R, sizeof...(Args)>(flambda, self, args, &ret);
@@ -526,7 +526,7 @@ inline void TypedNativeFunction<R(void*, Args...)>::AssignTypedLambda(FLambda fl
 }
 
 template <typename R, typename... Args>
-MATXSCRIPT_ALWAYS_INLINE R
+HERCULES_ALWAYS_INLINE R
 TypedNativeFunction<R(void*, Args...)>::operator()(void* self, Args&&... args) const {
   return native_method_details::typed_packed_call_dispatcher<R>::run(
       native_func_, self, std::forward<Args>(args)...);
@@ -546,7 +546,7 @@ inline void TypedNativeFunction<R(void*, Args...)>::SetDefaultArgs(TDefaultArgs.
   native_func_ = [func_name, all_funcs](void* self, PyArgs args) -> RTValue {
     constexpr size_t max_args = sizeof...(Args);
     constexpr size_t min_args = max_args - sizeof...(TDefaultArgs);
-    MXCHECK(args.size() <= max_args && args.size() >= min_args)
+    HSCHECK(args.size() <= max_args && args.size() >= min_args)
         << "[" << func_name << "] Expect (" << min_args << ", " << max_args
         << ") arguments but get " << args.size();
     return all_funcs[sizeof...(Args) - args.size()](self, args);
@@ -554,4 +554,4 @@ inline void TypedNativeFunction<R(void*, Args...)>::SetDefaultArgs(TDefaultArgs.
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

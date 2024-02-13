@@ -25,7 +25,7 @@
 #include <hercules/runtime/exceptions/exceptions.h>
 #include <hercules/runtime/utf8_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // constructor
@@ -50,7 +50,7 @@ TrieNode::TrieNode(const std::map<string_view, int64_t>& dic) {
   }
   auto rc =
       trie_->build(key.size(), const_cast<const char**>(&key[0]), key_len.data(), values.data());
-  MXCHECK_EQ(rc, 0) << "build trie failed!!!";
+  HSCHECK_EQ(rc, 0) << "build trie failed!!!";
 }
 
 void TrieNode::Update(const string_view& w, int64_t val) {
@@ -225,7 +225,7 @@ int TrieNode::load(const unicode_view& file_path) const {
   return trie_->open(UTF8Encode(file_path).c_str());
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(TrieNode);
+HERCULES_REGISTER_OBJECT_TYPE(TrieNode);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

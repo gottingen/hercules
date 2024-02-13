@@ -27,7 +27,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/utf8_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // Forward declare TArgValue
@@ -70,9 +70,9 @@ class Unicode {
   operator self_view() const noexcept;
   self_view view() const noexcept;
 
-  // MATXScriptAny
-  void MoveTo(MATXScriptAny* value) noexcept;
-  static Unicode MoveFromNoCheck(MATXScriptAny* value) noexcept;
+  // HerculesAny
+  void MoveTo(HerculesAny* value) noexcept;
+  static Unicode MoveFromNoCheck(HerculesAny* value) noexcept;
 
   // C++11 21.4.2 construct/copy/destroy
   Unicode() noexcept = default;
@@ -141,10 +141,10 @@ class Unicode {
 
   // Compatibility with std::basic_string_view
   // clang-format off
-#if MATXSCRIPT_USE_CXX17_STRING_VIEW
+#if HERCULES_USE_CXX17_STRING_VIEW
   explicit operator std::basic_string_view<value_type, std::char_traits<value_type>>()
       const noexcept;
-#elif MATXSCRIPT_USE_CXX14_STRING_VIEW
+#elif HERCULES_USE_CXX14_STRING_VIEW
   explicit operator std::experimental::basic_string_view<value_type, std::char_traits<value_type>>()
       const noexcept;
 #endif
@@ -464,14 +464,14 @@ inline Unicode operator+(const unicode_string& lhs, const Unicode& rhs) {
 std::ostream& operator<<(std::ostream& out, const Unicode& input);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 namespace std {
 template <>
-struct hash<::matxscript::runtime::Unicode> {
-  std::size_t operator()(const ::matxscript::runtime::Unicode& str) const noexcept {
-    constexpr auto ele_size = sizeof(::matxscript::runtime::Unicode::value_type);
-    return ::matxscript::runtime::BytesHash(str.data(), str.size() * ele_size);
+struct hash<::hercules::runtime::Unicode> {
+  std::size_t operator()(const ::hercules::runtime::Unicode& str) const noexcept {
+    constexpr auto ele_size = sizeof(::hercules::runtime::Unicode::value_type);
+    return ::hercules::runtime::BytesHash(str.data(), str.size() * ele_size);
   }
 };
 

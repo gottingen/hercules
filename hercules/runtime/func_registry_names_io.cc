@@ -24,7 +24,7 @@
 #include <hercules/runtime/container/string_view.h>
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 String GenerateFuncRegistryNames(const std::vector<String>& function_names) {
@@ -67,4 +67,4 @@ int LookupFuncRegistryName(const char* names, string_view target) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

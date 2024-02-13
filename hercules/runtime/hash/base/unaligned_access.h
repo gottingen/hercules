@@ -27,7 +27,7 @@
 // The unaligned API is C++ only.  The declarations use C++ features
 // (namespaces, inline) which are absent or incompatible in C.
 #if defined(__cplusplus)
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace base_internal {
 
@@ -63,14 +63,14 @@ inline void UnalignedStore64(void* p, uint64_t v) noexcept {
 
 }  // namespace base_internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
-#define MATXSCRIPT_INTERNAL_UNALIGNED_LOAD16(_p) (base_internal::UnalignedLoad16(_p))
-#define MATXSCRIPT_INTERNAL_UNALIGNED_LOAD32(_p) (base_internal::UnalignedLoad32(_p))
-#define MATXSCRIPT_INTERNAL_UNALIGNED_LOAD64(_p) (base_internal::UnalignedLoad64(_p))
+#define HERCULES_INTERNAL_UNALIGNED_LOAD16(_p) (base_internal::UnalignedLoad16(_p))
+#define HERCULES_INTERNAL_UNALIGNED_LOAD32(_p) (base_internal::UnalignedLoad32(_p))
+#define HERCULES_INTERNAL_UNALIGNED_LOAD64(_p) (base_internal::UnalignedLoad64(_p))
 
-#define MATXSCRIPT_INTERNAL_UNALIGNED_STORE16(_p, _val) (base_internal::UnalignedStore16(_p, _val))
-#define MATXSCRIPT_INTERNAL_UNALIGNED_STORE32(_p, _val) (base_internal::UnalignedStore32(_p, _val))
-#define MATXSCRIPT_INTERNAL_UNALIGNED_STORE64(_p, _val) (base_internal::UnalignedStore64(_p, _val))
+#define HERCULES_INTERNAL_UNALIGNED_STORE16(_p, _val) (base_internal::UnalignedStore16(_p, _val))
+#define HERCULES_INTERNAL_UNALIGNED_STORE32(_p, _val) (base_internal::UnalignedStore32(_p, _val))
+#define HERCULES_INTERNAL_UNALIGNED_STORE64(_p, _val) (base_internal::UnalignedStore64(_p, _val))
 
 #endif  // defined(__cplusplus), end of unaligned API

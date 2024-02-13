@@ -25,7 +25,7 @@
  */
 #include <hercules/ir/struct_info_functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 void StructInfoVisitor::VisitStructInfo_(const ObjectStructInfoNode* op) {
@@ -104,4 +104,4 @@ StructInfo StructInfoMutator::VisitStructInfo_(const TupleStructInfoNode* op) {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

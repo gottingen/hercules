@@ -31,116 +31,116 @@
 #include <hercules/ir/op_expr.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
-#define MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(OpName) \
+#define HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(OpName) \
   const Op& OpName() {                                 \
     static const Op& op = Op::Get("ir." #OpName);      \
     return op;                                         \
   }                                                    \
-  MATXSCRIPT_IR_REGISTER_OP("ir." #OpName)
+  HERCULES_IR_REGISTER_OP("ir." #OpName)
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(reinterpret)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(reinterpret)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure))
     .set_num_inputs(1);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(likely)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(likely)
     .set_num_inputs(1)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kExprAnnotation))
     .set_attr<TVectorizable>("TVectorizable", true);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(bitwise_and)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(bitwise_and)
     .set_num_inputs(2)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure))
     .set_attr<TVectorizable>("TVectorizable", true);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(bitwise_or)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(bitwise_or)
     .set_num_inputs(2)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure))
     .set_attr<TVectorizable>("TVectorizable", true);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(bitwise_xor)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(bitwise_xor)
     .set_num_inputs(2)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure))
     .set_attr<TVectorizable>("TVectorizable", true);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(bitwise_not)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(bitwise_not)
     .set_num_inputs(1)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure))
     .set_attr<TVectorizable>("TVectorizable", true);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(shift_left)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(shift_left)
     .set_num_inputs(2)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure))
     .set_attr<TVectorizable>("TVectorizable", true);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(shift_right)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(shift_right)
     .set_num_inputs(2)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure))
     .set_attr<TVectorizable>("TVectorizable", true);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(large_uint_imm)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(large_uint_imm)
     .set_num_inputs(2)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(address_of)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(address_of)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure))
     .set_num_inputs(1);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(if_then_else)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(if_then_else)
     .set_num_inputs(3)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(q_multiply_shift)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(q_multiply_shift)
     .set_num_inputs(3)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure))
     .set_attr<TVectorizable>("TVectorizable", true);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(isnullptr).set_num_inputs(1).set_attr<TCallEffectKind>(
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(isnullptr).set_num_inputs(1).set_attr<TCallEffectKind>(
     "TCallEffectKind", Integer(CallEffectKind::kPure));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(isnan).set_num_inputs(1).set_attr<TCallEffectKind>(
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(isnan).set_num_inputs(1).set_attr<TCallEffectKind>(
     "TCallEffectKind", Integer(CallEffectKind::kPure));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(popcount)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(popcount)
     .set_num_inputs(1)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure))
     .set_attr<TVectorizable>("TVectorizable", true);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(fma)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(fma)
     .set_num_inputs(3)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure))
     .set_attr<TVectorizable>("TVectorizable", true);
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(call_extern)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(call_extern)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(call_pure_extern)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(call_pure_extern)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(call_llvm_intrin)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(call_llvm_intrin)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(call_llvm_pure_intrin)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(call_llvm_pure_intrin)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(call_spirv_pure_glsl450)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(call_spirv_pure_glsl450)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(prefetch).set_attr<TCallEffectKind>(
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(prefetch).set_attr<TCallEffectKind>(
     "TCallEffectKind", Integer(CallEffectKind::kOpaque));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(vectorhigh)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(vectorhigh)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(vectorlow).set_attr<TCallEffectKind>(
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(vectorlow).set_attr<TCallEffectKind>(
     "TCallEffectKind", Integer(CallEffectKind::kPure));
 
-MATXSCRIPT_IR_DEFINE_PRIM_BUILTIN_FUNC(vectorcombine)
+HERCULES_IR_DEFINE_PRIM_BUILTIN_FUNC(vectorcombine)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kPure));
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

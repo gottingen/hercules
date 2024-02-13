@@ -25,7 +25,7 @@
 
 #include "hercules/runtime/runtime_port.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace utf8_details {
 
@@ -63,13 +63,13 @@ class GreedyTableDecoder {
   static void AdvanceByGreedy_4(char8_t const*& pSrc, char32_t& cdpt) noexcept;
 };
 
-MATXSCRIPT_ALWAYS_INLINE void GreedyTableDecoder::SkipByGreedy_2(const char8_t*& pSrc) noexcept {
+HERCULES_ALWAYS_INLINE void GreedyTableDecoder::SkipByGreedy_2(const char8_t*& pSrc) noexcept {
   if ((pSrc[0] & 0xC0) == 0x80) {
     pSrc += 1;
   }
 }
 
-MATXSCRIPT_ALWAYS_INLINE void GreedyTableDecoder::AdvanceByGreedy_2(const char8_t*& pSrc,
+HERCULES_ALWAYS_INLINE void GreedyTableDecoder::AdvanceByGreedy_2(const char8_t*& pSrc,
                                                                     char32_t& cdpt) noexcept {
   char32_t unit2;   //- The second UTF-8 code unit
   unit2 = pSrc[0];  //- Cache the second code unit
@@ -83,13 +83,13 @@ MATXSCRIPT_ALWAYS_INLINE void GreedyTableDecoder::AdvanceByGreedy_2(const char8_
   }
 }
 
-MATXSCRIPT_ALWAYS_INLINE void GreedyTableDecoder::SkipByGreedy_3(const char8_t*& pSrc) noexcept {
+HERCULES_ALWAYS_INLINE void GreedyTableDecoder::SkipByGreedy_3(const char8_t*& pSrc) noexcept {
   if (((pSrc[0] & 0xC0) == 0x80) && ((pSrc[1] & 0xC0) == 0x80)) {
     pSrc += 2;
   }
 }
 
-MATXSCRIPT_ALWAYS_INLINE void GreedyTableDecoder::AdvanceByGreedy_3(const char8_t*& pSrc,
+HERCULES_ALWAYS_INLINE void GreedyTableDecoder::AdvanceByGreedy_3(const char8_t*& pSrc,
                                                                     char32_t& cdpt) noexcept {
   char32_t unit2;  //- The second UTF-8 code unit
   char32_t unit3;  //- The third UTF-8 code unit
@@ -106,13 +106,13 @@ MATXSCRIPT_ALWAYS_INLINE void GreedyTableDecoder::AdvanceByGreedy_3(const char8_
   }
 }
 
-MATXSCRIPT_ALWAYS_INLINE void GreedyTableDecoder::SkipByGreedy_4(const char8_t*& pSrc) noexcept {
+HERCULES_ALWAYS_INLINE void GreedyTableDecoder::SkipByGreedy_4(const char8_t*& pSrc) noexcept {
   if (((pSrc[0] & 0xC0) == 0x80) && ((pSrc[1] & 0xC0) == 0x80) && ((pSrc[2] & 0xC0) == 0x80)) {
     pSrc += 3;
   }
 }
 
-MATXSCRIPT_ALWAYS_INLINE void GreedyTableDecoder::AdvanceByGreedy_4(const char8_t*& pSrc,
+HERCULES_ALWAYS_INLINE void GreedyTableDecoder::AdvanceByGreedy_4(const char8_t*& pSrc,
                                                                     char32_t& cdpt) noexcept {
   char32_t unit2;  //- The second UTF-8 code unit
   char32_t unit3;  //- The third UTF-8 code unit
@@ -133,4 +133,4 @@ MATXSCRIPT_ALWAYS_INLINE void GreedyTableDecoder::AdvanceByGreedy_4(const char8_
 
 }  // namespace utf8_details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

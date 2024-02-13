@@ -22,23 +22,23 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
 // json
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(json, load)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(json, load)
     .set_num_inputs(1)
     .add_argument("args", "*args", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(json, loads)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(json, loads)
     .set_num_inputs(1)
     .add_argument("args", "*args", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(json, dumps)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(json, dumps)
     .set_num_inputs(1)
     .add_argument("args", "*args", "");
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

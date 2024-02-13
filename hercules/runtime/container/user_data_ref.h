@@ -32,12 +32,12 @@
 #include <hercules/runtime/py_args.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct IUserDataRoot : public ILightUserData {
  public:
-  using __FunctionTable__ = ska::flat_hash_map<string_view, MATXScriptBackendPackedCFunc>;
+  using __FunctionTable__ = ska::flat_hash_map<string_view, HerculesBackendPackedCFunc>;
   ~IUserDataRoot() override = default;
   IUserDataRoot() = default;
 
@@ -74,7 +74,7 @@ struct IUserDataRoot : public ILightUserData {
   }
 
   // function table
-  static __FunctionTable__ InitFuncTable_2_71828182846(MATXScriptFuncRegistry* func_reg,
+  static __FunctionTable__ InitFuncTable_2_71828182846(HerculesFuncRegistry* func_reg,
                                                        string_view class_name);
   // join multi function table
   // select the pair in the first table when there are duplicate keys
@@ -86,11 +86,11 @@ struct IUserDataRoot : public ILightUserData {
 };
 
 template <typename FROM_TYPE, typename TO_TYPE>
-MATXSCRIPT_ALWAYS_INLINE TO_TYPE CAST_TO_CLASS_VIEW_NOCHECK(const FROM_TYPE& o) {
+HERCULES_ALWAYS_INLINE TO_TYPE CAST_TO_CLASS_VIEW_NOCHECK(const FROM_TYPE& o) {
   return TO_TYPE(o.ptr, o.ud_ref);
 }
 template <typename FROM_TYPE, typename TO_TYPE>
-MATXSCRIPT_ALWAYS_INLINE TO_TYPE CAST_TO_CLASS_VIEW(const FROM_TYPE& o) {
+HERCULES_ALWAYS_INLINE TO_TYPE CAST_TO_CLASS_VIEW(const FROM_TYPE& o) {
   return TO_TYPE(o.ud_ref);
 }
 
@@ -162,10 +162,10 @@ MATXSCRIPT_ALWAYS_INLINE TO_TYPE CAST_TO_CLASS_VIEW(const FROM_TYPE& o) {
  *
  * // entry info
  * extern "C" {
- *   int MyUserStruct_F_member_func_c_api(MATXValue* args,
+ *   int MyUserStruct_F_member_func_c_api(HVMValue* args,
  *                                        int* type_codes,
  *                                        int num_args,
- *                                        MATXValue* out_ret_value,
+ *                                        HVMValue* out_ret_value,
                                           int* out_ret_tcode,
  *                                        void* resource_handle) {
  *    TArgs args_t(args, type_codes, num_args);
@@ -194,7 +194,7 @@ class UserDataRef : public ObjectRef {
   UserDataRef(UserDataRef&& other) noexcept = default;
   UserDataRef& operator=(const UserDataRef& other) noexcept = default;
   UserDataRef& operator=(UserDataRef&& other) noexcept = default;
-  explicit UserDataRef(::matxscript::runtime::ObjectPtr<::matxscript::runtime::Object> n) noexcept
+  explicit UserDataRef(::hercules::runtime::ObjectPtr<::hercules::runtime::Object> n) noexcept
       : ObjectRef(std::move(n)) {
   }
   UserDataRef(uint32_t tag,
@@ -255,22 +255,22 @@ class UserDataRef : public ObjectRef {
   friend class JitObject;
 };
 
-UserDataRef MakeUserFunction(MATXScriptBackendPackedCFunc func, void* resource_handle);
+UserDataRef MakeUserFunction(HerculesBackendPackedCFunc func, void* resource_handle);
 UserDataRef MakeUserFunction(const string_view& name,
-                             MATXScriptBackendPackedCFunc func,
+                             HerculesBackendPackedCFunc func,
                              void* resource_handle);
 UserDataRef MakeUserFunction(std::initializer_list<RTView> captures,
-                             MATXScriptBackendPackedCFunc func,
+                             HerculesBackendPackedCFunc func,
                              void* resource_handle);
 UserDataRef MakeUserFunction(std::initializer_list<RTView> captures,
                              const string_view& name,
-                             MATXScriptBackendPackedCFunc func,
+                             HerculesBackendPackedCFunc func,
                              void* resource_handle);
 
 template <
     typename UserType,
     typename = typename std::enable_if<std::is_base_of<ILightUserData, UserType>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE UserDataRef CAST_TO_USER_DATA_REF(const UserType* o) {
+HERCULES_ALWAYS_INLINE UserDataRef CAST_TO_USER_DATA_REF(const UserType* o) {
   return UserDataRef(GetObjectPtr<Object>(o->self_node_ptr_2_71828182846));
 }
 
@@ -295,17 +295,17 @@ template <>
 bool IsConvertible<UserDataRef>(const Object* node);
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE UserDataRef Any::As<UserDataRef>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeUserData);
+HERCULES_ALWAYS_INLINE UserDataRef Any::As<UserDataRef>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeUserData);
   return UserDataRef(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE UserDataRef Any::AsNoCheck<UserDataRef>() const {
+HERCULES_ALWAYS_INLINE UserDataRef Any::AsNoCheck<UserDataRef>() const {
   return UserDataRef(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 std::ostream& operator<<(std::ostream& os, UserDataRef const& n);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

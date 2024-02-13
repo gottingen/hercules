@@ -38,11 +38,11 @@
 #include <string.h>  // for memcpy and memset
 #include <algorithm>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace hash_internal {
 
-#ifdef MATXSCRIPT_IS_BIG_ENDIAN
+#ifdef HERCULES_IS_BIG_ENDIAN
 #define uint32_in_expected_order(x) (base_internal::gbswap_32(x))
 #define uint64_in_expected_order(x) (base_internal::gbswap_64(x))
 #else
@@ -51,11 +51,11 @@ namespace hash_internal {
 #endif
 
 static uint64_t Fetch64(const char* p) noexcept {
-  return uint64_in_expected_order(MATXSCRIPT_INTERNAL_UNALIGNED_LOAD64(p));
+  return uint64_in_expected_order(HERCULES_INTERNAL_UNALIGNED_LOAD64(p));
 }
 
 static uint32_t Fetch32(const char* p) noexcept {
-  return uint32_in_expected_order(MATXSCRIPT_INTERNAL_UNALIGNED_LOAD32(p));
+  return uint32_in_expected_order(HERCULES_INTERNAL_UNALIGNED_LOAD32(p));
 }
 
 // Some primes between 2^63 and 2^64 for various uses.
@@ -351,4 +351,4 @@ uint64_t CityHash64WithSeeds(const char* s, size_t len, uint64_t seed0, uint64_t
 
 }  // namespace hash_internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

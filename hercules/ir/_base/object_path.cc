@@ -31,12 +31,12 @@
 #include <hercules/runtime/memory.h>
 #include <hercules/runtime/registry.h>
 
-using namespace matxscript::runtime;
+using namespace hercules::runtime;
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::ir::printer;
 
 // ============== ObjectPathNode ==============
 
@@ -54,7 +54,7 @@ Optional<ObjectPath> ObjectPathNode::GetParent() const {
   }
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathGetParent").set_body_typed([](const ObjectPath& self) {
+HERCULES_REGISTER_GLOBAL("node.ObjectPathGetParent").set_body_typed([](const ObjectPath& self) {
   return self->GetParent();
 });
 
@@ -64,15 +64,15 @@ int32_t ObjectPathNode::Length() const {
   return length_;
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathLength").set_body_typed([](const ObjectPath& self) {
+HERCULES_REGISTER_GLOBAL("node.ObjectPathLength").set_body_typed([](const ObjectPath& self) {
   return self->Length();
 });
 
 // --- GetPrefix ---
 
 ObjectPath ObjectPathNode::GetPrefix(int32_t length) const {
-  MXCHECK_GE(length, 1) << "IndexError: Prefix length must be at least 1";
-  MXCHECK_LE(length, Length())
+  HSCHECK_GE(length, 1) << "IndexError: Prefix length must be at least 1";
+  HSCHECK_LE(length, Length())
       << "IndexError: Attempted to get a prefix longer than the path itself";
 
   const ObjectPathNode* node = this;
@@ -84,7 +84,7 @@ ObjectPath ObjectPathNode::GetPrefix(int32_t length) const {
   return GetRef<ObjectPath>(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathGetPrefix")
+HERCULES_REGISTER_GLOBAL("node.ObjectPathGetPrefix")
     .set_body_typed([](const ObjectPath& self, int32_t length) { return self->GetPrefix(length); });
 
 // --- IsPrefixOf ---
@@ -97,7 +97,7 @@ bool ObjectPathNode::IsPrefixOf(const ObjectPath& other) const {
   return this->PathsEqual(other->GetPrefix(this_len));
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathIsPrefixOf")
+HERCULES_REGISTER_GLOBAL("node.ObjectPathIsPrefixOf")
     .set_body_typed([](const ObjectPath& self, const ObjectPath& other) {
       return self->IsPrefixOf(other);
     });
@@ -120,7 +120,7 @@ ObjectPath ObjectPathNode::Attr(Optional<StringRef> attr_key) const {
   }
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathAttr")
+HERCULES_REGISTER_GLOBAL("node.ObjectPathAttr")
     .set_body_typed([](const ObjectPath& object_path, const Optional<StringRef>& attr_key) {
       return object_path->Attr(attr_key);
     });
@@ -131,7 +131,7 @@ ObjectPath ObjectPathNode::ArrayIndex(int32_t index) const {
   return ObjectPath(make_object<ArrayIndexPathNode>(this, index));
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathArrayIndex")
+HERCULES_REGISTER_GLOBAL("node.ObjectPathArrayIndex")
     .set_body_typed([](const ObjectPath& self, int32_t index) { return self->ArrayIndex(index); });
 
 // --- MissingArrayElement ---
@@ -140,7 +140,7 @@ ObjectPath ObjectPathNode::MissingArrayElement(int32_t index) const {
   return ObjectPath(make_object<MissingArrayElementPathNode>(this, index));
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathMissingArrayElement")
+HERCULES_REGISTER_GLOBAL("node.ObjectPathMissingArrayElement")
     .set_body_typed([](const ObjectPath& self, int32_t index) {
       return self->MissingArrayElement(index);
     });
@@ -151,7 +151,7 @@ ObjectPath ObjectPathNode::MapValue(ObjectRef key) const {
   return ObjectPath(make_object<MapValuePathNode>(this, std::move(key)));
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathMapValue")
+HERCULES_REGISTER_GLOBAL("node.ObjectPathMapValue")
     .set_body_typed([](const ObjectPath& self, const ObjectRef& key) {
       return self->MapValue(key);
     });
@@ -162,7 +162,7 @@ ObjectPath ObjectPathNode::MissingMapEntry() const {
   return ObjectPath(make_object<MissingMapEntryPathNode>(this));
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathMissingMapEntry")
+HERCULES_REGISTER_GLOBAL("node.ObjectPathMissingMapEntry")
     .set_body_typed([](const ObjectPath& self) { return self->MissingMapEntry(); });
 
 // --- PathsEqual ----
@@ -189,7 +189,7 @@ bool ObjectPathNode::PathsEqual(const ObjectPath& other) const {
   return lhs == nullptr && rhs == nullptr;
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathEqual")
+HERCULES_REGISTER_GLOBAL("node.ObjectPathEqual")
     .set_body_typed([](const ObjectPath& self, const ObjectPath& other) {
       return self->PathsEqual(other);
     });
@@ -207,7 +207,7 @@ runtime::String ObjectPathNode::GetRepr() const {
   return ret;
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(ObjectPathNode);
+HERCULES_REGISTER_OBJECT_TYPE(ObjectPathNode);
 
 // --- Private/protected methods ---
 
@@ -221,7 +221,7 @@ const ObjectPathNode* ObjectPathNode::ParentNode() const {
   return ObjectPath(make_object<RootPathNode>());
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathRoot").set_body_typed(ObjectPath::Root);
+HERCULES_REGISTER_GLOBAL("node.ObjectPathRoot").set_body_typed(ObjectPath::Root);
 
 // ============== Individual path classes ==============
 
@@ -238,7 +238,7 @@ runtime::String RootPathNode::LastNodeString() const {
   return "<root>";
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(RootPathNode);
+HERCULES_REGISTER_OBJECT_TYPE(RootPathNode);
 
 // ----- AttributeAccess -----
 
@@ -255,7 +255,7 @@ runtime::String AttributeAccessPathNode::LastNodeString() const {
   return "." + attr_key;
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(AttributeAccessPathNode);
+HERCULES_REGISTER_OBJECT_TYPE(AttributeAccessPathNode);
 
 // ----- UnknownAttributeAccess -----
 
@@ -272,7 +272,7 @@ runtime::String UnknownAttributeAccessPathNode::LastNodeString() const {
   return ".<unknown attribute>";
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(UnknownAttributeAccessPathNode);
+HERCULES_REGISTER_OBJECT_TYPE(UnknownAttributeAccessPathNode);
 
 // ----- ArrayIndexPath -----
 
@@ -289,7 +289,7 @@ runtime::String ArrayIndexPathNode::LastNodeString() const {
   return "[" + std::to_string(index) + "]";
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(ArrayIndexPathNode);
+HERCULES_REGISTER_OBJECT_TYPE(ArrayIndexPathNode);
 
 // ----- MissingArrayElement -----
 
@@ -307,7 +307,7 @@ runtime::String MissingArrayElementPathNode::LastNodeString() const {
   return "[<missing element #" + std::to_string(index) + ">]";
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(MissingArrayElementPathNode);
+HERCULES_REGISTER_OBJECT_TYPE(MissingArrayElementPathNode);
 
 // ----- MapValue -----
 
@@ -326,7 +326,7 @@ runtime::String MapValuePathNode::LastNodeString() const {
   return s.str();
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(MapValuePathNode);
+HERCULES_REGISTER_OBJECT_TYPE(MapValuePathNode);
 
 // ----- MissingMapEntry -----
 
@@ -342,16 +342,16 @@ runtime::String MissingMapEntryPathNode::LastNodeString() const {
   return "[<missing entry>]";
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(MissingMapEntryPathNode);
+HERCULES_REGISTER_OBJECT_TYPE(MissingMapEntryPathNode);
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(ObjectPathPairNode);
+HERCULES_REGISTER_OBJECT_TYPE(ObjectPathPairNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathPairLhsPath")
+HERCULES_REGISTER_GLOBAL("node.ObjectPathPairLhsPath")
     .set_body_typed([](const ObjectPathPair& object_path_pair) {
       return object_path_pair->lhs_path;
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("node.ObjectPathPairRhsPath")
+HERCULES_REGISTER_GLOBAL("node.ObjectPathPairRhsPath")
     .set_body_typed([](const ObjectPathPair& object_path_pair) {
       return object_path_pair->rhs_path;
     });
@@ -365,4 +365,4 @@ ObjectPathPair::ObjectPathPair(ObjectPath lhs_path, ObjectPath rhs_path) {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

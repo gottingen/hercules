@@ -23,13 +23,13 @@
 #include <hercules/runtime/native_object_maker.h>
 #include <hercules/runtime/native_object_registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_DLL UserDataRef make_native_userdata(string_view cls_name, PyArgs args) {
+HERCULES_DLL UserDataRef make_native_userdata(string_view cls_name, PyArgs args) {
   static auto deleter = [](ILightUserData* data) { delete data; };
   auto native_user_data_register = NativeObjectRegistry::Get(cls_name);
-  MXCHECK(native_user_data_register != nullptr) << "Native class not found: " << cls_name;
+  HSCHECK(native_user_data_register != nullptr) << "Native class not found: " << cls_name;
   // find ctor by cls_name
   auto opaque_ptr = native_user_data_register->construct(args);
   NativeObject* ud = new NativeObject(opaque_ptr);
@@ -40,10 +40,10 @@ MATX_DLL UserDataRef make_native_userdata(string_view cls_name, PyArgs args) {
   return UserDataRef(ud->tag_2_71828182846(), ud->size_2_71828182846(), ud, deleter);
 }
 
-MATX_DLL UserDataRef make_native_op(string_view cls_name, PyArgs args) {
+HERCULES_DLL UserDataRef make_native_op(string_view cls_name, PyArgs args) {
   static auto deleter = [](ILightUserData* data) { delete data; };
   auto native_user_data_register = NativeObjectRegistry::Get(cls_name);
-  MXCHECK(native_user_data_register != nullptr) << "Native class not found: " << cls_name;
+  HSCHECK(native_user_data_register != nullptr) << "Native class not found: " << cls_name;
   auto opaque_ptr = native_user_data_register->construct({Dict()});
   auto op_ptr = (OpKernel*)(opaque_ptr.get());
   for (size_t i = 0; i < args.size(); i += 2) {
@@ -59,4 +59,4 @@ MATX_DLL UserDataRef make_native_op(string_view cls_name, PyArgs args) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

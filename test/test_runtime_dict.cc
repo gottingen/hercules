@@ -20,7 +20,7 @@
 #include <gtest/gtest.h>
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Dict, Constructor) {
@@ -58,19 +58,19 @@ TEST(Dict, contains) {
 }
 
 TEST(Dict, get_item) {
-  Dict d{{1, 2}, {Unicode(U"hello"), 3}, {3, Unicode(U"matx4")}};
+  Dict d{{1, 2}, {Unicode(U"hello"), 3}, {3, Unicode(U"hvm4")}};
   ASSERT_EQ(d[1], 2);
   ASSERT_EQ(d[Unicode(U"hello")], 3);
   ASSERT_EQ(d.get_item(Unicode(U"hello")), 3);
   ASSERT_EQ(d.get_item(U"hello"), 3);
   ASSERT_EQ(d.get_item(unicode_view(U"hello")), 3);
-  ASSERT_EQ(d[3], Unicode(U"matx4"));
-  ASSERT_NE(d[3], Unicode(U"matx3"));
+  ASSERT_EQ(d[3], Unicode(U"hvm4"));
+  ASSERT_NE(d[3], Unicode(U"hvm3"));
   ASSERT_NE(d[1], 4);
 }
 
 TEST(Dict, set_item) {
-  Dict d{{1, 2}, {Unicode(U"hello"), 3}, {3, Unicode(U"matx4")}};
+  Dict d{{1, 2}, {Unicode(U"hello"), 3}, {3, Unicode(U"hvm4")}};
   d[2] = 3;
   ASSERT_EQ(d[2], 3);
   d[Unicode(U"hello")] = Unicode(U"world");
@@ -84,10 +84,10 @@ TEST(Dict, set_item) {
 }
 
 TEST(Dict, clear) {
-  Dict d{{1, 2}, {Unicode(U"hello"), 3}, {3, Unicode(U"matx4")}};
+  Dict d{{1, 2}, {Unicode(U"hello"), 3}, {3, Unicode(U"hvm4")}};
   d.clear();
   ASSERT_EQ(d.size(), 0);
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

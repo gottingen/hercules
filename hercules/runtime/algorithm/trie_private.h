@@ -37,7 +37,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class TrieNode : public Object {
@@ -78,7 +78,7 @@ class TrieNode : public Object {
 
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeTrie;
   static constexpr const char* _type_key = "runtime.Trie";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TrieNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(TrieNode, Object);
 
  private:
   std::unique_ptr<cedar_t> trie_;
@@ -87,4 +87,4 @@ class TrieNode : public Object {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

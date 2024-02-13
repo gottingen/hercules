@@ -26,7 +26,7 @@
 #include <hercules/runtime/registry.h>
 #include <hercules/runtime/str_escape.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <>
@@ -257,28 +257,28 @@ bool Dict::operator!=(const Dict& other) const {
 Dict::mapped_type& Dict::get_item(const Any& key) const {
   MX_CHECK_DPTR(Dict);
   auto iter = d->data_container.find(key);
-  MXCHECK(iter != d->data_container.end()) << "Dict[" << key << "] not found";
+  HSCHECK(iter != d->data_container.end()) << "Dict[" << key << "] not found";
   return iter->second;
 }
 
 Dict::mapped_type& Dict::get_item(const string_view& key) const {
   MX_CHECK_DPTR(Dict);
   auto iter = d->data_container.find(key);
-  MXCHECK(iter != d->data_container.end()) << "Dict[" << key << "] not found";
+  HSCHECK(iter != d->data_container.end()) << "Dict[" << key << "] not found";
   return iter->second;
 }
 
 Dict::mapped_type& Dict::get_item(const unicode_view& key) const {
   MX_CHECK_DPTR(Dict);
   auto iter = d->data_container.find(key);
-  MXCHECK(iter != d->data_container.end()) << "Dict[" << key << "] not found";
+  HSCHECK(iter != d->data_container.end()) << "Dict[" << key << "] not found";
   return iter->second;
 }
 
 Dict::mapped_type& Dict::get_item(int64_t key) const {
   MX_CHECK_DPTR(Dict);
   auto iter = d->data_container.find(key);
-  MXCHECK(iter != d->data_container.end()) << "Dict[" << key << "] not found";
+  HSCHECK(iter != d->data_container.end()) << "Dict[" << key << "] not found";
   return iter->second;
 }
 
@@ -312,21 +312,21 @@ Dict::mapped_type const& Dict::get_default(const unicode_view& key,
 }
 
 Dict::mapped_type Dict::pop(PyArgs args) const {
-  MXCHECK(args.size() == 1 || args.size() == 2)
+  HSCHECK(args.size() == 1 || args.size() == 2)
       << "dict.pop expect 1 or 2 arguments, but get " << args.size();
   MX_DPTR(Dict);
   if (d == nullptr) {
     if (args.size() == 2) {
       return args[1].As<mapped_type>();
     }
-    MXTHROW << "dict.pop KeyError";
+    HSTHROW << "dict.pop KeyError";
   }
   auto it = d->data_container.find(args[0]);
   if (it == d->data_container.end()) {
     if (args.size() == 2) {
       return args[1].As<mapped_type>();
     }
-    MXTHROW << "dict.pop KeyError";
+    HSTHROW << "dict.pop KeyError";
   }
   auto ret = std::move(it->second);
   d->data_container.erase(it);
@@ -437,39 +437,39 @@ typename Dict::iterator Dict::end() const {
 
 typename Dict::item_iterator Dict::item_begin() const {
   auto n = GetDictNode();
-  MXCHECK(n != nullptr) << "Dict container is null";
+  HSCHECK(n != nullptr) << "Dict container is null";
   return item_iterator_adaptator<typename Dict::container_type::iterator>(
       n->data_container.begin());
 }
 
 typename Dict::item_iterator Dict::item_end() const {
   auto n = GetDictNode();
-  MXCHECK(n != nullptr) << "Dict.item_end container is null";
+  HSCHECK(n != nullptr) << "Dict.item_end container is null";
   return item_iterator_adaptator<typename Dict::container_type::iterator>(n->data_container.end());
 }
 
 typename Dict::key_const_iterator Dict::key_begin() const {
   auto n = GetDictNode();
-  MXCHECK(n != nullptr) << "Dict.key_begin container is null";
+  HSCHECK(n != nullptr) << "Dict.key_begin container is null";
   return key_iterator_adaptator<typename Dict::container_type::iterator>(n->data_container.begin());
 }
 
 typename Dict::key_const_iterator Dict::key_end() const {
   auto n = GetDictNode();
-  MXCHECK(n != nullptr) << "Dict.key_end container is null";
+  HSCHECK(n != nullptr) << "Dict.key_end container is null";
   return key_iterator_adaptator<typename Dict::container_type::iterator>(n->data_container.end());
 }
 
 typename Dict::value_iterator Dict::value_begin() const {
   auto n = GetDictNode();
-  MXCHECK(n != nullptr) << "Dict.value_begin container is null";
+  HSCHECK(n != nullptr) << "Dict.value_begin container is null";
   return value_iterator_adaptator<typename Dict::container_type::iterator>(
       n->data_container.begin());
 }
 
 typename Dict::value_iterator Dict::value_end() const {
   auto n = GetDictNode();
-  MXCHECK(n != nullptr) << "Dict.value_end container is null";
+  HSCHECK(n != nullptr) << "Dict.value_end container is null";
   return value_iterator_adaptator<typename Dict::container_type::iterator>(n->data_container.end());
 }
 
@@ -508,4 +508,4 @@ bool IsConvertible<Dict>(const Object* node) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

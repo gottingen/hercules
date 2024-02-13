@@ -22,14 +22,14 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
 /******************************************************************************
  * make_kwargs_op
  *****************************************************************************/
-MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(make_kwargs_op)
+HERCULES_IR_DEFINE_HLO_BUILTIN_FUNC(make_kwargs_op)
     .set_num_inputs(-1)
     .set_num_inputs_max(-1)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque));
@@ -37,7 +37,7 @@ MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(make_kwargs_op)
 /******************************************************************************
  * call torch function
  *****************************************************************************/
-MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(torch_ops)
+HERCULES_IR_DEFINE_HLO_BUILTIN_FUNC(torch_ops)
     .set_num_inputs(-1)
     .set_num_inputs_max(-1)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque));
@@ -45,7 +45,7 @@ MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(torch_ops)
 /******************************************************************************
  * call numpy function
  *****************************************************************************/
-MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(numpy_ops)
+HERCULES_IR_DEFINE_HLO_BUILTIN_FUNC(numpy_ops)
     .set_num_inputs(-1)
     .set_num_inputs_max(-1)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque));
@@ -53,11 +53,11 @@ MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(numpy_ops)
 /******************************************************************************
  * call lambda function
  *****************************************************************************/
-MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(call_lambda)
+HERCULES_IR_DEFINE_HLO_BUILTIN_FUNC(call_lambda)
     .set_num_inputs(1)
     .set_num_inputs_max(-1)
     .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque));
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

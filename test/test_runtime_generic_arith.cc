@@ -21,7 +21,7 @@
 #include <hercules/runtime/generic/generic_hlo_arith_funcs.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(RTValueOperators, builtin_add) {
@@ -809,4 +809,4 @@ TEST(ArithOps, floordiv) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

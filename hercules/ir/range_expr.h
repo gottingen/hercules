@@ -21,7 +21,7 @@
 
 #include <hercules/ir/base.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*! \brief range over one dimension */
@@ -54,7 +54,7 @@ class RangeExprNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "RangeExpr";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(RangeExprNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(RangeExprNode, HLOExprNode);
 };
 
 /*! \brief RangeExpr container  */
@@ -67,11 +67,11 @@ class RangeExpr : public HLOExpr {
    * \param step The step of the range.
    * \param span The source code info.
    */
-  MATX_DLL RangeExpr(PrimExpr start, PrimExpr stop, PrimExpr step, Span span = Span());
+  HERCULES_DLL RangeExpr(PrimExpr start, PrimExpr stop, PrimExpr step, Span span = Span());
 
   // declare range.
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(RangeExpr, HLOExpr, RangeExprNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(RangeExpr, HLOExpr, RangeExprNode);
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

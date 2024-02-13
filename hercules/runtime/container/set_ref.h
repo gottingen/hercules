@@ -30,7 +30,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class SetNode;
@@ -173,21 +173,21 @@ class Set : public ObjectRef {
 
   bool contains(string_view key) const;
   bool contains(unicode_view key) const;
-  MATXSCRIPT_ALWAYS_INLINE bool contains(const String& key) const {
+  HERCULES_ALWAYS_INLINE bool contains(const String& key) const {
     return contains(key.view());
   }
-  MATXSCRIPT_ALWAYS_INLINE bool contains(const Unicode& key) const {
+  HERCULES_ALWAYS_INLINE bool contains(const Unicode& key) const {
     return contains(key.view());
   }
-  MATXSCRIPT_ALWAYS_INLINE bool contains(const char* key) const {
+  HERCULES_ALWAYS_INLINE bool contains(const char* key) const {
     return contains(string_view(key));
   }
-  MATXSCRIPT_ALWAYS_INLINE bool contains(const char32_t* const key) const {
+  HERCULES_ALWAYS_INLINE bool contains(const char32_t* const key) const {
     return contains(unicode_view(key));
   }
   bool contains(int64_t key) const;
   template <class U, typename = typename std::enable_if<!is_runtime_value<U>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE bool contains(const U& key) const {
+  HERCULES_ALWAYS_INLINE bool contains(const U& key) const {
     return this->contains(static_cast<const Any&>(GenericValueConverter<RTView>{}(key)));
   }
 
@@ -223,13 +223,13 @@ struct type_index_traits<Set> {
 }  // namespace TypeIndex
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE Set Any::As<Set>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeSet);
+HERCULES_ALWAYS_INLINE Set Any::As<Set>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeSet);
   return Set(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE Set Any::AsNoCheck<Set>() const {
+HERCULES_ALWAYS_INLINE Set Any::AsNoCheck<Set>() const {
   return Set(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
@@ -239,4 +239,4 @@ template <>
 bool IsConvertible<Set>(const Object* node);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

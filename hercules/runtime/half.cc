@@ -1,7 +1,7 @@
 // Copyright 2022 ByteDance Ltd. and/or its affiliates.
 #include "hercules/runtime/half.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 static_assert(std::is_standard_layout<Half>::value, "c10::Half must be standard layout.");
@@ -12,4 +12,4 @@ std::ostream& operator<<(std::ostream& out, const Half& value) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

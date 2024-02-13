@@ -33,7 +33,7 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::PyArgs;
@@ -128,13 +128,13 @@ struct ArrayNodeTrait {
   }
 };
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(ArrayNode);
-MATXSCRIPT_REGISTER_REFLECTION_VTABLE(ArrayNode, ArrayNodeTrait)
+HERCULES_REGISTER_OBJECT_TYPE(ArrayNode);
+HERCULES_REGISTER_REFLECTION_VTABLE(ArrayNode, ArrayNodeTrait)
     .set_creator([](const runtime::String&) -> ObjectPtr<Object> {
       return runtime::make_object<ArrayNode>();
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Array").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.Array").set_body([](PyArgs args) -> RTValue {
   std::vector<ObjectRef> data;
   for (int i = 0; i < args.size(); ++i) {
     if (args[i].type_code() == runtime::TypeIndex::kRuntimeNullptr) {
@@ -142,7 +142,7 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Array").set_body([](PyArgs args) -> RTValue 
     } else if (args[i].type_code() >= 0) {
       data.push_back(args[i].As<ObjectRef>());
     } else {
-      MXCHECK(StringRef::CanConvertFrom(args[i]))
+      HSCHECK(StringRef::CanConvertFrom(args[i]))
           << "[runtime.Array] not supported item type_code: " << args[i].type_code();
       data.push_back(args[i].As<StringRef>());
     }
@@ -150,29 +150,29 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.Array").set_body([](PyArgs args) -> RTValue 
   return Array<ObjectRef>(data);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ArrayGetItem").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.ArrayGetItem").set_body([](PyArgs args) -> RTValue {
   int64_t i = args[1].As<int64_t>();
-  MXCHECK_GE(args[0].type_code(), 0);
+  HSCHECK_GE(args[0].type_code(), 0);
   Object* ptr = static_cast<Object*>(args[0].value().data.v_handle);
-  MXCHECK(ptr->IsInstance<ArrayNode>());
+  HSCHECK(ptr->IsInstance<ArrayNode>());
   auto* n = static_cast<const ArrayNode*>(ptr);
-  MXCHECK_LT(static_cast<size_t>(i), n->size()) << "out of bound of array";
+  HSCHECK_LT(static_cast<size_t>(i), n->size()) << "out of bound of array";
   return n->at(i);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ArraySize").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args[0].type_code(), 0);
+HERCULES_REGISTER_GLOBAL("runtime.ArraySize").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args[0].type_code(), 0);
   Object* ptr = static_cast<Object*>(args[0].value().data.v_handle);
-  MXCHECK(ptr->IsInstance<ArrayNode>());
+  HSCHECK(ptr->IsInstance<ArrayNode>());
   return static_cast<int64_t>(static_cast<const ArrayNode*>(ptr)->size());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ArrayContains").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime.ArrayContains").set_body([](PyArgs args) -> RTValue {
   ObjectRef item =
       StringRef::CanConvertFrom(args[1]) ? args[1].As<StringRef>() : args[1].As<ObjectRef>();
-  MXCHECK_GE(args[0].type_code(), 0);
+  HSCHECK_GE(args[0].type_code(), 0);
   Object* ptr = static_cast<Object*>(args[0].value().data.v_handle);
-  MXCHECK(ptr->IsInstance<ArrayNode>());
+  HSCHECK(ptr->IsInstance<ArrayNode>());
   auto* n = static_cast<const ArrayNode*>(ptr);
   bool result = false;
   for (auto i = 0; i < n->size(); ++i) {
@@ -185,8 +185,8 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.ArrayContains").set_body([](PyArgs args) -> 
 });
 
 // Container printer
-using namespace ::matxscript::ir::printer;
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+using namespace ::hercules::ir::printer;
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<Array<ObjectRef>>(  //
         "",
         [](Array<ObjectRef> array, ObjectPath p, IRDocsifier d) -> Doc {
@@ -200,4 +200,4 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
         });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

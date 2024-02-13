@@ -28,7 +28,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*!
@@ -89,7 +89,7 @@ class NodeFunctor<R(const ObjectRef& n, Args...)> {
    * \return The result.
    */
   R operator()(const ObjectRef& n, Args... args) const {
-    MXCHECK(can_dispatch(n)) << "NodeFunctor calls un-registered function on type "
+    HSCHECK(can_dispatch(n)) << "NodeFunctor calls un-registered function on type "
                              << n->GetTypeKey();
     return (*func_[n->type_index()])(n, std::forward<Args>(args)...);
   }
@@ -105,7 +105,7 @@ class NodeFunctor<R(const ObjectRef& n, Args...)> {
     if (func_.size() <= tindex) {
       func_.resize(tindex + 1, nullptr);
     }
-    MXCHECK(func_[tindex] == nullptr) << "Dispatch for " << TNode::_type_key << " is already set";
+    HSCHECK(func_[tindex] == nullptr) << "Dispatch for " << TNode::_type_key << " is already set";
     func_[tindex] = f;
     return *this;
   }
@@ -114,7 +114,7 @@ class NodeFunctor<R(const ObjectRef& n, Args...)> {
     if (func_.size() <= tindex) {
       func_.resize(tindex + 1, nullptr);
     }
-    MXCHECK(func_[tindex] == nullptr) << "Dispatch for " << tindex << " is already set";
+    HSCHECK(func_[tindex] == nullptr) << "Dispatch for " << tindex << " is already set";
     func_[tindex] = f;
     return *this;
   }
@@ -127,14 +127,14 @@ class NodeFunctor<R(const ObjectRef& n, Args...)> {
   template <typename TNode>
   TSelf& clear_dispatch() {  // NOLINT(*)
     uint32_t tindex = TNode::RuntimeTypeIndex();
-    MXCHECK_LT(tindex, func_.size()) << "clear_dispatch: index out of range";
+    HSCHECK_LT(tindex, func_.size()) << "clear_dispatch: index out of range";
     func_[tindex] = nullptr;
     return *this;
   }
 };
 
-#define MATXSCRIPT_REG_FUNC_VAR_DEF(ClsName) \
-  static MATXSCRIPT_ATTRIBUTE_UNUSED auto& __make_functor##_##ClsName
+#define HERCULES_REG_FUNC_VAR_DEF(ClsName) \
+  static HERCULES_ATTRIBUTE_UNUSED auto& __make_functor##_##ClsName
 
 /*!
  * \brief Useful macro to set NodeFunctor dispatch in a global static field.
@@ -163,7 +163,7 @@ class NodeFunctor<R(const ObjectRef& n, Args...)> {
  *    static FType inst; return inst;
  *  }
  *
- *  MATXSCRIPT_STATIC_IR_FUNCTOR(ReprPrinter, vtable)
+ *  HERCULES_STATIC_IR_FUNCTOR(ReprPrinter, vtable)
  *  .set_dispatch<Add>([](const ObjectRef& ref, ReprPrinter* p) {
  *    auto* n = static_cast<const Add*>(ref.get());
  *    p->print(n->a);
@@ -177,7 +177,7 @@ class NodeFunctor<R(const ObjectRef& n, Args...)> {
  * \param ClsName The name of the class
  * \param FField The static function that returns a singleton of NodeFunctor.
  */
-#define MATXSCRIPT_STATIC_IR_FUNCTOR(ClsName, FField) \
-  MATXSCRIPT_STR_CONCAT(MATXSCRIPT_REG_FUNC_VAR_DEF(ClsName), __COUNTER__) = ClsName::FField()
+#define HERCULES_STATIC_IR_FUNCTOR(ClsName, FField) \
+  HERCULES_STR_CONCAT(HERCULES_REG_FUNC_VAR_DEF(ClsName), __COUNTER__) = ClsName::FField()
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

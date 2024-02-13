@@ -49,12 +49,12 @@
 #include <hercules/ir/type_functor.h>
 #include <hercules/runtime/data_type.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
-using namespace ::matxscript::ir;
-using namespace ::matxscript::runtime;
+using namespace ::hercules::ir;
+using namespace ::hercules::runtime;
 class LinalgGenericPrinter;
 class MLIRTextPrinter : public StmtFunctor<void(const Stmt&, std::ostream&)>,
                         public PrimExprFunctor<void(const PrimExpr&, std::ostream&)>,
@@ -179,4 +179,4 @@ class MLIRTextPrinter : public StmtFunctor<void(const Stmt&, std::ostream&)>,
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

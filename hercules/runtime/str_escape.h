@@ -24,7 +24,7 @@
 #include <hercules/runtime/container/string.h>
 #include <hercules/runtime/container/unicode.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*!
@@ -48,4 +48,4 @@ inline runtime::String UnicodeEscape(const runtime::Unicode& val) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -23,7 +23,7 @@
 
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class Unicode;
@@ -103,4 +103,4 @@ struct ObjectsHolder<true, T> {
 
 }  // namespace details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

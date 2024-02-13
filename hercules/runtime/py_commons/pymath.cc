@@ -23,7 +23,7 @@
 #include <hercules/runtime/py_commons/pymath.h>
 
 #ifdef HAVE_GCC_ASM_FOR_X87
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -45,5 +45,5 @@ void _Py_set_387controlword(unsigned short cw) {
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 #endif

@@ -28,12 +28,12 @@
 #include <hercules/runtime/container/itertor_ref.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // BaseGenerator is used for codegen only
 template <typename ITEM_VALUE_TYPE>
-struct BaseGenerator : ::matxscript::runtime::Yielder {
+struct BaseGenerator : ::hercules::runtime::Yielder {
   static_assert(std::is_same<ITEM_VALUE_TYPE, bool>::value ||
                     std::is_same<ITEM_VALUE_TYPE, int32_t>::value ||
                     std::is_same<ITEM_VALUE_TYPE, int64_t>::value ||
@@ -107,7 +107,7 @@ struct GeneratorAdapter {
     return GeneratorIterator<GeneratorAdapter>();
   }
   result_type next() {
-    MXCHECK(generator_) << "generator_ is null";
+    HSCHECK(generator_) << "generator_ is null";
     return generator_->next();
   }
 
@@ -140,7 +140,7 @@ struct GeneratorAdapter {
     typedef iterator::value_type value_type;                                          \
                                                                                       \
     Name() = default;                                                                 \
-    explicit Name(::matxscript::runtime::ObjectPtr<::matxscript::runtime::Object> n)  \
+    explicit Name(::hercules::runtime::ObjectPtr<::hercules::runtime::Object> n)  \
         : ObjectRef(n) {                                                              \
     }                                                                                 \
     Name(const Name& other) noexcept = default;                                       \
@@ -172,12 +172,12 @@ struct GeneratorAdapter {
   template <>                                                                         \
   bool IsConvertible<Name>(const Object* node);                                       \
   template <>                                                                         \
-  MATXSCRIPT_ALWAYS_INLINE Name Any::As<Name>() const {                               \
-    MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntime##Name); \
+  HERCULES_ALWAYS_INLINE Name Any::As<Name>() const {                               \
+    HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntime##Name); \
     return Name(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));    \
   }                                                                                   \
   template <>                                                                         \
-  MATXSCRIPT_ALWAYS_INLINE Name Any::AsNoCheck<Name>() const {                        \
+  HERCULES_ALWAYS_INLINE Name Any::AsNoCheck<Name>() const {                        \
     return Name(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));    \
   }                                                                                   \
   std::ostream& operator<<(std::ostream& os, Name const& n)
@@ -191,4 +191,4 @@ DECLARE_GENERATOR_OBJECT_REF(RTValueGenerator, RTValue);
 
 #undef DECLARE_GENERATOR_OBJECT_REF
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

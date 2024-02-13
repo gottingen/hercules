@@ -27,7 +27,7 @@
 #include <hercules/runtime/threadpool/lock_free_thread_pool.h>
 #include <hercules/runtime/type_helper_macros.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <typename RunnableType, bool UnpackArgs = false>
@@ -64,7 +64,7 @@ class ParallelForTask : public RunnableType {
             *output_first_ = op_->generic_call(PyArgs(args.data(), args.size()));
           } break;
           default: {
-            MXTHROW << "matx.pstarmap(f, iterable) expect iterable[i] is list or tuple, but get "
+            HSTHROW << "hvm.pstarmap(f, iterable) expect iterable[i] is list or tuple, but get "
                     << input_first_->type_name();
           } break;
         }
@@ -120,7 +120,7 @@ void ThreadPoolExecutor::ParallelForImpl(const UserDataRef& op,
   if (group_size <= 0) {
     group_size = 1;
   }
-  MXCHECK(input_size % group_size == 0) << "Expect the number of tasks to be a multiple of "
+  HSCHECK(input_size % group_size == 0) << "Expect the number of tasks to be a multiple of "
                                         << group_size << ", but get " << input_size << "";
   int64_t num_group = input_size / group_size;
 
@@ -331,9 +331,9 @@ RTValue ThreadPoolExecutor::Submit(PyArgs args) {
   return this->ApplyAsync(callable.data(), PyArgs(args.begin() + 1, args.size() - 1));
 }
 
-MATX_REGISTER_NATIVE_OBJECT(ThreadPoolExecutor)
+HVM_REGISTER_NATIVE_OBJECT(ThreadPoolExecutor)
     .SetConstructor([](PyArgs args) -> std::shared_ptr<void> {
-      MXCHECK(args.size() == 2 || args.size() == 3)
+      HSCHECK(args.size() == 2 || args.size() == 3)
           << "[ThreadPoolExecutor] Expect 2 or 3 arguments but get " << args.size();
       int pool_size = args[0].As<int64_t>();
       bool lock_free = args[1].As<bool>();
@@ -343,15 +343,15 @@ MATX_REGISTER_NATIVE_OBJECT(ThreadPoolExecutor)
       }
       auto pool = lock_free
                       ? std::unique_ptr<internal::IThreadPool>(new internal::SPSCLockFreeThreadPool(
-                            pool_size, "matx.ThreadPool", intervals_ns))
+                            pool_size, "hvm.ThreadPool", intervals_ns))
                       : std::unique_ptr<internal::IThreadPool>(
-                            new internal::LockBasedThreadPool(pool_size, "matx.ThreadPool"));
+                            new internal::LockBasedThreadPool(pool_size, "hvm.ThreadPool"));
       return std::make_shared<ThreadPoolExecutor>(std::move(pool), lock_free);
     })
     .RegisterFunction(
         "ParallelFor",
         [](void* self, PyArgs args) -> RTValue {
-          MXCHECK(args.size() >= 2 && args.size() <= 4)
+          HSCHECK(args.size() >= 2 && args.size() <= 4)
               << "[ThreadPoolExecutor][func: ParallelFor] Expect 2-4 arguments but get "
               << args.size();
           UserDataRef op = args[0].As<UserDataRef>();
@@ -374,4 +374,4 @@ MATX_REGISTER_NATIVE_OBJECT(ThreadPoolExecutor)
     .SetThreadSafety(false);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -38,18 +38,18 @@
 #include <hercules/runtime/container.h>
 #include <hercules/runtime/object_internal.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::runtime;
+using namespace ::hercules::ir::printer;
 
 using OpRegistry = AttrRegistry<OpRegEntry, Op>;
 
 // find operator by name
 const Op& Op::Get(const StringRef& name) {
   const OpRegEntry* reg = OpRegistry::Global()->Get(name);
-  MXCHECK(reg != nullptr) << "AttributeError: Operator " << name << " is not registered";
+  HSCHECK(reg != nullptr) << "AttributeError: Operator " << name << " is not registered";
   return reg->op();
 }
 
@@ -83,15 +83,15 @@ void OpRegEntry::UpdateAttr(const StringRef& key, RTValue value, int plevel) {
 }
 
 // Frontend APIs
-MATXSCRIPT_REGISTER_GLOBAL("ir.ListOpNames").set_body_typed([]() {
+HERCULES_REGISTER_GLOBAL("ir.ListOpNames").set_body_typed([]() {
   return OpRegistry::Global()->ListAllNames();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.GetOp").set_body_typed([](StringRef name) -> Op {
+HERCULES_REGISTER_GLOBAL("ir.GetOp").set_body_typed([](StringRef name) -> Op {
   return Op::Get(name);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.OpGetAttr")
+HERCULES_REGISTER_GLOBAL("ir.OpGetAttr")
     .set_body_typed([](Op op, StringRef attr_name) -> RTValue {
       auto op_map = Op::GetAttrMap<RTValue>(attr_name);
       RTValue rv;
@@ -101,13 +101,13 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.OpGetAttr")
       return rv;
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.OpSetAttr")
+HERCULES_REGISTER_GLOBAL("ir.OpSetAttr")
     .set_body_typed([](Op op, StringRef attr_name, runtime::RTValue value, int plevel) {
       auto& reg = OpRegistry::Global()->RegisterOrGet(op->name).set_name();
       reg.set_attr(attr_name, value, plevel);
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.OpResetAttr").set_body_typed([](Op op, StringRef attr_name) {
+HERCULES_REGISTER_GLOBAL("ir.OpResetAttr").set_body_typed([](Op op, StringRef attr_name) {
   auto& reg = OpRegistry::Global()->RegisterOrGet(op->name);
   reg.reset_attr(attr_name);
 });
@@ -115,21 +115,21 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.OpResetAttr").set_body_typed([](Op op, StringRef 
 ObjectPtr<Object> CreateOp(const String& name) {
   // Hack use TVMRetValue as exchange
   auto op = Op::Get(StringRef(name));
-  MXCHECK(op.defined()) << "Cannot find op \'" << name << '\'';
+  HSCHECK(op.defined()) << "Cannot find op \'" << name << '\'';
   return ObjectInternal::GetObjectPtr(op);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(OpNode).set_creator(CreateOp).set_repr_bytes(
+HERCULES_REGISTER_NODE_TYPE(OpNode).set_creator(CreateOp).set_repr_bytes(
     [](const Object* n) -> String {
       return static_cast<const OpNode*>(n)->name.operator String();
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<Op>("", [](Op op, ObjectPath p, IRDocsifier d) -> Doc {
       return Dialect(d, "Op")->Call({LiteralDoc::Str(op->name, p->Attr("name"))});
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir._call_builtin_op").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("ir._call_builtin_op").set_body([](PyArgs args) -> RTValue {
   Type ret_type = args[0].As<Type>();
   StringRef op_name = args[1].As<StringRef>();
   Array<BaseExpr> call_args;
@@ -152,7 +152,7 @@ MATXSCRIPT_REGISTER_GLOBAL("ir._call_builtin_op").set_body([](PyArgs args) -> RT
         } else if (args[i].IsObjectRef<StringRef>()) {
           call_args.push_back(StringImm(args[i].As<StringRef>()));
         } else {
-          MXCHECK(false) << "ir._call_builtin_op, args[" << i
+          HSCHECK(false) << "ir._call_builtin_op, args[" << i
                          << "] type error, only support int/float/str/BaseExpr";
         }
       } break;
@@ -162,4 +162,4 @@ MATXSCRIPT_REGISTER_GLOBAL("ir._call_builtin_op").set_body([](PyArgs args) -> RT
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

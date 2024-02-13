@@ -30,7 +30,7 @@
 #include <hercules/runtime/device_api.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace {
@@ -179,7 +179,7 @@ DataType NDArrayHelper::DTypePromotion(const DataType& dt1, const DataType& dt2)
   if (dt1.is_int() && dt2.is_float()) {
     return dt2;
   }
-  MXTHROW << "unsupported dtype compare between " << DLDataType2String(dt1) << " and "
+  HSTHROW << "unsupported dtype compare between " << DLDataType2String(dt1) << " and "
           << DLDataType2String(dt2);
   return {};
 }
@@ -191,7 +191,7 @@ DataType NDArrayHelper::DTypeFromDouble(const DataType& dt) {
   if (dt.is_float()) {
     return dt;
   }
-  MXTHROW << "unsupported dtype " << DLDataType2String(dt) << " operating with double";
+  HSTHROW << "unsupported dtype " << DLDataType2String(dt) << " operating with double";
   return {};
 }
 
@@ -230,33 +230,33 @@ NDArray NDArrayOperate::Rand(const std::vector<int64_t>& shape) {
 
 NDArray NDArrayOperate::Concatenate(const Any& seq, int64_t axis) {
   std::vector<NDArray> arrays;
-  if (seq.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeList) {
+  if (seq.type_code() == ::hercules::runtime::TypeIndex::kRuntimeList) {
     const auto& l = seq.AsObjectRefNoCheck<List>();
     for (const auto& array : l) {
-      MXCHECK(array.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeNDArray)
+      HSCHECK(array.type_code() == ::hercules::runtime::TypeIndex::kRuntimeNDArray)
           << "seq element must be a NDArray";
       arrays.push_back(array.AsNoCheck<NDArray>());
     }
-  } else if (seq.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeTuple) {
+  } else if (seq.type_code() == ::hercules::runtime::TypeIndex::kRuntimeTuple) {
     const auto& t = seq.AsObjectRefNoCheck<Tuple>();
     for (int i = 0; i < t.size(); ++i) {
-      MXCHECK(t[i].type_code() == ::matxscript::runtime::TypeIndex::kRuntimeNDArray)
+      HSCHECK(t[i].type_code() == ::hercules::runtime::TypeIndex::kRuntimeNDArray)
           << "seq element must be a NDArray";
       arrays.push_back(t[i].AsNoCheck<NDArray>());
     }
   } else {
-    MXTHROW << "unsupported seq type, type_code: " << seq.type_code();
+    HSTHROW << "unsupported seq type, type_code: " << seq.type_code();
     return None.As<NDArray>();
   }
 
   if (arrays.empty()) {
-    MXTHROW << "need at least one array to concatenate";
+    HSTHROW << "need at least one array to concatenate";
   }
 
   // all ndarray must have the same shapes
   auto ndim = arrays[0].get_mutable()->dl_tensor.ndim;
   if (ndim == 0) {
-    MXTHROW << "zero-dimensional arrays cannot be concatenated";
+    HSTHROW << "zero-dimensional arrays cannot be concatenated";
   }
   axis = index_correction(axis, ndim);
   if (axis < 0 || axis >= ndim) {
@@ -264,7 +264,7 @@ NDArray NDArrayOperate::Concatenate(const Any& seq, int64_t axis) {
   }
   auto shape = arrays[0].Shape();
   for (int i = 1; i < arrays.size(); ++i) {
-    MXCHECK(arrays[i].get_mutable()->dl_tensor.ndim == ndim)
+    HSCHECK(arrays[i].get_mutable()->dl_tensor.ndim == ndim)
         << "all the input arrays must have same "
         << "number of dimensions, but the array at "
         << "index " << 0 << " has " << ndim << " dimension(s) and the array at index " << i
@@ -274,7 +274,7 @@ NDArray NDArrayOperate::Concatenate(const Any& seq, int64_t axis) {
       if (idim == axis) {
         shape[idim] += arr_shape[idim];
       } else {
-        MXCHECK(shape[idim] == arr_shape[idim])
+        HSCHECK(shape[idim] == arr_shape[idim])
             << "all the input array dimensions for the "
             << "concatenation axis must match exactly, but "
             << "along dimension " << idim << ", the array at index " << 0 << " has "
@@ -293,7 +293,7 @@ NDArray NDArrayOperate::Concatenate(const Any& seq, int64_t axis) {
   for (int i = 0; i < arrays.size(); ++i) {
     sliding_view_tensor->shape[axis] = arrays[i].get_mutable()->Shape(axis);
     NDArray::AssignNDArray(arrays[i], sliding_view);
-    MATX_NDARRAY_TYPE_SWITCH(dtype, DT, {
+    HVM_NDARRAY_TYPE_SWITCH(dtype, DT, {
       sliding_view_tensor->byte_offset +=
           sliding_view_container->Shape(axis) * sliding_view_container->Strides(axis) * sizeof(DT);
     });
@@ -304,33 +304,33 @@ NDArray NDArrayOperate::Concatenate(const Any& seq, int64_t axis) {
 
 NDArray NDArrayOperate::Stack(const Any& seq, int64_t axis) {
   std::vector<NDArray> arrays;
-  if (seq.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeList) {
+  if (seq.type_code() == ::hercules::runtime::TypeIndex::kRuntimeList) {
     const auto& l = seq.AsObjectRefNoCheck<List>();
     for (const auto& array : l) {
-      MXCHECK(array.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeNDArray)
+      HSCHECK(array.type_code() == ::hercules::runtime::TypeIndex::kRuntimeNDArray)
           << "seq element must be a NDArray";
       arrays.push_back(array.AsNoCheck<NDArray>());
     }
-  } else if (seq.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeTuple) {
+  } else if (seq.type_code() == ::hercules::runtime::TypeIndex::kRuntimeTuple) {
     const auto& t = seq.AsObjectRefNoCheck<Tuple>();
     for (int i = 0; i < t.size(); ++i) {
-      MXCHECK(t[i].type_code() == ::matxscript::runtime::TypeIndex::kRuntimeNDArray)
+      HSCHECK(t[i].type_code() == ::hercules::runtime::TypeIndex::kRuntimeNDArray)
           << "seq element must be a NDArray";
       arrays.push_back(t[i].AsNoCheck<NDArray>());
     }
   } else {
-    MXTHROW << "unsupported seq type, type_code: " << seq.type_code();
+    HSTHROW << "unsupported seq type, type_code: " << seq.type_code();
     return None.As<NDArray>();
   }
 
   if (arrays.empty()) {
-    MXTHROW << "need at least one array to stack";
+    HSTHROW << "need at least one array to stack";
   }
 
   // all arrays must have the same shapes
   for (int i = 1; i < arrays.size(); ++i) {
     if (!NDArrayHelper::IsSameShape(arrays[0], arrays[i])) {
-      MXTHROW << "all array must be the same shape";
+      HSTHROW << "all array must be the same shape";
     }
   }
 
@@ -363,11 +363,11 @@ NDArray NDArrayOperate::Stack(const Any& seq, int64_t axis) {
   int64_t axis_stride = shrink_target_strides[axis];
   shrink_target_strides.erase(shrink_target_strides.begin() + axis);
 
-  MATX_NDARRAY_TYPE_SWITCH(dtype, DT, {
+  HVM_NDARRAY_TYPE_SWITCH(dtype, DT, {
     DT* target_ptr = static_cast<DT*>(NDArrayHelper::GetData(ret));
     for (int i = 0; i < shape[axis]; ++i) {
       const int64_t* arg_strides = arrays[i].GetStridesPtr();
-      MATX_NDARRAY_TYPE_SWITCH(arrays[i].DataType(), SDT, {
+      HVM_NDARRAY_TYPE_SWITCH(arrays[i].DataType(), SDT, {
         SDT* source_ptr = static_cast<SDT*>(NDArrayHelper::GetData(arrays[i]));
         if (arrays[i].IsContiguous() && axis == 0) {
           Assign(target_ptr + i * axis_stride, source_ptr, arg_element_num);
@@ -422,7 +422,7 @@ DLDevice NDArrayHelper::GetDevice(const Unicode& device) {
     string_view device_view = bin_device.view();
     auto pos = device_view.find_last_of(':');
     if (pos == string_view::npos) {
-      MXTHROW << "unsupported device:" << device;
+      HSTHROW << "unsupported device:" << device;
     }
     auto dev_type = DeviceNameToType(device_view.substr(0, pos));
     return {DLDeviceType(dev_type), std::atoi(device_view.substr(pos + 1).data())};
@@ -436,16 +436,16 @@ Unicode NDArrayHelper::GetDeviceStr(const DLDevice& device) {
   static string_view unk("Unknown");
   auto dev_name = DeviceTypeToName(device.device_type);
   if (dev_name == unk) {
-    MXTHROW << "unknown device_type: " << device.device_type << ", device_id: " << device.device_id;
+    HSTHROW << "unknown device_type: " << device.device_type << ", device_id: " << device.device_id;
   }
   constexpr int dev_buf_size = 256;
   char device_buf[dev_buf_size];
   auto n = snprintf(device_buf, dev_buf_size, "%s:%d", dev_name, device.device_id);
   if (n < 0 || n >= dev_buf_size) {
-    MXTHROW << "unknown device_type: " << device.device_type << ", device_id: " << device.device_id;
+    HSTHROW << "unknown device_type: " << device.device_type << ", device_id: " << device.device_id;
   }
   return UTF8Decode(device_buf, n);
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

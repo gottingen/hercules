@@ -32,7 +32,7 @@
 #include <hercules/runtime/memory.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class SystemLibrary : public Library {
@@ -53,7 +53,7 @@ class SystemLibrary : public Library {
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = tbl_.find(name);
     if (it != tbl_.end() && ptr != it->second) {
-      MXLOG(WARNING) << "SystemLib symbol " << name << " get overridden to a different address "
+      HSLOG(WARNING) << "SystemLib symbol " << name << " get overridden to a different address "
                      << ptr << "->" << it->second;
     }
     tbl_[name] = ptr;
@@ -71,14 +71,14 @@ class SystemLibrary : public Library {
   std::unordered_map<std::string, void*> tbl_;
 };
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.SystemLib").set_body_typed([]() {
+HERCULES_REGISTER_GLOBAL("runtime.SystemLib").set_body_typed([]() {
   static auto mod = CreateModuleFromLibrary(SystemLibrary::Global());
   return mod;
 });
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
-int MATXScriptBackendRegisterSystemLibSymbol(const char* name, void* ptr) {
-  ::matxscript::runtime::SystemLibrary::Global()->RegisterSymbol(name, ptr);
+int HerculesBackendRegisterSystemLibSymbol(const char* name, void* ptr) {
+  ::hercules::runtime::SystemLibrary::Global()->RegisterSymbol(name, ptr);
   return 0;
 }

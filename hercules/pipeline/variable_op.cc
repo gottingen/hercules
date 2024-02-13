@@ -21,10 +21,10 @@
 
 #include <hercules/pipeline/node.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_REGISTER_NATIVE_OP(VariableOp);
+HVM_REGISTER_NATIVE_OP(VariableOp);
 
 std::unique_ptr<Symbol> VariableOp::make_symbol(OpKernelPtr op,
                                                 String name,
@@ -43,4 +43,4 @@ std::unique_ptr<Symbol> VariableOp::make_symbol(OpKernelPtr op,
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

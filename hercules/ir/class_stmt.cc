@@ -34,11 +34,11 @@
 #include <hercules/ir/type.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::runtime;
+using namespace ::hercules::ir::printer;
 
 Stmt ClassStmtNode::Lookup(const StringRef& name) const {
   for (auto stmt : this->body) {
@@ -48,7 +48,7 @@ Stmt ClassStmtNode::Lookup(const StringRef& name) const {
       }
     }
   }
-  MXCHECK(false) << "[ClassStmt] There is no definition of " << name;
+  HSCHECK(false) << "[ClassStmt] There is no definition of " << name;
   return Stmt{nullptr};
 }
 
@@ -68,9 +68,9 @@ ClassStmt::ClassStmt(
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ClassStmtNode);
+HERCULES_REGISTER_NODE_TYPE(ClassStmtNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassStmt")
+HERCULES_REGISTER_GLOBAL("ir.ClassStmt")
     .set_body_typed([](StringRef name,
                        Stmt base,
                        Array<Stmt> body,
@@ -85,7 +85,7 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.ClassStmt")
                        std::move(span));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::ClassStmt>("", [](ir::ClassStmt stmt, ObjectPath p, IRDocsifier d) -> Doc {
       With<IRFrame> f(d, stmt);
       (*f)->AddDispatchToken(d, "ir");
@@ -113,26 +113,26 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
           /*body=*/(*f)->stmts);
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassStmt_Attrs").set_body_typed([](ClassStmt cls) {
+HERCULES_REGISTER_GLOBAL("ir.ClassStmt_Attrs").set_body_typed([](ClassStmt cls) {
   return cls->attrs;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassStmt_Copy").set_body_typed([](ClassStmt stmt) { return stmt; });
+HERCULES_REGISTER_GLOBAL("ir.ClassStmt_Copy").set_body_typed([](ClassStmt stmt) { return stmt; });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassStmt_WithAttr")
+HERCULES_REGISTER_GLOBAL("ir.ClassStmt_WithAttr")
     .set_body_typed([](ClassStmt stmt, StringRef key, RTValue arg_val) -> ClassStmt {
       ObjectRef value = StringRef::CanConvertFrom(arg_val) ? arg_val.As<StringRef>()
                                                            : arg_val.AsObjectRef<ObjectRef>();
       return WithAttr(std::move(stmt), std::move(key), value);
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassStmt_GetType").set_body_typed([](ClassStmt stmt) {
+HERCULES_REGISTER_GLOBAL("ir.ClassStmt_GetType").set_body_typed([](ClassStmt stmt) {
   return stmt->type;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassStmt_Lookup").set_body_typed([](ClassStmt cls, StringRef name) {
+HERCULES_REGISTER_GLOBAL("ir.ClassStmt_Lookup").set_body_typed([](ClassStmt cls, StringRef name) {
   return cls->Lookup(name);
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

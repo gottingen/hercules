@@ -25,7 +25,7 @@
 #include <string>
 #include <vector>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(TXSession, Server) {
@@ -37,7 +37,7 @@ TEST(TXSession, Server) {
   const char* module_name = "model.spec.json";
 
   {
-    // create matx module for test
+    // create hvm module for test
     TXSession sess;
     auto sym = sess.CreateVariable("text", String("test query"));
     sess.Trace(sym.get());
@@ -76,4 +76,4 @@ TEST(TXSession, Server) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

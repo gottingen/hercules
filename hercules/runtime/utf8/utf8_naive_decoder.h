@@ -24,7 +24,7 @@
 
 #include "hercules/runtime/runtime_port.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace utf8_details {
 
@@ -34,4 +34,4 @@ ptrdiff_t NaiveDecoder(unsigned char const* s_ptr,
 
 }  // namespace utf8_details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -22,7 +22,7 @@
 #include <hercules/pipeline/global_unique_index.h>
 #include <hercules/pipeline/op_kernel.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class Symbol;
@@ -46,4 +46,4 @@ class ConstantOp : public OpKernel {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

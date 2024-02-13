@@ -20,7 +20,7 @@
 #include <gtest/gtest.h>
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Tuple, len) {
@@ -56,4 +56,4 @@ TEST(Tuple, AsDictKey) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -21,7 +21,7 @@
 
 #include <ctime>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class PosixEnvTime : public EnvTime {
@@ -41,4 +41,4 @@ EnvTime* EnvTime::Default() {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

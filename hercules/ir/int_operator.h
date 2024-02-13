@@ -33,7 +33,7 @@
 
 #include <hercules/ir/prim_expr.h>
 
-namespace matxscript {
+namespace hercules {
 namespace arith {
 
 /*!
@@ -225,4 +225,4 @@ inline int64_t LeastCommonMultiple(int64_t a, int64_t b) {
 }
 
 }  // namespace arith
-}  // namespace matxscript
+}  // namespace hercules

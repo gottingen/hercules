@@ -35,7 +35,7 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class StringImmNode : public HLOExprNode {
@@ -57,14 +57,14 @@ class StringImmNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.StringImm";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(StringImmNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(StringImmNode, HLOExprNode);
 };
 
 class StringImm : public HLOExpr {
  public:
-  MATX_DLL StringImm(StringRef value, Span span = Span());
+  HERCULES_DLL StringImm(StringRef value, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(StringImm, HLOExpr, StringImmNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(StringImm, HLOExpr, StringImmNode);
 };
 
 class UnicodeImmNode : public HLOExprNode {
@@ -86,14 +86,14 @@ class UnicodeImmNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.UnicodeImm";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(UnicodeImmNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(UnicodeImmNode, HLOExprNode);
 };
 
 class UnicodeImm : public HLOExpr {
  public:
-  MATX_DLL UnicodeImm(StringRef value, Span span = Span());
+  HERCULES_DLL UnicodeImm(StringRef value, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(UnicodeImm, HLOExpr, UnicodeImmNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(UnicodeImm, HLOExpr, UnicodeImmNode);
 };
 
 /*!
@@ -119,7 +119,7 @@ class DataTypeImmNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.DataTypeImm";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(DataTypeImmNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(DataTypeImmNode, HLOExprNode);
 };
 
 /*!
@@ -133,10 +133,10 @@ class DataTypeImm : public HLOExpr {
    * \param value The value input.
    * \param span The source span of the expression.
    */
-  MATX_DLL explicit DataTypeImm(runtime::DataType value, Span span = Span());
+  HERCULES_DLL explicit DataTypeImm(runtime::DataType value, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(DataTypeImm, HLOExpr, DataTypeImmNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(DataTypeImmNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(DataTypeImm, HLOExpr, DataTypeImmNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(DataTypeImmNode);
 };
 
 /*! \brief A shape expression which allows users to construct a shape containing PrimExpr.
@@ -164,14 +164,14 @@ class ShapeExprNode : public HLOExprNode {
   static constexpr const char* _type_key = "ir.ShapeExpr";
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ShapeExprNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ShapeExprNode, HLOExprNode);
 };
 
 class ShapeExpr : public HLOExpr {
  public:
-  MATX_DLL explicit ShapeExpr(Array<PrimExpr> values, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(ShapeExpr, HLOExpr, ShapeExprNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(ShapeExprNode);
+  HERCULES_DLL explicit ShapeExpr(Array<PrimExpr> values, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(ShapeExpr, HLOExpr, ShapeExprNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(ShapeExprNode);
 };
 
 /*!
@@ -202,7 +202,7 @@ class HLOBinaryOpNode : public HLOExprNode {
     hash_reduce(b);
   }
 
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(T, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(T, HLOExprNode);
 };
 
 /*! \brief a + b */
@@ -217,8 +217,8 @@ class HLOAddNode : public HLOBinaryOpNode<HLOAddNode> {
  */
 class HLOAdd : public HLOExpr {
  public:
-  MATX_DLL HLOAdd(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOAdd, HLOExpr, HLOAddNode);
+  HERCULES_DLL HLOAdd(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOAdd, HLOExpr, HLOAddNode);
 };
 
 /*! \brief a - b */
@@ -233,8 +233,8 @@ class HLOSubNode : public HLOBinaryOpNode<HLOSubNode> {
  */
 class HLOSub : public HLOExpr {
  public:
-  MATX_DLL HLOSub(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOSub, HLOExpr, HLOSubNode);
+  HERCULES_DLL HLOSub(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOSub, HLOExpr, HLOSubNode);
 };
 
 /*! \brief a * b */
@@ -249,8 +249,8 @@ class HLOMulNode : public HLOBinaryOpNode<HLOMulNode> {
  */
 class HLOMul : public HLOExpr {
  public:
-  MATX_DLL HLOMul(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOMul, HLOExpr, HLOMulNode);
+  HERCULES_DLL HLOMul(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOMul, HLOExpr, HLOMulNode);
 };
 
 /*! \brief Floor division, floor(a/b) */
@@ -265,8 +265,8 @@ class HLOFloorDivNode : public HLOBinaryOpNode<HLOFloorDivNode> {
  */
 class HLOFloorDiv : public HLOExpr {
  public:
-  MATX_DLL HLOFloorDiv(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOFloorDiv, HLOExpr, HLOFloorDivNode);
+  HERCULES_DLL HLOFloorDiv(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOFloorDiv, HLOExpr, HLOFloorDivNode);
 };
 
 /*! \brief The remainder of the floordiv */
@@ -281,8 +281,8 @@ class HLOFloorModNode : public HLOBinaryOpNode<HLOFloorModNode> {
  */
 class HLOFloorMod : public HLOExpr {
  public:
-  MATX_DLL HLOFloorMod(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOFloorMod, HLOExpr, HLOFloorModNode);
+  HERCULES_DLL HLOFloorMod(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOFloorMod, HLOExpr, HLOFloorModNode);
 };
 
 /*!
@@ -313,7 +313,7 @@ class HLOCmpOpNode : public HLOExprNode {
     hash_reduce(b);
   }
 
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(T, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(T, HLOExprNode);
 };
 
 /*! \brief a == b */
@@ -328,8 +328,8 @@ class HLOEqualNode : public HLOCmpOpNode<HLOEqualNode> {
  */
 class HLOEqual : public HLOExpr {
  public:
-  MATX_DLL HLOEqual(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOEqual, HLOExpr, HLOEqualNode);
+  HERCULES_DLL HLOEqual(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOEqual, HLOExpr, HLOEqualNode);
 };
 
 /*! \brief a != b */
@@ -344,8 +344,8 @@ class HLONotEqualNode : public HLOCmpOpNode<HLONotEqualNode> {
  */
 class HLONotEqual : public HLOExpr {
  public:
-  MATX_DLL HLONotEqual(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLONotEqual, HLOExpr, HLONotEqualNode);
+  HERCULES_DLL HLONotEqual(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLONotEqual, HLOExpr, HLONotEqualNode);
 };
 
 /*! \brief a < b */
@@ -360,8 +360,8 @@ class HLOLessThanNode : public HLOCmpOpNode<HLOLessThanNode> {
  */
 class HLOLessThan : public HLOExpr {
  public:
-  MATX_DLL HLOLessThan(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOLessThan, HLOExpr, HLOLessThanNode);
+  HERCULES_DLL HLOLessThan(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOLessThan, HLOExpr, HLOLessThanNode);
 };
 
 /*! \brief a <= b */
@@ -376,8 +376,8 @@ struct HLOLessEqualNode : public HLOCmpOpNode<HLOLessEqualNode> {
  */
 class HLOLessEqual : public HLOExpr {
  public:
-  MATX_DLL HLOLessEqual(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOLessEqual, HLOExpr, HLOLessEqualNode);
+  HERCULES_DLL HLOLessEqual(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOLessEqual, HLOExpr, HLOLessEqualNode);
 };
 
 /*! \brief a > b */
@@ -392,8 +392,8 @@ class HLOGreaterThanNode : public HLOCmpOpNode<HLOGreaterThanNode> {
  */
 class HLOGreaterThan : public HLOExpr {
  public:
-  MATX_DLL HLOGreaterThan(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOGreaterThan, HLOExpr, HLOGreaterThanNode);
+  HERCULES_DLL HLOGreaterThan(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOGreaterThan, HLOExpr, HLOGreaterThanNode);
 };
 
 /*! \brief a >= b */
@@ -408,8 +408,8 @@ class HLOGreaterEqualNode : public HLOCmpOpNode<HLOGreaterEqualNode> {
  */
 class HLOGreaterEqual : public HLOExpr {
  public:
-  MATX_DLL HLOGreaterEqual(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOGreaterEqual, HLOExpr, HLOGreaterEqualNode);
+  HERCULES_DLL HLOGreaterEqual(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOGreaterEqual, HLOExpr, HLOGreaterEqualNode);
 };
 
 /*! \brief a && b */
@@ -437,7 +437,7 @@ class HLOAndNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.HLOAnd";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(HLOAndNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(HLOAndNode, HLOExprNode);
 };
 
 /*!
@@ -446,8 +446,8 @@ class HLOAndNode : public HLOExprNode {
  */
 class HLOAnd : public HLOExpr {
  public:
-  MATX_DLL HLOAnd(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOAnd, HLOExpr, HLOAndNode);
+  HERCULES_DLL HLOAnd(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOAnd, HLOExpr, HLOAndNode);
 };
 
 /*! \brief a || b */
@@ -475,7 +475,7 @@ class HLOOrNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.HLOOr";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(HLOOrNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(HLOOrNode, HLOExprNode);
 };
 
 /*!
@@ -484,8 +484,8 @@ class HLOOrNode : public HLOExprNode {
  */
 class HLOOr : public HLOExpr {
  public:
-  MATX_DLL HLOOr(BaseExpr a, BaseExpr b, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOOr, HLOExpr, HLOOrNode);
+  HERCULES_DLL HLOOr(BaseExpr a, BaseExpr b, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOOr, HLOExpr, HLOOrNode);
 };
 
 /*! \brief !a */
@@ -509,7 +509,7 @@ class HLONotNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.HLONot";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(HLONotNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(HLONotNode, HLOExprNode);
 };
 
 /*!
@@ -518,8 +518,8 @@ class HLONotNode : public HLOExprNode {
  */
 class HLONot : public HLOExpr {
  public:
-  MATX_DLL HLONot(BaseExpr a, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLONot, HLOExpr, HLONotNode);
+  HERCULES_DLL HLONot(BaseExpr a, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLONot, HLOExpr, HLONotNode);
 };
 
 /*!
@@ -533,7 +533,7 @@ class CallNode : public HLOExprNode {
   /*!
    * \brief The operator(function) being invoked
    *
-   *  - It can be matx::Op which corresponds to the primitive operators.
+   *  - It can be hvm::Op which corresponds to the primitive operators.
    *  - It can also be user defined functions (Function, GlobalVar, Var).
    */
   HLOExpr op;
@@ -584,7 +584,7 @@ class CallNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.Call";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(CallNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(CallNode, HLOExprNode);
 };
 
 class Call : public HLOExpr {
@@ -597,13 +597,13 @@ class Call : public HLOExpr {
    * \param type_args The type arguments passed to a polymorphic function.
    * \param span The source span of the expression.
    */
-  MATX_DLL Call(Type ret_type,
+  HERCULES_DLL Call(Type ret_type,
                 HLOExpr op,
                 Array<BaseExpr> args,
                 Span span = Span(),
                 Array<ObjectRef> type_args = Array<ObjectRef>());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Call, HLOExpr, CallNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Call, HLOExpr, CallNode);
 };
 
 /*! \brief HLOIterator container */
@@ -633,7 +633,7 @@ class HLOIteratorNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.HLOIterator";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(HLOIteratorNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(HLOIteratorNode, HLOExprNode);
 };
 
 class HLOIterator : public HLOExpr {
@@ -643,9 +643,9 @@ class HLOIterator : public HLOExpr {
    * \param iter The iterator of a HLOIterator.
    * \param span The source span of the expression.
    */
-  MATX_DLL explicit HLOIterator(BaseExpr container, IntImm method, Span span = Span());
+  HERCULES_DLL explicit HLOIterator(BaseExpr container, IntImm method, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOIterator, HLOExpr, HLOIteratorNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOIterator, HLOExpr, HLOIteratorNode);
 };
 
 // Call args may be a InitializerList or InitializerDict
@@ -682,7 +682,7 @@ class InitializerListNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.InitializerList";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(InitializerListNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(InitializerListNode, HLOExprNode);
 };
 
 class InitializerList : public HLOExpr {
@@ -692,9 +692,9 @@ class InitializerList : public HLOExpr {
    * \param fields The fields of a InitializerList.
    * \param span The source span of the expression.
    */
-  MATX_DLL explicit InitializerList(Array<BaseExpr> fields, Span span = Span());
+  HERCULES_DLL explicit InitializerList(Array<BaseExpr> fields, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(InitializerList, HLOExpr, InitializerListNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(InitializerList, HLOExpr, InitializerListNode);
 };
 
 /*! \brief InitializerDict container */
@@ -730,7 +730,7 @@ class InitializerDictNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.InitializerDict";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(InitializerDictNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(InitializerDictNode, HLOExprNode);
 };
 
 class InitializerDict : public HLOExpr {
@@ -740,9 +740,9 @@ class InitializerDict : public HLOExpr {
    * \param fields The fields of a InitializerDict.
    * \param span The source span of the expression.
    */
-  MATX_DLL explicit InitializerDict(Map<BaseExpr, BaseExpr> fields, Span span = Span());
+  HERCULES_DLL explicit InitializerDict(Map<BaseExpr, BaseExpr> fields, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(InitializerDict, HLOExpr, InitializerDictNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(InitializerDict, HLOExpr, InitializerDictNode);
 };
 
 /*! \brief EnumAttr container */
@@ -766,7 +766,7 @@ class EnumAttrNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.EnumAttr";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(EnumAttrNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(EnumAttrNode, HLOExprNode);
 };
 
 class EnumAttr : public HLOExpr {
@@ -776,9 +776,9 @@ class EnumAttr : public HLOExpr {
    * \param enum_str The value of a EnumAttr.
    * \param span The source span of the expression.
    */
-  MATX_DLL explicit EnumAttr(StringRef enum_str, Span span = Span());
+  HERCULES_DLL explicit EnumAttr(StringRef enum_str, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(EnumAttr, HLOExpr, EnumAttrNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(EnumAttr, HLOExpr, EnumAttrNode);
 };
 
 /*! \brief Get attr field out of a HLOExpr. */
@@ -808,7 +808,7 @@ class ClassGetItemNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.ClassGetItem";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ClassGetItemNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ClassGetItemNode, HLOExprNode);
 };
 
 class ClassGetItem : public HLOExpr {
@@ -819,9 +819,9 @@ class ClassGetItem : public HLOExpr {
    * \param attr The attribute name for extracting a value in the tuple.
    * \param span The source span of the expression.
    */
-  MATX_DLL ClassGetItem(HLOExpr self, StringImm attr, Span span = Span());
+  HERCULES_DLL ClassGetItem(HLOExpr self, StringImm attr, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(ClassGetItem, HLOExpr, ClassGetItemNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(ClassGetItem, HLOExpr, ClassGetItemNode);
 };
 
 /*!
@@ -847,7 +847,7 @@ class HLOCastNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.HLOCast";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(HLOCastNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(HLOCastNode, HLOExprNode);
 };
 
 /*!
@@ -856,8 +856,8 @@ class HLOCastNode : public HLOExprNode {
  */
 class HLOCast : public HLOExpr {
  public:
-  MATX_DLL HLOCast(Type type, BaseExpr value, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOCast, HLOExpr, HLOCastNode);
+  HERCULES_DLL HLOCast(Type type, BaseExpr value, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOCast, HLOExpr, HLOCastNode);
 };
 
 /*!
@@ -883,7 +883,7 @@ class HLOMoveNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.HLOMove";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(HLOMoveNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(HLOMoveNode, HLOExprNode);
 };
 
 /*!
@@ -892,8 +892,8 @@ class HLOMoveNode : public HLOExprNode {
  */
 class HLOMove : public HLOExpr {
  public:
-  MATX_DLL HLOMove(BaseExpr value, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOMove, HLOExpr, HLOMoveNode);
+  HERCULES_DLL HLOMove(BaseExpr value, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOMove, HLOExpr, HLOMoveNode);
 };
 
 /*!
@@ -924,7 +924,7 @@ class HLOEnumerateNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.HLOEnumerate";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(HLOEnumerateNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(HLOEnumerateNode, HLOExprNode);
 };
 
 /*!
@@ -933,8 +933,8 @@ class HLOEnumerateNode : public HLOExprNode {
  */
 class HLOEnumerate : public HLOExpr {
  public:
-  MATX_DLL HLOEnumerate(BaseExpr value, BaseExpr start, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOEnumerate, HLOExpr, HLOEnumerateNode);
+  HERCULES_DLL HLOEnumerate(BaseExpr value, BaseExpr start, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOEnumerate, HLOExpr, HLOEnumerateNode);
 };
 
 /*!
@@ -960,7 +960,7 @@ class HLOZipNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.HLOZip";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(HLOZipNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(HLOZipNode, HLOExprNode);
 };
 
 /*!
@@ -969,8 +969,8 @@ class HLOZipNode : public HLOExprNode {
  */
 class HLOZip : public HLOExpr {
  public:
-  MATX_DLL HLOZip(Array<BaseExpr> values, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOZip, HLOExpr, HLOZipNode);
+  HERCULES_DLL HLOZip(Array<BaseExpr> values, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOZip, HLOExpr, HLOZipNode);
 };
 
 /*!
@@ -1001,7 +1001,7 @@ class ComprehensionNode : public Object {
   static constexpr const char* _type_key = "ir.Comprehension";
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ComprehensionNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ComprehensionNode, Object);
 };
 
 /*!
@@ -1010,10 +1010,10 @@ class ComprehensionNode : public Object {
  */
 class Comprehension : public ObjectRef {
  public:
-  MATX_DLL Comprehension(BaseExpr target, BaseExpr iter, Array<BaseExpr> ifs);
+  HERCULES_DLL Comprehension(BaseExpr target, BaseExpr iter, Array<BaseExpr> ifs);
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Comprehension, ObjectRef, ComprehensionNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(ComprehensionNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Comprehension, ObjectRef, ComprehensionNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(ComprehensionNode);
 };
 
 /*!
@@ -1042,7 +1042,7 @@ class ListCompNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.ListComp";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ListCompNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ListCompNode, HLOExprNode);
 };
 
 /*!
@@ -1051,13 +1051,13 @@ class ListCompNode : public HLOExprNode {
  */
 class ListComp : public HLOExpr {
  public:
-  MATX_DLL ListComp(Type ann_typed,
+  HERCULES_DLL ListComp(Type ann_typed,
                     BaseExpr elt,
                     Array<Comprehension> generators,
                     Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(ListComp, HLOExpr, ListCompNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(ListCompNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(ListComp, HLOExpr, ListCompNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(ListCompNode);
 };
 
 /*!
@@ -1086,7 +1086,7 @@ class SetCompNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.SetComp";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(SetCompNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(SetCompNode, HLOExprNode);
 };
 
 /*!
@@ -1095,13 +1095,13 @@ class SetCompNode : public HLOExprNode {
  */
 class SetComp : public HLOExpr {
  public:
-  MATX_DLL SetComp(Type ann_typed,
+  HERCULES_DLL SetComp(Type ann_typed,
                    BaseExpr elt,
                    Array<Comprehension> generators,
                    Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(SetComp, HLOExpr, SetCompNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(SetCompNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(SetComp, HLOExpr, SetCompNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(SetCompNode);
 };
 
 /*!
@@ -1133,7 +1133,7 @@ class DictCompNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.DictComp";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(DictCompNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(DictCompNode, HLOExprNode);
 };
 
 /*!
@@ -1142,15 +1142,15 @@ class DictCompNode : public HLOExprNode {
  */
 class DictComp : public HLOExpr {
  public:
-  MATX_DLL DictComp(Type ann_typed,
+  HERCULES_DLL DictComp(Type ann_typed,
                     BaseExpr key,
                     BaseExpr value,
                     Array<Comprehension> generators,
                     Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(DictComp, HLOExpr, DictCompNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(DictCompNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(DictComp, HLOExpr, DictCompNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(DictCompNode);
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -31,7 +31,7 @@
 #include <hercules/runtime/runtime_value.h>
 #include <hercules/runtime/utf8_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 bool Unicode::isSane() const noexcept {
@@ -40,7 +40,7 @@ bool Unicode::isSane() const noexcept {
          begin()[size()] == '\0';
 }
 
-#ifdef MATXSCRIPT_RUNTIME_STRING_UNICODE_ENABLE_INVARIANT_CHECK
+#ifdef HERCULES_RUNTIME_STRING_UNICODE_ENABLE_INVARIANT_CHECK
 namespace {
 struct Invariant {
   Invariant& operator=(const Invariant&) = delete;
@@ -59,7 +59,7 @@ struct Invariant {
 #define UNICODE_INVARIANT_CHECK(s) Invariant invariant_checker(s)
 #else
 #define UNICODE_INVARIANT_CHECK(s)
-#endif  // MATXSCRIPT_RUNTIME_STRING_UNICODE_ENABLE_INVARIANT_CHECK
+#endif  // HERCULES_RUNTIME_STRING_UNICODE_ENABLE_INVARIANT_CHECK
 
 /******************************************************************************
  * Generic Unicode Iterator
@@ -125,20 +125,20 @@ Unicode::self_view Unicode::view() const noexcept {
   return self_view(data_.data(), data_.size(), data_.category());
 }
 
-// MATXScriptAny
-void Unicode::MoveTo(MATXScriptAny* value) noexcept {
+// HerculesAny
+void Unicode::MoveTo(HerculesAny* value) noexcept {
   data_.MoveTo(&value->data.v_str_store, &value->pad);
   value->code = TypeIndex::kRuntimeUnicode;
 }
 
-Unicode Unicode::MoveFromNoCheck(MATXScriptAny* value) noexcept {
+Unicode Unicode::MoveFromNoCheck(HerculesAny* value) noexcept {
   return Unicode(ContainerType::MoveFromCHost(value));
 }
 
 // default constructors
 Unicode& Unicode::operator=(const Unicode& other) {
   UNICODE_INVARIANT_CHECK(*this);
-  if (MATXSCRIPT_UNLIKELY(&other == this)) {
+  if (HERCULES_UNLIKELY(&other == this)) {
     return *this;
   }
   if (other.data_.category() == ContainerType::Category::isLarge) {
@@ -149,7 +149,7 @@ Unicode& Unicode::operator=(const Unicode& other) {
 }
 
 Unicode& Unicode::operator=(Unicode&& other) noexcept {
-  if (MATXSCRIPT_UNLIKELY(&other == this)) {
+  if (HERCULES_UNLIKELY(&other == this)) {
     // Compatibility with std::basic_string<>,
     // C++11 21.4.2 [string.cons] / 23 requires self-move-assignment support.
     return *this;
@@ -318,7 +318,7 @@ Unicode& Unicode::append(self_view str) {
   auto s = str.data();
   auto n = str.size();
 
-  if (MATXSCRIPT_UNLIKELY(!n)) {
+  if (HERCULES_UNLIKELY(!n)) {
     // Unlikely but must be done
     return *this;
   }
@@ -333,7 +333,7 @@ Unicode& Unicode::append(self_view str) {
   // over pointers. See discussion at http://goo.gl/Cy2ya for more
   // info.
   std::less_equal<const value_type*> le;
-  if (MATXSCRIPT_UNLIKELY(le(oldData, s) && !le(oldData + oldSize, s))) {
+  if (HERCULES_UNLIKELY(le(oldData, s) && !le(oldData + oldSize, s))) {
     assert(le(s + n, oldData + oldSize));
     // expandNoinit() could have moved the storage, restore the source.
     s = data() + (s - oldData);
@@ -363,7 +363,7 @@ void Unicode::push_back(value_type c) {
 }
 
 Unicode& Unicode::assign(const Unicode& str) {
-  if (MATXSCRIPT_UNLIKELY(&str == this)) {
+  if (HERCULES_UNLIKELY(&str == this)) {
     return *this;
   }
   if (str.data_.category() == ContainerType::Category::isLarge) {
@@ -484,12 +484,12 @@ Unicode Unicode::join(const FTList<Unicode>& list) const {
   return UnicodeHelper::Join(view(), list);
 }
 
-#if MATXSCRIPT_USE_CXX17_STRING_VIEW
+#if HERCULES_USE_CXX17_STRING_VIEW
 Unicode::operator std::basic_string_view<Unicode::value_type,
                                          std::char_traits<Unicode::value_type>>() const noexcept {
   return {data(), static_cast<size_t>(size())};
 }
-#elif MATXSCRIPT_USE_CXX14_STRING_VIEW
+#elif HERCULES_USE_CXX14_STRING_VIEW
 explicit operator std::experimental::basic_string_view<Unicode::value_type,
                                                        std::char_traits<Unicode::value_type>>()
     const noexcept {
@@ -706,4 +706,4 @@ typename Unicode::const_reverse_iterator Unicode::Unicode::crend() const noexcep
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

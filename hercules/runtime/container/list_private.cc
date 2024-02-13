@@ -19,10 +19,10 @@
  */
 #include <hercules/runtime/container/list_private.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(ListNode);
+HERCULES_REGISTER_OBJECT_TYPE(ListNode);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

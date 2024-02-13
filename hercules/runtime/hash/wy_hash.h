@@ -30,7 +30,7 @@
 
 #include <hercules/runtime/hash/base/config.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace hash_internal {
 
@@ -40,12 +40,12 @@ namespace hash_internal {
 // To allow all hashable types (including string_view and Span) to depend on
 // this algorithm, we keep the API low-level, with as few dependencies as
 // possible.
-#ifdef MATXSCRIPT_HAVE_INTRINSIC_INT128
+#ifdef HERCULES_HAVE_INTRINSIC_INT128
 typedef __uint128_t uint128;
 
 uint64_t Wyhash(const void* data, size_t len, uint64_t seed, const uint64_t salt[5]) noexcept;
-#endif  // MATXSCRIPT_HAVE_INTRINSIC_INT128
+#endif  // HERCULES_HAVE_INTRINSIC_INT128
 
 }  // namespace hash_internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

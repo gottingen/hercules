@@ -26,11 +26,11 @@
 #include <hercules/runtime/registry.h>
 #include <hercules/runtime/type_helper_macros.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using namespace runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::ir::printer;
 
 RangeExpr::RangeExpr(PrimExpr start, PrimExpr stop, PrimExpr step, Span span) {
   auto n = make_object<RangeExprNode>();
@@ -42,14 +42,14 @@ RangeExpr::RangeExpr(PrimExpr start, PrimExpr stop, PrimExpr step, Span span) {
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.RangeExpr")
+HERCULES_REGISTER_GLOBAL("ir.RangeExpr")
     .set_body_typed([](PrimExpr start, PrimExpr stop, PrimExpr step, Span span) -> RTValue {
       return RangeExpr(std::move(start), std::move(stop), std::move(step), std::move(span));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(RangeExprNode);
+HERCULES_REGISTER_NODE_TYPE(RangeExprNode);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
     .set_dispatch<RangeExpr>("", [](RangeExpr r, ObjectPath p, IRDocsifier d) -> Doc {
       // TODO: optimize range args
       ExprDoc start = d->AsDoc<ExprDoc>(r->start, p->Attr("start"));
@@ -59,4 +59,4 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
     });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -23,7 +23,7 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/function.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(FTList, Constructor) {
@@ -502,4 +502,4 @@ TEST(FTList, sort) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

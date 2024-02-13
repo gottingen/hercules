@@ -29,7 +29,7 @@
 #include <hercules/runtime/container/string.h>
 #include <hercules/runtime/container/string_view.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class FileReader {
@@ -75,4 +75,4 @@ class FileReader {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

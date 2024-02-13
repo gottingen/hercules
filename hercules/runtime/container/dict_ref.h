@@ -34,7 +34,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <class I>
@@ -283,18 +283,18 @@ class Dict : public ObjectRef {
   mapped_type& get_item(int64_t key) const;
 
   mapped_type& get_item(const string_view& key) const;
-  MATXSCRIPT_ALWAYS_INLINE mapped_type& get_item(const String& key) const {
+  HERCULES_ALWAYS_INLINE mapped_type& get_item(const String& key) const {
     return get_item(key.view());
   }
-  MATXSCRIPT_ALWAYS_INLINE mapped_type& get_item(char const* key) const {
+  HERCULES_ALWAYS_INLINE mapped_type& get_item(char const* key) const {
     return get_item(string_view(key));
   }
 
   mapped_type& get_item(const unicode_view& key) const;
-  MATXSCRIPT_ALWAYS_INLINE mapped_type& get_item(const Unicode& key) const {
+  HERCULES_ALWAYS_INLINE mapped_type& get_item(const Unicode& key) const {
     return get_item(key.view());
   }
-  MATXSCRIPT_ALWAYS_INLINE mapped_type& get_item(char32_t const* key) const {
+  HERCULES_ALWAYS_INLINE mapped_type& get_item(char32_t const* key) const {
     return get_item(unicode_view(key));
   }
 
@@ -311,22 +311,22 @@ class Dict : public ObjectRef {
   mapped_type const& get_default(const unicode_view& key,
                                  mapped_type const& default_val = None) const;
 
-  MATXSCRIPT_ALWAYS_INLINE mapped_type const& get_default(
+  HERCULES_ALWAYS_INLINE mapped_type const& get_default(
       const String& key, mapped_type const& default_val = None) const {
     return this->get_default(key.view(), default_val);
   }
 
-  MATXSCRIPT_ALWAYS_INLINE mapped_type const& get_default(
+  HERCULES_ALWAYS_INLINE mapped_type const& get_default(
       const Unicode& key, mapped_type const& default_val = None) const {
     return this->get_default(key.view(), default_val);
   }
 
-  MATXSCRIPT_ALWAYS_INLINE mapped_type const& get_default(
+  HERCULES_ALWAYS_INLINE mapped_type const& get_default(
       char const* key, mapped_type const& default_val = None) const {
     return this->get_default(string_view(key), default_val);
   }
 
-  MATXSCRIPT_ALWAYS_INLINE mapped_type const& get_default(
+  HERCULES_ALWAYS_INLINE mapped_type const& get_default(
       char32_t const* key, mapped_type const& default_val = None) const {
     return this->get_default(unicode_view(key), default_val);
   }
@@ -334,13 +334,13 @@ class Dict : public ObjectRef {
   mapped_type pop(PyArgs args) const;
 
   void set_item(key_type&& key, mapped_type&& value) const;
-  MATXSCRIPT_ALWAYS_INLINE void set_item(const key_type& key, mapped_type&& value) const {
+  HERCULES_ALWAYS_INLINE void set_item(const key_type& key, mapped_type&& value) const {
     return set_item(key_type(key), std::move(value));
   }
-  MATXSCRIPT_ALWAYS_INLINE void set_item(key_type&& key, const mapped_type& value) const {
+  HERCULES_ALWAYS_INLINE void set_item(key_type&& key, const mapped_type& value) const {
     return set_item(std::move(key), mapped_type(value));
   }
-  MATXSCRIPT_ALWAYS_INLINE void set_item(const key_type& key, const mapped_type& value) const {
+  HERCULES_ALWAYS_INLINE void set_item(const key_type& key, const mapped_type& value) const {
     return set_item(key_type(key), mapped_type(value));
   }
 
@@ -352,18 +352,18 @@ class Dict : public ObjectRef {
   mapped_type& operator[](const char32_t* key) const;
 
   void emplace(key_type&& key, mapped_type&& value) const;
-  MATXSCRIPT_ALWAYS_INLINE void emplace(const key_type& key, mapped_type&& value) const {
+  HERCULES_ALWAYS_INLINE void emplace(const key_type& key, mapped_type&& value) const {
     return emplace(key_type(key), std::move(value));
   }
-  MATXSCRIPT_ALWAYS_INLINE void emplace(key_type&& key, const mapped_type& value) const {
+  HERCULES_ALWAYS_INLINE void emplace(key_type&& key, const mapped_type& value) const {
     return emplace(std::move(key), mapped_type(value));
   }
-  MATXSCRIPT_ALWAYS_INLINE void emplace(const key_type& key, const mapped_type& value) const {
+  HERCULES_ALWAYS_INLINE void emplace(const key_type& key, const mapped_type& value) const {
     return emplace(key_type(key), mapped_type(value));
   }
 
   void emplace(value_type&& value) const;
-  MATXSCRIPT_ALWAYS_INLINE void emplace(const value_type& value) const {
+  HERCULES_ALWAYS_INLINE void emplace(const value_type& value) const {
     return emplace(value_type(value));
   }
 
@@ -383,23 +383,23 @@ class Dict : public ObjectRef {
   bool contains(int64_t key) const;
 
   bool contains(const string_view& key) const;
-  MATXSCRIPT_ALWAYS_INLINE bool contains(const String& key) const {
+  HERCULES_ALWAYS_INLINE bool contains(const String& key) const {
     return this->contains(key.view());
   }
-  MATXSCRIPT_ALWAYS_INLINE bool contains(const char* key) const {
+  HERCULES_ALWAYS_INLINE bool contains(const char* key) const {
     return this->contains(string_view(key));
   }
 
   bool contains(const unicode_view& key) const;
-  MATXSCRIPT_ALWAYS_INLINE bool contains(const Unicode& key) const {
+  HERCULES_ALWAYS_INLINE bool contains(const Unicode& key) const {
     return this->contains(key.view());
   }
-  MATXSCRIPT_ALWAYS_INLINE bool contains(const char32_t* key) const {
+  HERCULES_ALWAYS_INLINE bool contains(const char32_t* key) const {
     return this->contains(unicode_view(key));
   }
 
   template <class U, typename = typename std::enable_if<!is_runtime_value<U>::value>::type>
-  MATXSCRIPT_ALWAYS_INLINE bool contains(const U& key) const {
+  HERCULES_ALWAYS_INLINE bool contains(const U& key) const {
     return this->contains(static_cast<const Any&>(GenericValueConverter<RTView>{}(key)));
   }
 
@@ -435,13 +435,13 @@ struct type_index_traits<Dict> {
 }  // namespace TypeIndex
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE Dict Any::As<Dict>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeDict);
+HERCULES_ALWAYS_INLINE Dict Any::As<Dict>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeDict);
   return Dict(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE Dict Any::AsNoCheck<Dict>() const {
+HERCULES_ALWAYS_INLINE Dict Any::AsNoCheck<Dict>() const {
   return Dict(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
@@ -451,4 +451,4 @@ template <>
 bool IsConvertible<Dict>(const Object* node);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

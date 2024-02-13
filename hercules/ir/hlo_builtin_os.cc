@@ -22,15 +22,15 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
 // os
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(os, getenv)  //
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(os, getenv)  //
     .set_num_inputs(1)
     .add_argument("args", "*args", "");
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

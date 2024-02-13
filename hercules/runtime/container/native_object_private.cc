@@ -23,7 +23,7 @@
 #include <hercules/pipeline/jit_op.h>
 #include <hercules/runtime/container/user_data_private.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 uint32_t NativeObject::tag_2_71828182846() const {
@@ -63,7 +63,7 @@ RTView NativeObject::__getattr__(string_view var_name) const {
     auto* jit_ptr = static_cast<JitObject*>(static_cast<OpKernel*>(opaque_ptr_.get()));
     return jit_ptr->self()->get_attr(var_name);
   }
-  MXTHROW << "[NativeObject] get_attr is disabled";
+  HSTHROW << "[NativeObject] get_attr is disabled";
   return None;
 }
 
@@ -72,8 +72,8 @@ void NativeObject::__setattr__(string_view var_name, const Any& val) {
     auto* jit_ptr = static_cast<JitObject*>(static_cast<OpKernel*>(opaque_ptr_.get()));
     return jit_ptr->self()->set_attr(var_name, val);
   }
-  MXTHROW << "[NativeObject] set_attr is disabled";
+  HSTHROW << "[NativeObject] set_attr is disabled";
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

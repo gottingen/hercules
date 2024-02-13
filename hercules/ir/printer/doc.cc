@@ -24,7 +24,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -185,9 +185,9 @@ YieldDoc::YieldDoc(Optional<ExprDoc> value) {
 }
 
 AssignDoc::AssignDoc(ExprDoc lhs, Optional<ExprDoc> rhs, Optional<ExprDoc> annotation) {
-  MXCHECK(rhs.defined() || annotation.defined())
+  HSCHECK(rhs.defined() || annotation.defined())
       << "ValueError: At least one of rhs and annotation needs to be non-null for AssignDoc.";
-  MXCHECK(lhs->IsInstance<IdDocNode>() || annotation == nullptr)
+  HSCHECK(lhs->IsInstance<IdDocNode>() || annotation == nullptr)
       << "ValueError: annotation can only be nonnull if lhs is an identifier.";
 
   ObjectPtr<AssignDocNode> n = make_object<AssignDocNode>();
@@ -198,7 +198,7 @@ AssignDoc::AssignDoc(ExprDoc lhs, Optional<ExprDoc> rhs, Optional<ExprDoc> annot
 }
 
 IfDoc::IfDoc(ExprDoc predicate, Array<StmtDoc> then_branch, Array<StmtDoc> else_branch) {
-  MXCHECK(!then_branch.empty() || !else_branch.empty())
+  HSCHECK(!then_branch.empty() || !else_branch.empty())
       << "ValueError: At least one of the then branch or else branch needs to be non-empty.";
 
   ObjectPtr<IfDocNode> n = make_object<IfDocNode>();
@@ -338,22 +338,22 @@ ModuleDoc::ModuleDoc(Array<StmtDoc> body) {
   this->data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(DocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.DocSetSourcePaths")
+HERCULES_REGISTER_NODE_TYPE(DocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.DocSetSourcePaths")
     .set_body_typed([](Doc doc, Array<ObjectPath> source_paths) {
       doc->source_paths = std::move(source_paths);
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ExprDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ExprDocAttr")
+HERCULES_REGISTER_NODE_TYPE(ExprDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ExprDocAttr")
     .set_body_typed([](const ExprDoc& self, StringRef attr) {
       return self->Attr(std::move(attr));
     });
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ExprDocIndex")
+HERCULES_REGISTER_GLOBAL("ir.printer.ExprDocIndex")
     .set_body_typed([](const ExprDoc& self, Array<Doc> indices) {
       return self->operator[](std::move(indices));
     });
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ExprDocCall")
+HERCULES_REGISTER_GLOBAL("ir.printer.ExprDocCall")
     .set_body_typed([](const ExprDoc& self,
                        Array<ExprDoc, void> args,
                        Array<StringRef> kwargs_keys,
@@ -361,43 +361,43 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ExprDocCall")
       return self->Call(std::move(args), std::move(kwargs_keys), std::move(kwargs_values));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(StmtDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.StmtDocSetComment")
+HERCULES_REGISTER_NODE_TYPE(StmtDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.StmtDocSetComment")
     .set_body_typed([](StmtDoc doc, Optional<StringRef> comment) {
       doc->comment = std::move(comment);
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(StmtBlockDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.StmtBlockDoc").set_body_typed([](Array<StmtDoc> stmts) {
+HERCULES_REGISTER_NODE_TYPE(StmtBlockDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.StmtBlockDoc").set_body_typed([](Array<StmtDoc> stmts) {
   return StmtBlockDoc(std::move(stmts));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(LiteralDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.LiteralDocNone").set_body_typed(LiteralDoc::None);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.LiteralDocInt").set_body_typed(LiteralDoc::Int);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.LiteralDocBoolean").set_body_typed(LiteralDoc::Boolean);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.LiteralDocFloat").set_body_typed(LiteralDoc::Float);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.LiteralDocStr").set_body_typed(LiteralDoc::Str);
+HERCULES_REGISTER_NODE_TYPE(LiteralDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.LiteralDocNone").set_body_typed(LiteralDoc::None);
+HERCULES_REGISTER_GLOBAL("ir.printer.LiteralDocInt").set_body_typed(LiteralDoc::Int);
+HERCULES_REGISTER_GLOBAL("ir.printer.LiteralDocBoolean").set_body_typed(LiteralDoc::Boolean);
+HERCULES_REGISTER_GLOBAL("ir.printer.LiteralDocFloat").set_body_typed(LiteralDoc::Float);
+HERCULES_REGISTER_GLOBAL("ir.printer.LiteralDocStr").set_body_typed(LiteralDoc::Str);
 
-MATXSCRIPT_REGISTER_NODE_TYPE(IdDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.IdDoc").set_body_typed([](StringRef name) {
+HERCULES_REGISTER_NODE_TYPE(IdDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.IdDoc").set_body_typed([](StringRef name) {
   return IdDoc(std::move(name));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(AttrAccessDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.AttrAccessDoc")
+HERCULES_REGISTER_NODE_TYPE(AttrAccessDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.AttrAccessDoc")
     .set_body_typed([](ExprDoc value, StringRef attr) {
       return AttrAccessDoc(std::move(value), std::move(attr));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(IndexDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.IndexDoc")
+HERCULES_REGISTER_NODE_TYPE(IndexDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.IndexDoc")
     .set_body_typed([](ExprDoc value, Array<Doc> indices) {
       return IndexDoc(std::move(value), std::move(indices));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(CallDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.CallDoc")
+HERCULES_REGISTER_NODE_TYPE(CallDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.CallDoc")
     .set_body_typed([](ExprDoc callee,                //
                        Array<ExprDoc> args,           //
                        Array<StringRef> kwargs_keys,  //
@@ -406,118 +406,118 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.printer.CallDoc")
           std::move(callee), std::move(args), std::move(kwargs_keys), std::move(kwargs_values));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(OperationDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.OperationDoc")
+HERCULES_REGISTER_NODE_TYPE(OperationDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.OperationDoc")
     .set_body_typed([](int32_t kind, Array<ExprDoc> operands) {
       return OperationDoc(OperationDocNode::Kind(kind), std::move(operands));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(LambdaDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.LambdaDoc")
+HERCULES_REGISTER_NODE_TYPE(LambdaDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.LambdaDoc")
     .set_body_typed([](Array<IdDoc> args, ExprDoc body) {
       return LambdaDoc(std::move(args), std::move(body));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(TupleDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.TupleDoc").set_body_typed([](Array<ExprDoc> elements) {
+HERCULES_REGISTER_NODE_TYPE(TupleDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.TupleDoc").set_body_typed([](Array<ExprDoc> elements) {
   return TupleDoc(std::move(elements));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ListDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ListDoc").set_body_typed([](Array<ExprDoc> elements) {
+HERCULES_REGISTER_NODE_TYPE(ListDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ListDoc").set_body_typed([](Array<ExprDoc> elements) {
   return ListDoc(std::move(elements));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(DictDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.DictDoc")
+HERCULES_REGISTER_NODE_TYPE(DictDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.DictDoc")
     .set_body_typed([](Array<ExprDoc> keys, Array<ExprDoc> values) {
       return DictDoc(std::move(keys), std::move(values));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(SetDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.SetDoc").set_body_typed([](Array<ExprDoc> elements) {
+HERCULES_REGISTER_NODE_TYPE(SetDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.SetDoc").set_body_typed([](Array<ExprDoc> elements) {
   return SetDoc(std::move(elements));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ComprehensionDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ComprehensionDoc")
+HERCULES_REGISTER_NODE_TYPE(ComprehensionDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ComprehensionDoc")
     .set_body_typed([](ExprDoc target, ExprDoc iter, Optional<Array<ExprDoc>> ifs) {
       return ComprehensionDoc(std::move(target), std::move(iter), std::move(ifs));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ListCompDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ListCompDoc")
+HERCULES_REGISTER_NODE_TYPE(ListCompDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ListCompDoc")
     .set_body_typed([](ExprDoc elt, Array<ComprehensionDoc> generators) {
       return ListCompDoc(std::move(elt), std::move(generators));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(SetCompDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.SetCompDoc")
+HERCULES_REGISTER_NODE_TYPE(SetCompDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.SetCompDoc")
     .set_body_typed([](ExprDoc elt, Array<ComprehensionDoc> generators) {
       return SetCompDoc(std::move(elt), std::move(generators));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(DictCompDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.DictCompDoc")
+HERCULES_REGISTER_NODE_TYPE(DictCompDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.DictCompDoc")
     .set_body_typed([](ExprDoc key, ExprDoc value, Array<ComprehensionDoc> generators) {
       return DictCompDoc(std::move(key), std::move(value), std::move(generators));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(SliceDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.SliceDoc")
+HERCULES_REGISTER_NODE_TYPE(SliceDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.SliceDoc")
     .set_body_typed([](Optional<ExprDoc> start, Optional<ExprDoc> stop, Optional<ExprDoc> step) {
       return SliceDoc(std::move(start), std::move(stop), std::move(step));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(YieldDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.YieldDoc").set_body_typed([](Optional<ExprDoc> value) {
+HERCULES_REGISTER_NODE_TYPE(YieldDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.YieldDoc").set_body_typed([](Optional<ExprDoc> value) {
   return YieldDoc(std::move(value));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(AssignDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.AssignDoc")
+HERCULES_REGISTER_NODE_TYPE(AssignDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.AssignDoc")
     .set_body_typed([](ExprDoc lhs, Optional<ExprDoc> rhs, Optional<ExprDoc> annotation) {
       return AssignDoc(std::move(lhs), std::move(rhs), std::move(annotation));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(IfDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.IfDoc")
+HERCULES_REGISTER_NODE_TYPE(IfDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.IfDoc")
     .set_body_typed([](ExprDoc predicate, Array<StmtDoc> then_branch, Array<StmtDoc> else_branch) {
       return IfDoc(std::move(predicate), std::move(then_branch), std::move(else_branch));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(WhileDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.WhileDoc")
+HERCULES_REGISTER_NODE_TYPE(WhileDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.WhileDoc")
     .set_body_typed([](ExprDoc predicate, Array<StmtDoc> body) {
       return WhileDoc(std::move(predicate), std::move(body));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ForDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ForDoc")
+HERCULES_REGISTER_NODE_TYPE(ForDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ForDoc")
     .set_body_typed([](ExprDoc lhs, ExprDoc rhs, Array<StmtDoc> body) {
       return ForDoc(std::move(lhs), std::move(rhs), std::move(body));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ContinueDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ContinueDoc").set_body_typed([]() {
+HERCULES_REGISTER_NODE_TYPE(ContinueDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ContinueDoc").set_body_typed([]() {
   static ContinueDoc c;
   return c;
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(BreakDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.BreakDoc").set_body_typed([]() {
+HERCULES_REGISTER_NODE_TYPE(BreakDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.BreakDoc").set_body_typed([]() {
   static BreakDoc c;
   return c;
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ExceptionHandlerDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ExceptionHandlerDoc")
+HERCULES_REGISTER_NODE_TYPE(ExceptionHandlerDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ExceptionHandlerDoc")
     .set_body_typed([](Optional<ExprDoc> type, Optional<ExprDoc> name, Array<StmtDoc> body) {
       return ExceptionHandlerDoc(std::move(type), std::move(name), std::move(body));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(TryExceptDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.TryExceptDoc")
+HERCULES_REGISTER_NODE_TYPE(TryExceptDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.TryExceptDoc")
     .set_body_typed([](Array<StmtDoc> body,
                        Optional<Array<ExceptionHandlerDoc>> handlers,
                        Optional<Array<StmtDoc>> orelse,
@@ -526,36 +526,36 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.printer.TryExceptDoc")
           std::move(body), std::move(handlers), std::move(orelse), std::move(finalbody));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(RaiseDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.RaiseDoc")
+HERCULES_REGISTER_NODE_TYPE(RaiseDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.RaiseDoc")
     .set_body_typed([](Optional<ExprDoc> exc, Optional<ExprDoc> cause) {
       return RaiseDoc(std::move(exc), std::move(cause));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ScopeDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ScopeDoc")
+HERCULES_REGISTER_NODE_TYPE(ScopeDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ScopeDoc")
     .set_body_typed([](Optional<ExprDoc> lhs, ExprDoc rhs, Array<StmtDoc> body) {
       return ScopeDoc(std::move(lhs), std::move(rhs), std::move(body));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ExprStmtDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ExprStmtDoc").set_body_typed([](ExprDoc expr) {
+HERCULES_REGISTER_NODE_TYPE(ExprStmtDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ExprStmtDoc").set_body_typed([](ExprDoc expr) {
   return ExprStmtDoc(std::move(expr));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(AssertDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.AssertDoc")
+HERCULES_REGISTER_NODE_TYPE(AssertDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.AssertDoc")
     .set_body_typed([](ExprDoc test, Optional<ExprDoc> msg = NullOpt) {
       return AssertDoc(std::move(test), std::move(msg));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ReturnDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ReturnDoc").set_body_typed([](ExprDoc value) {
+HERCULES_REGISTER_NODE_TYPE(ReturnDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ReturnDoc").set_body_typed([](ExprDoc value) {
   return ReturnDoc(std::move(value));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(FunctionDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.FunctionDoc")
+HERCULES_REGISTER_NODE_TYPE(FunctionDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.FunctionDoc")
     .set_body_typed([](IdDoc name,
                        Array<AssignDoc> args,
                        Array<ExprDoc> decorators,
@@ -568,27 +568,27 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.printer.FunctionDoc")
                          std::move(body));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ClassDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ClassDoc")
+HERCULES_REGISTER_NODE_TYPE(ClassDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ClassDoc")
     .set_body_typed([](IdDoc name, IdDoc base, Array<ExprDoc> decorators, Array<StmtDoc> body) {
       return ClassDoc(std::move(name), std::move(base), std::move(decorators), std::move(body));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(CommentDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.CommentDoc").set_body_typed([](StringRef comment) {
+HERCULES_REGISTER_NODE_TYPE(CommentDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.CommentDoc").set_body_typed([](StringRef comment) {
   return CommentDoc(std::move(comment));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(DocStringDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.DocStringDoc").set_body_typed([](StringRef docs) {
+HERCULES_REGISTER_NODE_TYPE(DocStringDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.DocStringDoc").set_body_typed([](StringRef docs) {
   return DocStringDoc(std::move(docs));
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ModuleDocNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.printer.ModuleDoc").set_body_typed([](Array<StmtDoc> body) {
+HERCULES_REGISTER_NODE_TYPE(ModuleDocNode);
+HERCULES_REGISTER_GLOBAL("ir.printer.ModuleDoc").set_body_typed([](Array<StmtDoc> body) {
   return ModuleDoc(std::move(body));
 });
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

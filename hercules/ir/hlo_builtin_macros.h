@@ -21,23 +21,23 @@
 #include <hercules/ir/op_attr_types.h>
 #include <hercules/ir/op_expr.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
-#define MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(OpName) \
+#define HERCULES_IR_DEFINE_HLO_BUILTIN_FUNC(OpName) \
   const Op& OpName() {                                \
     static const Op& op = Op::Get("ir." #OpName);     \
     return op;                                        \
   }                                                   \
-  MATXSCRIPT_IR_REGISTER_OP("ir." #OpName)
+  HERCULES_IR_REGISTER_OP("ir." #OpName)
 
 /******************************************************************************
  * Method
  *****************************************************************************/
 
-#define MATXSCRIPT_IR_DEFINE_HLO_METHOD(T, OpName, KernelMethod)                      \
-  MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(T##_##OpName)                                 \
+#define HERCULES_IR_DEFINE_HLO_METHOD(T, OpName, KernelMethod)                      \
+  HERCULES_IR_DEFINE_HLO_BUILTIN_FUNC(T##_##OpName)                                 \
       .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque)) \
       .set_attr<TMethodSymbol>("TMethodSymbol", #KernelMethod)                        \
       .set_attr<TPrinterMethodSymbol>("TPrinterMethodSymbol", #OpName)
@@ -46,12 +46,12 @@ namespace builtin {
  * Global Function
  *****************************************************************************/
 
-#define MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(Prefix, OpName)                                   \
-  MATXSCRIPT_IR_DEFINE_HLO_BUILTIN_FUNC(Prefix##_##OpName)                                     \
+#define HERCULES_IR_DEFINE_HLO_MODULE_FUNC(Prefix, OpName)                                   \
+  HERCULES_IR_DEFINE_HLO_BUILTIN_FUNC(Prefix##_##OpName)                                     \
       .set_attr<TCallEffectKind>("TCallEffectKind", Integer(CallEffectKind::kOpaque))          \
-      .set_attr<TGlobalSymbol>("TGlobalSymbol", MATXSCRIPT_AS_STR(kernel_##Prefix##_##OpName)) \
+      .set_attr<TGlobalSymbol>("TGlobalSymbol", HERCULES_AS_STR(kernel_##Prefix##_##OpName)) \
       .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", #Prefix "." #OpName)
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

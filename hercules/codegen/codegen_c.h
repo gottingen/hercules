@@ -44,7 +44,7 @@
 #include <hercules/ir/stmt_functor.h>
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace codegen {
 
 using namespace ir;
@@ -109,7 +109,7 @@ class CodeGenC : public PrimExprFunctor<void(const PrimExpr&, std::ostream&)>,
     } else if (e->IsInstance<PrimExprNode>()) {
       PrimExprFunctor::VisitExpr(runtime::Downcast<PrimExpr>(e), os);
     } else {
-      MXCHECK(false) << "[CodeGenC] not supported expr node: " << e;
+      HSCHECK(false) << "[CodeGenC] not supported expr node: " << e;
     }
   }
 
@@ -384,4 +384,4 @@ class CodeGenC : public PrimExprFunctor<void(const PrimExpr&, std::ostream&)>,
 };
 
 }  // namespace codegen
-}  // namespace matxscript
+}  // namespace hercules

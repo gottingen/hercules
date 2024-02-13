@@ -26,7 +26,7 @@
 #include <hercules/runtime/runtime_value.h>
 #include <hercules/runtime/type_helper_macros.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace {
@@ -57,24 +57,24 @@ struct remove_runtime_view<RTView> {
  * fused list ops
  *****************************************************************************/
 template <typename... Args>
-MATXSCRIPT_ALWAYS_INLINE auto kernel_list_fused_repeat_one(Args&&... args) {
+HERCULES_ALWAYS_INLINE auto kernel_list_fused_repeat_one(Args&&... args) {
   return List::repeat_one(std::forward<Args>(args)...);
 }
 
-MATXSCRIPT_ALWAYS_INLINE auto kernel_list_fused_repeat_many(
+HERCULES_ALWAYS_INLINE auto kernel_list_fused_repeat_many(
     const std::initializer_list<List::value_type>& values, int64_t times) {
   return List::repeat_many(values, times);
 }
 
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE auto kernel_ft_list_fused_repeat_one(T&& value, int64_t times) {
+HERCULES_ALWAYS_INLINE auto kernel_ft_list_fused_repeat_one(T&& value, int64_t times) {
   using T_TYPE = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
   using ElementType = typename remove_runtime_view<T_TYPE>::type;
   return FTList<ElementType>::repeat_one(std::forward<T>(value), times);
 }
 
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE auto kernel_ft_list_fused_repeat_many(
+HERCULES_ALWAYS_INLINE auto kernel_ft_list_fused_repeat_many(
     const std::initializer_list<T>& values, int64_t times) {
   using T_TYPE = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
   using ElementType = typename remove_runtime_view<T_TYPE>::type;
@@ -82,4 +82,4 @@ MATXSCRIPT_ALWAYS_INLINE auto kernel_ft_list_fused_repeat_many(
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

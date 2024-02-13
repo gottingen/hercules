@@ -27,14 +27,14 @@
 
 #include <hercules/runtime/memory.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * Tuple container
  *****************************************************************************/
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(TupleNode);
+HERCULES_REGISTER_OBJECT_TYPE(TupleNode);
 
 ObjectPtr<TupleNode> TupleNode::MakeNones(size_t n) {
   auto output_node = make_inplace_array_object<TupleNode, TupleNode::value_type>(n);
@@ -48,4 +48,4 @@ ObjectPtr<TupleNode> TupleNode::MakeNones(size_t n) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

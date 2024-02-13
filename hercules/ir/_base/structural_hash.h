@@ -29,7 +29,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::Object;
@@ -105,7 +105,7 @@ class StructuralHash : public BaseValueHash {
    * \param key The left operand.
    * \return The hash value.
    */
-  MATX_DLL uint64_t operator()(const ObjectRef& key) const;
+  HERCULES_DLL uint64_t operator()(const ObjectRef& key) const;
 };
 
 /*!
@@ -270,4 +270,4 @@ class SHashHandlerDefault : public SHashReducer::Handler {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

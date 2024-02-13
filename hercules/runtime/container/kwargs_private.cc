@@ -19,10 +19,10 @@
  */
 #include <hercules/runtime/container/kwargs_private.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(KwargsNode);
+HERCULES_REGISTER_OBJECT_TYPE(KwargsNode);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

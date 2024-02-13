@@ -26,7 +26,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
@@ -83,17 +83,17 @@ bool IsConvertible<Iterator>(const Object* node);
 
 // RTValue converter
 template <>
-MATXSCRIPT_ALWAYS_INLINE Iterator Any::As<Iterator>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeIterator);
+HERCULES_ALWAYS_INLINE Iterator Any::As<Iterator>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeIterator);
   return Iterator(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE Iterator Any::AsNoCheck<Iterator>() const {
+HERCULES_ALWAYS_INLINE Iterator Any::AsNoCheck<Iterator>() const {
   return Iterator(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 std::ostream& operator<<(std::ostream& os, Iterator const& n);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

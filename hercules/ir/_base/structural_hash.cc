@@ -31,7 +31,7 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using namespace runtime;
@@ -40,7 +40,7 @@ using namespace runtime;
 void ReflectionVTable::SHashReduce(const Object* self, SHashReducer reducer) const {
   uint32_t tindex = self->type_index();
   if (tindex >= fshash_reduce_.size() || fshash_reduce_[tindex] == nullptr) {
-    MXLOG(FATAL) << "TypeError: SHashReduce of " << self->GetTypeKey()
+    HSLOG(FATAL) << "TypeError: SHashReduce of " << self->GetTypeKey()
                  << " is not registered via TVM_REGISTER_NODE_TYPE";
   }
   fshash_reduce_[tindex](self, reducer);
@@ -85,7 +85,7 @@ class SHashHandlerDefault::Impl {
 
   void MarkGraphNode() {
     // need to push to pending tasks in this case
-    MXCHECK(!allow_push_to_stack_ && !task_stack_.empty());
+    HSCHECK(!allow_push_to_stack_ && !task_stack_.empty());
     task_stack_.back().graph_node_hash = true;
   }
 
@@ -103,7 +103,7 @@ class SHashHandlerDefault::Impl {
   }
 
   void SHashReduceFreeVar(const runtime::Object* var, bool map_free_vars) {
-    MXCHECK(!hash_memo_.count(GetRef<ObjectRef>(var)));
+    HSCHECK(!hash_memo_.count(GetRef<ObjectRef>(var)));
     if (map_free_vars) {
       // use counter value.
       uint64_t value = std::hash<uint64_t>()(free_var_counter_++);
@@ -133,26 +133,26 @@ class SHashHandlerDefault::Impl {
   }
 
   uint64_t Hash(const ObjectRef& object, bool map_free_vars) {
-    MXCHECK_EQ(task_stack_.size(), 0U);
-    MXCHECK_EQ(pending_tasks_.size(), 0U);
-    MXCHECK_EQ(result_stack_.size(), 0U);
+    HSCHECK_EQ(task_stack_.size(), 0U);
+    HSCHECK_EQ(pending_tasks_.size(), 0U);
+    HSCHECK_EQ(result_stack_.size(), 0U);
 
     this->SHashReduce(object, map_free_vars);
-    MXCHECK_EQ(pending_tasks_.size(), 1U);
-    MXCHECK(allow_push_to_stack_);
+    HSCHECK_EQ(pending_tasks_.size(), 1U);
+    HSCHECK(allow_push_to_stack_);
     task_stack_.emplace_back(std::move(pending_tasks_.back()));
     pending_tasks_.clear();
 
     this->RunTasks();
 
-    MXCHECK_EQ(result_stack_.size(), 1U);
+    HSCHECK_EQ(result_stack_.size(), 1U);
     uint64_t ret = result_stack_.back();
     result_stack_.pop_back();
     return ret;
   }
 
   void DispatchSHash(const ObjectRef& object, bool map_free_vars) {
-    MXCHECK(object.defined());
+    HSCHECK(object.defined());
     vtable_->SHashReduce(object.get(), SHashReducer(parent_, map_free_vars));
   }
 
@@ -171,7 +171,7 @@ class SHashHandlerDefault::Impl {
    */
   uint64_t ReduceHash(const Task& task) {
     uint64_t stack_begin = task.result_stack_index;
-    MXCHECK_LE(stack_begin, result_stack_.size());
+    HSCHECK_LE(stack_begin, result_stack_.size());
 
     // combine in the reverse order of the stack.
     uint64_t reduced_hash = task.reduced_hash;
@@ -221,7 +221,7 @@ class SHashHandlerDefault::Impl {
           entry.children_expanded = true;
           entry.result_stack_index = result_stack_.size();
 
-          MXCHECK_EQ(pending_tasks_.size(), 0U);
+          HSCHECK_EQ(pending_tasks_.size(), 0U);
           allow_push_to_stack_ = false;
           // dispatch hash, reduce to the current slot.
           parent_->DispatchSHash(entry.object, entry.map_free_vars);
@@ -304,7 +304,7 @@ void SHashHandlerDefault::DispatchSHash(const ObjectRef& key, bool map_free_vars
   impl->DispatchSHash(key, map_free_vars);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.StructuralHash")
+HERCULES_REGISTER_GLOBAL("node.StructuralHash")
     .set_body_typed([](const ObjectRef& object, bool map_free_vars) -> int64_t {
       uint64_t hashed_value = SHashHandlerDefault().Hash(object, map_free_vars);
       return static_cast<int64_t>(hashed_value);
@@ -315,4 +315,4 @@ uint64_t StructuralHash::operator()(const ObjectRef& object) const {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

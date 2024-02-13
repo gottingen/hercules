@@ -32,10 +32,10 @@
 #include <hercules/ir/printer/ir_docsifier.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::ir::printer;
 
 ObjectPtr<Object> GetSourceNameNode(const StringRef& name) {
   // always return pointer as the reference can change as map re-allocate.
@@ -70,27 +70,27 @@ Span::Span(StringRef file_name, int64_t lineno, StringRef func_name, StringRef s
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.SourceName").set_body_typed(SourceName::Get);
+HERCULES_REGISTER_GLOBAL("ir.SourceName").set_body_typed(SourceName::Get);
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<SourceName>("", [](SourceName s, ObjectPath p, IRDocsifier d) -> Doc {
       return Dialect(d, "SourceName")->Call({LiteralDoc::Str(s->name, p->Attr("name"))});
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(SourceNameNode)
+HERCULES_REGISTER_NODE_TYPE(SourceNameNode)
     .set_creator(GetSourceNameNodeByStr)
     .set_repr_bytes([](const Object* n) -> runtime::String {
       return static_cast<const SourceNameNode*>(n)->name;
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(SpanNode);
+HERCULES_REGISTER_NODE_TYPE(SpanNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Span").set_body_typed(
+HERCULES_REGISTER_GLOBAL("ir.Span").set_body_typed(
     [](StringRef file_name, int64_t lineno, StringRef func_name, StringRef source_code) {
       return Span(file_name, lineno, func_name, source_code);
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<Span>("", [](Span s, ObjectPath p, IRDocsifier d) -> Doc {
       Array<StringRef> keys;
       Array<ExprDoc> values;
@@ -111,4 +111,4 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

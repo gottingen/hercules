@@ -32,7 +32,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*! \brief An object representing a structure or enumeration. */
@@ -56,47 +56,47 @@ class TupleNode : public Object, public InplaceArrayBase<TupleNode, RTValue> {
 
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeTuple;
   static constexpr const char* _type_key = "runtime.Tuple";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TupleNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(TupleNode, Object);
 
  public:
   // iterators
-  MATXSCRIPT_ALWAYS_INLINE iterator begin() {
+  HERCULES_ALWAYS_INLINE iterator begin() {
     return reinterpret_cast<value_type*>(AddressOf(0));
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const_iterator begin() const {
+  HERCULES_ALWAYS_INLINE const_iterator begin() const {
     return reinterpret_cast<value_type*>(AddressOf(0));
   }
 
-  MATXSCRIPT_ALWAYS_INLINE iterator end() {
+  HERCULES_ALWAYS_INLINE iterator end() {
     return reinterpret_cast<value_type*>(AddressOf(size));
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const_iterator end() const {
+  HERCULES_ALWAYS_INLINE const_iterator end() const {
     return reinterpret_cast<value_type*>(AddressOf(size));
   }
 
-  MATXSCRIPT_ALWAYS_INLINE reverse_iterator rbegin() {
+  HERCULES_ALWAYS_INLINE reverse_iterator rbegin() {
     return reverse_iterator(end());
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const_reverse_iterator rbegin() const {
+  HERCULES_ALWAYS_INLINE const_reverse_iterator rbegin() const {
     return const_reverse_iterator(end());
   }
 
-  MATXSCRIPT_ALWAYS_INLINE reverse_iterator rend() {
+  HERCULES_ALWAYS_INLINE reverse_iterator rend() {
     return reverse_iterator(begin());
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const_reverse_iterator rend() const {
+  HERCULES_ALWAYS_INLINE const_reverse_iterator rend() const {
     return const_reverse_iterator(begin());
   }
 
-  MATXSCRIPT_ALWAYS_INLINE value_type* data() {
+  HERCULES_ALWAYS_INLINE value_type* data() {
     return reinterpret_cast<value_type*>(AddressOf(0));
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const value_type* data() const {
+  HERCULES_ALWAYS_INLINE const value_type* data() const {
     return reinterpret_cast<value_type*>(AddressOf(0));
   }
 
@@ -134,4 +134,4 @@ class TupleNode : public Object, public InplaceArrayBase<TupleNode, RTValue> {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

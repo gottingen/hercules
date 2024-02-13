@@ -24,7 +24,7 @@
 #include <hercules/runtime/container/string_view.h>
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace UnicodeNormalForm {
@@ -35,10 +35,10 @@ static constexpr int NFKC = 1;
 static constexpr int NFD = 2;
 static constexpr int NFKD = 3;
 
-MATX_DLL int32_t FromStr(string_view form) noexcept;
-MATX_DLL string_view ToStr(int32_t form) noexcept;
+HERCULES_DLL int32_t FromStr(string_view form) noexcept;
+HERCULES_DLL string_view ToStr(int32_t form) noexcept;
 
 }  // namespace UnicodeNormalForm
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

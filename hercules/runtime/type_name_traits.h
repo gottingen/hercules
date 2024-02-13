@@ -25,12 +25,12 @@
 #include <hercules/runtime/container/_flat_hash_map.h>
 #include <hercules/runtime/container/string_view.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct TypeNameTraits {
-  MATX_DLL static TypeNameTraits& Register(std::type_index ty_idx, string_view name);
-  MATX_DLL static string_view Get(std::type_index ty_idx);
+  HERCULES_DLL static TypeNameTraits& Register(std::type_index ty_idx, string_view name);
+  HERCULES_DLL static string_view Get(std::type_index ty_idx);
 
   template <class T>
   inline static TypeNameTraits& Register(string_view name) {
@@ -50,12 +50,12 @@ struct TypeNameTraits {
   friend struct Manager;
 };
 
-#define MATXSCRIPT_TYPE_NAME_TRAITS_VAR_DEF(T) \
-  static MATXSCRIPT_ATTRIBUTE_UNUSED auto& __make_##MATXSCRIPT_TYPE_TRAITS##T
+#define HERCULES_TYPE_NAME_TRAITS_VAR_DEF(T) \
+  static HERCULES_ATTRIBUTE_UNUSED auto& __make_##HERCULES_TYPE_TRAITS##T
 
-#define MATXSCRIPT_REGISTER_TYPE_NAME_TRAITS(T)                                \
-  MATXSCRIPT_STR_CONCAT(MATXSCRIPT_TYPE_NAME_TRAITS_VAR_DEF(T), __COUNTER__) = \
-      ::matxscript::runtime::TypeNameTraits::Register<T>(#T)
+#define HERCULES_REGISTER_TYPE_NAME_TRAITS(T)                                \
+  HERCULES_STR_CONCAT(HERCULES_TYPE_NAME_TRAITS_VAR_DEF(T), __COUNTER__) = \
+      ::hercules::runtime::TypeNameTraits::Register<T>(#T)
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

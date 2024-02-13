@@ -22,23 +22,23 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(cuda, module_default_stream)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(cuda, module_default_stream)
     .set_num_inputs(1)
     .add_argument("device_id", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(cuda, module_create_stream)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(cuda, module_create_stream)
     .set_num_inputs(1)
     .add_argument("device_id", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(cuda, module_stream_sync)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(cuda, module_stream_sync)
     .set_num_inputs(2)
-    .add_argument("stream", "matx.OpaqueObject|any_view", "")
+    .add_argument("stream", "hvm.OpaqueObject|any_view", "")
     .add_argument("device_id", "int", "");
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

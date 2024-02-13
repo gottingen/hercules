@@ -34,7 +34,7 @@
 #include <hercules/runtime/registry.h>
 #include <hercules/runtime/str_escape.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
@@ -262,7 +262,7 @@ void List::pop_back() const {
 List::value_type& List::get_item(int64_t i) const {
   MX_CHECK_DPTR(List);
   int64_t len = size();
-  MXCHECK((i >= 0 && i < len) || (i < 0 && i >= -len)) << "ValueError: index overflow";
+  HSCHECK((i >= 0 && i < len) || (i < 0 && i >= -len)) << "ValueError: index overflow";
   i = slice_index_correction(i, len);
   return d->data_container[i];
 }
@@ -273,7 +273,7 @@ void List::set_item(int64_t i, value_type&& item) const {
   if (i < 0) {
     i += len;
   }
-  MXCHECK(i >= 0 && i < len) << "ValueError: index overflow";
+  HSCHECK(i >= 0 && i < len) << "ValueError: index overflow";
   p->data_container[i] = std::move(item);
 }
 
@@ -282,7 +282,7 @@ void List::set_item(int64_t i, const value_type& item) const {
 }
 
 List List::get_slice(int64_t b, int64_t e, int64_t step) const {
-  MXCHECK_GT(step, 0) << "List.slice_load step must be gt 0";
+  HSCHECK_GT(step, 0) << "List.slice_load step must be gt 0";
   int64_t len = size();
   b = slice_index_correction(b, len);
   e = slice_index_correction(e, len);
@@ -304,7 +304,7 @@ List List::get_slice(int64_t b, int64_t e, int64_t step) const {
 }
 
 void List::set_slice(int64_t start, int64_t end, List&& rhs) const {
-  MXCHECK(start >= 0 && end >= 0 && start <= end);
+  HSCHECK(start >= 0 && end >= 0 && start <= end);
   int64_t len = size();
   start = slice_index_correction(start, len);
   end = slice_index_correction(end, len);
@@ -320,7 +320,7 @@ void List::set_slice(int64_t start, int64_t end, List&& rhs) const {
 }
 
 void List::set_slice(int64_t start, int64_t end, const List& rhs) const {
-  MXCHECK(start >= 0 && end >= 0 && start <= end);
+  HSCHECK(start >= 0 && end >= 0 && start <= end);
   int64_t len = size();
   start = slice_index_correction(start, len);
   end = slice_index_correction(end, len);
@@ -400,7 +400,7 @@ List List::repeat(int64_t times) const {
   MX_CHECK_DPTR(List);
 
   List new_list{};
-  if (MATXSCRIPT_UNLIKELY(times <= 0)) {
+  if (HERCULES_UNLIKELY(times <= 0)) {
     return new_list;
   }
 
@@ -411,8 +411,8 @@ List List::repeat(int64_t times) const {
   auto num_ele = this_e - this_b;
 
   // eval copy function and do copy
-  if (MATXSCRIPT_UNLIKELY(num_ele == 0)) {
-  } else if (MATXSCRIPT_LIKELY(num_ele == 1)) {
+  if (HERCULES_UNLIKELY(num_ele == 0)) {
+  } else if (HERCULES_LIKELY(num_ele == 1)) {
     const value_type& ele = *this_b;
     if (CanUseFastCopy(ele)) {
       for (int64_t i = 0; i < times; i++) {
@@ -436,7 +436,7 @@ List List::repeat(int64_t times) const {
 
 List List::repeat_one(const Any& value, int64_t times) {
   List new_list{};
-  if (MATXSCRIPT_UNLIKELY(times <= 0)) {
+  if (HERCULES_UNLIKELY(times <= 0)) {
     return new_list;
   }
   auto new_node = new_list.GetListNode();
@@ -455,7 +455,7 @@ List List::repeat_one(const Any& value, int64_t times) {
 
 List List::repeat_one(value_type&& value, int64_t times) {
   List new_list{};
-  if (MATXSCRIPT_UNLIKELY(times <= 0)) {
+  if (HERCULES_UNLIKELY(times <= 0)) {
     return new_list;
   }
   auto new_node = new_list.GetListNode();
@@ -476,7 +476,7 @@ List List::repeat_one(value_type&& value, int64_t times) {
 
 List List::repeat_many(const std::initializer_list<value_type>& values, int64_t times) {
   List new_list{};
-  if (MATXSCRIPT_UNLIKELY(times <= 0)) {
+  if (HERCULES_UNLIKELY(times <= 0)) {
     return new_list;
   }
   auto new_node = new_list.GetListNode();
@@ -698,4 +698,4 @@ std::ostream& operator<<(std::ostream& os, List const& n) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

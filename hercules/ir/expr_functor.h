@@ -21,7 +21,7 @@
  */
 
 /*!
- * \file matx/ir/expr_functor.h
+ * \file hvm/ir/expr_functor.h
  *
  * \brief Functors for ir expressions.
  */
@@ -36,10 +36,10 @@
 #include <hercules/runtime/demangle.h>
 #include <hercules/runtime/functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using ::matxscript::runtime::NodeFunctor;
+using ::hercules::runtime::NodeFunctor;
 
 /*!
  * \brief A dynamical functor that dispatches on in the first Expr argument.
@@ -164,7 +164,7 @@ class PrimExprFunctor<R(const PrimExpr& n, Args...)> {
   virtual R VisitExpr_(const BufferLoadNode* op, Args... args) EXPR_FUNCTOR_DEFAULT;
 
   virtual R VisitExprDefault_(const Object* op, Args...) {
-    MXTHROW << "[" << runtime::DemangleType(typeid(*this).name()) << "] Do not have a default for "
+    HSTHROW << "[" << runtime::DemangleType(typeid(*this).name()) << "] Do not have a default for "
             << op->GetTypeKey();
     return R();
   }
@@ -293,7 +293,7 @@ class HLOExprFunctor<R(const HLOExpr& n, Args...)> {
   virtual R VisitExpr_(const ShapeExprNode* op, Args... args) EXPR_FUNCTOR_DEFAULT;
 
   virtual R VisitExprDefault_(const Object* op, Args...) {
-    MXTHROW << "[" << runtime::DemangleType(typeid(*this).name()) << "] Do not have a default for "
+    HSTHROW << "[" << runtime::DemangleType(typeid(*this).name()) << "] Do not have a default for "
             << op->GetTypeKey();
     return R();
   }
@@ -359,7 +359,7 @@ class HLOExprFunctor<R(const HLOExpr& n, Args...)> {
 /*!
  * \brief ExprVisitor
  */
-class MATX_DLL ExprVisitor : public PrimExprFunctor<void(const PrimExpr&)>,
+class HERCULES_DLL ExprVisitor : public PrimExprFunctor<void(const PrimExpr&)>,
                              public HLOExprFunctor<void(const HLOExpr&)> {
  public:
   using PrimExprFunctor<void(const PrimExpr&)>::operator();
@@ -383,7 +383,7 @@ class MATX_DLL ExprVisitor : public PrimExprFunctor<void(const PrimExpr&)>,
       } else if (expr->IsInstance<HLOExprNode>()) {
         VisitExpr(runtime::Downcast<HLOExpr>(expr));
       } else {
-        MXTHROW << "[ExprVisitor] not supported expr node: " << expr;
+        HSTHROW << "[ExprVisitor] not supported expr node: " << expr;
       }
     }
   }
@@ -476,7 +476,7 @@ class MATX_DLL ExprVisitor : public PrimExprFunctor<void(const PrimExpr&)>,
 /*!
  * \brief ExprMutator that mutates expressions.
  */
-class MATX_DLL ExprMutator : public PrimExprFunctor<PrimExpr(const PrimExpr&)>,
+class HERCULES_DLL ExprMutator : public PrimExprFunctor<PrimExpr(const PrimExpr&)>,
                              public HLOExprFunctor<HLOExpr(const HLOExpr&)> {
  public:
   using PrimExprFunctor<PrimExpr(const PrimExpr&)>::operator();
@@ -508,7 +508,7 @@ class MATX_DLL ExprMutator : public PrimExprFunctor<PrimExpr(const PrimExpr&)>,
       } else if (expr->IsInstance<HLOExprNode>()) {
         return this->VisitExpr(runtime::Downcast<HLOExpr>(expr));
       } else {
-        MXTHROW << "[ExprMutator] not supported expr node: " << expr;
+        HSTHROW << "[ExprMutator] not supported expr node: " << expr;
       }
     }
     return expr;
@@ -602,4 +602,4 @@ class MATX_DLL ExprMutator : public PrimExprFunctor<PrimExpr(const PrimExpr&)>,
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

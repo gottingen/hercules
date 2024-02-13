@@ -43,7 +43,7 @@ void compute_strides(shape_t* shape, dst_t* dst, size_t n) {
   }
 }
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace mlir {
 
@@ -179,4 +179,4 @@ bool is_overlapping(void* target, std::initializer_list<void*> others) {
 
 }  // namespace mlir
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

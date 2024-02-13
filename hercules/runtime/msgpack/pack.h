@@ -24,7 +24,7 @@
 #include <limits.h>
 #include <string.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace serialization {
 
@@ -89,7 +89,7 @@ static inline int msgpack_pack_extend_write_buf(msgpack_packer* pk, size_t l)
 
 }  // namespace serialization
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 #include "pack_template.h"
 

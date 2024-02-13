@@ -28,7 +28,7 @@
 #include <hercules/runtime/runtime_value.h>
 #include <hercules/runtime/threadpool/mpmc_bounded_queue.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace server {
 
@@ -112,7 +112,7 @@ class SimpleMPMCServer {
   std::vector<std::thread> workers_;
   std::vector<std::shared_ptr<TXSession>> handlers_;
   // the task queue
-  ::matxscript::runtime::MPMCBoundedQueue<RunnablePtr> tasks_;
+  ::hercules::runtime::MPMCBoundedQueue<RunnablePtr> tasks_;
   // stop flag
   bool stop_ = false;
   std::string name_;
@@ -120,4 +120,4 @@ class SimpleMPMCServer {
 
 }  // namespace server
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

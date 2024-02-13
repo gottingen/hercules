@@ -51,7 +51,7 @@
 #include <stdlib.h>  // for size_t.
 #include <utility>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace hash_internal {
 
@@ -71,4 +71,4 @@ uint32_t CityHash32(const char* s, size_t len) noexcept;
 
 }  // namespace hash_internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

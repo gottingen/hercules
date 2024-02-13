@@ -19,14 +19,14 @@
 
 #include "hercules/runtime/mlir/func_loader.h"
 #include "hercules/runtime/py_args.h"
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace mlir {
 
 void* load_func(const std::string& func_name, const std::string& share_lib_path) {
   if (lib_func_map.find(share_lib_path) == lib_func_map.end()) {
     void* lib = dlopen(share_lib_path.c_str(), RTLD_NOW | RTLD_LOCAL);
-    MXCHECK(lib != nullptr) << "shared lib is not found in " << share_lib_path;
+    HSCHECK(lib != nullptr) << "shared lib is not found in " << share_lib_path;
     std::pair<void*, std::unordered_map<std::string, void*>> value(lib, {});
     lib_func_map.emplace(share_lib_path, std::move(value));
   }
@@ -35,7 +35,7 @@ void* load_func(const std::string& func_name, const std::string& share_lib_path)
   auto& func_map = value.second;
   if (func_map.find(func_name) == func_map.end()) {
     auto func_ptr = dlsym(lib, (func_name.c_str()));
-    MXCHECK(func_ptr != nullptr) << func_name << " is not found";
+    HSCHECK(func_ptr != nullptr) << func_name << " is not found";
     func_map.emplace(func_name, func_ptr);
   }
   return func_map[func_name];
@@ -43,4 +43,4 @@ void* load_func(const std::string& func_name, const std::string& share_lib_path)
 
 }  // namespace mlir
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

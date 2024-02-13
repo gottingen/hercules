@@ -27,7 +27,7 @@
 #include <hercules/runtime/json_util.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace pickle {
 
@@ -43,31 +43,31 @@ static Unicode ToJsonStructStr(const Any& rtv) {
 
 static RTValue FromJsonStructStr(const string_view& bytes) {
   rapidjson::Document doc;
-  MXCHECK(JsonUtil::FromString(bytes, doc));
+  HSCHECK(JsonUtil::FromString(bytes, doc));
   return FromJsonStruct(doc);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.pickle_ToJsonStruct").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 1) << "[runtime.pickle.ToJsonStruct] Expect 1 arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.pickle_ToJsonStruct").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 1) << "[runtime.pickle.ToJsonStruct] Expect 1 arguments but get "
                             << args.size();
   return ToJsonStructStr(args[0]);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.pickle_FromJsonStruct").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 1) << "[runtime.pickle.FromJsonStruct] Expect 1 arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.pickle_FromJsonStruct").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 1) << "[runtime.pickle.FromJsonStruct] Expect 1 arguments but get "
                             << args.size();
   String v = UnicodeHelper::Encode(args[0].As<unicode_view>());
   return FromJsonStructStr(v);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.Serialize").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 1) << "[runtime.pickle.Serialize] Expect 1 arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.Serialize").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 1) << "[runtime.pickle.Serialize] Expect 1 arguments but get "
                             << args.size();
   return Serialize(args[0]).decode();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.DeSerialize").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 1) << "[runtime.pickle.DeSerialize] Expect 1 arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.DeSerialize").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 1) << "[runtime.pickle.DeSerialize] Expect 1 arguments but get "
                             << args.size();
   auto v = UnicodeHelper::Encode(args[0].As<unicode_view>());
   return DeSerialize(v);
@@ -75,4 +75,4 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.DeSerialize").set_body([](PyArgs args) -> RT
 
 }  // namespace pickle
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

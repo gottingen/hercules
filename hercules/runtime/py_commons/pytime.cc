@@ -61,7 +61,7 @@
 #define NS_TO_MS (1000 * 1000)
 #define NS_TO_US (1000)
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -903,4 +903,4 @@ int _PyTime_gmtime(time_t t, struct tm* tm) {
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

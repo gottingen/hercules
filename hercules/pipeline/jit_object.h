@@ -17,8 +17,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-#ifndef MATXSCRIPT_RUNTIME_JIT_OBJECT_H
-#define MATXSCRIPT_RUNTIME_JIT_OBJECT_H
+#ifndef HERCULES_RUNTIME_JIT_OBJECT_H
+#define HERCULES_RUNTIME_JIT_OBJECT_H
 
 #include <hercules/pipeline/op_kernel.h>
 #include <hercules/runtime/container.h>
@@ -26,7 +26,7 @@
 #include <hercules/runtime/module.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class TXSession;
@@ -138,7 +138,7 @@ class JitObject : public OpKernel {
  private:
   static NativeMethod MakeNativeFunc(const FuncMeta& meta,
                                      UserDataRef self,
-                                     MATXScriptBackendPackedCFunc c_func);
+                                     HerculesBackendPackedCFunc c_func);
 
  private:
   Options options_;
@@ -154,6 +154,6 @@ JitObjectPtr check_get_jit_object(const UserDataRef& ud);
 JitObjectPtr try_get_jit_object(const UserDataRef& ud);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
-#endif  // MATXSCRIPT_RUNTIME_JIT_OBJECT_H
+#endif  // HERCULES_RUNTIME_JIT_OBJECT_H

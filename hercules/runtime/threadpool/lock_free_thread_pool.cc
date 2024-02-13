@@ -20,7 +20,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/threadpool/lock_free_thread_pool.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace internal {
 
@@ -95,7 +95,7 @@ void LockFreeThreadPool::EnqueueBulk(std::vector<IRunnablePtr>& runners) {
 }
 
 void LockFreeThreadPool::Enqueue(IRunnablePtr& runner, size_t seq) {
-  MXCHECK(runner != nullptr) << "Enqueue arg invalid: runner is null pointer";
+  HSCHECK(runner != nullptr) << "Enqueue arg invalid: runner is null pointer";
   for (;;) {
     if (tasks_.try_enqueue(runner)) {
       return;
@@ -164,4 +164,4 @@ std::vector<std::thread::id> SPSCLockFreeThreadPool::GetThreadIds() const {
 
 }  // namespace internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

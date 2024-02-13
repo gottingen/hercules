@@ -28,7 +28,7 @@
 
 #include <hercules/runtime/py_commons/pyhash.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*!
@@ -138,4 +138,4 @@ struct ScalarHash<T*, sizeof(void*) / sizeof(size_t)> {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

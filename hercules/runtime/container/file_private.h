@@ -27,7 +27,7 @@
 #include <hercules/runtime/file_reader.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 using PtrFileReader = std::shared_ptr<FileReader>;
@@ -37,20 +37,20 @@ class FileNode : public Object {
  public:
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeFile;
   static constexpr const char* _type_key = "runtime.File";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(FileNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(FileNode, Object);
 
   FileNode(const String& path, const String& mode = "r", const String& encoding = "utf-8")
       : path_(path), preader_(new FileReader(path, /* keep_newline */ true)) {
     // mode_ and _encoding are stored only for debug, they will not be checked while reading lines.
     mode_ = mode;
     std::transform(mode_.begin(), mode_.end(), mode_.begin(), ::tolower);
-    MXCHECK(mode_ == "r" || mode_ == "rb") << "By now we only support \"r\" and \"rb\" mode.";
+    HSCHECK(mode_ == "r" || mode_ == "rb") << "By now we only support \"r\" and \"rb\" mode.";
     encoding_ = encoding;
     std::transform(encoding_.begin(), encoding_.end(), encoding_.begin(), ::tolower);
     if (encoding_ == "utf8") {
       encoding_ = "utf-8";
     }
-    MXCHECK(encoding_ == "utf-8") << "By now we only support \"utf-8\" encoding.";
+    HSCHECK(encoding_ == "utf-8") << "By now we only support \"utf-8\" encoding.";
 
     if (mode == "r") {
       readable_ = true;
@@ -95,4 +95,4 @@ class FileNode : public Object {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

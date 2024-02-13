@@ -21,7 +21,7 @@
 #include <hercules/runtime/ft_container.h>
 #include "hercules/runtime/logging.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(FTSet, Constructor) {
@@ -237,4 +237,4 @@ TEST(FTSet, update) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

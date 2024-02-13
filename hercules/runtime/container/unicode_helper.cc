@@ -32,7 +32,7 @@
 #include <hercules/runtime/py_args.h>
 #include <hercules/runtime/utf8_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 Unicode UnicodeHelper::Concat(self_view lhs, self_view rhs) {
@@ -63,7 +63,7 @@ Unicode UnicodeHelper::Concat(std::initializer_list<self_view> args) {
 }
 
 Unicode UnicodeHelper::Repeat(self_view sv, int64_t times) {
-  times = MATXSCRIPT_UNLIKELY(times < 0) ? 0 : times;
+  times = HERCULES_UNLIKELY(times < 0) ? 0 : times;
   auto result_size = times * sv.length();
   Unicode::ContainerType store(result_size, Unicode::ContainerType::NoInit{});
   auto* data = (Unicode::pointer)store.data();
@@ -115,13 +115,13 @@ int64_t UnicodeHelper::PyFind(self_view sv, self_view str, int64_t start, int64_
 
 Unicode UnicodeHelper::GetItem(self_view sv, int64_t pos) {
   int64_t len = sv.size();
-  MXCHECK((pos >= 0 && pos < len) || (pos < 0 && pos >= -len)) << "ValueError: index overflow";
+  HSCHECK((pos >= 0 && pos < len) || (pos < 0 && pos >= -len)) << "ValueError: index overflow";
   pos = slice_index_correction(pos, len);
   return Unicode(1, sv[pos]);
 }
 
 Unicode UnicodeHelper::GetSlice(self_view sv, int64_t b, int64_t e, int64_t step) {
-  MXCHECK_GT(step, 0) << "Unicode.slice_load step must be gt 0";
+  HSCHECK_GT(step, 0) << "Unicode.slice_load step must be gt 0";
   int64_t len = sv.size();
   b = slice_index_correction(b, len);
   e = slice_index_correction(e, len);
@@ -183,7 +183,7 @@ List UnicodeHelper::Split(self_view sv, self_view sep, int64_t maxsplit) {
       ret_node->emplace_back(Unicode(data_last, data_end));
     }
   } else {
-    MXCHECK(!sep.empty()) << "ValueError: empty separator";
+    HSCHECK(!sep.empty()) << "ValueError: empty separator";
     size_type end;
     for (size_type start = 0; start < sv.size(); --maxsplit) {
       if (maxsplit > 0 && (end = sv.find(sep, start)) != npos) {
@@ -509,19 +509,19 @@ Unicode UnicodeHelper::Format(self_view sv, PyArgs args) {
         ss << '{';
         left_bracket = false;
       } else if (c == U'}') {
-        MXCHECK(arg_itr != args.end()) << "tuple index out of range";
+        HSCHECK(arg_itr != args.end()) << "tuple index out of range";
         ss << *arg_itr;
         ++arg_itr;
         left_bracket = false;
       } else {
-        MXCHECK(false) << "keyword format string is not supported now";
+        HSCHECK(false) << "keyword format string is not supported now";
       }
     } else if (right_bracket) {
       if (c == U'}') {
         ss << '}';
         right_bracket = false;
       } else {
-        MXCHECK(false) << "ingle '}' encountered in format string";
+        HSCHECK(false) << "ingle '}' encountered in format string";
       }
     } else {
       if (c == U'{') {
@@ -533,12 +533,12 @@ Unicode UnicodeHelper::Format(self_view sv, PyArgs args) {
       }
     }
   }
-  MXCHECK(!left_bracket) << "Single '{' encountered in format string";
-  MXCHECK(!right_bracket) << "Single '}' encountered in format string";
+  HSCHECK(!left_bracket) << "Single '{' encountered in format string";
+  HSCHECK(!right_bracket) << "Single '}' encountered in format string";
   return UTF8Decode(String(ss.str()));
 }
 
-UnicodeHelper::self_view UnicodeHelper::AsViewNoCheck(const MATXScriptAny* value) noexcept {
+UnicodeHelper::self_view UnicodeHelper::AsViewNoCheck(const HerculesAny* value) noexcept {
   if (value->pad >= 0) {
     return self_view{value->data.v_str_store.v_small_chars, size_t(value->pad), 0};
   } else {
@@ -547,13 +547,13 @@ UnicodeHelper::self_view UnicodeHelper::AsViewNoCheck(const MATXScriptAny* value
   }
 }
 
-UnicodeHelper::self_view UnicodeHelper::AsView(const MATXScriptAny* value) {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value->code, TypeIndex::kRuntimeUnicode);
+UnicodeHelper::self_view UnicodeHelper::AsView(const HerculesAny* value) {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value->code, TypeIndex::kRuntimeUnicode);
   return AsViewNoCheck(value);
 }
 
-MATXScriptAny UnicodeHelper::CopyFrom(const MATXScriptAny* value) {
-  MATXScriptAny ret;
+HerculesAny UnicodeHelper::CopyFrom(const HerculesAny* value) {
+  HerculesAny ret;
   auto view = UnicodeHelper::AsView(value);
   string_core<Unicode::value_type> str(view.data(), view.size(), view.category());
   str.MoveTo(&ret.data.v_str_store, &ret.pad);
@@ -561,13 +561,13 @@ MATXScriptAny UnicodeHelper::CopyFrom(const MATXScriptAny* value) {
   return ret;
 }
 
-MATXScriptAny UnicodeHelper::CopyFrom(MATXScriptAny value) {
+HerculesAny UnicodeHelper::CopyFrom(HerculesAny value) {
   return CopyFrom(&value);
 }
 
-void UnicodeHelper::Destroy(MATXScriptAny* value) noexcept {
+void UnicodeHelper::Destroy(HerculesAny* value) noexcept {
   string_core<Unicode::value_type>::DestroyCHost(value);
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

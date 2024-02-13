@@ -24,25 +24,25 @@
 #include <hercules/runtime/container_private.h>
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_REGISTER_NATIVE_OP(JitOp).SetThreadSafety(false);
+HVM_REGISTER_NATIVE_OP(JitOp).SetThreadSafety(false);
 
 void JitOp::Init() {
   main_func_name_ = GetAttr<String>("main_func_name");
   jit_object_name_ = GetAttr<String>("jit_object_name");
   jit_object_ = belong_to_->FindJitObject(jit_object_name_);
-  MXCHECK(jit_object_ != nullptr);
+  HSCHECK(jit_object_ != nullptr);
   name_ = jit_object_->PyObjectName() + "_" + name_;
   sub_ops_ = {jit_object_};
   auto pf = jit_object_->GetFunction(main_func_name_);
   forward_func_ = pf.first;
   func_meta_ = pf.second;
   self_ = jit_object_->self();
-  MXCHECK(forward_func_ != nullptr && func_meta_ != nullptr)
+  HSCHECK(forward_func_ != nullptr && func_meta_ != nullptr)
       << "[JitOp] function not found, name: " << main_func_name_;
-  MXCHECK(self_.defined()) << "[JitOp] self is nullptr";
+  HSCHECK(self_.defined()) << "[JitOp] self is nullptr";
 }
 
 int JitOp::Bundle(string_view folder) {
@@ -98,4 +98,4 @@ String JitOp::GetHumanName(bool with_debug_info) const {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

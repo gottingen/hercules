@@ -21,7 +21,7 @@
 #include <hercules/runtime/generic/generic_unpack.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(Generic, kernel_builtins_len) {
@@ -90,4 +90,4 @@ TEST(Generic, kernel_builtins_unpack) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

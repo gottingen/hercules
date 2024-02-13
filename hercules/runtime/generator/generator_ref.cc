@@ -23,7 +23,7 @@
 #include <hercules/runtime/generator/generator_private.h>
 #include <hercules/runtime/memory.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
@@ -61,4 +61,4 @@ DEFINE_GENERATOR_OBJECT_REF(Float64Generator, double);
 DEFINE_GENERATOR_OBJECT_REF(RTValueGenerator, RTValue);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

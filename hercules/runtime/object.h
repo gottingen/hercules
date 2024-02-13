@@ -37,15 +37,15 @@
  *  an object cannot be owned by multiple threads.
  *  We can, however, move an object across threads
  */
-#ifndef MATXSCRIPT_OBJECT_ATOMIC_REF_COUNTER
-#define MATXSCRIPT_OBJECT_ATOMIC_REF_COUNTER 1
+#ifndef HERCULES_OBJECT_ATOMIC_REF_COUNTER
+#define HERCULES_OBJECT_ATOMIC_REF_COUNTER 1
 #endif
 
-#if MATXSCRIPT_OBJECT_ATOMIC_REF_COUNTER
+#if HERCULES_OBJECT_ATOMIC_REF_COUNTER
 #include <atomic>
-#endif  // MATXSCRIPT_OBJECT_ATOMIC_REF_COUNTER
+#endif  // HERCULES_OBJECT_ATOMIC_REF_COUNTER
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*!
@@ -61,7 +61,7 @@ namespace runtime {
  *       The unique string identifier of the type.
  * - _type_final:
  *       Whether the type is terminal type(there is no subclass of the type in the object system).
- *       This field is automatically set by macro MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO
+ *       This field is automatically set by macro HERCULES_DECLARE_FINAL_OBJECT_INFO
  *       It is still OK to sub-class a terminal object type T and construct it using make_object.
  *       But IsInstance check will only show that the object type is T(instead of the sub-class).
  *
@@ -80,8 +80,8 @@ namespace runtime {
  * used. Recommendation: set to false for optimal runtime speed if we know exact number of children.
  *
  * Two macros are used to declare helper functions in the object:
- * - Use MATXSCRIPT_DECLARE_BASE_OBJECT_INFO for object classes that can be sub-classed.
- * - Use MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO for object classes that cannot be sub-classed.
+ * - Use HERCULES_DECLARE_BASE_OBJECT_INFO for object classes that can be sub-classed.
+ * - Use HERCULES_DECLARE_FINAL_OBJECT_INFO for object classes that cannot be sub-classed.
  *
  * New objects can be created using make_object function.
  * Which will automatically populate the type_index and deleter of the object.
@@ -101,7 +101,7 @@ namespace runtime {
  *    // object properties
  *    static constexpr const uint32_t _type_index = TypeIndex::kDynamic;
  *    static constexpr const char* _type_key = "test.BaseObj";
- *    MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(BaseObj, Object);
+ *    HERCULES_DECLARE_BASE_OBJECT_INFO(BaseObj, Object);
  *  };
  *
  *  class ObjLeaf : public ObjBase {
@@ -111,12 +111,12 @@ namespace runtime {
  *    // object properties
  *    static constexpr const uint32_t _type_index = TypeIndex::kDynamic;
  *    static constexpr const char* _type_key = "test.LeafObj";
- *    MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(LeafObj, Object);
+ *    HERCULES_DECLARE_BASE_OBJECT_INFO(LeafObj, Object);
  *  };
  *
  *  // The following code should be put into a cc file.
- *  MATXSCRIPT_REGISTER_OBJECT_TYPE(ObjBase);
- *  MATXSCRIPT_REGISTER_OBJECT_TYPE(ObjLeaf);
+ *  HERCULES_REGISTER_OBJECT_TYPE(ObjBase);
+ *  HERCULES_REGISTER_OBJECT_TYPE(ObjLeaf);
  *
  *  // Usage example.
  *  void TestObjects() {
@@ -168,22 +168,22 @@ class Object {
    * \param tindex The type index.
    * \return the result.
    */
-  MATX_DLL static string_view TypeIndex2Key(uint32_t tindex);
-  MATX_DLL static bool TryTypeIndex2Key(uint32_t tindex, string_view* tkey);
+  HERCULES_DLL static string_view TypeIndex2Key(uint32_t tindex);
+  HERCULES_DLL static bool TryTypeIndex2Key(uint32_t tindex, string_view* tkey);
   /*!
    * \brief Get the type key hash of the corresponding index from runtime.
    * \param tindex The type index.
    * \return the related key-hash.
    */
-  MATX_DLL static size_t TypeIndex2KeyHash(uint32_t tindex);
+  HERCULES_DLL static size_t TypeIndex2KeyHash(uint32_t tindex);
   /*!
    * \brief Get the type index of the corresponding key from runtime.
    * \param key The type key.
    * \return the result.
    */
-  MATX_DLL static uint32_t TypeKey2Index(const string_view& key);
+  HERCULES_DLL static uint32_t TypeKey2Index(const string_view& key);
 
-#if MATXSCRIPT_OBJECT_ATOMIC_REF_COUNTER
+#if HERCULES_OBJECT_ATOMIC_REF_COUNTER
   using RefCounterType = std::atomic<int32_t>;
 #else
   using RefCounterType = int32_t;
@@ -264,7 +264,7 @@ class Object {
    * \param type_child_slots_can_overflow Whether to allow child to overflow the slots.
    * \return The allocated type index.
    */
-  MATX_DLL static uint32_t GetOrAllocRuntimeTypeIndex(const string_view& key,
+  HERCULES_DLL static uint32_t GetOrAllocRuntimeTypeIndex(const string_view& key,
                                                       uint32_t static_tindex,
                                                       uint32_t parent_tindex,
                                                       uint32_t type_child_slots,
@@ -290,7 +290,7 @@ class Object {
    * \param parent_tindex The parent type index.
    * \return The derivation results.
    */
-  MATX_DLL bool DerivedFrom(uint32_t parent_tindex) const;
+  HERCULES_DLL bool DerivedFrom(uint32_t parent_tindex) const;
   // friend classes
   template <typename>
   friend class ObjAllocatorBase;
@@ -634,7 +634,7 @@ class ObjectRef {
 #define MX_DPTR(Class) Class##Node* d = static_cast<Class##Node*>(data_.get())
 #define MX_CHECK_DPTR(ClassName) \
   MX_DPTR(ClassName);            \
-  MXCHECK(d != nullptr) << "[" << #ClassName << "] object is None"
+  HSCHECK(d != nullptr) << "[" << #ClassName << "] object is None"
 #define MX_QPTR(Class) Class* q = static_cast<Class*>(q_ptr)
 
 /*!
@@ -677,13 +677,13 @@ struct ObjectPtrEqual {
  * \param TypeName The name of the current type.
  * \param ParentType The name of the ParentType
  */
-#define MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(TypeName, ParentType)                           \
+#define HERCULES_DECLARE_BASE_OBJECT_INFO(TypeName, ParentType)                           \
   static_assert(!ParentType::_type_final, "ParentObj maked as final");                      \
   static uint32_t RuntimeTypeIndex() {                                                      \
     static_assert(TypeName::_type_child_slots == 0 || ParentType::_type_child_slots == 0 || \
                       TypeName::_type_child_slots < ParentType::_type_child_slots,          \
                   "Need to set _type_child_slots when parent specifies it.");               \
-    if (TypeName::_type_index != ::matxscript::runtime::TypeIndex::kDynamic) {              \
+    if (TypeName::_type_index != ::hercules::runtime::TypeIndex::kDynamic) {              \
       return TypeName::_type_index;                                                         \
     }                                                                                       \
     return _GetOrAllocRuntimeTypeIndex();                                                   \
@@ -703,12 +703,12 @@ struct ObjectPtrEqual {
  * \param TypeName The name of the current type.
  * \param ParentType The name of the ParentType
  */
-#define MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TypeName, ParentType) \
+#define HERCULES_DECLARE_FINAL_OBJECT_INFO(TypeName, ParentType) \
   static const constexpr bool _type_final = true;                  \
   static const constexpr int _type_child_slots = 0;                \
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(TypeName, ParentType)
+  HERCULES_DECLARE_BASE_OBJECT_INFO(TypeName, ParentType)
 
-#define MATXSCRIPT_OBJECT_REG_VAR_DEF static MATXSCRIPT_ATTRIBUTE_UNUSED uint32_t __make_Object_tid
+#define HERCULES_OBJECT_REG_VAR_DEF static HERCULES_ATTRIBUTE_UNUSED uint32_t __make_Object_tid
 
 /*!
  * \brief Helper macro to register the object type to runtime.
@@ -716,8 +716,8 @@ struct ObjectPtrEqual {
  *
  *  Use this macro in the cc file for each terminal class.
  */
-#define MATXSCRIPT_REGISTER_OBJECT_TYPE(TypeName)                     \
-  MATXSCRIPT_STR_CONCAT(MATXSCRIPT_OBJECT_REG_VAR_DEF, __COUNTER__) = \
+#define HERCULES_REGISTER_OBJECT_TYPE(TypeName)                     \
+  HERCULES_STR_CONCAT(HERCULES_OBJECT_REG_VAR_DEF, __COUNTER__) = \
       TypeName::_GetOrAllocRuntimeTypeIndex()
 
 /*
@@ -726,9 +726,9 @@ struct ObjectPtrEqual {
  * \param ParentType The parent type of the objectref
  * \param ObjectName The type name of the object.
  */
-#define MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(TypeName, ParentType, ObjectName)                  \
+#define HERCULES_DEFINE_OBJECT_REF_METHODS(TypeName, ParentType, ObjectName)                  \
   TypeName() noexcept = default;                                                                \
-  explicit TypeName(::matxscript::runtime::ObjectPtr<::matxscript::runtime::Object> n) noexcept \
+  explicit TypeName(::hercules::runtime::ObjectPtr<::hercules::runtime::Object> n) noexcept \
       : ParentType(std::move(n)) {                                                              \
   }                                                                                             \
   TypeName(const TypeName& other) noexcept = default;                                           \
@@ -750,8 +750,8 @@ struct ObjectPtrEqual {
  * \param ParentType The parent type of the objectref
  * \param ObjectName The type name of the object.
  */
-#define MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TypeName, ParentType, ObjectName)      \
-  explicit TypeName(::matxscript::runtime::ObjectPtr<::matxscript::runtime::Object> n) noexcept \
+#define HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(TypeName, ParentType, ObjectName)      \
+  explicit TypeName(::hercules::runtime::ObjectPtr<::hercules::runtime::Object> n) noexcept \
       : ParentType(std::move(n)) {                                                              \
   }                                                                                             \
   TypeName(const TypeName& other) noexcept = default;                                           \
@@ -775,13 +775,13 @@ struct ObjectPtrEqual {
  * \note We recommend making objects immutable when possible.
  *       This macro is only reserved for objects that stores runtime states.
  */
-#define MATXSCRIPT_DEFINE_MUTABLE_OBJECT_REF_METHODS(TypeName, ParentType, ObjectName)          \
+#define HERCULES_DEFINE_MUTABLE_OBJECT_REF_METHODS(TypeName, ParentType, ObjectName)          \
   TypeName() noexcept = default;                                                                \
   TypeName(const TypeName& other) noexcept = default;                                           \
   TypeName(TypeName&& other) noexcept = default;                                                \
   TypeName& operator=(const TypeName& other) noexcept = default;                                \
   TypeName& operator=(TypeName&& other) noexcept = default;                                     \
-  explicit TypeName(::matxscript::runtime::ObjectPtr<::matxscript::runtime::Object> n) noexcept \
+  explicit TypeName(::hercules::runtime::ObjectPtr<::hercules::runtime::Object> n) noexcept \
       : ParentType(std::move(n)) {                                                              \
   }                                                                                             \
   ObjectName* operator->() const noexcept {                                                     \
@@ -796,12 +796,12 @@ struct ObjectPtrEqual {
  * \param ParentType The parent type of the objectref
  * \param ObjectName The type name of the object.
  */
-#define MATXSCRIPT_DEFINE_MUTABLE_NOTNULLABLE_OBJECT_REF_METHODS(TypeName, ParentType, ObjectName) \
+#define HERCULES_DEFINE_MUTABLE_NOTNULLABLE_OBJECT_REF_METHODS(TypeName, ParentType, ObjectName) \
   TypeName(const TypeName& other) noexcept = default;                                              \
   TypeName(TypeName&& other) noexcept = default;                                                   \
   TypeName& operator=(const TypeName& other) noexcept = default;                                   \
   TypeName& operator=(TypeName&& other) noexcept = default;                                        \
-  explicit TypeName(::matxscript::runtime::ObjectPtr<::matxscript::runtime::Object> n) noexcept    \
+  explicit TypeName(::hercules::runtime::ObjectPtr<::hercules::runtime::Object> n) noexcept    \
       : ParentType(std::move(n)) {                                                                 \
   }                                                                                                \
   ObjectName* operator->() const {                                                                 \
@@ -832,19 +832,19 @@ struct ObjectPtrEqual {
  *
  * \endcode
  */
-#define MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(ObjectName)                                      \
+#define HERCULES_DEFINE_OBJECT_REF_COW_METHOD(ObjectName)                                      \
   ObjectName* CopyOnWrite() {                                                                    \
-    MXCHECK(data_ != nullptr);                                                                   \
+    HSCHECK(data_ != nullptr);                                                                   \
     if (!data_.unique()) {                                                                       \
-      auto n = ::matxscript::runtime::make_object<ObjectName>(*(operator->()));                  \
-      ::matxscript::runtime::ObjectPtr<::matxscript::runtime::Object>(std::move(n)).swap(data_); \
+      auto n = ::hercules::runtime::make_object<ObjectName>(*(operator->()));                  \
+      ::hercules::runtime::ObjectPtr<::hercules::runtime::Object>(std::move(n)).swap(data_); \
     }                                                                                            \
     return static_cast<ObjectName*>(data_.get());                                                \
   }
 
 // Implementations details below
 // Object reference counting.
-#if MATXSCRIPT_OBJECT_ATOMIC_REF_COUNTER
+#if HERCULES_OBJECT_ATOMIC_REF_COUNTER
 
 inline void Object::IncRef() noexcept {
   ref_counter_.fetch_add(1, std::memory_order_relaxed);
@@ -885,7 +885,7 @@ inline int Object::use_count() const noexcept {
   return ref_counter_;
 }
 
-#endif  // MATXSCRIPT_OBJECT_ATOMIC_REF_COUNTER
+#endif  // HERCULES_OBJECT_ATOMIC_REF_COUNTER
 
 template <typename TargetType>
 inline bool Object::IsInstance() const {
@@ -940,7 +940,7 @@ inline RefType GetRef(const ObjType* ptr) {
   static_assert(std::is_base_of<typename RefType::ContainerType, ObjType>::value,
                 "Can only cast to the ref of same container type");
   if (!RefType::_type_is_nullable) {
-    MXCHECK(ptr != nullptr);
+    HSCHECK(ptr != nullptr);
   }
   return RefType(ObjectPtr<Object>(const_cast<Object*>(static_cast<const Object*>(ptr))));
 }
@@ -964,11 +964,11 @@ inline bool IsConvertible(const Object* node) {
 template <typename SubRef, typename BaseRef>
 inline SubRef Downcast(BaseRef ref) {
   if (ref.defined()) {
-    MXCHECK(ref->template IsInstance<typename SubRef::ContainerType>())
+    HSCHECK(ref->template IsInstance<typename SubRef::ContainerType>())
         << "Downcast from " << ref->GetTypeKey() << " to " << SubRef::ContainerType::_type_key
         << " failed.";
   } else {
-    MXCHECK(SubRef::_type_is_nullable) << "Downcast from nullptr to not nullable reference of "
+    HSCHECK(SubRef::_type_is_nullable) << "Downcast from nullptr to not nullable reference of "
                                        << SubRef::ContainerType::_type_key;
   }
   return SubRef(std::move(ref.data_));
@@ -1012,7 +1012,7 @@ struct traits_helper_step2<true, TYPE> {
 template <typename TYPE>
 struct traits_helper_step2<false, TYPE> {
   static inline int32_t GetRuntimeIndex() {
-    MXTHROW << "unknown type index: " << typeid(TYPE).name();
+    HSTHROW << "unknown type index: " << typeid(TYPE).name();
     return kRuntimeUnknown;
   }
 };
@@ -1047,4 +1047,4 @@ struct traits {
 }  // namespace TypeIndex
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

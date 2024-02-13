@@ -27,7 +27,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class FileNode;
@@ -106,4 +106,4 @@ bool IsConvertible<File>(const Object* node);
 std::ostream& operator<<(std::ostream& os, File const& n);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

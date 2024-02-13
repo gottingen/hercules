@@ -29,14 +29,14 @@
 #include <hercules/runtime/container/ndarray_helper.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*********************************************************************
  * AtFork
  *********************************************************************/
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.os_register_at_fork").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 4) << "[os_register_at_fork] Expect 4 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.os_register_at_fork").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 4) << "[os_register_at_fork] Expect 4 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   std::function<bool()> prepare;
   std::function<void()> child;
@@ -54,7 +54,7 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.os_register_at_fork").set_body([](PyArgs ar
       return true;
     };
   } else if (!args[1].is_nullptr()) {
-    MXTHROW << "[os_register_at_fork] before is not None or a Callable object";
+    HSTHROW << "[os_register_at_fork] before is not None or a Callable object";
   }
   if (args[2].IsObjectRef<UserDataRef>()) {
     auto after_in_child = args[2].AsObjectRefNoCheck<UserDataRef>();
@@ -66,7 +66,7 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.os_register_at_fork").set_body([](PyArgs ar
       return true;
     };
   } else if (!args[2].is_nullptr()) {
-    MXTHROW << "[os_register_at_fork] after_in_child is not None or a Callable object";
+    HSTHROW << "[os_register_at_fork] after_in_child is not None or a Callable object";
   }
   if (args[3].IsObjectRef<UserDataRef>()) {
     auto after_in_parent = args[3].AsObjectRefNoCheck<UserDataRef>();
@@ -78,15 +78,15 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.os_register_at_fork").set_body([](PyArgs ar
       return true;
     };
   } else if (!args[3].is_nullptr()) {
-    MXTHROW << "[os_register_at_fork] after_in_parent is not None or a Callable object";
+    HSTHROW << "[os_register_at_fork] after_in_parent is not None or a Callable object";
   }
   internal::AtFork::RegisterHandler(
       handle, std::move(prepare), std::move(parent), std::move(child));
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.os_unregister_at_fork").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[os_unregister_at_fork] Expect 1 arguments but get "
+HERCULES_REGISTER_GLOBAL("pipeline.os_unregister_at_fork").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[os_unregister_at_fork] Expect 1 arguments but get "
                              << args.size();
   void* handle = args[0].As<void*>();
   internal::AtFork::UnregisterHandler(handle);
@@ -97,36 +97,36 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.os_unregister_at_fork").set_body([](PyArgs 
  * trace state
  *********************************************************************/
 static bool __TRACE_STATE__ = false;
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.SetTraceState").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[SetTraceState] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.SetTraceState").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[SetTraceState] Expect 1 arguments but get " << args.size();
   bool state = args[0].As<bool>();
   __TRACE_STATE__ = state;
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.GetTraceState").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 0) << "[GetTraceState] Expect 0 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.GetTraceState").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 0) << "[GetTraceState] Expect 0 arguments but get " << args.size();
   return __TRACE_STATE__;
 });
 
 static bool __OP_INIT_STATE__ = false;
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.SetOpInitState").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[SetOpInitState] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.SetOpInitState").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[SetOpInitState] Expect 1 arguments but get " << args.size();
   bool state = args[0].As<bool>();
   __OP_INIT_STATE__ = state;
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.GetOpInitState").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 0) << "[GetOpInitState] Expect 0 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.GetOpInitState").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 0) << "[GetOpInitState] Expect 0 arguments but get " << args.size();
   return __OP_INIT_STATE__;
 });
 
 /*********************************************************************
  * log
  *********************************************************************/
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.SetLoggerLevel").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[SetLoggerLevel] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.SetLoggerLevel").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[SetLoggerLevel] Expect 1 arguments but get " << args.size();
   int64_t level = args[0].As<int64_t>();
   return None;
 });
@@ -134,8 +134,8 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.SetLoggerLevel").set_body([](PyArgs args) -
 /*********************************************************************
  * Operator
  *********************************************************************/
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.ListAllOpNames").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 0) << "[ListAllOpNames] Expect 0 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.ListAllOpNames").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 0) << "[ListAllOpNames] Expect 0 arguments but get " << args.size();
   auto names = NativeObjectRegistry::ListNames();
   List result;
   for (auto& name : names) {
@@ -146,8 +146,8 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.ListAllOpNames").set_body([](PyArgs args) -
   return result;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.CreateNativeOp").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 3) << "[CreateNativeOp] Expect 3 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.CreateNativeOp").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 3) << "[CreateNativeOp] Expect 3 arguments but get " << args.size();
   void* sess = args[0].As<void*>();
   String op_cls = args[1].As<String>();
   Dict config = args[2].As<Dict>();
@@ -156,15 +156,15 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.CreateNativeOp").set_body([](PyArgs args) -
   return sess_ptr->FindUserData(op_ptr->ClassName(), op_ptr->GetName());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.GetNativeOpHandle").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[GetNativeOpHandle] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.GetNativeOpHandle").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[GetNativeOpHandle] Expect 1 arguments but get " << args.size();
   UserDataRef ud_ref = args[0].As<UserDataRef>();
   void* handle = check_get_op_kernel(ud_ref).get();
   return handle;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.FreeNativeOp").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 2) << "[FreeNativeOp] Expect 2 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.FreeNativeOp").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 2) << "[FreeNativeOp] Expect 2 arguments but get " << args.size();
   void* sess = args[0].As<void*>();
   UserDataRef ud_ref = args[1].As<UserDataRef>();
   auto op_ptr = check_get_op_kernel(ud_ref);
@@ -172,24 +172,24 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.FreeNativeOp").set_body([](PyArgs args) -> 
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.OpHandleGetName").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[OpHandleGetName] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.OpHandleGetName").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[OpHandleGetName] Expect 1 arguments but get " << args.size();
   UserDataRef ud = args[0].As<UserDataRef>();
   OpKernelPtr op_ptr = check_get_op_kernel(ud);
   return String(op_ptr->GetName()).decode();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.OpKernelProcess").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 1) << "[OpKernelProcess] Expect 1 or more arguments but get "
+HERCULES_REGISTER_GLOBAL("pipeline.OpKernelProcess").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 1) << "[OpKernelProcess] Expect 1 or more arguments but get "
                              << args.size();
   UserDataRef ud = args[0].As<UserDataRef>();
   OpKernelPtr op_ptr = check_get_op_kernel(ud);
   return op_ptr->Process(PyArgs(args.begin(), args.size() - 1));
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.SymbolicExecutor_Compose")
+HERCULES_REGISTER_GLOBAL("pipeline.SymbolicExecutor_Compose")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK_GE(args.size(), 2) << "[SymbolicExecutor_Compose] Expect 2 or more arguments but get "
+      HSCHECK_GE(args.size(), 2) << "[SymbolicExecutor_Compose] Expect 2 or more arguments but get "
                                  << args.size();
       UserDataRef ud = args[0].As<UserDataRef>();
       int64_t output_num = args[1].As<int64_t>();
@@ -214,8 +214,8 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.SymbolicExecutor_Compose")
 /*********************************************************************
  * variable and constant
  *********************************************************************/
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.CreateVariable").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 3) << "[CreateVariable] Expect 3 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.CreateVariable").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 3) << "[CreateVariable] Expect 3 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   Unicode name = args[1].As<Unicode>();
   RTValue data = args[2].As<RTValue>();
@@ -223,8 +223,8 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.CreateVariable").set_body([](PyArgs args) -
   return sess->CreateVariable(name.encode(), data).release();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.CreateConstant").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 2) << "[CreateConstant] Expect 2 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.CreateConstant").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 2) << "[CreateConstant] Expect 2 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   RTValue data = args[1].As<RTValue>();
   std::string name = GlobalUniqueIndex::instance()->gen_uniq_name("Constant", data.type_name());
@@ -241,40 +241,40 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.CreateConstant").set_body([](PyArgs args) -
 /*********************************************************************
  * Symbol
  *********************************************************************/
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.SymbolFree").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[SymbolFree] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.SymbolFree").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[SymbolFree] Expect 1 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   delete static_cast<Symbol*>(handle);
   return None;
 });
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.SymbolGetName").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[SymbolGetName] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.SymbolGetName").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[SymbolGetName] Expect 1 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   auto* sym = static_cast<Symbol*>(handle);
   return sym->GetEntry()->Name().decode();
 });
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.SymbolGetKey").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[SymbolGetKey] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.SymbolGetKey").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[SymbolGetKey] Expect 1 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   auto* sym = static_cast<Symbol*>(handle);
   return sym->GetEntry()->key.decode();
 });
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.SymbolGetVal").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[SymbolGetVal] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.SymbolGetVal").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[SymbolGetVal] Expect 1 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   auto* sym = static_cast<Symbol*>(handle);
   return sym->GetEntry()->data;
 });
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.SymbolSetVal").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 2) << "[SymbolSetFirstOutVal] Expect 2 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.SymbolSetVal").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 2) << "[SymbolSetFirstOutVal] Expect 2 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   RTValue data = args[1].As<RTValue>();
   auto sym = static_cast<Symbol*>(handle);
   sym->GetEntry()->data = std::move(data);
   return None;
 });
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.GetOpInstanceName").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[GetOpInstanceName] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.GetOpInstanceName").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[GetOpInstanceName] Expect 1 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   auto sess = static_cast<TXSession*>(handle);
   return sess->GetOpInstanceName();
@@ -283,8 +283,8 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.GetOpInstanceName").set_body([](PyArgs args
 /*********************************************************************
  * TXSession
  *********************************************************************/
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.CreateTXSessionHandle").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_LE(args.size(), 1) << "[CreateTXSessionHandle] Expect 0 or 1 arguments but get "
+HERCULES_REGISTER_GLOBAL("pipeline.CreateTXSessionHandle").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_LE(args.size(), 1) << "[CreateTXSessionHandle] Expect 0 or 1 arguments but get "
                              << args.size();
   TXSessionOptions opt = DEFAULT_SESSION_OPTIONS;
   if (args.size() == 1) {
@@ -293,23 +293,23 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.CreateTXSessionHandle").set_body([](PyArgs 
   return new TXSession(opt);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.FreeTXSessionHandle").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[FreeTXSessionHandle] Expect 1 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.FreeTXSessionHandle").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[FreeTXSessionHandle] Expect 1 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   delete static_cast<TXSession*>(handle);
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionSetDevice").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 2) << "[TXSessionSetDevice] Expect 2 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionSetDevice").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 2) << "[TXSessionSetDevice] Expect 2 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   int64_t device = args[1].As<int64_t>();
   auto sess = static_cast<TXSession*>(handle);
   sess->SetDevice(device);
   return None;
 });
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionTrace").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 2) << "[TXSessionTrace] Expect 2 or more arguments but get "
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionTrace").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 2) << "[TXSessionTrace] Expect 2 or more arguments but get "
                              << args.size();
   void* handle = args[0].As<void*>();
   auto sess = static_cast<TXSession*>(handle);
@@ -321,9 +321,9 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionTrace").set_body([](PyArgs args) -
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionSetSchedulingThreads")
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionSetSchedulingThreads")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK(args.size() >= 1 || args.size() <= 3)
+      HSCHECK(args.size() >= 1 || args.size() <= 3)
           << "[TXSessionSetSchedulingThreads] Expect 1 ~ 3 arguments but get " << args.size();
       void* handle = args[0].As<void*>();
       auto sess = static_cast<TXSession*>(handle);
@@ -347,18 +347,18 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionSetSchedulingThreads")
       return None;
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionGetSchedulingThreads")
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionGetSchedulingThreads")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK(args.size() == 1) << "[TXSessionGetSchedulingThreads] Expect 1  arguments but get "
+      HSCHECK(args.size() == 1) << "[TXSessionGetSchedulingThreads] Expect 1  arguments but get "
                                 << args.size();
       void* handle = args[0].As<void*>();
       auto sess = static_cast<TXSession*>(handle);
       return sess ? sess->GetSchedulingThreads() : 0;
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionSetOpParallelismThreads")
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionSetOpParallelismThreads")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK(args.size() >= 1 || args.size() <= 3)
+      HSCHECK(args.size() >= 1 || args.size() <= 3)
           << "[TXSessionSetOpParallelismThreads] Expect 1 ~ 3 arguments but get " << args.size();
       void* handle = args[0].As<void*>();
       auto sess = static_cast<TXSession*>(handle);
@@ -382,18 +382,18 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionSetOpParallelismThreads")
       return None;
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionGetOpParallelismThreads")
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionGetOpParallelismThreads")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK(args.size() == 1) << "[TXSessionGetOpParallelismThreads] Expect 1  arguments but get "
+      HSCHECK(args.size() == 1) << "[TXSessionGetOpParallelismThreads] Expect 1  arguments but get "
                                 << args.size();
       void* handle = args[0].As<void*>();
       auto sess = static_cast<TXSession*>(handle);
       return sess ? sess->GetOpParallelismThreads() : 0;
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionSetOpComputeThreads")
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionSetOpComputeThreads")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK(args.size() >= 1 || args.size() <= 3)
+      HSCHECK(args.size() >= 1 || args.size() <= 3)
           << "[TXSessionSetOpComputeThreads] Expect 1 ~ 3 arguments but get " << args.size();
       void* handle = args[0].As<void*>();
       auto sess = static_cast<TXSession*>(handle);
@@ -417,9 +417,9 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionSetOpComputeThreads")
       return None;
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionGetOpComputeThreads")
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionGetOpComputeThreads")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK(args.size() == 1) << "[TXSessionGetOpComputeThreads] Expect 1 arguments but get "
+      HSCHECK(args.size() == 1) << "[TXSessionGetOpComputeThreads] Expect 1 arguments but get "
                                 << args.size();
       void* handle = args[0].As<void*>();
       auto sess = static_cast<TXSession*>(handle);
@@ -429,8 +429,8 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionGetOpComputeThreads")
       return int64_t(0);
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionSave").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 3) << "[TXSessionSave] Expect 3 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionSave").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 3) << "[TXSessionSave] Expect 3 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   Unicode folder = args[1].As<Unicode>();
   Unicode name = args[2].As<Unicode>();
@@ -439,8 +439,8 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionSave").set_body([](PyArgs args) ->
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionRun").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 2) << "[TXSessionRun] Expect 2 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionRun").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 2) << "[TXSessionRun] Expect 2 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   auto sess = static_cast<TXSession*>(handle);
   Dict feed_dict = args[1].As<Dict>();
@@ -456,8 +456,8 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionRun").set_body([](PyArgs args) -> 
   return result_v2;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionRunWithMeta").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 2) << "[TXSessionRunWithMeta] Expect 2 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionRunWithMeta").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 2) << "[TXSessionRunWithMeta] Expect 2 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   auto sess = static_cast<TXSession*>(handle);
   Dict feed_dict = args[1].As<Dict>();
@@ -490,9 +490,9 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionRunWithMeta").set_body([](PyArgs a
   return Tuple::dynamic(std::move(result_v2), std::move(meta_info));
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionGetNestedOpAttributesByName")
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionGetNestedOpAttributesByName")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK_EQ(args.size(), 3)
+      HSCHECK_EQ(args.size(), 3)
           << "[TXSessionGetNestedOpAttributesByName] Expect 3 arguments but get " << args.size();
       void* handle = args[0].As<void*>();
       auto sess = static_cast<TXSession*>(handle);
@@ -506,8 +506,8 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionGetNestedOpAttributesByName")
       }
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionWarmup").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 2) << "[TXSessionWarmup] Expect 2 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionWarmup").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 2) << "[TXSessionWarmup] Expect 2 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   auto sess = static_cast<TXSession*>(handle);
   Dict feed_dict = args[1].As<Dict>();
@@ -523,22 +523,22 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionWarmup").set_body([](PyArgs args) 
   return result_v2;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.LoadTXSession").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 3) << "[LoadTXSession] Expect 3 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.LoadTXSession").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 3) << "[LoadTXSession] Expect 3 arguments but get " << args.size();
   Unicode folder = args[0].As<Unicode>();
   Unicode name = args[1].As<Unicode>();
   int64_t device = -1;
   switch (args[2].type_code()) {
     case TypeIndex::kRuntimeUnicode: {
       auto ctx = NDArrayHelper::GetDevice(args[2].AsNoCheck<Unicode>());
-      MXCHECK(ctx.device_type == kDLCPU || ctx.device_type == kDLCUDA);
+      HSCHECK(ctx.device_type == kDLCPU || ctx.device_type == kDLCUDA);
       if (ctx.device_type == kDLCUDA) {
         device = ctx.device_id;
       }
     } break;
     case TypeIndex::kRuntimeString: {
       auto ctx = NDArrayHelper::GetDevice(args[2].AsNoCheck<String>().decode());
-      MXCHECK(ctx.device_type == kDLCPU || ctx.device_type == kDLCUDA);
+      HSCHECK(ctx.device_type == kDLCPU || ctx.device_type == kDLCUDA);
       if (ctx.device_type == kDLCUDA) {
         device = ctx.device_id;
       }
@@ -547,23 +547,23 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.LoadTXSession").set_body([](PyArgs args) ->
       device = args[2].AsNoCheck<int64_t>();
     } break;
     default: {
-      MXTHROW << "expect device is int or str type, but get " << args[2];
+      HSTHROW << "expect device is int or str type, but get " << args[2];
     } break;
   }
   std::unique_ptr<TXSession> ptr = TXSession::Load(folder.encode(), name.encode(), device);
   return ptr.release();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionGetAttr").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 2) << "[TXSessionRun] Expect 2 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionGetAttr").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 2) << "[TXSessionRun] Expect 2 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   auto sess = static_cast<TXSession*>(handle);
   Unicode key = args[1].As<Unicode>();
   return sess->GetAttr(key.encode());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionSetAttr").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 3) << "[TXSessionRun] Expect 3 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionSetAttr").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 3) << "[TXSessionRun] Expect 3 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   auto sess = static_cast<TXSession*>(handle);
   Unicode key = args[1].As<Unicode>();
@@ -572,16 +572,16 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionSetAttr").set_body([](PyArgs args)
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionHasAttr").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 2) << "[TXSessionRun] Expect 2 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionHasAttr").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 2) << "[TXSessionRun] Expect 2 arguments but get " << args.size();
   void* handle = args[0].As<void*>();
   auto sess = static_cast<TXSession*>(handle);
   Unicode key = args[1].As<Unicode>();
   return sess->HasAttr(key.encode());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionAtForkBefore").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[TXSessionAtForkBefore] Expect 1 arguments but get "
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionAtForkBefore").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[TXSessionAtForkBefore] Expect 1 arguments but get "
                              << args.size();
   void* handle = args[0].As<void*>();
   auto sess = static_cast<TXSession*>(handle);
@@ -589,9 +589,9 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionAtForkBefore").set_body([](PyArgs 
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionAtForkAfterInChild")
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionAtForkAfterInChild")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK_EQ(args.size(), 1) << "[TXSessionAtForkAfterInChild] Expect 1 arguments but get "
+      HSCHECK_EQ(args.size(), 1) << "[TXSessionAtForkAfterInChild] Expect 1 arguments but get "
                                  << args.size();
       void* handle = args[0].As<void*>();
       auto sess = static_cast<TXSession*>(handle);
@@ -599,9 +599,9 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionAtForkAfterInChild")
       return None;
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.TXSessionAtForkAfterInParent")
+HERCULES_REGISTER_GLOBAL("pipeline.TXSessionAtForkAfterInParent")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK_EQ(args.size(), 1) << "[TXSessionAtForkAfterInParent] Expect 1 arguments but get "
+      HSCHECK_EQ(args.size(), 1) << "[TXSessionAtForkAfterInParent] Expect 1 arguments but get "
                                  << args.size();
       void* handle = args[0].As<void*>();
       auto sess = static_cast<TXSession*>(handle);
@@ -613,34 +613,34 @@ extern RTValue ParallelMap(const UserDataRef& func, const Any& inputs, void* ses
 extern RTValue ParallelStarMap(const UserDataRef& func, const Any& inputs, void* session_handle);
 extern RTValue ApplyAsync(const UserDataRef& func, const PyArgs& inputs, void* session_handle);
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.ParallelMap").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 3) << "[ParallelMap] Expect 3 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.ParallelMap").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 3) << "[ParallelMap] Expect 3 arguments but get " << args.size();
   auto func = args[0].As<UserDataRef>();
   auto* sess = args[2].As<void*>();
   return ParallelMap(func, args[1], sess);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.ParallelStarMap").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 3) << "[ParallelStarMap] Expect 3 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.ParallelStarMap").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 3) << "[ParallelStarMap] Expect 3 arguments but get " << args.size();
   auto func = args[0].As<UserDataRef>();
   auto* sess = args[2].As<void*>();
   return ParallelStarMap(func, args[1], sess);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.ApplyAsync").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_GE(args.size(), 2) << "[ApplyAsync] Expect 2 or more arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("pipeline.ApplyAsync").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_GE(args.size(), 2) << "[ApplyAsync] Expect 2 or more arguments but get " << args.size();
   auto func = args[0].As<UserDataRef>();
   auto* sess = args[args.size() - 1].As<void*>();
   return ApplyAsync(func, PyArgs(args.begin() + 1, args.size() - 2), sess);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("pipeline.PythonBaseOp_UpdatePassOpOptions")
+HERCULES_REGISTER_GLOBAL("pipeline.PythonBaseOp_UpdatePassOpOptions")
     .set_body([](PyArgs args) -> RTValue {
-      MXCHECK_GE(args.size(), 2) << "[UpdatePythonBaseOp] Expect 2 or more arguments but get "
+      HSCHECK_GE(args.size(), 2) << "[UpdatePythonBaseOp] Expect 2 or more arguments but get "
                                  << args.size();
       UserDataRef ud = args[0].As<UserDataRef>();
       OpKernelPtr op_ptr = check_get_op_kernel(ud);
-      MXCHECK(op_ptr->ClassName() == "PythonBaseOp") << "internal error";
+      HSCHECK(op_ptr->ClassName() == "PythonBaseOp") << "internal error";
       auto py_op = std::static_pointer_cast<PythonBaseOp>(op_ptr);
       auto new_op_options = args[1].As<Dict>();
       auto items = new_op_options.items();
@@ -651,4 +651,4 @@ MATXSCRIPT_REGISTER_GLOBAL("pipeline.PythonBaseOp_UpdatePassOpOptions")
     });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

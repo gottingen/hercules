@@ -22,7 +22,7 @@
  */
 #include <hercules/runtime/uchar_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // clang-format off
@@ -242,4 +242,4 @@ const unsigned char __uchar_toupper_index[256] = {
 // clang-format on
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

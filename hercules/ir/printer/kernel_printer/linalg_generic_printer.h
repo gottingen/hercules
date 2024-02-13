@@ -46,7 +46,7 @@
 #include <hercules/ir/type_functor.h>
 #include <hercules/runtime/data_type.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 class MLIRTextPrinter;
@@ -61,7 +61,7 @@ class LinalgGenericPrinter {
 
   void ComputeBlockToLinalgGeneric(const ComputeBlockNode* op, std::ostream& os);
 
-  void PrintBufferArray(const Array<matxscript::ir::BufferRegion>& bufferArray,
+  void PrintBufferArray(const Array<hercules::ir::BufferRegion>& bufferArray,
                         const std::string& perfix_str,
                         std::ostream& os);
   void VisitRangeExpr_(const BufferRegion& buffer, const RangeExpr& rng, std::ostream& os);
@@ -81,4 +81,4 @@ class LinalgGenericPrinter {
 };
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

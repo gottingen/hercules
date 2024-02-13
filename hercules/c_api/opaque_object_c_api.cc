@@ -23,13 +23,13 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.OpaqueObject").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 0) << "[runtime.OpaqueObject] no need argument";
+HERCULES_REGISTER_GLOBAL("runtime.OpaqueObject").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 0) << "[runtime.OpaqueObject] no need argument";
   return OpaqueObject();
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

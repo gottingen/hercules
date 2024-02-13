@@ -52,12 +52,12 @@
 #include <hercules/runtime/data_type.h>
 #include <unistd.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
-using namespace ::matxscript::ir;
-using namespace ::matxscript::runtime;
+using namespace ::hercules::ir;
+using namespace ::hercules::runtime;
 
 void MLIRTextPrinter::NewScope() {
   expr_name_scope.emplace_back(expr_name_map_->begin(), expr_name_map_->end());
@@ -75,15 +75,15 @@ void MLIRTextPrinter::PopScope() {
 
 // Error Handlers
 void MLIRTextPrinter::VisitExprDefault_(const Object* op, std::ostream& os) {
-  MXTHROW << "[MLIRTextPrinter] Unsupported Expr: " << op->GetTypeKey();
+  HSTHROW << "[MLIRTextPrinter] Unsupported Expr: " << op->GetTypeKey();
 }
 
 void MLIRTextPrinter::VisitStmtDefault_(const Object* op, std::ostream& os) {
-  MXTHROW << "[MLIRTextPrinter] Unsupported Stmt: " << op->GetTypeKey();
+  HSTHROW << "[MLIRTextPrinter] Unsupported Stmt: " << op->GetTypeKey();
 }
 
 void MLIRTextPrinter::VisitTypeDefault_(const Object* op, std::ostream& os) {
-  MXTHROW << "[MLIRTextPrinter] Unsupported Type: " << op->GetTypeKey();
+  HSTHROW << "[MLIRTextPrinter] Unsupported Type: " << op->GetTypeKey();
 }
 
 // Begin Expr
@@ -91,7 +91,7 @@ void MLIRTextPrinter::VisitExpr_(const IntImmNode* op, std::ostream& os) {
   os << '%' << cur_index_ << " = arith.constant " << std::to_string(op->value) << " : "
      << ConvertTypeToMLIR(op->checked_type()) << std::endl;
   // if (expr_name_map_->find(op) != expr_name_map_->end()) {
-  //   MXTHROW << "[linalg] op is already in expr_index_map_";
+  //   HSTHROW << "[linalg] op is already in expr_index_map_";
   // }
   insert_or_assign_map_(
       expr_name_map_, static_cast<const Object*>(op), '%' + std::to_string(cur_index_));
@@ -102,7 +102,7 @@ void MLIRTextPrinter::VisitExpr_(const FloatImmNode* op, std::ostream& os) {
   os << '%' << cur_index_ << " = arith.constant " << std::to_string(op->value) << " : "
      << ConvertTypeToMLIR(op->checked_type()) << std::endl;
   if (expr_name_map_->find(op) != expr_name_map_->end()) {
-    MXTHROW << "[linalg] op is already in expr_index_map_";
+    HSTHROW << "[linalg] op is already in expr_index_map_";
   }
   insert_or_assign_map_(
       expr_name_map_, static_cast<const Object*>(op), '%' + std::to_string(cur_index_));
@@ -128,39 +128,39 @@ std::string MLIRTextPrinter::ConvertTypeToMLIR(const runtime::DataType& type) co
       break;
     }
     default: {
-      MXTHROW << "data type not supported, type: " << type_code << " bits: " << bits;
+      HSTHROW << "data type not supported, type: " << type_code << " bits: " << bits;
     }
   }
   return data_type;
 }
 
-std::string MLIRTextPrinter::ConvertTypeToMLIR(const matxscript::ir::PointerTypeNode* node) const {
+std::string MLIRTextPrinter::ConvertTypeToMLIR(const hercules::ir::PointerTypeNode* node) const {
   if (pointer_buffer_map.find(node) != pointer_buffer_map.end()) {
     return ConvertTypeToMLIR((pointer_buffer_map.at(node)));
   }
-  MXTHROW << "Pointer type " << node->GetPythonTypeName() << " has not been binded to a buffer";
+  HSTHROW << "Pointer type " << node->GetPythonTypeName() << " has not been binded to a buffer";
   return "";
 }
 
-std::string MLIRTextPrinter::ConvertTypeToMLIR(const matxscript::ir::Type& type) const {
+std::string MLIRTextPrinter::ConvertTypeToMLIR(const hercules::ir::Type& type) const {
   if (auto* n = type.as<PrimTypeNode>()) {
     return ConvertTypeToMLIR(n->dtype);
   } else if (auto* n = type.as<PointerTypeNode>()) {
     return ConvertTypeToMLIR(n);
   } else {
-    MXTHROW << "Type " << type << " does not have a corresponding runtime::DataType";
+    HSTHROW << "Type " << type << " does not have a corresponding runtime::DataType";
     return "";
   }
 }
 
-std::string MLIRTextPrinter::ConvertTypeToMLIR(const matxscript::ir::Buffer& buffer) const {
+std::string MLIRTextPrinter::ConvertTypeToMLIR(const hercules::ir::Buffer& buffer) const {
   std::stringstream ss;
   ss << "memref<";
   for (auto dim : buffer->shape) {
     if (dim->IsInstance<PrimVarNode>()) {
       auto node = runtime::Downcast<PrimVar>(dim);
       if (expr_name_map_->find(dim.get()) == expr_name_map_->end()) {
-        MXLOG(WARNING)
+        HSLOG(WARNING)
             << "[MLIRTextPrinter.ConvertTypeToMLIR] Buffer(" << buffer->name
             << ") is annotated with " << node->name_hint
             << ", which is not a constant or a predefined symbol. "
@@ -173,7 +173,7 @@ std::string MLIRTextPrinter::ConvertTypeToMLIR(const matxscript::ir::Buffer& buf
       auto node = runtime::Downcast<IntImm>(dim);
       ss << node->value << 'x';
     } else {
-      MXTHROW << "Buffer(" << buffer->name << ") is annotated with " << dim->checked_type()
+      HSTHROW << "Buffer(" << buffer->name << ") is annotated with " << dim->checked_type()
               << ", but for now linalg printer only supports constant or predefined symbols";
     }
   }
@@ -190,18 +190,18 @@ void MLIRTextPrinter::PrintNodeName(const BaseExpr& ptr, std::ostream& os) {
   if (ptr->IsInstance<PrimVarNode>()) {
     auto node = runtime::Downcast<PrimVar>(ptr);
     const auto& var_name = var_name_map_->find(node->name_hint);
-    MXCHECK(var_name != var_name_map_->end())
+    HSCHECK(var_name != var_name_map_->end())
         << "Expr: " << ptr << " has no corrresponding ssa value";
     os << var_name->second.mlir_name;
     return;
   }
-  MXTHROW << "Expr: " << ptr << " has no corrresponding ssa value";
+  HSTHROW << "Expr: " << ptr << " has no corrresponding ssa value";
 }
 
 std::pair<std::string, std::string> MLIRTextPrinter::GetNodeDataType(const PrimExprNode* op) const {
   std::string arith_suffix;
   std::string data_type = ConvertTypeToMLIR(op->checked_type());
-  MXCHECK(op->dtype.lanes() == 1) << " lanes must be 1, but receive " << op->dtype.lanes();
+  HSCHECK(op->dtype.lanes() == 1) << " lanes must be 1, but receive " << op->dtype.lanes();
   auto op_dtype = op->dtype.code();
   auto bits = op->dtype.bits();
   switch (op->dtype.code()) {
@@ -213,11 +213,11 @@ std::pair<std::string, std::string> MLIRTextPrinter::GetNodeDataType(const PrimE
       arith_suffix = "f";
       break;
     default:
-      MXTHROW << "data type not supported, type: " << op->dtype.code() << " bits: " << bits;
+      HSTHROW << "data type not supported, type: " << op->dtype.code() << " bits: " << bits;
   }
 
   if (arith_suffix.empty() || data_type.empty()) {
-    MXTHROW << "data type not supported, type: " << op->dtype.code()
+    HSTHROW << "data type not supported, type: " << op->dtype.code()
             << " bits: " << op->dtype.bits();
   }
 
@@ -250,7 +250,7 @@ void MLIRTextPrinter::GenMLIRArithStatement(
   PrintNodeName(op->b, os);
   os << " : " << data_type << "\n";
   if (expr_name_map_->find(op) != expr_name_map_->end()) {
-    MXTHROW << "[linalg] op is already in expr_index_map_";
+    HSTHROW << "[linalg] op is already in expr_index_map_";
   }
   insert_or_assign_map_(
       expr_name_map_, static_cast<const Object*>(op), '%' + std::to_string(cur_index_));
@@ -326,9 +326,9 @@ void MLIRTextPrinter::GenMLIRCompareStatement(const std::string& compare_type,
   PrimExprFunctor::VisitExpr(op->b, os);
   const auto& a_type = GetNodeDataType(op->a.get());
   const auto& b_type = GetNodeDataType(op->b.get());
-  MXCHECK_EQ(a_type.first, b_type.first)
+  HSCHECK_EQ(a_type.first, b_type.first)
       << "[mlir printer] the two values for comparesion are not the same type";
-  MXCHECK_EQ(a_type.second, b_type.second)
+  HSCHECK_EQ(a_type.second, b_type.second)
       << "[mlir printer] the two values for comparesion are not the same type";
   const auto& a_arith_suffix = a_type.second;
   const std::string op_name = "arith.cmp" + a_arith_suffix;
@@ -338,13 +338,13 @@ void MLIRTextPrinter::GenMLIRCompareStatement(const std::string& compare_type,
     predicate = "o" + predicate;
   } else if (compare_type != "eq" && compare_type != "ne") {
     if (a_arith_suffix == "ui") {
-      MXLOG(WARNING) << "Enconuntered a unsuppoerted type: " << a_arith_suffix
+      HSLOG(WARNING) << "Enconuntered a unsuppoerted type: " << a_arith_suffix
                      << " Will try to treat it as unsigned int";
       predicate = "u" + predicate;
     } else if (a_arith_suffix == "i") {
       predicate = "s" + predicate;
     } else {
-      MXLOG(WARNING) << "Enconuntered a unsuppoerted type: " << a_arith_suffix
+      HSLOG(WARNING) << "Enconuntered a unsuppoerted type: " << a_arith_suffix
                      << " Will try to treat it as signed int";
       predicate = "s" + predicate;
     }
@@ -355,7 +355,7 @@ void MLIRTextPrinter::GenMLIRCompareStatement(const std::string& compare_type,
   PrintNodeName(op->b, os);
   os << " : " << a_type.first << std::endl;
   if (expr_name_map_->find(op) != expr_name_map_->end()) {
-    MXTHROW << "[linalg] op is already in expr_index_map_";
+    HSTHROW << "[linalg] op is already in expr_index_map_";
   }
   insert_or_assign_map_(
       expr_name_map_, static_cast<const Object*>(op), '%' + std::to_string(cur_index_));
@@ -392,9 +392,9 @@ void MLIRTextPrinter::VisitExpr_(const PrimAndNode* op, std::ostream& os) {
   const auto& a_type = GetNodeDataType(op->a.get());
   const auto& b_type = GetNodeDataType(op->b.get());
   const auto& rc_type = GetNodeDataType(op);
-  MXCHECK_EQ(a_type.second, b_type.second)
+  HSCHECK_EQ(a_type.second, b_type.second)
       << "[mlir printer] the two values for comparesion are not the same type";
-  MXCHECK_EQ(a_type.first, b_type.first)
+  HSCHECK_EQ(a_type.first, b_type.first)
       << "[mlir printer] the two values for comparesion are not the same type";
   const auto& a_arith_suffix = a_type.second;
   const std::string op_name = "arith.andi ";
@@ -405,7 +405,7 @@ void MLIRTextPrinter::VisitExpr_(const PrimAndNode* op, std::ostream& os) {
   PrintNodeName(op->b, os);
   os << " : " << rc_type.first << std::endl;
   if (expr_name_map_->find(op) != expr_name_map_->end()) {
-    MXTHROW << "[linalg] op is already in expr_index_map_";
+    HSTHROW << "[linalg] op is already in expr_index_map_";
   }
   insert_or_assign_map_(
       expr_name_map_, static_cast<const Object*>(op), '%' + std::to_string(cur_index_));
@@ -418,9 +418,9 @@ void MLIRTextPrinter::VisitExpr_(const PrimOrNode* op, std::ostream& os) {
   const auto& a_type = GetNodeDataType(op->a.get());
   const auto& b_type = GetNodeDataType(op->b.get());
   const auto& rc_type = GetNodeDataType(op);
-  MXCHECK_EQ(a_type.second, b_type.second)
+  HSCHECK_EQ(a_type.second, b_type.second)
       << "[mlir printer] the two values for comparesion are not the same type";
-  MXCHECK_EQ(a_type.first, b_type.first)
+  HSCHECK_EQ(a_type.first, b_type.first)
       << "[mlir printer] the two values for comparesion are not the same type";
   const std::string op_name = "arith.ori ";
 
@@ -430,7 +430,7 @@ void MLIRTextPrinter::VisitExpr_(const PrimOrNode* op, std::ostream& os) {
   PrintNodeName(op->b, os);
   os << " : " << rc_type.first << std::endl;
   if (expr_name_map_->find(op) != expr_name_map_->end()) {
-    MXTHROW << "[linalg] op is already in expr_index_map_";
+    HSTHROW << "[linalg] op is already in expr_index_map_";
   }
   insert_or_assign_map_(
       expr_name_map_, static_cast<const Object*>(op), '%' + std::to_string(cur_index_));
@@ -440,7 +440,7 @@ void MLIRTextPrinter::VisitExpr_(const PrimOrNode* op, std::ostream& os) {
 void MLIRTextPrinter::VisitExpr_(const PrimNotNode* op, std::ostream& os) {
   PrimExprFunctor::VisitExpr(op->a, os);
   const auto& a_type = GetNodeDataType(op->a.get());
-  MXCHECK_EQ(a_type.second, "i") << "[mlir printer] the operand for not op should only be a int";
+  HSCHECK_EQ(a_type.second, "i") << "[mlir printer] the operand for not op should only be a int";
   const auto& rc_type = GetNodeDataType(op);
   const std::string op_name = "arith.xori ";
   const std::string const1 = '%' + std::to_string(cur_index_);
@@ -450,7 +450,7 @@ void MLIRTextPrinter::VisitExpr_(const PrimNotNode* op, std::ostream& os) {
   PrintNodeName(op->a, os);
   os << " : " << rc_type.first << std::endl;
   if (expr_name_map_->find(op) != expr_name_map_->end()) {
-    MXTHROW << "[linalg] op is already in expr_index_map_";
+    HSTHROW << "[linalg] op is already in expr_index_map_";
   }
   insert_or_assign_map_(
       expr_name_map_, static_cast<const Object*>(op), '%' + std::to_string(cur_index_));
@@ -489,20 +489,20 @@ void printCastOp(const Type& origin, const Type& target, std::ostream& os) {
   auto* origin_t = origin.as<PrimTypeNode>();
   auto* target_t = target.as<PrimTypeNode>();
   if (origin_t == nullptr || target_t == nullptr) {
-    MXTHROW << "[MLIR] casting between non prim type node is not allowed";
+    HSTHROW << "[MLIR] casting between non prim type node is not allowed";
   }
   auto const origin_t_bits = origin_t->dtype.bits();
   auto const origin_t_code = origin_t->dtype.code();
   auto const target_t_bits = target_t->dtype.bits();
   auto const target_t_code = target_t->dtype.code();
   if (origin_t_code != kDLInt && origin_t_code != kDLUInt && origin_t_code != kDLFloat) {
-    MXTHROW << "[MLIR] the type being casted from is neither int nor float";
+    HSTHROW << "[MLIR] the type being casted from is neither int nor float";
   }
   if (target_t_code != kDLInt && target_t_code != kDLUInt && target_t_code != kDLFloat) {
-    MXTHROW << "[MLIR] the type being casted to is neither int nor float";
+    HSTHROW << "[MLIR] the type being casted to is neither int nor float";
   }
   if (origin_t_code == target_t_code && origin_t_bits == target_t_bits) {
-    MXTHROW << "[MLIR] casting between the same type is not allowed";
+    HSTHROW << "[MLIR] casting between the same type is not allowed";
   }
   int compare = 0;
   if (target_t_bits < origin_t_bits) {
@@ -575,7 +575,7 @@ void MLIRTextPrinter::VisitStmt_(const AllocaVarStmtNode* op, std::ostream& os) 
     const auto& node = runtime::Downcast<PrimVar>(name);
     node_name = node->name_hint;
   } else {
-    MXTHROW << "The target var of " << op << " is not a PrimVar.";
+    HSTHROW << "The target var of " << op << " is not a PrimVar.";
     return;
   }
   const auto& init_value = op->init_value;
@@ -583,7 +583,7 @@ void MLIRTextPrinter::VisitStmt_(const AllocaVarStmtNode* op, std::ostream& os) 
     const auto& node = runtime::Downcast<PrimExpr>(init_value);
     PrimExprFunctor::VisitExpr(node, os);
   } else {
-    MXTHROW << "The init value of " << op << " is not a PrimExpr.";
+    HSTHROW << "The init value of " << op << " is not a PrimExpr.";
     return;
   }
   mlir_info var_info = {expr_name_map_->at(init_value.get()),
@@ -598,7 +598,7 @@ void MLIRTextPrinter::VisitStmt_(const AssignStmtNode* op, std::ostream& os) {
     const auto& node = runtime::Downcast<PrimVar>(lhs_var);
     node_name = node->name_hint;
   } else {
-    MXTHROW << "The target var of " << op << " is not a PrimVar.";
+    HSTHROW << "The target var of " << op << " is not a PrimVar.";
     return;
   }
 
@@ -607,7 +607,7 @@ void MLIRTextPrinter::VisitStmt_(const AssignStmtNode* op, std::ostream& os) {
     const auto& node = runtime::Downcast<PrimExpr>(rhs_expr);
     PrimExprFunctor::VisitExpr(node, os);
   } else {
-    MXTHROW << "The init value of " << op << " is not a PrimExpr.";
+    HSTHROW << "The init value of " << op << " is not a PrimExpr.";
     return;
   }
   mlir_info var_info = {expr_name_map_->at(rhs_expr.get()),
@@ -627,7 +627,7 @@ void MLIRTextPrinter::VisitStmt_(const ReturnStmtNode* op, std::ostream& os) {
   } else if (op->value->IsInstance<NoneExprNode>()) {
     os << "func.return " << std::endl;
   } else {
-    MXTHROW << "[linalg] not support expr node: " << op->value;
+    HSTHROW << "[linalg] not support expr node: " << op->value;
   }
 }
 
@@ -644,7 +644,7 @@ auto SearchCommonNewVars(const MLIRTextPrinter::var_name_map& if_case,
   std::unordered_map<StringRef, info_pair> common_new_vars;
   for (const auto& pair : if_case) {
     if (else_case.count(pair.first) && !old_vars.count(pair.first)) {
-      MXCHECK(common_new_vars.find(pair.first) == common_new_vars.end())
+      HSCHECK(common_new_vars.find(pair.first) == common_new_vars.end())
           << "[MLIR Printer] " << pair.first;
       const auto& else_pair = else_case.at(pair.first);
       if (pair.second.mlir_type != else_pair.mlir_type) {
@@ -658,7 +658,7 @@ auto SearchCommonNewVars(const MLIRTextPrinter::var_name_map& if_case,
 }
 
 void MLIRTextPrinter::VisitStmt_(const IfThenElseNode* op, std::ostream& os) {
-  MXCHECK(op->condition->IsInstance<PrimExprNode>())
+  HSCHECK(op->condition->IsInstance<PrimExprNode>())
       << "The condition of if op: " << op << " is not a PrimExprNode";
   const auto& condition = runtime::Downcast<PrimExpr>(op->condition);
   const auto& then_case = op->then_case;
@@ -760,9 +760,9 @@ void MLIRTextPrinter::VisitStmt_(const ExprStmtNode* op, std::ostream& os) {
 void MLIRTextPrinter::VisitStmt_(const PrimFuncNode* op, std::ostream& os) {
   // TODO, add func name and params
   const auto& opt_parameter_map =
-      op->GetAttr<matxscript::ir::Map<PrimVar, Buffer>>(attr::kKernelFunctionParameterBinding);
+      op->GetAttr<hercules::ir::Map<PrimVar, Buffer>>(attr::kKernelFunctionParameterBinding);
   if (!opt_parameter_map.defined()) {
-    MXLOG(WARNING) << "Kernel function, " << op->GetReprName()
+    HSLOG(WARNING) << "Kernel function, " << op->GetReprName()
                    << ", is supposed to have an attribute named kKernelFunctionParameterBinding.";
   }
   const auto& parameter_map = opt_parameter_map.value();
@@ -771,7 +771,7 @@ void MLIRTextPrinter::VisitStmt_(const PrimFuncNode* op, std::ostream& os) {
     const auto& buffer = item.second;
     const auto* var_type = var->checked_type().as<PointerTypeNode>();
     if (var_type == nullptr) {
-      MXLOG(WARNING) << "The attribute, kKernelFunctionParameterBinding, binded to "
+      HSLOG(WARNING) << "The attribute, kKernelFunctionParameterBinding, binded to "
                      << op->GetReprName()
                      << ", is expected to have PrimVar of PointerType as keys.";
     }
@@ -791,7 +791,7 @@ void MLIRTextPrinter::VisitStmt_(const PrimFuncNode* op, std::ostream& os) {
                             static_cast<const Object*>(param.get()),
                             '%' + std::string(node->name_hint.data()));
     } else {
-      MXTHROW << "[linalg] not support arg node: " << param->checked_type();
+      HSTHROW << "[linalg] not support arg node: " << param->checked_type();
     }
     if (i != func_params.size() - 1) {
       os << ", ";
@@ -819,41 +819,41 @@ void MLIRTextPrinter::VisitStmt_(const ComputeBlockNode* op, std::ostream& os) {
 
 void MLIRTextPrinter::VisitStmt_(const AllocateNode* op, std::ostream& os) {
   const auto& condition = op->condition;
-  MXCHECK(condition->IsInstance<IntImmNode>())
+  HSCHECK(condition->IsInstance<IntImmNode>())
       << "The condition for allocate node should only be a constant of int, but get "
       << op->condition->checked_type();
   const auto& node = runtime::Downcast<IntImm>(op->condition);
   if (!node->value) {
-    MXLOG(WARNING)
-        << "Warning for matx developer, the condition for allocate node is intended to only be 1, but get "
+    HSLOG(WARNING)
+        << "Warning for hvm developer, the condition for allocate node is intended to only be 1, but get "
         << node->value;
     return;
   }
   if (node->value != 1) {
-    MXLOG(WARNING)
-        << "Warning for matx developer, the condition for allocate node is intended to only be 1, but get "
+    HSLOG(WARNING)
+        << "Warning for hvm developer, the condition for allocate node is intended to only be 1, but get "
         << node->value;
   }
 
   // value
   const auto& opt_buffer = op->annotations.Get("allocation_buffer");
-  MXCHECK(opt_buffer.defined()) << "AllocateNode has to be decleard with the corresponding buffer";
+  HSCHECK(opt_buffer.defined()) << "AllocateNode has to be decleard with the corresponding buffer";
   const auto& value = opt_buffer.value();
-  MXCHECK(value->IsInstance<BufferNode>())
+  HSCHECK(value->IsInstance<BufferNode>())
       << "AllocateNode has to be decleard with the corresponding buffer, but get "
       << value->GetTypeKey();
   const auto& buffer = runtime::Downcast<Buffer>(value);
   const auto& type_str = ConvertTypeToMLIR(buffer);
   auto& alloc_shape = op->extents;
   auto& alloc_dtype = op->dtype;
-  MXCHECK_EQ(alloc_dtype, buffer->dtype) << "Allocating an ndarray with " << alloc_dtype
+  HSCHECK_EQ(alloc_dtype, buffer->dtype) << "Allocating an ndarray with " << alloc_dtype
                                          << ", but corresponding buffer dtype is " << buffer->dtype;
 
   std::vector<std::string> dims;
   for (int64_t i = 0; i < alloc_shape.size(); i++) {
     const auto& alloc_dim = alloc_shape[i];
     const auto& buffer_dim = buffer->shape[i];
-    MXCHECK_EQ(alloc_dim.get(), buffer_dim.get())
+    HSCHECK_EQ(alloc_dim.get(), buffer_dim.get())
         << "Allocating an ndarray with " << alloc_shape << ", but corresponding buffer shape is "
         << buffer->shape;
     if (alloc_dim->IsInstance<IntImmNode>()) {
@@ -861,7 +861,7 @@ void MLIRTextPrinter::VisitStmt_(const AllocateNode* op, std::ostream& os) {
     }
     PrimExprFunctor::VisitExpr(alloc_dim, os);
     const auto& var_type = GetRuntimeDataType(alloc_dim->checked_type());
-    MXCHECK(var_type.is_int() || var_type.is_uint())
+    HSCHECK(var_type.is_int() || var_type.is_uint())
         << "Allocating an ndarray whose dim is not a integer";
     if (index_map.find(alloc_dim.get()) == index_map.end()) {
       const std::string index_var_name('%' + std::to_string(cur_index_));
@@ -910,7 +910,7 @@ StringRef MLIRTextPrinter::Finish() {
   return {stream_.str()};
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.as_linalg_text").set_body_typed([](const PrimFunc& fn) {
+HERCULES_REGISTER_GLOBAL("node.as_linalg_text").set_body_typed([](const PrimFunc& fn) {
   MLIRTextPrinter printer;
   printer.AddFunction(fn);
   return printer.Finish();
@@ -918,4 +918,4 @@ MATXSCRIPT_REGISTER_GLOBAL("node.as_linalg_text").set_body_typed([](const PrimFu
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

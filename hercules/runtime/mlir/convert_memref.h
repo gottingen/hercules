@@ -27,7 +27,7 @@
 #include "string"
 #include "vector"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace mlir {
 
@@ -52,4 +52,4 @@ bool is_overlapping(void* target, std::initializer_list<void*> others);
 
 }  // namespace mlir
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

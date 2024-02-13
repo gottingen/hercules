@@ -2,7 +2,7 @@
 /*
  * Taken from https://github.com/apache/tvm/blob/v0.7/include/tvm/ir/adt.h
  * with fixes applied:
- * - add namespace matx::ir for fix conflict with tvm
+ * - add namespace hvm::ir for fix conflict with tvm
  * - remove TypeData
  * - add ClassType
  *
@@ -35,11 +35,11 @@
 #include <hercules/ir/type.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using namespace runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::ir::printer;
 
 Constructor::Constructor(Type ret_type,
                          StringRef name_hint,
@@ -53,16 +53,16 @@ Constructor::Constructor(Type ret_type,
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ConstructorNode);
+HERCULES_REGISTER_NODE_TYPE(ConstructorNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Constructor")
+HERCULES_REGISTER_GLOBAL("ir.Constructor")
     .set_body_typed(
         [](Type ret_type, StringRef name_hint, Array<Type> inputs, GlobalTypeVar belong_to) {
           return Constructor(
               std::move(ret_type), std::move(name_hint), std::move(inputs), std::move(belong_to));
         });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
     .set_dispatch<Constructor>("", [](Constructor node, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(node->name_hint);
     });
@@ -86,7 +86,7 @@ ClassType::ClassType(uint64_t py_type_id,
   n->func_types = std::move(func_types);
   n->base = std::move(base);
   if (n->base.defined()) {
-    MXCHECK(n->base->IsInstance<ClassTypeNode>())
+    HSCHECK(n->base->IsInstance<ClassTypeNode>())
         << "class base type can only be class, but get " << n->base;
   }
   data_ = std::move(n);
@@ -109,7 +109,7 @@ Type ClassTypeNode::GetItem(const StringRef& name) const {
     // do nothing, will return None
     if (base.defined()) {
       auto base_node = base.as<ClassTypeNode>();
-      MXCHECK(base_node) << "class base type can only be class, but get " << base;
+      HSCHECK(base_node) << "class base type can only be class, but get " << base;
       return base_node->GetItem(name);
     }
     return Type();
@@ -123,7 +123,7 @@ Array<StringRef> ClassTypeNode::GetVarNamesLookupTable() const {
     // ...
     // cur vars
     auto base_node = base.as<ClassTypeNode>();
-    MXCHECK(base_node) << "class base type can only be class, but get " << base;
+    HSCHECK(base_node) << "class base type can only be class, but get " << base;
     auto all_var_names = base_node->GetVarNamesLookupTable();
     all_var_names.insert(all_var_names.end(), var_names.begin(), var_names.end());
     return all_var_names;
@@ -138,7 +138,7 @@ Array<Type> ClassTypeNode::GetVarTypesLookupTable() const {
     // ...
     // cur var types
     auto base_node = base.as<ClassTypeNode>();
-    MXCHECK(base_node) << "class base type can only be class, but get " << base;
+    HSCHECK(base_node) << "class base type can only be class, but get " << base;
     auto all_var_types = base_node->GetVarTypesLookupTable();
     all_var_types.insert(all_var_types.end(), var_types.begin(), var_types.end());
     return all_var_types;
@@ -165,7 +165,7 @@ bool IsBaseTypeOf(const Type& base, const Type& derived, bool allow_same) {
   fn = [&](const ClassTypeNode* base, const ClassTypeNode* derived) -> bool {
     if (derived->base.defined()) {
       auto derived_base = derived->base.as<ClassTypeNode>();
-      MXCHECK(derived_base != nullptr);
+      HSCHECK(derived_base != nullptr);
       if (derived_base == base) {
         return true;
       } else {
@@ -183,13 +183,13 @@ const PrimVar& GetImplicitClassSessionVar() {
   return var;
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.GetImplicitClassSessionVar").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("ir.GetImplicitClassSessionVar").set_body([](PyArgs args) -> RTValue {
   return GetImplicitClassSessionVar();
 });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ClassTypeNode);
+HERCULES_REGISTER_NODE_TYPE(ClassTypeNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType")
+HERCULES_REGISTER_GLOBAL("ir.ClassType")
     .set_body_typed([](uint64_t py_type_id,
                        GlobalTypeVar header,
                        Type base,
@@ -208,13 +208,13 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType")
                        std::move(func_types));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
     .set_dispatch<ClassType>("", [](ClassType node, ObjectPath p, IRDocsifier d) -> Doc {
       return IdDoc(node->header->name_hint);
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType_GetItem").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 2) << "[ir.ClassType_GetItem] Expect 2 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("ir.ClassType_GetItem").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 2) << "[ir.ClassType_GetItem] Expect 2 arguments but get " << args.size();
   ClassType cls_ty = args[0].As<ClassType>();
   StringRef name = args[1].As<StringRef>();
   auto ty = cls_ty->GetItem(name);
@@ -224,8 +224,8 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType_GetItem").set_body([](PyArgs args) -> R
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType_InplaceAppendFunc").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 4) << "[ir.ClassType_AppendFunc] Expect 4 arguments but get "
+HERCULES_REGISTER_GLOBAL("ir.ClassType_InplaceAppendFunc").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 4) << "[ir.ClassType_AppendFunc] Expect 4 arguments but get "
                              << args.size();
   ClassType cls_ty = args[0].As<ClassType>();
   StringRef func_name = args[1].As<StringRef>();
@@ -238,8 +238,8 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType_InplaceAppendFunc").set_body([](PyArgs 
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType_InplaceAppendVar").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 3) << "[ir.ClassType_InplaceAppendVar] Expect 3 arguments but get "
+HERCULES_REGISTER_GLOBAL("ir.ClassType_InplaceAppendVar").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 3) << "[ir.ClassType_InplaceAppendVar] Expect 3 arguments but get "
                              << args.size();
   ClassType cls_ty = args[0].As<ClassType>();
   StringRef var_name = args[1].As<StringRef>();
@@ -250,15 +250,15 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType_InplaceAppendVar").set_body([](PyArgs a
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType_RebuildTag").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 1 || args.size() == 2)
+HERCULES_REGISTER_GLOBAL("ir.ClassType_RebuildTag").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 1 || args.size() == 2)
       << "[ir.ClassType_RebuildTag] Expect 1 or 2 arguments but get " << args.size();
   ClassType cls_ty = args[0].As<ClassType>();
   auto* node = const_cast<ClassTypeNode*>(cls_ty.get());
   String seed = node->header->name_hint + "_names";
   if (node->base.defined()) {
     auto base_node = node->base.as<ClassTypeNode>();
-    MXCHECK(base_node != nullptr) << "class base type can only be class, but get " << node->base;
+    HSCHECK(base_node != nullptr) << "class base type can only be class, but get " << node->base;
     seed.append("_");
     seed.append(std::to_string(base_node->tag));
     seed.append("_");
@@ -287,8 +287,8 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType_RebuildTag").set_body([](PyArgs args) -
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType_ClearMembers").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 1) << "[ir.ClassType_ClearMembers] Expect 1 arguments but get "
+HERCULES_REGISTER_GLOBAL("ir.ClassType_ClearMembers").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 1) << "[ir.ClassType_ClearMembers] Expect 1 arguments but get "
                             << args.size();
   ClassType cls_ty = args[0].As<ClassType>();
   auto* node = const_cast<ClassTypeNode*>(cls_ty.get());
@@ -296,10 +296,10 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.ClassType_ClearMembers").set_body([](PyArgs args)
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.IsBaseTypeOf").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(args.size() == 3) << "[ir.ClassType_IsBaseOf] Expect 3 arguments but get " << args.size();
+HERCULES_REGISTER_GLOBAL("ir.IsBaseTypeOf").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(args.size() == 3) << "[ir.ClassType_IsBaseOf] Expect 3 arguments but get " << args.size();
   return IsBaseTypeOf(args[0].As<Type>(), args[1].As<Type>(), args[2].As<bool>());
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

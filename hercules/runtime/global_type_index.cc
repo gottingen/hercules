@@ -21,10 +21,10 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_DLL const char* TypeIndex2Str(int32_t type_code) {
+HERCULES_DLL const char* TypeIndex2Str(int32_t type_code) {
   switch (type_code) {
     case TypeIndex::kRuntimeInteger:
       return "int";
@@ -34,16 +34,16 @@ MATX_DLL const char* TypeIndex2Str(int32_t type_code) {
       return "handle";
     case TypeIndex::kRuntimeNullptr:
       return "nullptr";
-    case TypeIndex::kMATXByteArray:
+    case TypeIndex::kHVMByteArray:
       return "ByteArray";
     case TypeIndex::kRuntimeDataType:
       return "DLDataType";
     case TypeIndex::kRuntimeContext:
-      return "MATXContext";
+      return "HVMContext";
     case TypeIndex::kRuntimeDLTensorHandle:
       return "ArrayHandle";
     case TypeIndex::kRuntimePackedFuncHandle:
-      return "MATXFunctionHandle";
+      return "HVMFunctionHandle";
     case TypeIndex::kRuntimeObjectRValueRefArg:
       return "ObjectRValueRefArg";
     case TypeIndex::kRoot:
@@ -96,7 +96,7 @@ MATX_DLL const char* TypeIndex2Str(int32_t type_code) {
   }
 }
 
-MATX_DLL int32_t Str2TypeIndex(string_view str) {
+HERCULES_DLL int32_t Str2TypeIndex(string_view str) {
   if (str == "int") {
     return TypeIndex::kRuntimeInteger;
   } else if (str == "float") {
@@ -139,4 +139,4 @@ MATX_DLL int32_t Str2TypeIndex(string_view str) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

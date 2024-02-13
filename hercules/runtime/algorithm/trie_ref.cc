@@ -26,7 +26,7 @@
 #include <hercules/runtime/registry.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <>
@@ -118,4 +118,4 @@ std::ostream& operator<<(std::ostream& os, Trie const& n) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

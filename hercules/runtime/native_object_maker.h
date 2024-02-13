@@ -25,10 +25,10 @@
 #include <hercules/runtime/container/user_data_ref.h>
 #include <hercules/runtime/py_args.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_DLL UserDataRef make_native_userdata(string_view cls_name, PyArgs args);
+HERCULES_DLL UserDataRef make_native_userdata(string_view cls_name, PyArgs args);
 
 template <typename... ARGS>
 inline UserDataRef make_native_userdata(string_view cls_name, ARGS&&... args) {
@@ -36,7 +36,7 @@ inline UserDataRef make_native_userdata(string_view cls_name, ARGS&&... args) {
   return make_native_userdata(cls_name, PyArgs(args_init));
 }
 
-MATX_DLL UserDataRef make_native_op(string_view cls_name, PyArgs args);
+HERCULES_DLL UserDataRef make_native_op(string_view cls_name, PyArgs args);
 
 template <typename... ARGS>
 inline UserDataRef make_native_op(string_view cls_name, ARGS&&... args) {
@@ -45,4 +45,4 @@ inline UserDataRef make_native_op(string_view cls_name, ARGS&&... args) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

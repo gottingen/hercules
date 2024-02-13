@@ -25,7 +25,7 @@
 
 #include <hercules/ir/stmt_functor.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class MoveOptimizerAnalysis : public StmtExprVisitor {
@@ -354,4 +354,4 @@ class MoveOptimizerMutator : public StmtExprMutator {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

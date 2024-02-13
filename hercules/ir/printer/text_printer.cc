@@ -29,7 +29,7 @@
 #include <hercules/ir/tensor_stmt.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
@@ -55,7 +55,7 @@ static std::string Docsify(const ObjectRef& obj,
     }
     move_source_paths = true;
   } else {
-    MXLOG(FATAL) << "TypeError: Unexpected doc type: " << doc->GetTypeKey();
+    HSLOG(FATAL) << "TypeError: Unexpected doc type: " << doc->GetTypeKey();
   }
   std::ostringstream os;
   if (!d->metadata.empty()) {
@@ -134,13 +134,13 @@ PrinterConfig::PrinterConfig(Map<StringRef, ObjectRef> config_dict) {
   this->data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrinterConfigNode);
-MATXSCRIPT_REGISTER_GLOBAL("node.PrinterConfig")
+HERCULES_REGISTER_NODE_TYPE(PrinterConfigNode);
+HERCULES_REGISTER_GLOBAL("node.PrinterConfig")
     .set_body_typed([](Map<StringRef, ObjectRef> config_dict) {
       return PrinterConfig(config_dict);
     });
-MATXSCRIPT_REGISTER_GLOBAL("node.IRTextPrinter_Print").set_body_typed(IRTextPrinter::Print);
+HERCULES_REGISTER_GLOBAL("node.IRTextPrinter_Print").set_body_typed(IRTextPrinter::Print);
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

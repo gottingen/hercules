@@ -26,14 +26,14 @@
 
 #include <hercules/ir/printer/utils.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace printer {
 
 IdDoc IRDocsifierNode::Define(const ObjectRef& obj,
                               const Frame& frame,
                               const StringRef& name_hint) {
-  MXCHECK(obj2info.find(obj) == obj2info.end()) << "Duplicated object: " << obj;
+  HSCHECK(obj2info.find(obj) == obj2info.end()) << "Duplicated object: " << obj;
   StringRef name = GenerateUniqueName(name_hint, this->defined_names);
   this->defined_names.insert(name);
   DocCreator doc_factory = [name]() { return IdDoc(name); };
@@ -44,7 +44,7 @@ IdDoc IRDocsifierNode::Define(const ObjectRef& obj,
 }
 
 void IRDocsifierNode::Define(const ObjectRef& obj, const Frame& frame, DocCreator doc_factory) {
-  MXCHECK(obj2info.find(obj) == obj2info.end()) << "Duplicated object: " << obj;
+  HSCHECK(obj2info.find(obj) == obj2info.end()) << "Duplicated object: " << obj;
   obj2info.insert({obj, VariableInfo{std::move(doc_factory), NullOpt}});
   frame->AddExitCallback([this, obj]() { this->RemoveVar(obj); });
 }
@@ -58,7 +58,7 @@ Optional<ExprDoc> IRDocsifierNode::GetVarDoc(const ObjectRef& obj) const {
 }
 
 ExprDoc IRDocsifierNode::AddMetadata(const ObjectRef& obj) {
-  MXCHECK(obj.defined()) << "TypeError: Cannot add nullptr to metadata";
+  HSCHECK(obj.defined()) << "TypeError: Cannot add nullptr to metadata";
   StringRef key(obj->GetTypeKey());
   Array<ObjectRef>& array = metadata[key];
   int index = std::find(array.begin(), array.end(), obj) - array.begin();
@@ -74,7 +74,7 @@ bool IRDocsifierNode::IsVarDefined(const ObjectRef& obj) const {
 
 void IRDocsifierNode::RemoveVar(const ObjectRef& obj) {
   auto it = obj2info.find(obj);
-  MXCHECK(it != obj2info.end()) << "No such object: " << obj;
+  HSCHECK(it != obj2info.end()) << "No such object: " << obj;
   if (it->second.name.defined()) {
     defined_names.erase(it->second.name.value());
   }
@@ -180,9 +180,9 @@ IRDocsifier::FType& IRDocsifier::vtable() {
   return inst;
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(FrameNode);
-MATXSCRIPT_REGISTER_NODE_TYPE(IRDocsifierNode);
+HERCULES_REGISTER_NODE_TYPE(FrameNode);
+HERCULES_REGISTER_NODE_TYPE(IRDocsifierNode);
 
 }  // namespace printer
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

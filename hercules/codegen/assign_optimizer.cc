@@ -19,12 +19,12 @@
  */
 #include "assign_optimizer.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.AssignOptimizer_Match").set_body_typed([](BaseFunc f) {
+HERCULES_REGISTER_GLOBAL("ir.AssignOptimizer_Match").set_body_typed([](BaseFunc f) {
   return AssignOptimizerFilter().run(f);
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

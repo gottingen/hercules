@@ -37,19 +37,19 @@
 #include <hercules/ir/type.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using namespace runtime;
 
 // macro to register an unary op
-#define MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP(OpName)                             \
-  MATXSCRIPT_IR_REGISTER_OP(OpName).set_num_inputs(1).set_attr<TCallEffectKind>( \
+#define HERCULES_IR_REGISTER_PURE_UNARY_OP(OpName)                             \
+  HERCULES_IR_REGISTER_OP(OpName).set_num_inputs(1).set_attr<TCallEffectKind>( \
       "TCallEffectKind", Integer(CallEffectKind::kPure))
 
 // macro to register an binary op
-#define MATXSCRIPT_IR_REGISTER_PURE_BINARY_OP(OpName)                            \
-  MATXSCRIPT_IR_REGISTER_OP(OpName).set_num_inputs(2).set_attr<TCallEffectKind>( \
+#define HERCULES_IR_REGISTER_PURE_BINARY_OP(OpName)                            \
+  HERCULES_IR_REGISTER_OP(OpName).set_num_inputs(2).set_attr<TCallEffectKind>( \
       "TCallEffectKind", Integer(CallEffectKind::kPure))
 
 Type GetType(const PrimExpr& expr) {
@@ -98,7 +98,7 @@ void BinaryOpMatchTypes(PrimExpr& lhs, PrimExpr& rhs) {  // NOLINT(*)
   DataType ltype = lhs.dtype();
   DataType rtype = rhs.dtype();
 
-  MXCHECK(ltype.lanes() == rtype.lanes()) << "Cannot match type " << ltype << " vs " << rtype;
+  HSCHECK(ltype.lanes() == rtype.lanes()) << "Cannot match type " << ltype << " vs " << rtype;
   if (lhs.dtype() == rhs.dtype())
     return;
   // Only do very simple type coversion
@@ -126,13 +126,13 @@ void BinaryOpMatchTypes(PrimExpr& lhs, PrimExpr& rhs) {  // NOLINT(*)
     lhs = SimpleCast(DataType::Int(bits, lhs.dtype().lanes()), lhs);
     rhs = SimpleCast(DataType::Int(bits, rhs.dtype().lanes()), rhs);
   } else {
-    MXLOG(FATAL) << "Cannot match type " << ltype << " vs " << rtype;
+    HSLOG(FATAL) << "Cannot match type " << ltype << " vs " << rtype;
   }
 }
 
 // maximum and min limits
 PrimExpr max_value(const DataType& dtype, Span span) {
-  MXCHECK_EQ(dtype.lanes(), 1);
+  HSCHECK_EQ(dtype.lanes(), 1);
   if (dtype.is_int()) {
     if (dtype.bits() == 64) {
       return IntImm(dtype, std::numeric_limits<int64_t>::max(), span);
@@ -158,12 +158,12 @@ PrimExpr max_value(const DataType& dtype, Span span) {
       return FloatImm(dtype, 65504.0, span);
     }
   }
-  MXLOG(FATAL) << "Cannot decide max_value for type" << dtype;
+  HSLOG(FATAL) << "Cannot decide max_value for type" << dtype;
   return PrimExpr();
 }
 
 PrimExpr min_value(const DataType& dtype, Span span) {
-  MXCHECK_EQ(dtype.lanes(), 1);
+  HSCHECK_EQ(dtype.lanes(), 1);
   if (dtype.is_int()) {
     if (dtype.bits() == 64) {
       return IntImm(dtype, std::numeric_limits<int64_t>::lowest(), span);
@@ -183,13 +183,13 @@ PrimExpr min_value(const DataType& dtype, Span span) {
       return FloatImm(dtype, -65504.0, span);
     }
   }
-  MXLOG(FATAL) << "Cannot decide min_value for type" << dtype;
+  HSLOG(FATAL) << "Cannot decide min_value for type" << dtype;
   return PrimExpr();
 }
 
 // infinity
 PrimExpr infinity(const DataType& dtype, Span span) {
-  MXCHECK_EQ(dtype.lanes(), 1);
+  HSCHECK_EQ(dtype.lanes(), 1);
   if (dtype.is_float()) {
     if (dtype.bits() == 64) {
       return FloatImm(dtype, std::numeric_limits<double>::infinity(), span);
@@ -197,7 +197,7 @@ PrimExpr infinity(const DataType& dtype, Span span) {
       return FloatImm(dtype, std::numeric_limits<float>::infinity(), span);
     }
   }
-  MXLOG(FATAL) << "Cannot decide infinity for type " << dtype;
+  HSLOG(FATAL) << "Cannot decide infinity for type " << dtype;
   return PrimExpr();
 }
 
@@ -236,7 +236,7 @@ PrimExpr cast(const DataType& t, PrimExpr value, Span span) {
     }
     return PrimCast(t, value, span);
   } else {
-    MXCHECK(value.dtype().lanes() == t.lanes());
+    HSCHECK(value.dtype().lanes() == t.lanes());
     return PrimCast(t, value, span);
   }
 }
@@ -385,7 +385,7 @@ PrimExpr max(PrimExpr a, PrimExpr b, Span span) {
 
 // if_then_else
 PrimExpr if_then_else(PrimExpr cond, PrimExpr true_value, PrimExpr false_value, Span span) {
-  MXCHECK(cond.dtype() == DataType::Bool(1))
+  HSCHECK(cond.dtype() == DataType::Bool(1))
       << "if_then_else only accept the condition to be boolean type.";
   BinaryOpMatchTypes(true_value, false_value);
   if (const IntImmNode* op = cond.as<IntImmNode>()) {
@@ -457,8 +457,8 @@ PrimExpr not_equal(PrimExpr a, PrimExpr b, Span span) {
 }
 
 PrimExpr logic_and(PrimExpr a, PrimExpr b, Span span) {
-  MXCHECK(a.dtype().is_bool() || a.dtype().is_int());
-  MXCHECK(b.dtype().is_bool() || b.dtype().is_int());
+  HSCHECK(a.dtype().is_bool() || a.dtype().is_int());
+  HSCHECK(b.dtype().is_bool() || b.dtype().is_int());
   PrimExpr ret = arith::TryConstFold<PrimAnd>(a, b);
   if (ret.defined())
     return ret;
@@ -466,8 +466,8 @@ PrimExpr logic_and(PrimExpr a, PrimExpr b, Span span) {
 }
 
 PrimExpr logic_or(PrimExpr a, PrimExpr b, Span span) {
-  MXCHECK(a.dtype().is_bool() || a.dtype().is_int());
-  MXCHECK(b.dtype().is_bool() || b.dtype().is_int());
+  HSCHECK(a.dtype().is_bool() || a.dtype().is_int());
+  HSCHECK(b.dtype().is_bool() || b.dtype().is_int());
   PrimExpr ret = arith::TryConstFold<PrimOr>(a, b);
   if (ret.defined())
     return ret;
@@ -475,7 +475,7 @@ PrimExpr logic_or(PrimExpr a, PrimExpr b, Span span) {
 }
 
 PrimExpr logic_not(PrimExpr a, Span span) {
-  MXCHECK(a.dtype().is_bool() || a.dtype().is_int());
+  HSCHECK(a.dtype().is_bool() || a.dtype().is_int());
   PrimExpr ret = arith::TryConstFold<PrimNot>(a);
   if (ret.defined())
     return ret;
@@ -484,13 +484,13 @@ PrimExpr logic_not(PrimExpr a, Span span) {
 
 // shirt right
 PrimExpr right_shift(PrimExpr a, PrimExpr b, Span span) {
-  MXCHECK(a.dtype().is_int() || a.dtype().is_uint());
-  MXCHECK(b.dtype().is_int() || b.dtype().is_uint());
+  HSCHECK(a.dtype().is_int() || a.dtype().is_uint());
+  HSCHECK(b.dtype().is_int() || b.dtype().is_uint());
   BinaryOpMatchTypes(a, b);
-  MATXSCRIPT_INDEX_CONST_PROPAGATION({
+  HERCULES_INDEX_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pb)
-      MXCHECK(pb->value >= 0 && pb->value < rtype.bits())
+      HSCHECK(pb->value >= 0 && pb->value < rtype.bits())
           << "Shift amount must be non-negative and less than " << rtype.bits() << " for type "
           << rtype;
     if (pa && pb)
@@ -506,13 +506,13 @@ PrimExpr right_shift(PrimExpr a, PrimExpr b, Span span) {
 
 // shift left
 PrimExpr left_shift(PrimExpr a, PrimExpr b, Span span) {
-  MXCHECK(a.dtype().is_int() || a.dtype().is_uint());
-  MXCHECK(b.dtype().is_int() || b.dtype().is_uint());
+  HSCHECK(a.dtype().is_int() || a.dtype().is_uint());
+  HSCHECK(b.dtype().is_int() || b.dtype().is_uint());
   BinaryOpMatchTypes(a, b);
-  MATXSCRIPT_INDEX_CONST_PROPAGATION({
+  HERCULES_INDEX_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pb)
-      MXCHECK(pb->value >= 0 && pb->value < rtype.bits())
+      HSCHECK(pb->value >= 0 && pb->value < rtype.bits())
           << "Shift amount must be non-negative and less than " << rtype.bits() << " for type "
           << rtype;
     if (pa && pb)
@@ -527,10 +527,10 @@ PrimExpr left_shift(PrimExpr a, PrimExpr b, Span span) {
 
 // bitwise and
 PrimExpr bitwise_and(PrimExpr a, PrimExpr b, Span span) {
-  MXCHECK(a.dtype().is_int() || a.dtype().is_uint());
-  MXCHECK(b.dtype().is_int() || b.dtype().is_uint());
+  HSCHECK(a.dtype().is_int() || a.dtype().is_uint());
+  HSCHECK(b.dtype().is_int() || b.dtype().is_uint());
   BinaryOpMatchTypes(a, b);
-  MATXSCRIPT_INDEX_CONST_PROPAGATION({
+  HERCULES_INDEX_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb)
       return IntImm(rtype, (pa->value & pb->value), span);
@@ -540,10 +540,10 @@ PrimExpr bitwise_and(PrimExpr a, PrimExpr b, Span span) {
 
 // bitwise_or
 PrimExpr bitwise_or(PrimExpr a, PrimExpr b, Span span) {
-  MXCHECK(a.dtype().is_int() || a.dtype().is_uint());
-  MXCHECK(b.dtype().is_int() || b.dtype().is_uint());
+  HSCHECK(a.dtype().is_int() || a.dtype().is_uint());
+  HSCHECK(b.dtype().is_int() || b.dtype().is_uint());
   BinaryOpMatchTypes(a, b);
-  MATXSCRIPT_INDEX_CONST_PROPAGATION({
+  HERCULES_INDEX_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb)
       return IntImm(rtype, (pa->value | pb->value), span);
@@ -553,10 +553,10 @@ PrimExpr bitwise_or(PrimExpr a, PrimExpr b, Span span) {
 
 // bitwise_xor
 PrimExpr bitwise_xor(PrimExpr a, PrimExpr b, Span span) {
-  MXCHECK(a.dtype().is_int() || a.dtype().is_uint());
-  MXCHECK(b.dtype().is_int() || b.dtype().is_uint());
+  HSCHECK(a.dtype().is_int() || a.dtype().is_uint());
+  HSCHECK(b.dtype().is_int() || b.dtype().is_uint());
   BinaryOpMatchTypes(a, b);
-  MATXSCRIPT_INDEX_CONST_PROPAGATION({
+  HERCULES_INDEX_CONST_PROPAGATION({
     const DataType& rtype = a.dtype();
     if (pa && pb)
       return IntImm(rtype, (pa->value ^ pb->value), span);
@@ -566,11 +566,11 @@ PrimExpr bitwise_xor(PrimExpr a, PrimExpr b, Span span) {
 
 // bitwie_not
 PrimExpr bitwise_not(PrimExpr a, Span span) {
-  MXCHECK(a.dtype().is_int() || a.dtype().is_uint());
+  HSCHECK(a.dtype().is_int() || a.dtype().is_uint());
   return PrimCall(a.dtype(), builtin::bitwise_not(), {a}, span);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.bitwise_not").set_body_typed([](PrimExpr a, Span span) {
+HERCULES_REGISTER_GLOBAL("ir.bitwise_not").set_body_typed([](PrimExpr a, Span span) {
   return bitwise_not(a, span);
 });
 
@@ -599,19 +599,19 @@ PrimExpr abs(PrimExpr x, Span span) {
   } else if (x.dtype().is_uint()) {
     return x;
   } else {
-    MXLOG(FATAL) << "Data type " << x.dtype()
+    HSLOG(FATAL) << "Data type " << x.dtype()
                  << " not supported for absolute op. Skipping absolute op...";
     return x;
   }
 }
 
 // TODO(xiandi.ma): fix TGlobalSymbol
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.builtins_abs")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.builtins_abs")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "fabs")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "abs");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_fabs")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_fabs")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "fabs")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.fabs");
@@ -633,7 +633,7 @@ PrimExpr isnan(PrimExpr x, Span span) {
       return PrimCall(t, op, {x}, span);
     }
   } else {
-    MXLOG(FATAL) << "Data type " << x.dtype()
+    HSLOG(FATAL) << "Data type " << x.dtype()
                  << " not supported for isnan op. Skipping isnan op...";
     return x;
   }
@@ -648,7 +648,7 @@ PrimExpr isinf(PrimExpr x, Span span) {
     PrimExpr infX = infinity(x.dtype());
     return logic_and(equal(abs(x), infX), logic_not(isnan(x)), span);
   } else {
-    MXLOG(FATAL) << "Data type " << x.dtype()
+    HSLOG(FATAL) << "Data type " << x.dtype()
                  << " not supported for finiteness ops. Skipping it...";
     return x;
   }
@@ -662,12 +662,12 @@ PrimExpr isfinite(PrimExpr x, Span span) {
 // fmod
 PrimExpr fmod(PrimExpr x, PrimExpr y, Span span) {
   BinaryOpMatchTypes(x, y);
-  MXCHECK(x.dtype().is_float()) << "fmod only applies to float";
+  HSCHECK(x.dtype().is_float()) << "fmod only applies to float";
   static auto op = Op::Get("ir.math_fmod");
   return PrimCall(x.dtype(), op, {x, y}, span);
 }
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_fmod")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_fmod")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "fmod")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.fmod");
 
@@ -686,7 +686,7 @@ PrimExpr floor(PrimExpr x, Span span) {
   return result;
 }
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_floor")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_floor")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "floor")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.floor");
@@ -706,7 +706,7 @@ PrimExpr ceil(PrimExpr x, Span span) {
   return result;
 }
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_ceil")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_ceil")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "ceil")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.ceil");
@@ -723,7 +723,7 @@ PrimExpr round(PrimExpr x, Span span) {
   return PrimCall(x.dtype(), op, {x}, span);
 }
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.builtins_round")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.builtins_round")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "round")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "round");
@@ -736,13 +736,13 @@ PrimExpr nearbyint(PrimExpr x, Span span) {
   const FloatImmNode* fx = x.as<FloatImmNode>();
   if (fx)
     return FloatImm(x.dtype(), std::nearbyint(fx->value), span);
-  static auto op = Op::Get("ir.matx_math_nearbyint");
+  static auto op = Op::Get("ir.hvm_math_nearbyint");
   return PrimCall(x.dtype(), op, {x}, span);
 }
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.matx_math_nearbyint")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.hvm_math_nearbyint")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "nearbyint")
-    .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "matx.math.nearbyint");
+    .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "hvm.math.nearbyint");
 
 // trunc
 PrimExpr trunc(PrimExpr x, Span span) {
@@ -758,206 +758,206 @@ PrimExpr trunc(PrimExpr x, Span span) {
   return PrimCall(x.dtype(), op, {x}, span);
 }
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_trunc")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_trunc")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "trunc")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.trunc");
 
 // unary op registration.
-MATXSCRIPT_IR_REGISTER_PURE_BINARY_OP("ir.math_pow")
+HERCULES_IR_REGISTER_PURE_BINARY_OP("ir.math_pow")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "Math<double(double, double)>::check_call<pow>")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.pow");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_exp")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_exp")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "exp")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.exp");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.matx_math_exp2")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.hvm_math_exp2")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "exp2")
-    .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "matx.math.exp2");
+    .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "hvm.math.exp2");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.matx_math_exp10")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.hvm_math_exp10")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "exp10")
-    .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "matx.math.exp10");
+    .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "hvm.math.exp10");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_erf")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_erf")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "erf")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.erf");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_tanh")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_tanh")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "tanh")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.tanh");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_sigmoid")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_sigmoid")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "sigmoid")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.sigmoid");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_sqrt")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_sqrt")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "Math<double(double)>::check_call<sqrt>")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.sqrt");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_rsqrt")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_rsqrt")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "rsqrt")
-    .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "matx.math.rsqrt");
+    .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "hvm.math.rsqrt");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_log")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_log")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "Math<double(double)>::check_call<log>")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.log");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_log2")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_log2")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "Math<double(double)>::check_call<log2>")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.log2");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_log1p")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_log1p")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "log1p")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.log1p");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_log10")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_log10")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "Math<double(double)>::check_call<log10>")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.log10");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_tan")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_tan")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "tan")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.tan");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_cos")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_cos")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "cos")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.cos");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_cosh")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_cosh")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "cosh")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.cosh");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_sin")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_sin")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "sin")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.sin");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_sinh")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_sinh")
     .set_attr<TVectorizable>("TVectorizable", true)
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "sinh")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.sinh");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_asin")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_asin")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "asin")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.asin");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_acos")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_acos")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "acos")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.acos");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_atan")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_atan")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "atan")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.atan");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_acosh")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_acosh")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "acosh")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.acosh");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_asinh")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_asinh")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "asinh")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.asinh");
 
-MATXSCRIPT_IR_REGISTER_PURE_UNARY_OP("ir.math_atanh")
+HERCULES_IR_REGISTER_PURE_UNARY_OP("ir.math_atanh")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "atanh")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.atanh");
 
 // binary intrinsics
-MATXSCRIPT_IR_REGISTER_PURE_BINARY_OP("ir.math_atan2")
+HERCULES_IR_REGISTER_PURE_BINARY_OP("ir.math_atan2")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "atan2")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.atan2");
 
-MATXSCRIPT_IR_REGISTER_PURE_BINARY_OP("ir.math_nextafter")
+HERCULES_IR_REGISTER_PURE_BINARY_OP("ir.math_nextafter")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "nextafter")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.nextafter");
 
-MATXSCRIPT_IR_REGISTER_PURE_BINARY_OP("ir.math_hypot")
+HERCULES_IR_REGISTER_PURE_BINARY_OP("ir.math_hypot")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "hypot")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.hypot");
 
-MATXSCRIPT_IR_REGISTER_PURE_BINARY_OP("ir.math_copysign")
+HERCULES_IR_REGISTER_PURE_BINARY_OP("ir.math_copysign")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "copysign")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.copysign");
 
-MATXSCRIPT_IR_REGISTER_PURE_BINARY_OP("ir.math_ldexp")
+HERCULES_IR_REGISTER_PURE_BINARY_OP("ir.math_ldexp")
     .set_attr<TGlobalSymbol>("TGlobalSymbol", "ldexp")
     .set_attr<TPrinterGlobalSymbol>("TPrinterGlobalSymbol", "math.ldexp");
 
 // expose basic functions to node namespace
-MATXSCRIPT_REGISTER_GLOBAL("ir._const").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("ir._const").set_body([](PyArgs args) -> RTValue {
   if (args[0].type_code() == TypeIndex::kRuntimeInteger) {
     return make_const(args[1].As<DataType>(), args[0].As<int64_t>());
   } else if (args[0].type_code() == TypeIndex::kRuntimeFloat) {
     return make_const(args[1].As<DataType>(), args[0].As<double>());
   } else {
-    MXLOG(FATAL) << "only accept int or float";
+    HSLOG(FATAL) << "only accept int or float";
   }
   return None;
 });
 
 // expose basic functions to node namespace
-MATXSCRIPT_REGISTER_GLOBAL("runtime._const").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("runtime._const").set_body([](PyArgs args) -> RTValue {
   if (args[0].type_code() == TypeIndex::kRuntimeInteger) {
     return make_const(args[1].As<DataType>(), args[0].As<int64_t>());
   } else if (args[0].type_code() == TypeIndex::kRuntimeFloat) {
     return make_const(args[1].As<DataType>(), args[0].As<double>());
   } else {
-    MXLOG(FATAL) << "only accept int or float";
+    HSLOG(FATAL) << "only accept int or float";
   }
   return None;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.LargeUIntImm").set_body_typed(LargeUIntImm);
+HERCULES_REGISTER_GLOBAL("ir.LargeUIntImm").set_body_typed(LargeUIntImm);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.min_value").set_body_typed(min_value);
+HERCULES_REGISTER_GLOBAL("ir.min_value").set_body_typed(min_value);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.max_value").set_body_typed(max_value);
+HERCULES_REGISTER_GLOBAL("ir.max_value").set_body_typed(max_value);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.builtins_abs").set_body_typed(abs);
+HERCULES_REGISTER_GLOBAL("ir.builtins_abs").set_body_typed(abs);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.math_isnan").set_body_typed(isnan);
+HERCULES_REGISTER_GLOBAL("ir.math_isnan").set_body_typed(isnan);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.math_isfinite").set_body_typed(isfinite);
+HERCULES_REGISTER_GLOBAL("ir.math_isfinite").set_body_typed(isfinite);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.math_isinf").set_body_typed(isinf);
+HERCULES_REGISTER_GLOBAL("ir.math_isinf").set_body_typed(isinf);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.math_floor").set_body_typed(floor);
+HERCULES_REGISTER_GLOBAL("ir.math_floor").set_body_typed(floor);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.math_ceil").set_body_typed(ceil);
+HERCULES_REGISTER_GLOBAL("ir.math_ceil").set_body_typed(ceil);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.builtins_round").set_body_typed(round);
+HERCULES_REGISTER_GLOBAL("ir.builtins_round").set_body_typed(round);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.matx_math_nearbyint").set_body_typed(nearbyint);
+HERCULES_REGISTER_GLOBAL("ir.hvm_math_nearbyint").set_body_typed(nearbyint);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.math_trunc").set_body_typed(trunc);
+HERCULES_REGISTER_GLOBAL("ir.math_trunc").set_body_typed(trunc);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir._cast").set_body_typed(cast);
+HERCULES_REGISTER_GLOBAL("ir._cast").set_body_typed(cast);
 
 // operator overloading, smarter than make
 #define REGISTER_MAKE_UNARY_OP(Node, Func)                                           \
-  MATXSCRIPT_REGISTER_GLOBAL("ir." #Node).set_body_typed([](PrimExpr a, Span span) { \
+  HERCULES_REGISTER_GLOBAL("ir." #Node).set_body_typed([](PrimExpr a, Span span) { \
     return (Func(a, span));                                                          \
   })
 
 #define REGISTER_MAKE_BINARY_OP(Node, Func)                                                      \
-  MATXSCRIPT_REGISTER_GLOBAL("ir." #Node).set_body_typed([](PrimExpr a, PrimExpr b, Span span) { \
+  HERCULES_REGISTER_GLOBAL("ir." #Node).set_body_typed([](PrimExpr a, PrimExpr b, Span span) { \
     return (Func(a, b, span));                                                                   \
   })
 
 #define REGISTER_MAKE_BIT_OP(Node, Func)                                        \
-  MATXSCRIPT_REGISTER_GLOBAL("ir." #Node).set_body([](PyArgs args) -> RTValue { \
+  HERCULES_REGISTER_GLOBAL("ir." #Node).set_body([](PyArgs args) -> RTValue { \
     bool lhs_is_int = args[0].type_code() == TypeIndex::kRuntimeInteger;        \
     bool rhs_is_int = args[1].type_code() == TypeIndex::kRuntimeInteger;        \
     if (lhs_is_int) {                                                           \
@@ -969,7 +969,7 @@ MATXSCRIPT_REGISTER_GLOBAL("ir._cast").set_body_typed(cast);
     }                                                                           \
   })
 
-// MATXSCRIPT_REGISTER_GLOBAL("ir._OpDiv").set_body_typed([](PrimExpr a, PrimExpr b, Span span =
+// HERCULES_REGISTER_GLOBAL("ir._OpDiv").set_body_typed([](PrimExpr a, PrimExpr b, Span span =
 // Span()) {
 //   return (div(a, b, span));
 // });
@@ -1002,11 +1002,11 @@ REGISTER_MAKE_BIT_OP(bitwise_xor, bitwise_xor);
 REGISTER_MAKE_BIT_OP(left_shift, left_shift);  // NOLINT(*)
 REGISTER_MAKE_BIT_OP(right_shift, right_shift);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir._OpIfThenElse")
+HERCULES_REGISTER_GLOBAL("ir._OpIfThenElse")
     .set_body_typed(
         [](PrimExpr cond, PrimExpr true_value, PrimExpr false_value, Span span = Span()) {
           return if_then_else(cond, true_value, false_value, span);
         });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

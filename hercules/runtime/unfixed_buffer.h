@@ -24,7 +24,7 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <typename T, int32_t MEAN_SIZE = 256>
@@ -60,12 +60,12 @@ class UnfixedBuffer {
         }
         return buf_large_ele_;
       } else {
-        auto buf_base_tmp = malloc(len * sizeof(T) + MATXSCRIPT_MEMORY_ALIGNMENT - 1);
+        auto buf_base_tmp = malloc(len * sizeof(T) + HERCULES_MEMORY_ALIGNMENT - 1);
         if (!buf_base_tmp) {
           return nullptr;
         }
         auto buf_ele_tmp = reinterpret_cast<T*>(
-            matxscript_memory_align_ptr(buf_base_tmp, MATXSCRIPT_MEMORY_ALIGNMENT));
+            hercules_memory_align_ptr(buf_base_tmp, HERCULES_MEMORY_ALIGNMENT));
         if (old && old_len > 0) {
           memmove(buf_ele_tmp, old, len > old_len ? old_len * sizeof(T) : len * sizeof(T));
         }
@@ -93,4 +93,4 @@ class UnfixedBuffer {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

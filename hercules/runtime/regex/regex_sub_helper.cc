@@ -24,7 +24,7 @@
 
 #include <hercules/runtime/str_printf.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace regex {
 
@@ -450,4 +450,4 @@ int RegexSubHelper::replaceScriptDone(regex_sub_script_compile_t* sc, String* er
 
 }  // namespace regex
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -24,166 +24,166 @@
 #include <hercules/ir/hlo_expr.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
 /******************************************************************************
  * NDArray builtin methods
  *****************************************************************************/
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, to_list, ToList)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, to_list, ToList)
     .set_num_inputs(1)
-    .add_argument("self", "matx.NDArray", "");
+    .add_argument("self", "hvm.NDArray", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, tolist, ToList)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, tolist, ToList)
     .set_num_inputs(1)
-    .add_argument("self", "matx.NDArray", "");
+    .add_argument("self", "hvm.NDArray", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, is_contiguous, IsContiguous)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, is_contiguous, IsContiguous)
     .set_num_inputs(1)
-    .add_argument("self", "matx.NDArray", "");
+    .add_argument("self", "hvm.NDArray", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, contiguous, Contiguous)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, contiguous, Contiguous)
     .set_num_inputs(1)
-    .add_argument("self", "matx.NDArray", "");
+    .add_argument("self", "hvm.NDArray", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, reshape, Reshape)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, reshape, Reshape)
     .set_num_inputs(2)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("shape", "List|Tuple|Any|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, squeeze, Squeeze)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, squeeze, Squeeze)
     .set_num_inputs(1)
     .set_num_inputs_max(2)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("axis", "Tuple|Any|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, unsqueeze, Unsqueeze)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, unsqueeze, Unsqueeze)
     .set_num_inputs(2)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("dim", "int|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, shape, ShapeList)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, shape, ShapeList)
     .set_num_inputs(1)
-    .add_argument("self", "matx.NDArray", "");
+    .add_argument("self", "hvm.NDArray", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, dtype, DTypeUnicode)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, dtype, DTypeUnicode)
     .set_num_inputs(1)
-    .add_argument("self", "matx.NDArray", "");
+    .add_argument("self", "hvm.NDArray", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, dim, GetDim)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, dim, GetDim)
     .set_num_inputs(1)
-    .add_argument("self", "matx.NDArray", "");
+    .add_argument("self", "hvm.NDArray", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, device, Device)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, device, Device)
     .set_num_inputs(1)
-    .add_argument("self", "matx.NDArray", "");
+    .add_argument("self", "hvm.NDArray", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, __getitem__, get_item)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, __getitem__, get_item)
     .set_num_inputs(2)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("index", "int|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, getitem_as_double, get_item_as_double)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, getitem_as_double, get_item_as_double)
     .set_num_inputs(2)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("index", "int|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, getitem_as_int64, get_item_as_int64)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, getitem_as_int64, get_item_as_int64)
     .set_num_inputs(2)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("index", "int|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, fused_getitem, fused_get_item)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, fused_getitem, fused_get_item)
     .set_num_inputs(2)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("index", "<template>", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, fused_getitem_as_double, fused_get_item_as_double)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, fused_getitem_as_double, fused_get_item_as_double)
     .set_num_inputs(2)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("index", "<template>", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, fused_getitem_as_int64, fused_get_item_as_int64)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, fused_getitem_as_int64, fused_get_item_as_int64)
     .set_num_inputs(2)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("index", "<template>", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, __setitem__, set_item)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, __setitem__, set_item)
     .set_num_inputs(3)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("index", "int|any_view", "")
     .add_argument("item", "int|float|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, fused_setitem, fused_set_item)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, fused_setitem, fused_set_item)
     .set_num_inputs(3)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("index", "<template>", "")
     .add_argument("item", "int|float|any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, __getslice__, get_slice)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, __getslice__, get_slice)
     .set_num_inputs(4)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("begin", "int", "")
     .add_argument("end", "int", "")
     .add_argument("step", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, __setslice__, set_slice)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, __setslice__, set_slice)
     .set_num_inputs(4)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("begin", "int", "")
     .add_argument("end", "int", "")
     .add_argument("item", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, __len__, size)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, __len__, size)
     .set_num_inputs(1)
-    .add_argument("self", "matx.NDArray", "");
+    .add_argument("self", "hvm.NDArray", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, transpose, transpose)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, transpose, transpose)
     .set_num_inputs(1)
     .set_num_inputs_max(2)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("axes", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ndarray, as_type, as_type)
+HERCULES_IR_DEFINE_HLO_METHOD(ndarray, as_type, as_type)
     .set_num_inputs(2)
-    .add_argument("self", "matx.NDArray", "")
+    .add_argument("self", "hvm.NDArray", "")
     .add_argument("dtype_str", "unicode_view", "");
 
 /******************************************************************************
  * NDArray global functions
  *****************************************************************************/
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(nd, module_add)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(nd, module_add)
     .set_num_inputs(2)
     .add_argument("lhs", "any_view", "")
     .add_argument("rhs", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(nd, module_sub)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(nd, module_sub)
     .set_num_inputs(2)
     .add_argument("lhs", "any_view", "")
     .add_argument("rhs", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(nd, module_div)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(nd, module_div)
     .set_num_inputs(2)
     .add_argument("lhs", "any_view", "")
     .add_argument("rhs", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(nd, module_mul)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(nd, module_mul)
     .set_num_inputs(2)
     .add_argument("lhs", "any_view", "")
     .add_argument("rhs", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(nd, module_rand)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(nd, module_rand)
     .set_num_inputs(1)
     .add_argument("lhs", "any_view", "")
     .add_argument("rhs", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(nd, module_concatenate)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(nd, module_concatenate)
     .set_num_inputs(1)
     .add_argument("args", "*args", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(nd, module_stack)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(nd, module_stack)
     .set_num_inputs(1)
     .add_argument("args", "*args", "");
 
@@ -193,7 +193,7 @@ static runtime::RTValue TryFusedNDArrayGetItem(BaseExpr container, BaseExpr inde
       if (IsIntegerType(index->checked_type_) || IsObjectType(index->checked_type_)) {
         index = HLOCastPrim(runtime::DataType(kDLInt, 64, 1), index);
       } else {
-        MXTHROW << "[__getitem__] key must be int type";
+        HSTHROW << "[__getitem__] key must be int type";
       }
       Array<BaseExpr> new_args = {HLOCastPrim(runtime::DataType(kDLInt, 64, 1), call_node->args[1]),
                                   std::move(index)};
@@ -207,7 +207,7 @@ static runtime::RTValue TryFusedNDArrayGetItem(BaseExpr container, BaseExpr inde
       if (IsIntegerType(index->checked_type_) || IsObjectType(index->checked_type_)) {
         index = HLOCastPrim(runtime::DataType(kDLInt, 64, 1), index);
       } else {
-        MXTHROW << "[__getitem__] key must be int type";
+        HSTHROW << "[__getitem__] key must be int type";
       }
       InitializerList old_call_args = runtime::Downcast<InitializerList>(call_node->args[1]);
       Array<BaseExpr> new_args;
@@ -232,7 +232,7 @@ static runtime::RTValue TryFusedNDArraySetItem(BaseExpr container, BaseExpr inde
       if (IsIntegerType(index->checked_type_) || IsObjectType(index->checked_type_)) {
         index = HLOCastPrim(runtime::DataType(kDLInt, 64, 1), index);
       } else {
-        MXTHROW << "[__getitem__] key must be int type";
+        HSTHROW << "[__getitem__] key must be int type";
       }
       Array<BaseExpr> new_args = {HLOCastPrim(runtime::DataType(kDLInt, 64, 1), call_node->args[1]),
                                   std::move(index)};
@@ -246,7 +246,7 @@ static runtime::RTValue TryFusedNDArraySetItem(BaseExpr container, BaseExpr inde
       if (IsIntegerType(index->checked_type_) || IsObjectType(index->checked_type_)) {
         index = HLOCastPrim(runtime::DataType(kDLInt, 64, 1), index);
       } else {
-        MXTHROW << "[__getitem__] key must be int type";
+        HSTHROW << "[__getitem__] key must be int type";
       }
       InitializerList old_call_args = runtime::Downcast<InitializerList>(call_node->args[1]);
       Array<BaseExpr> new_args;
@@ -303,11 +303,11 @@ static runtime::RTValue TryNDArrayItemAsInt64(BaseExpr item) {
   return runtime::None;
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.TryFusedNDArrayGetItem").set_body_typed(TryFusedNDArrayGetItem);
-MATXSCRIPT_REGISTER_GLOBAL("ir.TryFusedNDArraySetItem").set_body_typed(TryFusedNDArraySetItem);
-MATXSCRIPT_REGISTER_GLOBAL("ir.TryNDArrayItemAsDouble").set_body_typed(TryNDArrayItemAsDouble);
-MATXSCRIPT_REGISTER_GLOBAL("ir.TryNDArrayItemAsInt64").set_body_typed(TryNDArrayItemAsInt64);
+HERCULES_REGISTER_GLOBAL("ir.TryFusedNDArrayGetItem").set_body_typed(TryFusedNDArrayGetItem);
+HERCULES_REGISTER_GLOBAL("ir.TryFusedNDArraySetItem").set_body_typed(TryFusedNDArraySetItem);
+HERCULES_REGISTER_GLOBAL("ir.TryNDArrayItemAsDouble").set_body_typed(TryNDArrayItemAsDouble);
+HERCULES_REGISTER_GLOBAL("ir.TryNDArrayItemAsInt64").set_body_typed(TryNDArrayItemAsInt64);
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -24,7 +24,7 @@
 #include <hercules/runtime/container/unicode.h>
 #include "_item_type_traits.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace details {
@@ -121,4 +121,4 @@ enumerate(Iterable&& seq, int64_t first = 0L) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

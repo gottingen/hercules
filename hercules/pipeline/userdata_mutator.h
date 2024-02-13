@@ -22,7 +22,7 @@
 #include <hercules/pipeline/op_kernel.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct UserDataMutator {
@@ -31,4 +31,4 @@ struct UserDataMutator {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

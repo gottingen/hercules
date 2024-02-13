@@ -22,124 +22,124 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
 /******************************************************************************
  * Dict builtin methods
  *****************************************************************************/
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, __len__, size)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, __len__, size)
     .set_num_inputs(1)
     .add_argument("self", "dict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, __len__, size)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, __len__, size)
     .set_num_inputs(1)
     .add_argument("self", "FTDict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, __contains__, contains)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, __contains__, contains)
     .set_num_inputs(2)
     .add_argument("self", "dict", "")
     .add_argument("key", "<template>", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, __contains__, contains)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, __contains__, contains)
     .set_num_inputs(2)
     .add_argument("self", "FTDict", "")
     .add_argument("key", "<template>", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, __getitem__, get_item)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, __getitem__, get_item)
     .set_num_inputs(2)
     .add_argument("self", "dict", "")
     .add_argument("key", "<template>", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, __getitem__, get_item)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, __getitem__, get_item)
     .set_num_inputs(2)
     .add_argument("self", "FTDict", "")
     .add_argument("key", "<template>", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, __setitem__, set_item)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, __setitem__, set_item)
     .set_num_inputs(3)
     .add_argument("self", "dict", "")
     .add_argument("key", "Any", "")
     .add_argument("item", "Any", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, __setitem__, set_item)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, __setitem__, set_item)
     .set_num_inputs(3)
     .add_argument("self", "FTDict", "")
     .add_argument("key", "<template>", "")
     .add_argument("item", "<template>", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, clear, clear)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, clear, clear)
     .set_num_inputs(1)
     .add_argument("self", "dict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, clear, clear)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, clear, clear)
     .set_num_inputs(1)
     .add_argument("self", "FTDict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, reserve, reserve)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, reserve, reserve)
     .set_num_inputs(2)
     .add_argument("self", "dict", "")
     .add_argument("new_size", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, reserve, reserve)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, reserve, reserve)
     .set_num_inputs(2)
     .add_argument("self", "FTDict", "")
     .add_argument("new_size", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, bucket_count, bucket_count)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, bucket_count, bucket_count)
     .set_num_inputs(1)
     .add_argument("self", "dict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, bucket_count, bucket_count)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, bucket_count, bucket_count)
     .set_num_inputs(1)
     .add_argument("self", "FTDict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, keys, key_iter)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, keys, key_iter)
     .set_num_inputs(1)
     .add_argument("self", "dict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, keys, key_iter)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, keys, key_iter)
     .set_num_inputs(1)
     .add_argument("self", "FTDict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, values, value_iter)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, values, value_iter)
     .set_num_inputs(1)
     .add_argument("self", "dict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, values, value_iter)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, values, value_iter)
     .set_num_inputs(1)
     .add_argument("self", "FTDict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, items, item_iter)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, items, item_iter)
     .set_num_inputs(1)
     .add_argument("self", "dict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, items, item_iter)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, items, item_iter)
     .set_num_inputs(1)
     .add_argument("self", "FTDict", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, get, get_default)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, get, get_default)
     .set_num_inputs(2)
     .set_num_inputs_max(3)
     .add_argument("self", "dict", "")
     .add_argument("key", "<template>", "")
     .add_argument("default_val", "Any", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, get, get_default)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, get, get_default)
     .set_num_inputs(2)
     .set_num_inputs_max(3)
     .add_argument("self", "FTDict", "")
     .add_argument("key", "<template>", "")
     .add_argument("default_val", "<template>", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(dict, pop, pop)
+HERCULES_IR_DEFINE_HLO_METHOD(dict, pop, pop)
     .set_num_inputs(1)
     .set_num_inputs_max(2)
     .add_argument("self", "dict", "")
     .add_argument("args", "*args", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, pop, pop)
+HERCULES_IR_DEFINE_HLO_METHOD(ft_dict, pop, pop)
     .set_num_inputs(1)
     .set_num_inputs_max(2)
     .add_argument("self", "FTDict", "")
@@ -147,4 +147,4 @@ MATXSCRIPT_IR_DEFINE_HLO_METHOD(ft_dict, pop, pop)
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

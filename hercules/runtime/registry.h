@@ -22,7 +22,7 @@
 #pragma once
 
 /*!
- * \file matx/runtime/registry.h
+ * \file hvm/runtime/registry.h
  * \brief This file defines the global function registry.
  *
  *  The registered functions will be made available to front-end
@@ -34,11 +34,11 @@
  *
  *  Front-end can also pass callbacks as PackedFunc, or register
  *  then into the same global registry in C++.
- *  The goal is to mix the front-end language and the MATXScript back-end.
+ *  The goal is to mix the front-end language and the Hercules back-end.
  *
  * \code
  *   // register the function as MyAPIFuncName
- *   MATXSCRIPT_REGISTER_GLOBAL(MyAPIFuncName)
+ *   HERCULES_REGISTER_GLOBAL(MyAPIFuncName)
  *   .set_body([](PyArgs args) -> RTValue {
  *     // my code.
  *   });
@@ -52,7 +52,7 @@
 #include <hercules/runtime/py_args.h>
 #include <hercules/runtime/typed_native_function.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class FunctionRegistry {
@@ -68,11 +68,11 @@ class FunctionRegistry {
   // TODO: rename ?
   bool __is_native__ = false;
 
-  MATX_DLL static FunctionRegistry& Register(string_view name, bool override = false);
-  MATX_DLL static bool Remove(string_view name);
-  MATX_DLL static NativeFunction* Get(string_view name);
-  MATX_DLL static FunctionRegistry* GetRegistry(string_view name);
-  MATX_DLL static std::vector<string_view> ListNames();
+  HERCULES_DLL static FunctionRegistry& Register(string_view name, bool override = false);
+  HERCULES_DLL static bool Remove(string_view name);
+  HERCULES_DLL static NativeFunction* Get(string_view name);
+  HERCULES_DLL static FunctionRegistry* GetRegistry(string_view name);
+  HERCULES_DLL static std::vector<string_view> ListNames();
 
   template <typename FLambda,
             typename... TDefaultArgs,
@@ -129,26 +129,26 @@ class FunctionRegistry {
   friend struct Manager;
 };
 
-#define MATXSCRIPT_FUNCTION_VAR_DEF(Func) \
-  static MATXSCRIPT_ATTRIBUTE_UNUSED auto& __make_##MATXSCRIPT_FUNCTION##Func
+#define HERCULES_FUNCTION_VAR_DEF(Func) \
+  static HERCULES_ATTRIBUTE_UNUSED auto& __make_##HERCULES_FUNCTION##Func
 
-#define MATX_REGISTER_NATIVE_FUNC(Func)                                   \
-  MATXSCRIPT_STR_CONCAT(MATXSCRIPT_FUNCTION_VAR_DEF(Func), __COUNTER__) = \
-      ::matxscript::runtime::FunctionRegistry::Register(#Func)            \
+#define HVM_REGISTER_NATIVE_FUNC(Func)                                   \
+  HERCULES_STR_CONCAT(HERCULES_FUNCTION_VAR_DEF(Func), __COUNTER__) = \
+      ::hercules::runtime::FunctionRegistry::Register(#Func)            \
           .SetIsNative(true)                                              \
           .SetFuncName(#Func)                                             \
           .def(Func)
 
-#define MATX_REGISTER_NATIVE_NAMED_FUNC(Name, Func)                       \
-  MATXSCRIPT_STR_CONCAT(MATXSCRIPT_FUNCTION_VAR_DEF(Func), __COUNTER__) = \
-      ::matxscript::runtime::FunctionRegistry::Register(Name)             \
+#define HVM_REGISTER_NATIVE_NAMED_FUNC(Name, Func)                       \
+  HERCULES_STR_CONCAT(HERCULES_FUNCTION_VAR_DEF(Func), __COUNTER__) = \
+      ::hercules::runtime::FunctionRegistry::Register(Name)             \
           .SetIsNative(true)                                              \
           .SetFuncName(Name)                                              \
           .def(Func)
 
-#define MATXSCRIPT_REGISTER_GLOBAL(OpName)                                  \
-  MATXSCRIPT_STR_CONCAT(MATXSCRIPT_FUNCTION_VAR_DEF(GLOBAL), __COUNTER__) = \
-      ::matxscript::runtime::FunctionRegistry::Register(OpName).SetFuncName(OpName)
+#define HERCULES_REGISTER_GLOBAL(OpName)                                  \
+  HERCULES_STR_CONCAT(HERCULES_FUNCTION_VAR_DEF(GLOBAL), __COUNTER__) = \
+      ::hercules::runtime::FunctionRegistry::Register(OpName).SetFuncName(OpName)
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -23,7 +23,7 @@
 
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace details {
@@ -56,4 +56,4 @@ struct iterator_min<T, Iters...> {
 
 }  // namespace details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

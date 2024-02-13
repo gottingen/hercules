@@ -23,7 +23,7 @@
 
 #include <mutex>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <class T>
@@ -53,4 +53,4 @@ template <class T>
 std::mutex Singleton<T>::s_singleton_mutex_;
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -28,7 +28,7 @@
 
 #include <hercules/runtime/exceptions/exceptions.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <class T>
@@ -90,4 +90,4 @@ bool GeneratorIterator<T>::operator<(GeneratorIterator<T> const& other) const {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

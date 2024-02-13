@@ -29,7 +29,7 @@
 
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace details {
@@ -63,8 +63,8 @@ inline std::string FormatLineMessage(const char* file,
   line_log.append("[").append(date.HumanDate()).append("] ");
   line_log.append(file).append(":").append(std::to_string(line)).append(": ");
   line_log.append(cls).append(": ").append(what);
-#if MATXSCRIPT_LOG_STACK_TRACE
-  if (ENV_ENABLE_MATX_LOG_STACK_TRACE) {
+#if HERCULES_LOG_STACK_TRACE
+  if (ENV_ENABLE_HVM_LOG_STACK_TRACE) {
     line_log.append("\n");
     line_log.append(StackTrace(1, LogStackTraceLevel()));
     line_log.append("\n");
@@ -156,7 +156,7 @@ PY_CLASS_EXCEPTION_DECL(TabError, IndentationError);
 PY_CLASS_EXCEPTION_DECL(UnicodeError, ValueError);
 
 #define __MAKE_PY_EXCEPTION__(_EX_CLS, ...) \
-  ::matxscript::runtime::_EX_CLS(__FILE__, __LINE__, details::ToString(__VA_ARGS__))
+  ::hercules::runtime::_EX_CLS(__FILE__, __LINE__, details::ToString(__VA_ARGS__))
 
 #define __THROW_PY_EXCEPTION__(...) throw __MAKE_PY_EXCEPTION__(__VA_ARGS__)
 
@@ -208,4 +208,4 @@ PY_CLASS_EXCEPTION_DECL(UnicodeError, ValueError);
 #define THROW_PY_NotImplementedError(...) __THROW_PY_EXCEPTION__(NotImplementedError, __VA_ARGS__)
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -22,7 +22,7 @@
 #include <hercules/runtime/container/unicode.h>
 #include <hercules/runtime/unicodelib/unicode_ops.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 static inline Py_UCS4 handle_capital_sigma(const Py_UCS4* data, intptr_t length, intptr_t i) {
@@ -123,4 +123,4 @@ Unicode py_unicode_do_lower_optimize(unicode_view input) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

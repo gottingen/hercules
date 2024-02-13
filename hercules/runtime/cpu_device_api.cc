@@ -41,30 +41,30 @@
 #include <android/api-level.h>
 #endif
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class CPUDeviceAPI final : public DeviceAPI {
  public:
-  void SetDevice(MATXScriptDevice ctx) final {
+  void SetDevice(HerculesDevice ctx) final {
   }
-  void GetAttr(MATXScriptDevice ctx, DeviceAttrKind kind, RTValue* rv) final {
+  void GetAttr(HerculesDevice ctx, DeviceAttrKind kind, RTValue* rv) final {
     if (kind == kExist) {
       *rv = 1;
     }
   }
 
-  void* Alloc(MATXScriptDevice ctx, size_t nbytes) final {
-    MXCHECK(cpuBFCAllocator != nullptr);
+  void* Alloc(HerculesDevice ctx, size_t nbytes) final {
+    HSCHECK(cpuBFCAllocator != nullptr);
     void* ptr = cpuBFCAllocator->Alloc(nbytes);
     return ptr;
   }
 
-  void* Alloc(MATXScriptDevice ctx, size_t nbytes, size_t alignment, DLDataType type_hint) final {
+  void* Alloc(HerculesDevice ctx, size_t nbytes, size_t alignment, DLDataType type_hint) final {
     return Alloc(ctx, nbytes);
   }
 
-  void* AllocRaw(MATXScriptDevice ctx,
+  void* AllocRaw(HerculesDevice ctx,
                  size_t nbytes,
                  size_t alignment,
                  DLDataType type_hint) final {
@@ -86,12 +86,12 @@ class CPUDeviceAPI final : public DeviceAPI {
     return ptr;
   }
 
-  void Free(MATXScriptDevice ctx, void* ptr) final {
-    MXCHECK(cpuBFCAllocator != nullptr);
+  void Free(HerculesDevice ctx, void* ptr) final {
+    HSCHECK(cpuBFCAllocator != nullptr);
     cpuBFCAllocator->Free(ptr);
   }
 
-  void FreeRaw(MATXScriptDevice ctx, void* ptr) final {
+  void FreeRaw(HerculesDevice ctx, void* ptr) final {
 #if _MSC_VER
     _aligned_free(ptr);
 #else
@@ -104,45 +104,45 @@ class CPUDeviceAPI final : public DeviceAPI {
                       void* to,
                       size_t to_offset,
                       size_t size,
-                      MATXScriptDevice ctx_from,
-                      MATXScriptDevice ctx_to,
+                      HerculesDevice ctx_from,
+                      HerculesDevice ctx_to,
                       DLDataType type_hint,
-                      MATXScriptStreamHandle stream) final {
+                      HerculesStreamHandle stream) final {
     std::memcpy(
         static_cast<char*>(to) + to_offset, static_cast<const char*>(from) + from_offset, size);
   }
 
-  MATXScriptStreamHandle CreateStream(MATXScriptDevice ctx) final {
+  HerculesStreamHandle CreateStream(HerculesDevice ctx) final {
     return nullptr;
   }
 
-  void FreeStream(MATXScriptDevice ctx, MATXScriptStreamHandle stream) final {
+  void FreeStream(HerculesDevice ctx, HerculesStreamHandle stream) final {
   }
 
-  MATXScriptStreamHandle GetDefaultStream(MATXScriptDevice ctx) final {
+  HerculesStreamHandle GetDefaultStream(HerculesDevice ctx) final {
     return nullptr;
   }
 
-  MATXScriptStreamHandle GetCurrentThreadStream(MATXScriptDevice ctx) final {
+  HerculesStreamHandle GetCurrentThreadStream(HerculesDevice ctx) final {
     return nullptr;
   }
 
-  std::shared_ptr<void> GetSharedCurrentThreadStream(MATXScriptDevice ctx) final {
+  std::shared_ptr<void> GetSharedCurrentThreadStream(HerculesDevice ctx) final {
     return nullptr;
   }
 
-  void SetCurrentThreadStream(MATXScriptDevice ctx, std::shared_ptr<void> stream) final {
+  void SetCurrentThreadStream(HerculesDevice ctx, std::shared_ptr<void> stream) final {
   }
 
-  void StreamSync(MATXScriptDevice ctx, MATXScriptStreamHandle stream) final {
+  void StreamSync(HerculesDevice ctx, HerculesStreamHandle stream) final {
   }
 
-  void CreateEventSync(MATXScriptStreamHandle stream) final {
+  void CreateEventSync(HerculesStreamHandle stream) final {
   }
 
-  void SyncStreamFromTo(MATXScriptDevice ctx,
-                        MATXScriptStreamHandle event_src,
-                        MATXScriptStreamHandle event_dst) final {
+  void SyncStreamFromTo(HerculesDevice ctx,
+                        HerculesStreamHandle event_src,
+                        HerculesStreamHandle event_dst) final {
   }
 
   static CPUDeviceAPI* Global() {
@@ -164,9 +164,9 @@ struct CPUGlobalEntry {
   }
 };
 
-MATXSCRIPT_REGISTER_GLOBAL("device_api.cpu").set_body([](PyArgs args) -> RTValue {
+HERCULES_REGISTER_GLOBAL("device_api.cpu").set_body([](PyArgs args) -> RTValue {
   DeviceAPI* ptr = CPUDeviceAPI::Global();
   return static_cast<void*>(ptr);
 });
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

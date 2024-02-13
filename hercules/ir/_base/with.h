@@ -21,7 +21,7 @@
  */
 
 /*!
- * \file matxscript/ir/_base/with.h
+ * \file hercules/ir/_base/with.h
  * \brief RAII wrapper function to enter and exit a context object
  *        similar to python's with syntax.
  */
@@ -30,7 +30,7 @@
 #include <functional>
 #include <utility>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -110,4 +110,4 @@ class With {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

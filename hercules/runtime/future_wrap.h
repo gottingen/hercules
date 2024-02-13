@@ -25,7 +25,7 @@
 #include <hercules/runtime/file_util.h>
 #include <hercules/runtime/native_object_registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class Future {
@@ -45,4 +45,4 @@ class Future {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

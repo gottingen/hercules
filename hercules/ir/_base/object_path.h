@@ -21,7 +21,7 @@
  */
 
 /*!
- * \file matx/ir/_base/object_path.h
+ * \file hvm/ir/_base/object_path.h
  * ObjectPath class that represents a path from a root object to one of its descendants
  * via attribute access, array indexing etc.
  */
@@ -35,7 +35,7 @@
 #include <hercules/ir/_base/optional_ref.h>
 #include <hercules/ir/_base/string_ref.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using runtime::Object;
@@ -106,7 +106,7 @@ class ObjectPathNode : public Object {
   runtime::String GetRepr() const;
 
   static constexpr const char* _type_key = "ObjectPath";
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(ObjectPathNode, Object);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(ObjectPathNode, Object);
 
  protected:
   explicit ObjectPathNode(const ObjectPathNode* parent);
@@ -130,7 +130,7 @@ class ObjectPath : public ObjectRef {
   /*! \brief Create a path that represents the root object itself. */
   static ObjectPath Root();
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ObjectPath, ObjectRef, ObjectPathNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ObjectPath, ObjectRef, ObjectPathNode);
 };
 
 //-------------------------------------------------------------------------
@@ -144,7 +144,7 @@ class RootPathNode final : public ObjectPathNode {
   explicit RootPathNode();
 
   static constexpr const char* _type_key = "RootPath";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(RootPathNode, ObjectPathNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(RootPathNode, ObjectPathNode);
 
  protected:
   bool LastNodeEqual(const ObjectPathNode* other) const final;
@@ -153,7 +153,7 @@ class RootPathNode final : public ObjectPathNode {
 
 class RootPath : public ObjectPath {
  public:
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(RootPath, ObjectPath, RootPathNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(RootPath, ObjectPath, RootPathNode);
 };
 
 // ----- Attribute access -----
@@ -166,7 +166,7 @@ class AttributeAccessPathNode final : public ObjectPathNode {
   explicit AttributeAccessPathNode(const ObjectPathNode* parent, StringRef attr_key);
 
   static constexpr const char* _type_key = "AttributeAccessPath";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(AttributeAccessPathNode, ObjectPathNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(AttributeAccessPathNode, ObjectPathNode);
 
  protected:
   bool LastNodeEqual(const ObjectPathNode* other) const final;
@@ -175,7 +175,7 @@ class AttributeAccessPathNode final : public ObjectPathNode {
 
 class AttributeAccessPath : public ObjectPath {
  public:
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(AttributeAccessPath,
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(AttributeAccessPath,
                                                    ObjectPath,
                                                    AttributeAccessPathNode);
 };
@@ -187,7 +187,7 @@ class UnknownAttributeAccessPathNode final : public ObjectPathNode {
   explicit UnknownAttributeAccessPathNode(const ObjectPathNode* parent);
 
   static constexpr const char* _type_key = "UnknownAttributeAccessPath";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(UnknownAttributeAccessPathNode, ObjectPathNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(UnknownAttributeAccessPathNode, ObjectPathNode);
 
  protected:
   bool LastNodeEqual(const ObjectPathNode* other) const final;
@@ -196,7 +196,7 @@ class UnknownAttributeAccessPathNode final : public ObjectPathNode {
 
 class UnknownAttributeAccessPath : public ObjectPath {
  public:
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(UnknownAttributeAccessPath,
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(UnknownAttributeAccessPath,
                                                    ObjectPath,
                                                    UnknownAttributeAccessPathNode);
 };
@@ -211,7 +211,7 @@ class ArrayIndexPathNode : public ObjectPathNode {
   explicit ArrayIndexPathNode(const ObjectPathNode* parent, int32_t index);
 
   static constexpr const char* _type_key = "ArrayIndexPath";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ArrayIndexPathNode, ObjectPathNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ArrayIndexPathNode, ObjectPathNode);
 
  protected:
   bool LastNodeEqual(const ObjectPathNode* other) const final;
@@ -220,7 +220,7 @@ class ArrayIndexPathNode : public ObjectPathNode {
 
 class ArrayIndexPath : public ObjectPath {
  public:
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ArrayIndexPath, ObjectPath, ArrayIndexPathNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ArrayIndexPath, ObjectPath, ArrayIndexPathNode);
 };
 
 // ----- Missing array element -----
@@ -233,7 +233,7 @@ class MissingArrayElementPathNode : public ObjectPathNode {
   explicit MissingArrayElementPathNode(const ObjectPathNode* parent, int32_t index);
 
   static constexpr const char* _type_key = "MissingArrayElementPath";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(MissingArrayElementPathNode, ObjectPathNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(MissingArrayElementPathNode, ObjectPathNode);
 
  protected:
   bool LastNodeEqual(const ObjectPathNode* other) const final;
@@ -242,7 +242,7 @@ class MissingArrayElementPathNode : public ObjectPathNode {
 
 class MissingArrayElementPath : public ObjectPath {
  public:
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(MissingArrayElementPath,
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(MissingArrayElementPath,
                                                    ObjectPath,
                                                    MissingArrayElementPathNode);
 };
@@ -257,7 +257,7 @@ class MapValuePathNode : public ObjectPathNode {
   explicit MapValuePathNode(const ObjectPathNode* parent, ObjectRef key);
 
   static constexpr const char* _type_key = "MapValuePath";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(MapValuePathNode, ObjectPathNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(MapValuePathNode, ObjectPathNode);
 
  protected:
   bool LastNodeEqual(const ObjectPathNode* other) const final;
@@ -266,7 +266,7 @@ class MapValuePathNode : public ObjectPathNode {
 
 class MapValuePath : public ObjectPath {
  public:
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(MapValuePath, ObjectPath, MapValuePathNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(MapValuePath, ObjectPath, MapValuePathNode);
 };
 
 // ----- Missing map entry -----
@@ -276,7 +276,7 @@ class MissingMapEntryPathNode : public ObjectPathNode {
   explicit MissingMapEntryPathNode(const ObjectPathNode* parent);
 
   static constexpr const char* _type_key = "MissingMapEntryPath";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(MissingMapEntryPathNode, ObjectPathNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(MissingMapEntryPathNode, ObjectPathNode);
 
  protected:
   bool LastNodeEqual(const ObjectPathNode* other) const final;
@@ -285,7 +285,7 @@ class MissingMapEntryPathNode : public ObjectPathNode {
 
 class MissingMapEntryPath : public ObjectPath {
  public:
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(MissingMapEntryPath,
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(MissingMapEntryPath,
                                                    ObjectPath,
                                                    MissingMapEntryPathNode);
 };
@@ -301,15 +301,15 @@ class ObjectPathPairNode : public Object {
   ObjectPathPairNode(ObjectPath lhs_path, ObjectPath rhs_path);
 
   static constexpr const char* _type_key = "ObjectPathPair";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ObjectPathPairNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ObjectPathPairNode, Object);
 };
 
 class ObjectPathPair : public ObjectRef {
  public:
   ObjectPathPair(ObjectPath lhs_path, ObjectPath rhs_path);
 
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ObjectPathPair, ObjectRef, ObjectPathPairNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(ObjectPathPair, ObjectRef, ObjectPathPairNode);
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

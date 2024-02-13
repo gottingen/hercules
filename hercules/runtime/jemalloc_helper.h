@@ -20,15 +20,15 @@
 
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 #if defined(__GNUC__)
 // This is for checked malloc-like functions (returns non-null pointer
 // which cannot alias any outstanding pointer).
-#define MATXSCRIPT_MALLOC_CHECKED_MALLOC __attribute__((__returns_nonnull__, __malloc__))
+#define HERCULES_MALLOC_CHECKED_MALLOC __attribute__((__returns_nonnull__, __malloc__))
 #else
-#define MATXSCRIPT_MALLOC_CHECKED_MALLOC
+#define HERCULES_MALLOC_CHECKED_MALLOC
 #endif
 
 size_t goodMallocSize(size_t minSize) noexcept;
@@ -52,8 +52,8 @@ void* checkedRealloc(void* ptr, size_t size);
  * jemalloc, realloc() almost always ends up doing a copy, because
  * there is little fragmentation / slack space to take advantage of.
  */
-MATXSCRIPT_MALLOC_CHECKED_MALLOC MATXSCRIPT_NO_INLINE void* smartRealloc(
+HERCULES_MALLOC_CHECKED_MALLOC HERCULES_NO_INLINE void* smartRealloc(
     void* p, const size_t currentSize, const size_t currentCapacity, const size_t newCapacity);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

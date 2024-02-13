@@ -23,28 +23,28 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * File container
  *****************************************************************************/
-MATXSCRIPT_REGISTER_GLOBAL("runtime.File")
+HERCULES_REGISTER_GLOBAL("runtime.File")
     .set_body_typed([](const Unicode& path, const Unicode& mode, const Unicode& encoding) {
       return File(path, mode, encoding);
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.FileHasNext").set_body_typed([](const File& file) {
+HERCULES_REGISTER_GLOBAL("runtime.FileHasNext").set_body_typed([](const File& file) {
   return file.HasNext();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.FileReadLineString").set_body_typed([](const File& file) {
+HERCULES_REGISTER_GLOBAL("runtime.FileReadLineString").set_body_typed([](const File& file) {
   return file.ReadLineString();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.FileReadLineUnicode").set_body_typed([](const File& file) {
+HERCULES_REGISTER_GLOBAL("runtime.FileReadLineUnicode").set_body_typed([](const File& file) {
   return file.ReadLineUnicode();
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

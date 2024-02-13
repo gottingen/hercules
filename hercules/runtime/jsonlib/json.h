@@ -23,7 +23,7 @@
 #include <hercules/runtime/container/unicode.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 RTValue json_load(const File& fp);
@@ -36,4 +36,4 @@ RTValue json_loads(string_view s);
 Unicode json_dumps(const Any& obj, int indent = -1, bool ensure_ascii = true);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

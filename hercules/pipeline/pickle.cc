@@ -27,7 +27,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace pickle {
 
@@ -36,7 +36,7 @@ namespace pickle {
  *****************************************************************************/
 
 List FromJsonArray(const rapidjson::Value& val, bool use_unicode) {
-  MXCHECK(val.IsArray());
+  HSCHECK(val.IsArray());
   List ret;
   auto json_array = val.GetArray();
   ret.reserve(json_array.Size());
@@ -47,7 +47,7 @@ List FromJsonArray(const rapidjson::Value& val, bool use_unicode) {
 }
 
 Dict FromJsonDict(const rapidjson::Value& val, bool use_unicode) {
-  MXCHECK(val.IsObject());
+  HSCHECK(val.IsObject());
   Dict ret;
   auto json_obj = val.GetObject();
   for (auto& item : json_obj) {
@@ -133,7 +133,7 @@ void ToJsonDict(const Dict& rtv,
         skey = "null";
       } break;
       default:
-        MXCHECK(false) << "keys must be str, int, float, bool or None, not "
+        HSCHECK(false) << "keys must be str, int, float, bool or None, not "
                        << item.first.type_name();
     }
     json_k_item.SetString(skey.c_str(), skey.length(), allocator);
@@ -173,7 +173,7 @@ void ToJson(const Any& rtv,
       ToJsonDict(vl, json_val, allocator);
     } break;
     default: {
-      MXCHECK(false) << "[ToJson] unsupported runtime value type: " << rtv.type_name();
+      HSCHECK(false) << "[ToJson] unsupported runtime value type: " << rtv.type_name();
     } break;
   }
 }
@@ -186,7 +186,7 @@ void ToJson(const Any& rtv,
  * }
  *****************************************************************************/
 List FromJsonStructArray(const rapidjson::Value& val) {
-  MXCHECK(val.IsArray());
+  HSCHECK(val.IsArray());
   List ret;
   auto json_array = val.GetArray();
   ret.reserve(json_array.Size());
@@ -197,7 +197,7 @@ List FromJsonStructArray(const rapidjson::Value& val) {
 }
 
 Dict FromJsonStructDict(const rapidjson::Value& val) {
-  MXCHECK(val.IsArray() && val.Size() % 2 == 0);
+  HSCHECK(val.IsArray() && val.Size() % 2 == 0);
   Dict ret;
   for (auto itr = val.Begin(); itr != val.End(); itr += 1) {
     RTValue name = FromJsonStruct(*itr);
@@ -209,7 +209,7 @@ Dict FromJsonStructDict(const rapidjson::Value& val) {
 }
 
 Set FromJsonStructSet(const rapidjson::Value& val) {
-  MXCHECK(val.IsArray());
+  HSCHECK(val.IsArray());
   Set ret;
   auto json_array = val.GetArray();
   ret.reserve(json_array.Size());
@@ -220,14 +220,14 @@ Set FromJsonStructSet(const rapidjson::Value& val) {
 }
 
 UserDataRef FromJsonStructUserData(const rapidjson::Value& val) {
-  MXCHECK(val.IsObject());
+  HSCHECK(val.IsObject());
   uint32_t tag = JSON_GET(val, "tag", Uint);
   int32_t type = JSON_GET(val, "type", Uint);
   uint32_t var_num = JSON_GET(val, "var_num", Uint);
   // std::uintptr_t ud_ptr = JSON_GET(val, "ud_ptr", Uint64);
-  MXCHECK(type == UserDataStructType::kNativeData) << "only native op can be load from json";
+  HSCHECK(type == UserDataStructType::kNativeData) << "only native op can be load from json";
   bool is_native_op = JSON_GET(val, "is_native_op", Bool);
-  MXCHECK(is_native_op) << "only native op can be load from json";
+  HSCHECK(is_native_op) << "only native op can be load from json";
   bool is_jit_object = JSON_GET(val, "is_jit_object", Bool);
   String native_class_name = JSON_GET(val, "native_class_name", String);
   String native_instance_name = JSON_GET(val, "native_instance_name", String);
@@ -241,7 +241,7 @@ UserDataRef FromJsonStructUserData(const rapidjson::Value& val) {
 }
 
 Tuple FromJsonStructADT(const rapidjson::Value& val) {
-  MXCHECK(val.IsObject());
+  HSCHECK(val.IsObject());
   int32_t size = JSON_GET(val, "size", Uint);
   auto data = JSON_GET(val, "data", Array);
   std::vector<RTValue> fields;
@@ -358,10 +358,10 @@ void FromValue(rapidjson::Value* ret,
 }  // namespace
 
 NDArray FromJsonStructNDArray(const rapidjson::Value& val) {
-  MXCHECK(val.IsObject());
-  MXCHECK(val.HasMember("dtype"));
-  MXCHECK(val.HasMember("shape"));
-  MXCHECK(val.HasMember("data"));
+  HSCHECK(val.IsObject());
+  HSCHECK(val.HasMember("dtype"));
+  HSCHECK(val.HasMember("shape"));
+  HSCHECK(val.HasMember("data"));
 
   auto dtype_str = JSON_GET(val, "dtype", String);
   DataType dtype(String2DLDataType(dtype_str));
@@ -376,7 +376,7 @@ NDArray FromJsonStructNDArray(const rapidjson::Value& val) {
 
   DLDevice device{kDLCPU, 0};
   auto tensor = NDArray::Empty(shape_list, dtype, device);
-  MATX_NDARRAY_TYPE_SWITCH(dtype, DType, {
+  HVM_NDARRAY_TYPE_SWITCH(dtype, DType, {
     auto* data_ptr = tensor.Data<DType>();
     GetNumericDataFromJson<DType>(val["data"], const_cast<DType*>(data_ptr), tensor.ElementSize());
   });
@@ -384,20 +384,20 @@ NDArray FromJsonStructNDArray(const rapidjson::Value& val) {
 }
 
 void* FromJsonStructOpaqueData(const rapidjson::Value& val) {
-  MXCHECK(val.IsObject());
+  HSCHECK(val.IsObject());
   std::uintptr_t user_ptr = JSON_GET(val, "user_ptr", Uint64);
   return reinterpret_cast<void*>(user_ptr);
 }
 
 RTValue FromJsonStruct(const rapidjson::Value& struct_json_node) {
-  MXCHECK(struct_json_node.IsObject()) << "JsonStruct node should be always object";
+  HSCHECK(struct_json_node.IsObject()) << "JsonStruct node should be always object";
   auto itr_find_t = struct_json_node.FindMember("t");
   auto itr_find_v = struct_json_node.FindMember("v");
-  MXCHECK(struct_json_node.MemberCount() == 2 && itr_find_t != struct_json_node.MemberEnd() &&
+  HSCHECK(struct_json_node.MemberCount() == 2 && itr_find_t != struct_json_node.MemberEnd() &&
           itr_find_v != struct_json_node.MemberEnd());
   auto& type = itr_find_t->value;
   auto& val = itr_find_v->value;
-  MXCHECK(type.IsString());
+  HSCHECK(type.IsString());
   string_view type_str_v(type.GetString(), type.GetStringLength());
   // for compatible with versions 1.5 and earlier
   if (type_str_v == "ADT") {
@@ -453,7 +453,7 @@ RTValue FromJsonStruct(const rapidjson::Value& struct_json_node) {
       return FromJsonStructNDArray(val);
     } break;
     default: {
-      MXCHECK(false) << "[FromJsonStruct] unsupported runtime value type: " << type_str_v;
+      HSCHECK(false) << "[FromJsonStruct] unsupported runtime value type: " << type_str_v;
       return RTValue();
     } break;
   }
@@ -504,12 +504,12 @@ void ToJsonStructUserData(const UserDataRef& rtv,
   JsonUtil::Set(&json_val, "class_name", rtv->ud_ptr->ClassName_2_71828182846(), allocator);
   JsonUtil::Set(&json_val, "var_num", rtv->var_num, allocator);
   json_val.AddMember("ud_ptr", reinterpret_cast<uint64_t>(rtv->ud_ptr), allocator);
-  MXCHECK(rtv->ud_ptr->type_2_71828182846() == UserDataStructType::kNativeData)
+  HSCHECK(rtv->ud_ptr->type_2_71828182846() == UserDataStructType::kNativeData)
       << "[Class: " << rtv->ud_ptr->ClassName_2_71828182846()
       << "] [type: " << rtv->ud_ptr->type_2_71828182846()
       << "] does not support serialization. Please check whether it is used in the __init__ function of an op or as a constant symbol of the pipeline!!!";
   auto* nud_ptr = dynamic_cast<NativeObject*>(rtv->ud_ptr);
-  MXCHECK(nud_ptr->is_native_op_)
+  HSCHECK(nud_ptr->is_native_op_)
       << "[Class: " << rtv->ud_ptr->ClassName_2_71828182846()
       << "] [type: " << rtv->ud_ptr->type_2_71828182846()
       << "] does not support serialization. Please check whether it is used in the __init__ function of an op or as a constant symbol of the pipeline!!!";
@@ -538,7 +538,7 @@ void ToJsonStructADT(const Tuple& rtv,
 void ToJsonStructNDArray(const NDArray& rtv,
                          rapidjson::Value& json_val,
                          rapidjson::MemoryPoolAllocator<>& allocator) {
-  MXCHECK(rtv.IsContiguous()) << "only contiguous ndarray supports serialization.";
+  HSCHECK(rtv.IsContiguous()) << "only contiguous ndarray supports serialization.";
   json_val.SetObject();
   JsonUtil::Set(&json_val, "dtype", rtv.DTypeUnicode().encode().c_str(), allocator);
 
@@ -554,7 +554,7 @@ void ToJsonStructNDArray(const NDArray& rtv,
   data_item.SetArray();
   int64_t elem_size = rtv.ElementSize();
 
-  MATX_NDARRAY_TYPE_SWITCH(rtv->dtype, DType, {
+  HVM_NDARRAY_TYPE_SWITCH(rtv->dtype, DType, {
     const DType* data = rtv.Data<DType>();
     for (int64_t i = 0; i < elem_size; ++i) {
       rapidjson::Value j_data;
@@ -650,7 +650,7 @@ void ToJsonStruct(const Any& rtv,
       ToJsonStructADT(vl, json_val_v, allocator);
     } break;
     default: {
-      MXTHROW << "[ToJson] unsupported runtime value type: " << rtv.type_name();
+      HSTHROW << "[ToJson] unsupported runtime value type: " << rtv.type_name();
     } break;
   }
   json_val.SetObject();
@@ -658,12 +658,12 @@ void ToJsonStruct(const Any& rtv,
   json_val.AddMember("v", json_val_v, allocator);
 }
 
-static constexpr const char* MATX4_SERIALIZE_VERSION = "v1.0";
+static constexpr const char* HVM4_SERIALIZE_VERSION = "v1.0";
 
 String Serialize(const Any& value) {
   rapidjson::Document doc;
   doc.SetObject();
-  JsonUtil::Set(&doc, "version", MATX4_SERIALIZE_VERSION, doc.GetAllocator());
+  JsonUtil::Set(&doc, "version", HVM4_SERIALIZE_VERSION, doc.GetAllocator());
   rapidjson::Value js_val;
   ToJsonStruct(value, js_val, doc.GetAllocator());
   JsonUtil::Set(&doc, "doc", js_val, doc.GetAllocator());
@@ -672,16 +672,16 @@ String Serialize(const Any& value) {
 
 RTValue DeSerialize(const string_view& str) {
   rapidjson::Document doc;
-  ::matxscript::runtime::JsonUtil::FromString(str, doc);
-  MXCHECK(doc.HasMember("version") && doc.HasMember("doc"))
+  ::hercules::runtime::JsonUtil::FromString(str, doc);
+  HSCHECK(doc.HasMember("version") && doc.HasMember("doc"))
       << "Serialized json object should have key `version` and `data` ";
   String version = JSON_GET(doc, "version", String);
-  MXCHECK(version == MATX4_SERIALIZE_VERSION) << "Serialization doesn't match, supported "
-                                              << MATX4_SERIALIZE_VERSION << " ,but got " << version;
+  HSCHECK(version == HVM4_SERIALIZE_VERSION) << "Serialization doesn't match, supported "
+                                              << HVM4_SERIALIZE_VERSION << " ,but got " << version;
   RTValue v = FromJsonStruct(doc["doc"]);
   return v;
 }
 
 }  // namespace pickle
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

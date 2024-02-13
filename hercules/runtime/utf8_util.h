@@ -23,7 +23,7 @@
 
 #include <hercules/runtime/unicodelib/unicode_ops.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class String;
@@ -64,4 +64,4 @@ static inline bool AsciiIsAlpha(string_view input) noexcept {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

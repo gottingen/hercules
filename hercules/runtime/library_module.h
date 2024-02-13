@@ -32,7 +32,7 @@
 #include <hercules/runtime/c_runtime_api.h>
 #include <hercules/runtime/module.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 /*!
  * \brief Library is the common interface
@@ -67,4 +67,4 @@ class Library : public Object {
  */
 Module CreateModuleFromLibrary(ObjectPtr<Library> lib);
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

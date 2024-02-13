@@ -28,7 +28,7 @@
 #include "hercules/runtime/logging.h"
 #include "hercules/runtime/threadpool/lock_based_thread_pool.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 void DeviceOp::Init() {
@@ -43,13 +43,13 @@ void DeviceOp::Init() {
 
 RTValue DeviceOp::Process(PyArgs inputs) const {
   int session_device_id = device_;
-  MATXScriptStreamHandle current_stream = nullptr;
+  HerculesStreamHandle current_stream = nullptr;
   void* thread_pool = nullptr;
 
   if (device_ == NONE_DEVICE) {
     // no session, use global
     if (device_id_ >= 0) {
-      MATXScriptDevice ctx{kDLCUDA, device_id_};
+      HerculesDevice ctx{kDLCUDA, device_id_};
       DeviceAPI* api = DeviceAPI::Get(ctx, true);
       if (api != nullptr) {
         current_stream = api->GetCurrentThreadStream(ctx);
@@ -58,7 +58,7 @@ RTValue DeviceOp::Process(PyArgs inputs) const {
   } else {
     if (device_ >= 0) {
       session_device_id = internal::cuda_device_offset(device_);
-      MATXScriptDevice ctx{kDLCUDA, session_device_id};
+      HerculesDevice ctx{kDLCUDA, session_device_id};
       DeviceAPI* api = DeviceAPI::Get(ctx, true);
       if (api != nullptr) {
         current_stream = api->GetCurrentThreadStream(ctx);
@@ -76,7 +76,7 @@ RTValue DeviceOp::Process(PyArgs inputs) const {
 }
 
 // Device should be rebind for every session
-MATX_REGISTER_NATIVE_OP(DeviceOp).SetThreadSafety(false);
+HVM_REGISTER_NATIVE_OP(DeviceOp).SetThreadSafety(false);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

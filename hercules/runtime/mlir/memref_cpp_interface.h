@@ -21,7 +21,7 @@
 #include <iostream>
 #include "cstdlib"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace mlir {
 
@@ -144,4 +144,4 @@ class MemrefCPPInterface {
 
 }  // namespace mlir
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

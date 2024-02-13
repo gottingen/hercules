@@ -2,7 +2,7 @@
 /*
  * Taken from https://github.com/apache/tvm/blob/v0.7/include/tvm/ir/attrs.h
  * with fixes applied:
- * - add namespace matxscript::ir for fix conflict with tvm
+ * - add namespace hercules::ir for fix conflict with tvm
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -22,29 +22,29 @@
  * under the License.
  */
 /*!
- * \file matx/ir/attrs.h
+ * \file hvm/ir/attrs.h
  * \brief Helpers for attribute objects.
  *
  *  This module enables declaration of named attributes
  *  which support default value setup and bound checking.
  *
  * \code
- *   struct MyAttrs : public matxscript::ir::AttrsNode<MyAttrs> {
+ *   struct MyAttrs : public hercules::ir::AttrsNode<MyAttrs> {
  *     float learning_rate;
  *     int num_hidden;
  *     String name;
  *     // declare attribute fields in header file
- *     MATXSCRIPT_DECLARE_ATTRS(MyAttrs, "attrs.MyAttrs") {
- *       MATXSCRIPT_ATTR_FIELD(num_hidden).set_lower_bound(1);
- *       MATXSCRIPT_ATTR_FIELD(learning_rate).set_default(0.01f);
- *       MATXSCRIPT_ATTR_FIELD(name).set_default("hello");
+ *     HERCULES_DECLARE_ATTRS(MyAttrs, "attrs.MyAttrs") {
+ *       HERCULES_ATTR_FIELD(num_hidden).set_lower_bound(1);
+ *       HERCULES_ATTR_FIELD(learning_rate).set_default(0.01f);
+ *       HERCULES_ATTR_FIELD(name).set_default("hello");
  *     }
  *   };
  *   // register it in cc file
- *   MATXSCRIPT_REGISTER_NODE_TYPE(MyAttrs);
+ *   HERCULES_REGISTER_NODE_TYPE(MyAttrs);
  * \endcode
  *
- * \sa AttrsNode, MATXSCRIPT_DECLARE_ATTRS, MATXSCRIPT_ATTR_FIELD
+ * \sa AttrsNode, HERCULES_DECLARE_ATTRS, HERCULES_ATTR_FIELD
  */
 #pragma once
 
@@ -61,7 +61,7 @@
 #include <hercules/ir/base.h>
 #include <hercules/ir/prim_expr.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -111,13 +111,13 @@ class AttrFieldInfoNode : public Object {
   static constexpr const char* _type_key = "AttrFieldInfo";
   static constexpr bool _type_has_method_sequal_reduce = false;
   static constexpr bool _type_has_method_shash_reduce = false;
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(AttrFieldInfoNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(AttrFieldInfoNode, Object);
 };
 
 /*! \brief AttrFieldInfo */
 class AttrFieldInfo : public ObjectRef {
  public:
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(AttrFieldInfo, ObjectRef, AttrFieldInfoNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(AttrFieldInfo, ObjectRef, AttrFieldInfoNode);
 };
 
 /*!
@@ -145,17 +145,17 @@ class BaseAttrsNode : public Object {
    * \note This is useful to extract fields for concise printing.
    * \param v The visitor
    */
-  MATX_DLL virtual void VisitNonDefaultAttrs(AttrVisitor* v) = 0;
+  HERCULES_DLL virtual void VisitNonDefaultAttrs(AttrVisitor* v) = 0;
   /*!
    * \brief Get the field information
    * \return The fields in the Attrs.
    */
-  MATX_DLL virtual Array<AttrFieldInfo> ListFieldInfo() const = 0;
+  HERCULES_DLL virtual Array<AttrFieldInfo> ListFieldInfo() const = 0;
 
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
   static constexpr const char* _type_key = "Attrs";
-  MATXSCRIPT_DECLARE_BASE_OBJECT_INFO(BaseAttrsNode, Object);
+  HERCULES_DECLARE_BASE_OBJECT_INFO(BaseAttrsNode, Object);
 };
 
 /*!
@@ -164,7 +164,7 @@ class BaseAttrsNode : public Object {
  */
 class Attrs : public ObjectRef {
  public:
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Attrs, ObjectRef, BaseAttrsNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Attrs, ObjectRef, BaseAttrsNode);
 };
 
 /*!
@@ -192,7 +192,7 @@ class DictAttrsNode : public BaseAttrsNode {
   Array<AttrFieldInfo> ListFieldInfo() const final;
   // type info
   static constexpr const char* _type_key = "DictAttrs";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(DictAttrsNode, BaseAttrsNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(DictAttrsNode, BaseAttrsNode);
 };
 
 /*!
@@ -206,10 +206,10 @@ class DictAttrs : public Attrs {
    * \param dict The attributes.
    * \return The dict attributes.
    */
-  MATX_DLL explicit DictAttrs(Map<StringRef, ObjectRef> dict);
+  HERCULES_DLL explicit DictAttrs(Map<StringRef, ObjectRef> dict);
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(DictAttrs, Attrs, DictAttrsNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(DictAttrsNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(DictAttrs, Attrs, DictAttrsNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(DictAttrsNode);
 };
 
 // Namespace containing detail implementations
@@ -219,19 +219,19 @@ namespace detail {
 struct AttrNopEntry {
   using TSelf = AttrNopEntry;
 
-  TSelf& describe(MATXSCRIPT_ATTRIBUTE_UNUSED const char* str) {
+  TSelf& describe(HERCULES_ATTRIBUTE_UNUSED const char* str) {
     return *this;
   }
   template <typename T>
-  TSelf& set_default(MATXSCRIPT_ATTRIBUTE_UNUSED const T& value) {
+  TSelf& set_default(HERCULES_ATTRIBUTE_UNUSED const T& value) {
     return *this;
   }
   template <typename T>
-  TSelf& set_lower_bound(MATXSCRIPT_ATTRIBUTE_UNUSED const T& begin) {
+  TSelf& set_lower_bound(HERCULES_ATTRIBUTE_UNUSED const T& begin) {
     return *this;
   }
   template <typename T>
-  TSelf& set_upper_bound(MATXSCRIPT_ATTRIBUTE_UNUSED const T& end) {
+  TSelf& set_upper_bound(HERCULES_ATTRIBUTE_UNUSED const T& end) {
     return *this;
   }
 };
@@ -293,7 +293,7 @@ class AttrsSHashVisitor {
 };
 
 /*!
- * \brief Helper struct to get the type name known to matxscript.
+ * \brief Helper struct to get the type name known to hercules.
  * \tparam T the type we are interested in.
  */
 template <typename T>
@@ -359,11 +359,11 @@ class AttrDocEntry {
     return *this;
   }
   template <typename T>
-  TSelf& set_lower_bound(MATXSCRIPT_ATTRIBUTE_UNUSED T begin) {
+  TSelf& set_lower_bound(HERCULES_ATTRIBUTE_UNUSED T begin) {
     return *this;
   }
   template <typename T>
-  TSelf& set_upper_bound(MATXSCRIPT_ATTRIBUTE_UNUSED T end) {
+  TSelf& set_upper_bound(HERCULES_ATTRIBUTE_UNUSED T end) {
     return *this;
   }
 
@@ -408,12 +408,12 @@ struct AttrTriggerNonDefaultEntry {
       : visitor_(visitor), key_(key), data_(data) {
   }
 
-  ~AttrTriggerNonDefaultEntry() MATXSCRIPT_THROW_EXCEPTION {
+  ~AttrTriggerNonDefaultEntry() HERCULES_THROW_EXCEPTION {
     if (trigger_) {
       visitor_->Visit(key_, data_);
     }
   }
-  TSelf& describe(MATXSCRIPT_ATTRIBUTE_UNUSED const char* str) {
+  TSelf& describe(HERCULES_ATTRIBUTE_UNUSED const char* str) {
     return *this;
   }
   TSelf& set_default(const T& value) {
@@ -422,10 +422,10 @@ struct AttrTriggerNonDefaultEntry {
     }
     return *this;
   }
-  TSelf& set_lower_bound(MATXSCRIPT_ATTRIBUTE_UNUSED const T& begin) {
+  TSelf& set_lower_bound(HERCULES_ATTRIBUTE_UNUSED const T& begin) {
     return *this;
   }
-  TSelf& set_upper_bound(MATXSCRIPT_ATTRIBUTE_UNUSED const T& end) {
+  TSelf& set_upper_bound(HERCULES_ATTRIBUTE_UNUSED const T& end) {
     return *this;
   }
 
@@ -460,29 +460,29 @@ template <typename DerivedType>
 class AttrsNode : public BaseAttrsNode {
  public:
   void VisitAttrs(AttrVisitor* v) {
-    ::matxscript::ir::detail::AttrNormalVisitor vis(v);
+    ::hercules::ir::detail::AttrNormalVisitor vis(v);
     self()->__VisitAttrs__(vis);
   }
 
   void VisitNonDefaultAttrs(AttrVisitor* v) {
-    ::matxscript::ir::detail::AttrNonDefaultVisitor vis(v);
+    ::hercules::ir::detail::AttrNonDefaultVisitor vis(v);
     self()->__VisitAttrs__(vis);
   }
 
   bool SEqualReduce(const DerivedType* other, SEqualReducer equal) const {
     DerivedType* pself = self();
-    ::matxscript::ir::detail::AttrsSEqualVisitor visitor(pself, other, equal);
+    ::hercules::ir::detail::AttrsSEqualVisitor visitor(pself, other, equal);
     self()->__VisitAttrs__(visitor);
     return visitor.result_;
   }
 
   void SHashReduce(SHashReducer hash_reducer) const {
-    ::matxscript::ir::detail::AttrsSHashVisitor visitor(hash_reducer);
+    ::hercules::ir::detail::AttrsSHashVisitor visitor(hash_reducer);
     self()->__VisitAttrs__(visitor);
   }
 
   Array<AttrFieldInfo> ListFieldInfo() const final {
-    ::matxscript::ir::detail::AttrDocVisitor visitor;
+    ::hercules::ir::detail::AttrDocVisitor visitor;
     self()->__VisitAttrs__(visitor);
     return visitor.fields_;
   }
@@ -504,4 +504,4 @@ inline void BaseAttrsNode::PrintDocString(std::ostream& os) const {  // NOLINT(*
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

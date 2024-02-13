@@ -21,7 +21,7 @@
 
 #include <type_traits>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace {
 
@@ -39,4 +39,4 @@ struct is_std_hashable<
 
 }  // namespace
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

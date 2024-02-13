@@ -23,38 +23,38 @@
 #include <hercules/runtime/module.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ModuleGetSource").set_body_typed([](Module mod, Unicode fmt) {
+HERCULES_REGISTER_GLOBAL("runtime.ModuleGetSource").set_body_typed([](Module mod, Unicode fmt) {
   return String(mod->GetSource(fmt.encode())).decode();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ModuleImportsSize").set_body_typed([](Module mod) {
+HERCULES_REGISTER_GLOBAL("runtime.ModuleImportsSize").set_body_typed([](Module mod) {
   return static_cast<int64_t>(mod->imports().size());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ModuleGetImport").set_body_typed([](Module mod, int index) {
+HERCULES_REGISTER_GLOBAL("runtime.ModuleGetImport").set_body_typed([](Module mod, int index) {
   return mod->imports().at(index);
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ModuleGetTypeKey").set_body_typed([](Module mod) {
+HERCULES_REGISTER_GLOBAL("runtime.ModuleGetTypeKey").set_body_typed([](Module mod) {
   return String(mod->type_key()).decode();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ModuleLoadFromFile")
+HERCULES_REGISTER_GLOBAL("runtime.ModuleLoadFromFile")
     .set_body_typed([](Unicode name, Unicode fmt) {
       return Module::LoadFromFile(name.encode(), fmt.encode());
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.ModuleSaveToFile")
+HERCULES_REGISTER_GLOBAL("runtime.ModuleSaveToFile")
     .set_body_typed([](Module mod, Unicode name, Unicode fmt) {
       mod->SaveToFile(name.encode(), fmt.encode());
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.GetCodegenModulePtrName").set_body_typed([]() {
+HERCULES_REGISTER_GLOBAL("runtime.GetCodegenModulePtrName").set_body_typed([]() {
   return String(symbol::library_module_ctx).decode();
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

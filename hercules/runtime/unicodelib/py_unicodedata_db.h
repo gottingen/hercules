@@ -24,7 +24,7 @@
 
 #include <stddef.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 // clang-format off
 #define UNIDATA_VERSION "12.1.0"
@@ -7691,4 +7691,4 @@ static Py_UCS4 normalization_3_2_0(Py_UCS4 n)
 
 // clang-format on
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -19,7 +19,7 @@
  */
 #include <hercules/runtime/str_escape.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 static const char HexDigits[16] = {
@@ -104,7 +104,7 @@ String UnicodeEscape(const char32_t* data, size_t size) {
         result.push_back(HexDigits[(codepoint >> 4) & 15]);
         result.push_back(HexDigits[(codepoint)&15]);
       } else {
-        MXCHECK(codepoint >= 0x010000 && codepoint <= 0x10FFFF);
+        HSCHECK(codepoint >= 0x010000 && codepoint <= 0x10FFFF);
         result.push_back('U');
         result.push_back(HexDigits[(codepoint >> 28) & 15]);
         result.push_back(HexDigits[(codepoint >> 24) & 15]);
@@ -129,4 +129,4 @@ String UnicodeEscape(const char32_t* data, size_t size) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

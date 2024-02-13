@@ -29,7 +29,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/string_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 namespace internal {
@@ -48,7 +48,7 @@ inline int cuda_device_offset(int gpu_ordinal) {
   std::string env_val(tmp);
   std::vector<std::string> gpu_list = StringUtil::Split(env_val, ",");
   auto it = std::find(gpu_list.begin(), gpu_list.end(), std::to_string(gpu_ordinal));
-  MXCHECK(it != gpu_list.end()) << "gpu_ordinal:" << gpu_ordinal
+  HSCHECK(it != gpu_list.end()) << "gpu_ordinal:" << gpu_ordinal
                                 << " not found in CUDA_VISIBLE_DEVICES:" << env_val;
   return std::distance(gpu_list.begin(), it);
 }
@@ -93,7 +93,7 @@ inline void ListToStdVector_String(const List& list, std::vector<std::string>& r
       } break;
       default: {
         /* not compatible type */
-        MXCHECK(false) << "input type error, \n"
+        HSCHECK(false) << "input type error, \n"
                        << "optional: str, \n"
                        << "but receive type : " << item.type_name();
       } break;
@@ -104,4 +104,4 @@ inline void ListToStdVector_String(const List& list, std::vector<std::string>& r
 }  // namespace internal
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

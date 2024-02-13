@@ -48,12 +48,12 @@
 
 extern "C" {
 // C-mangled dlpack deleter.
-static void MATXScriptNDArrayDLPackDeleter(DLManagedTensor* tensor);
+static void HerculesNDArrayDLPackDeleter(DLManagedTensor* tensor);
 // helper function to get NDArray's type index, only used by ctypes.
-MATX_DLL int MATXScriptArrayGetTypeIndex(MATXScriptTensorHandle handle, unsigned* out_tindex);
-MATX_DLL int MATXScriptGetDLTensor(::matxscript::runtime::NDArray::Container* handle,
-                                   MATXScriptTensorHandle* out);
-MATX_DLL int MATXScriptNDArrayAlloc(const matx_script_index_t* shape,
+HERCULES_DLL int HerculesArrayGetTypeIndex(HerculesTensorHandle handle, unsigned* out_tindex);
+HERCULES_DLL int HerculesGetDLTensor(::hercules::runtime::NDArray::Container* handle,
+                                   HerculesTensorHandle* out);
+HERCULES_DLL int HerculesNDArrayAlloc(const hvm_script_index_t* shape,
                                     int ndim,
                                     int dtype_code,
                                     int dtype_bits,
@@ -63,7 +63,7 @@ MATX_DLL int MATXScriptNDArrayAlloc(const matx_script_index_t* shape,
                                     void** out);
 }
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
@@ -123,12 +123,12 @@ Iterator NDArray::iter() const {
 namespace {
 
 template <typename T>
-MATXSCRIPT_ALWAYS_INLINE RTValue ElementData2AnyValue(const T& d) {
+HERCULES_ALWAYS_INLINE RTValue ElementData2AnyValue(const T& d) {
   return RTValue(d);
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE RTValue ElementData2AnyValue(const Half& d) {
+HERCULES_ALWAYS_INLINE RTValue ElementData2AnyValue(const Half& d) {
   return RTValue(static_cast<float>(d));
 }
 
@@ -136,7 +136,7 @@ MATXSCRIPT_ALWAYS_INLINE RTValue ElementData2AnyValue(const Half& d) {
 
 size_t GetDataSize(const DLTensor& arr) {
   size_t size = 1;
-  for (matx_script_index_t i = 0; i < arr.ndim; ++i) {
+  for (hvm_script_index_t i = 0; i < arr.ndim; ++i) {
     size *= static_cast<size_t>(arr.shape[i]);
   }
   size *= (arr.dtype.bits * arr.dtype.lanes + 7) / 8;
@@ -181,7 +181,7 @@ bool flat_to_1d_imp(const List& data,
     }
   }
   for (const auto& e : data) {
-    if (e.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeList) {
+    if (e.type_code() == ::hercules::runtime::TypeIndex::kRuntimeList) {
       if (!flat_to_1d_imp(e, flat_list, shape, depth + 1, max_depth)) {
         return false;
       }
@@ -211,11 +211,11 @@ bool NDArray::operator==(const NDArray& other) const {
 
   auto ldt = lhs->dl_tensor.dtype;
   auto rdt = rhs->dl_tensor.dtype;
-  MXCHECK_EQ(lhs->dl_tensor.device.device_type, kDLCPU) << "can only compare CPU tensor";
-  MXCHECK_EQ(rhs->dl_tensor.device.device_type, kDLCPU) << "can only compare CPU tensor";
-  MXCHECK(::matxscript::runtime::IsContiguous(lhs->dl_tensor))
+  HSCHECK_EQ(lhs->dl_tensor.device.device_type, kDLCPU) << "can only compare CPU tensor";
+  HSCHECK_EQ(rhs->dl_tensor.device.device_type, kDLCPU) << "can only compare CPU tensor";
+  HSCHECK(::hercules::runtime::IsContiguous(lhs->dl_tensor))
       << "Can only compare contiguous tensor";
-  MXCHECK(::matxscript::runtime::IsContiguous(rhs->dl_tensor))
+  HSCHECK(::hercules::runtime::IsContiguous(rhs->dl_tensor))
       << "Can only compare contiguous tensor";
 
   if (lhs->dl_tensor.ndim != rhs->dl_tensor.ndim)
@@ -233,33 +233,33 @@ bool NDArray::operator==(const NDArray& other) const {
 }
 
 bool NDArray::IsContiguous() const {
-  return ::matxscript::runtime::IsContiguous(get_mutable()->dl_tensor);
+  return ::hercules::runtime::IsContiguous(get_mutable()->dl_tensor);
 }
 
 void NDArray::CopyFrom(const DLTensor* other) {
-  MXCHECK(data_ != nullptr);
+  HSCHECK(data_ != nullptr);
   CopyFromTo(other, &(get_mutable()->dl_tensor));
 }
 
 void NDArray::CopyFrom(const NDArray& other) {
-  MXCHECK(data_ != nullptr);
-  MXCHECK(other.data_ != nullptr);
+  HSCHECK(data_ != nullptr);
+  HSCHECK(other.data_ != nullptr);
   CopyFromTo(&(other.get_mutable()->dl_tensor), &(get_mutable()->dl_tensor));
 }
 
 void NDArray::CopyTo(DLTensor* other) const {
-  MXCHECK(data_ != nullptr);
+  HSCHECK(data_ != nullptr);
   CopyFromTo(&(get_mutable()->dl_tensor), other);
 }
 
 void NDArray::CopyTo(const NDArray& other) const {
-  MXCHECK(data_ != nullptr);
-  MXCHECK(other.data_ != nullptr);
+  HSCHECK(data_ != nullptr);
+  HSCHECK(other.data_ != nullptr);
   CopyFromTo(&(get_mutable()->dl_tensor), &(other.get_mutable()->dl_tensor));
 }
 
 NDArray NDArray::CopyTo(const DLDevice& device) const {
-  MXCHECK(data_ != nullptr);
+  HSCHECK(data_ != nullptr);
   const DLTensor* dptr = operator->();
   NDArray ret =
       Empty(std::vector<int64_t>(dptr->shape, dptr->shape + dptr->ndim), dptr->dtype, device);
@@ -279,23 +279,23 @@ NDArray::Container* NDArray::get_mutable() const {
   return static_cast<NDArray::Container*>(data_.get());
 }
 
-ObjectPtr<Object> NDArray::FFIDataFromHandle(MATXScriptTensorHandle handle) {
+ObjectPtr<Object> NDArray::FFIDataFromHandle(HerculesTensorHandle handle) {
   return GetObjectPtr<Object>(
       static_cast<NDArray::Container*>(reinterpret_cast<NDArray::ContainerBase*>(handle)));
 }
 
-MATXScriptTensorHandle NDArray::FFIGetHandle(const ObjectRef& nd) {
+HerculesTensorHandle NDArray::FFIGetHandle(const ObjectRef& nd) {
   // NOTE: it is necessary to cast to container then to base
   //       so that the FFI handle uses the ContainerBase address.
-  return reinterpret_cast<MATXScriptTensorHandle>(static_cast<NDArray::ContainerBase*>(
+  return reinterpret_cast<HerculesTensorHandle>(static_cast<NDArray::ContainerBase*>(
       static_cast<NDArray::Container*>(const_cast<Object*>(nd.get()))));
 }
 
-void NDArray::FFIDecRef(MATXScriptTensorHandle handle) {
+void NDArray::FFIDecRef(HerculesTensorHandle handle) {
   static_cast<NDArray::Container*>(reinterpret_cast<NDArray::ContainerBase*>(handle))->DecRef();
 }
 
-Object* MATXScriptArrayHandleToObjectHandle(MATXScriptTensorHandle handle) {
+Object* HerculesArrayHandleToObjectHandle(HerculesTensorHandle handle) {
   return static_cast<NDArray::Container*>(reinterpret_cast<NDArray::ContainerBase*>(handle));
 }
 
@@ -312,9 +312,9 @@ bool IsConvertible<NDArray>(const Object* node) {
 }
 
 inline void VerifyDataType(DLDataType dtype) {
-  MXCHECK_GE(dtype.lanes, 1);
+  HSCHECK_GE(dtype.lanes, 1);
   if (dtype.code == kDLFloat) {
-    MXCHECK_EQ(dtype.bits % 8, 0);
+    HSCHECK_EQ(dtype.bits % 8, 0);
   } else {
     // allow uint1 as a special flag for bool.
     if (dtype.bits == 1 && dtype.code == kDLUInt)
@@ -327,9 +327,9 @@ inline void VerifyDataType(DLDataType dtype) {
     else if (dtype.bits == 4 && dtype.code == kDLInt)
       return;
     else
-      MXCHECK_EQ(dtype.bits % 8, 0);
+      HSCHECK_EQ(dtype.bits % 8, 0);
   }
-  MXCHECK_EQ(dtype.bits & (dtype.bits - 1), 0);
+  HSCHECK_EQ(dtype.bits & (dtype.bits - 1), 0);
 }
 
 inline size_t GetDataAlignment(const DLTensor& arr) {
@@ -341,8 +341,8 @@ inline size_t GetDataAlignment(const DLTensor& arr) {
 
 void ArrayCopyFromBytes(DLTensor* handle, const void* data, size_t nbytes) {
   size_t arr_size = GetDataSize(*handle);
-  MXCHECK(IsContiguous(*handle)) << "ArrayCopyFromBytes only support contiguous array for now";
-  MXCHECK_EQ(arr_size, nbytes) << "ArrayCopyFromBytes: size mismatch";
+  HSCHECK(IsContiguous(*handle)) << "ArrayCopyFromBytes only support contiguous array for now";
+  HSCHECK_EQ(arr_size, nbytes) << "ArrayCopyFromBytes: size mismatch";
   DLDevice cpu_dev{kDLCPU, 0};
   auto* device_api = DeviceAPI::Get(handle->device);
   auto stream = device_api->GetCurrentThreadStream(handle->device);
@@ -362,8 +362,8 @@ void ArrayCopyFromBytes(DLTensor* handle, const void* data, size_t nbytes) {
 void ArrayCopyToBytes(const DLTensor* handle, void* data, size_t nbytes) {
   DLDevice cpu_dev{kDLCPU, 0};
   size_t arr_size = GetDataSize(*handle);
-  MXCHECK(IsContiguous(*handle)) << "ArrayCopyToBytes only support contiguous array for now";
-  MXCHECK_EQ(arr_size, nbytes) << "ArrayCopyToBytes: size mismatch";
+  HSCHECK(IsContiguous(*handle)) << "ArrayCopyToBytes only support contiguous array for now";
+  HSCHECK_EQ(arr_size, nbytes) << "ArrayCopyToBytes: size mismatch";
 
   auto* device_api = DeviceAPI::Get(handle->device);
   auto stream = device_api->GetCurrentThreadStream(handle->device);
@@ -405,13 +405,13 @@ List ToListImpl(int64_t ndim, DType* data, const int64_t* shape, const int64_t* 
 
 List NDArray::ToList() const {
   const DLTensor* dl_tensor = &(get_mutable()->dl_tensor);
-  MXCHECK(dl_tensor->device.device_type == kDLCPU) << "Only CPU NDArray supports ToList method.";
+  HSCHECK(dl_tensor->device.device_type == kDLCPU) << "Only CPU NDArray supports ToList method.";
   int64_t ndim = dl_tensor->ndim;
   const int64_t* shape = dl_tensor->shape;
   const int64_t* strides = get_mutable()->StridesBegin();
   void* p = static_cast<void*>(static_cast<char*>(dl_tensor->data) + dl_tensor->byte_offset);
   List ret;
-  MATX_NDARRAY_TYPE_SWITCH(
+  HVM_NDARRAY_TYPE_SWITCH(
       dl_tensor->dtype, DT, { return ToListImpl(ndim, static_cast<DT*>(p), shape, strides); });
   return ret;
 }
@@ -423,14 +423,14 @@ struct NDArray::Internal {
     if (ptr->manager_ctx != nullptr) {
       static_cast<NDArray::Container*>(ptr->manager_ctx)->DecRef();
     } else if (ptr->dl_tensor.data != nullptr) {
-      ::matxscript::runtime::DeviceAPI::Get(ptr->dl_tensor.device)
+      ::hercules::runtime::DeviceAPI::Get(ptr->dl_tensor.device)
           ->Free(ptr->dl_tensor.device, ptr->dl_tensor.data);
     }
     delete ptr;
   }
   // Deleter for NDArray converted from DLPack
   // This is used from data which is passed from external DLPack(DLManagedTensor)
-  // that are not allocated inside of MATXScript.
+  // that are not allocated inside of Hercules.
   // This enables us to create NDArray from memory allocated by other
   // frameworks that are DLPack compatible
   static void DLPackDeleter(Object* ptr_obj) {
@@ -459,7 +459,7 @@ struct NDArray::Internal {
     NDArray ret(GetObjectPtr<Object>(data));
     // setup shape
     data->shape_ = std::move(shape);
-    data->dl_tensor.shape = ::matxscript::runtime::BeginPtr(data->shape_);
+    data->dl_tensor.shape = ::hercules::runtime::BeginPtr(data->shape_);
     data->dl_tensor.ndim = static_cast<int>(data->shape_.size());
     // setup strides
     data->strides_ = std::move(strides);
@@ -468,7 +468,7 @@ struct NDArray::Internal {
     // setup device
     data->dl_tensor.device = device;
     if (!contiguous) {
-      data->dl_tensor.strides = ::matxscript::runtime::BeginPtr(data->strides_);
+      data->dl_tensor.strides = ::hercules::runtime::BeginPtr(data->strides_);
     }
     return ret;
   }
@@ -487,7 +487,7 @@ struct NDArray::Internal {
     // setup shape
     data->shape_.resize(ndim);
     data->shape_.assign(shape, shape + ndim);
-    data->dl_tensor.shape = ::matxscript::runtime::BeginPtr(data->shape_);
+    data->dl_tensor.shape = ::hercules::runtime::BeginPtr(data->shape_);
     data->dl_tensor.ndim = ndim;
     // setup strides
     if (strides == nullptr) {
@@ -495,8 +495,8 @@ struct NDArray::Internal {
     } else {
       data->strides_.resize(ndim);
       data->strides_.assign(strides, strides + ndim);
-      if (!::matxscript::runtime::IsContiguous(shape, strides, ndim)) {
-        data->dl_tensor.strides = ::matxscript::runtime::BeginPtr(data->strides_);
+      if (!::hercules::runtime::IsContiguous(shape, strides, ndim)) {
+        data->dl_tensor.strides = ::hercules::runtime::BeginPtr(data->strides_);
       }
     }
     // setup dtype
@@ -517,7 +517,7 @@ struct NDArray::Internal {
     // update shape_
     data->shape_.resize(data->dl_tensor.ndim);
     data->shape_.assign(data->dl_tensor.shape, data->dl_tensor.shape + data->dl_tensor.ndim);
-    data->dl_tensor.shape = ::matxscript::runtime::BeginPtr(data->shape_);
+    data->dl_tensor.shape = ::hercules::runtime::BeginPtr(data->shape_);
     // update strides_
     if (data->dl_tensor.strides == nullptr) {
       data->strides_ = GenStridesFromShape(data->shape_);
@@ -525,7 +525,7 @@ struct NDArray::Internal {
       data->strides_.resize(data->dl_tensor.ndim);
       data->strides_.assign(data->dl_tensor.strides,
                             data->dl_tensor.strides + data->dl_tensor.ndim);
-      data->dl_tensor.strides = ::matxscript::runtime::BeginPtr(data->strides_);
+      data->dl_tensor.strides = ::hercules::runtime::BeginPtr(data->strides_);
     }
     return NDArray(GetObjectPtr<Object>(data));
   }
@@ -536,23 +536,23 @@ struct NDArray::Internal {
     ObjectRef::FFIClearAfterMove(&arr);
     return handle;
   }
-  static void FFIDecRef(MATXScriptTensorHandle tensor) {
+  static void FFIDecRef(HerculesTensorHandle tensor) {
     NDArray::FFIDecRef(tensor);
   }
   // Container to DLManagedTensor
-  static DLManagedTensor* ToDLPack(MATXScriptTensorHandle handle) {
+  static DLManagedTensor* ToDLPack(HerculesTensorHandle handle) {
     auto* from =
         static_cast<NDArray::Container*>(reinterpret_cast<NDArray::ContainerBase*>(handle));
     return ToDLPack(from);
   }
 
   static DLManagedTensor* ToDLPack(NDArray::Container* from) {
-    MXCHECK(from != nullptr);
+    HSCHECK(from != nullptr);
     DLManagedTensor* ret = new DLManagedTensor();
     ret->dl_tensor = from->dl_tensor;
     ret->manager_ctx = from;
     from->IncRef();
-    ret->deleter = MATXScriptNDArrayDLPackDeleter;
+    ret->deleter = HerculesNDArrayDLPackDeleter;
     return ret;
   }
   // Delete dlpack object.
@@ -563,7 +563,7 @@ struct NDArray::Internal {
 };
 
 NDArray NDArray::Reshape(std::vector<int64_t> newshape) const {
-  MXCHECK(IsContiguous()) << "only support contiguous ndarray";
+  HSCHECK(IsContiguous()) << "only support contiguous ndarray";
   std::stringstream result;
   result << '<';
   std::copy(newshape.begin(), newshape.end(), std::ostream_iterator<int>(result, " "));
@@ -578,7 +578,7 @@ NDArray NDArray::Reshape(std::vector<int64_t> newshape) const {
   bool has_zero = false;
   for (size_t i = 0; i < newshape.size(); i++) {
     if (newshape[i] < 0) {
-      MXCHECK(newaxis == -1) << "ValueError: can only specify one unknown dimension";
+      HSCHECK(newaxis == -1) << "ValueError: can only specify one unknown dimension";
       newaxis = i;
       continue;
     }
@@ -586,9 +586,9 @@ NDArray NDArray::Reshape(std::vector<int64_t> newshape) const {
     has_zero = has_zero || (newshape[i] == 0);
   }
 
-  MXCHECK(!(newaxis == -1 && given_size != curr_size))
+  HSCHECK(!(newaxis == -1 && given_size != curr_size))
       << "cannot reshape array of size " << curr_size << " into " << result.str();
-  MXCHECK(!(has_zero && newaxis != -1))
+  HSCHECK(!(has_zero && newaxis != -1))
       << "cannot reshape array of size " << curr_size << " into " << result.str();
 
   if (newaxis != -1) {
@@ -636,7 +636,7 @@ NDArray NDArray::Reshape(const Any& newshape) const {
       return Reshape(it);
     } break;
     default: {
-      MXTHROW << "expect 'list' but get '" << TypeIndex2Str(newshape.type_code());
+      HSTHROW << "expect 'list' but get '" << TypeIndex2Str(newshape.type_code());
     } break;
   }
   return NDArray();
@@ -659,7 +659,7 @@ NDArray NDArray::Squeeze(const std::vector<int64_t>& axis) const {
   auto i = 0, j = 0;
   while (i < curr_shape.size() && j < sorted_axis.size()) {
     if (i == sorted_axis[j]) {
-      MXCHECK(curr_shape[i] == 1)
+      HSCHECK(curr_shape[i] == 1)
           << "ValueError: cannot select an axis to squeeze out which has size not equal to one";
       i++;
       j++;
@@ -668,7 +668,7 @@ NDArray NDArray::Squeeze(const std::vector<int64_t>& axis) const {
     new_shape.push_back(curr_shape[i]);
     i++;
   }
-  MXCHECK(j >= sorted_axis.size())
+  HSCHECK(j >= sorted_axis.size())
       << "NDArray.AxisError: axis " << sorted_axis[j] << " is out of bounds for array of dimension "
       << curr_shape.size();
   for (; i < curr_shape.size(); i++) {
@@ -693,7 +693,7 @@ NDArray NDArray::Squeeze(const Any& axis) const {
       return Squeeze(std::move(it));
     } break;
     default: {
-      MXTHROW << "expect 'tuple' but get '" << TypeIndex2Str(axis.type_code());
+      HSTHROW << "expect 'tuple' but get '" << TypeIndex2Str(axis.type_code());
     } break;
   }
   return NDArray();
@@ -704,7 +704,7 @@ NDArray NDArray::Unsqueeze(int64_t dim) const {
   int64_t curr_ndim = curr_shape.size();
   auto inclusive_lower_bound = 0 - curr_ndim - 1;
   auto exclusive_higher_bound = curr_ndim + 1;
-  MXCHECK(inclusive_lower_bound <= dim && dim < exclusive_higher_bound)
+  HSCHECK(inclusive_lower_bound <= dim && dim < exclusive_higher_bound)
       << "IndexError: Dimension out of range (expected to be in range of [" << inclusive_lower_bound
       << ", " << exclusive_higher_bound << "], but got " << dim << ")";
   if (dim < 0) {
@@ -719,15 +719,15 @@ NDArray NDArray::Unsqueeze(const Any& dim) const {
 }
 
 NDArray NDArray::CreateView(std::vector<int64_t> shape, DLDataType dtype) const {
-  MXCHECK(data_ != nullptr);
-  MXCHECK(get_mutable()->dl_tensor.strides == nullptr) << "Can only create view for compact tensor";
+  HSCHECK(data_ != nullptr);
+  HSCHECK(get_mutable()->dl_tensor.strides == nullptr) << "Can only create view for compact tensor";
   auto strides = GenStridesFromShape(shape);
   NDArray ret = Internal::Create(
       std::move(shape), std::move(strides), dtype, get_mutable()->dl_tensor.device);
   ret.get_mutable()->dl_tensor.byte_offset = this->get_mutable()->dl_tensor.byte_offset;
   size_t curr_size = GetDataSize(this->get_mutable()->dl_tensor);
   size_t view_size = GetDataSize(ret.get_mutable()->dl_tensor);
-  MXCHECK_LE(view_size, curr_size)
+  HSCHECK_LE(view_size, curr_size)
       << "Tries to create a view that has bigger memory than current one";
   // increase ref count
   get_mutable()->IncRef();
@@ -739,8 +739,8 @@ NDArray NDArray::CreateView(std::vector<int64_t> shape, DLDataType dtype) const 
 NDArray NDArray::CreateViewWithStrides(std::vector<int64_t> shape,
                                        std::vector<int64_t> strides,
                                        DLDataType dtype) const {
-  MXCHECK(data_ != nullptr);
-  bool contiguous = ::matxscript::runtime::IsContiguous(shape, strides, shape.size());
+  HSCHECK(data_ != nullptr);
+  bool contiguous = ::hercules::runtime::IsContiguous(shape, strides, shape.size());
   NDArray ret = Internal::Create(
       std::move(shape), std::move(strides), dtype, get_mutable()->dl_tensor.device, contiguous);
   Container* ret_container = ret.get_mutable();
@@ -748,7 +748,7 @@ NDArray NDArray::CreateViewWithStrides(std::vector<int64_t> shape,
   ret_container->dl_tensor.byte_offset = this_container->dl_tensor.byte_offset;
   size_t curr_size = GetDataSize(this_container->dl_tensor);
   size_t view_size = GetDataSize(ret_container->dl_tensor);
-  MXCHECK_LE(view_size, curr_size)
+  HSCHECK_LE(view_size, curr_size)
       << "Tries to create a view that has bigger memory than current one";
   // TODO: check dot(view.shape, view.strides) <= dot(self.shape, self.strides)
   // increase ref count
@@ -802,23 +802,23 @@ NDArray NDArray::FromDLPack(DLManagedTensor* tensor) {
 }
 
 void NDArray::CopyToBytes(void* data, size_t nbytes) const {
-  MXCHECK(data != nullptr);
-  MXCHECK(data_ != nullptr);
+  HSCHECK(data != nullptr);
+  HSCHECK(data_ != nullptr);
   ArrayCopyToBytes(&get_mutable()->dl_tensor, data, nbytes);
 }
 
 void NDArray::CopyFromBytes(const void* data, size_t nbytes) {
-  MXCHECK(data != nullptr);
-  MXCHECK(data_ != nullptr);
+  HSCHECK(data != nullptr);
+  HSCHECK(data_ != nullptr);
   ArrayCopyFromBytes(&get_mutable()->dl_tensor, data, nbytes);
 }
 
-void NDArray::CopyFromTo(const DLTensor* from, DLTensor* to, MATXScriptStreamHandle stream) {
+void NDArray::CopyFromTo(const DLTensor* from, DLTensor* to, HerculesStreamHandle stream) {
   size_t from_size = GetDataSize(*from);
   size_t to_size = GetDataSize(*to);
-  MXCHECK_EQ(from_size, to_size) << "MATXScriptArrayCopyFromTo: The size must exactly match";
+  HSCHECK_EQ(from_size, to_size) << "HerculesArrayCopyFromTo: The size must exactly match";
 
-  MXCHECK(from->device.device_type == to->device.device_type ||
+  HSCHECK(from->device.device_type == to->device.device_type ||
           from->device.device_type == kDLCPU || to->device.device_type == kDLCPU ||
           from->device.device_type == kDLCUDAHost || to->device.device_type == kDLCUDAHost)
       << "Can not copy across different device types directly";
@@ -848,8 +848,8 @@ void NDArray::CopyFromTo(const DLTensor* from, DLTensor* to) {
 std::vector<int64_t> NDArray::Shape() const {
   return get_mutable()->ShapeVec();
 }
-::matxscript::runtime::DataType NDArray::DataType() const {
-  return ::matxscript::runtime::DataType(get_mutable()->dl_tensor.dtype);
+::hercules::runtime::DataType NDArray::DataType() const {
+  return ::hercules::runtime::DataType(get_mutable()->dl_tensor.dtype);
 }
 
 List NDArray::ShapeList() const {
@@ -900,14 +900,14 @@ int NDArray::GetDim() const {
 RTValue NDArray::get_item(int64_t index) const {
   const DLTensor* dl_tensor = &(get_mutable()->dl_tensor);
   int64_t idx = index_correction(index, dl_tensor->shape[0]);
-  MXCHECK(0 <= idx && idx < dl_tensor->shape[0])
+  HSCHECK(0 <= idx && idx < dl_tensor->shape[0])
       << "[NDArray.get_item] index " << index << " is out of bounds for axis 0 with size "
       << dl_tensor->shape[0];
   void* p = static_cast<void*>(static_cast<char*>(dl_tensor->data) + dl_tensor->byte_offset);
   if (dl_tensor->ndim == 1) {
-    MXCHECK(dl_tensor->device.device_type == kDLCPU)
+    HSCHECK(dl_tensor->device.device_type == kDLCPU)
         << "[NDArray]: get item from gpu is not supported";
-    MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+    HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
       return ElementData2AnyValue(static_cast<DT*>(p)[idx * get_mutable()->Strides(0)]);
     });
   } else {
@@ -919,7 +919,7 @@ RTValue NDArray::get_item(int64_t index) const {
     get_mutable()->IncRef();
     ret.get_mutable()->dl_tensor.byte_offset = dl_tensor->byte_offset;
     ret.get_mutable()->manager_ctx = get_mutable();
-    MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+    HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
       ret.get_mutable()->dl_tensor.data =
           static_cast<DT*>(dl_tensor->data) + get_mutable()->Strides(0) * idx;
     });
@@ -935,11 +935,11 @@ RTValue NDArray::get_item(const Any& index) const {
     } break;
     case TypeIndex::kRuntimeTuple: {
       // TODO: support tuple
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return None;
     } break;
     default: {
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return None;
     } break;
   }
@@ -949,13 +949,13 @@ int64_t NDArray::get_item_as_int64(int64_t index) const {
   auto* d_ptr = get_mutable();
   const DLTensor* dl_tensor = &(d_ptr->dl_tensor);
   int64_t idx = index_correction(index, dl_tensor->shape[0]);
-  MXCHECK(0 <= idx && idx < dl_tensor->shape[0])
+  HSCHECK(0 <= idx && idx < dl_tensor->shape[0])
       << "[NDArray.get_item] index " << index << " is out of bounds for axis 0 with size "
       << dl_tensor->shape[0];
-  MXCHECK(dl_tensor->ndim == 1) << "can not convert ndarray as int type";
-  MXCHECK(dl_tensor->device.device_type == kDLCPU)
+  HSCHECK(dl_tensor->ndim == 1) << "can not convert ndarray as int type";
+  HSCHECK(dl_tensor->device.device_type == kDLCPU)
       << "[NDArray]: get item from gpu is not supported";
-  MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+  HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
     auto* p = reinterpret_cast<DT*>(static_cast<char*>(dl_tensor->data) + dl_tensor->byte_offset);
     return (int64_t)(p[idx * d_ptr->Strides(0)]);
   });
@@ -967,13 +967,13 @@ double NDArray::get_item_as_double(int64_t index) const {
   auto* d_ptr = get_mutable();
   const DLTensor* dl_tensor = &(d_ptr->dl_tensor);
   int64_t idx = index_correction(index, dl_tensor->shape[0]);
-  MXCHECK(0 <= idx && idx < dl_tensor->shape[0])
+  HSCHECK(0 <= idx && idx < dl_tensor->shape[0])
       << "[NDArray.get_item] index " << index << " is out of bounds for axis 0 with size "
       << dl_tensor->shape[0];
-  MXCHECK(dl_tensor->ndim == 1) << "can not convert ndarray as int type";
-  MXCHECK(dl_tensor->device.device_type == kDLCPU)
+  HSCHECK(dl_tensor->ndim == 1) << "can not convert ndarray as int type";
+  HSCHECK(dl_tensor->device.device_type == kDLCPU)
       << "[NDArray]: get item from gpu is not supported";
-  MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+  HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
     auto* p = reinterpret_cast<DT*>(static_cast<char*>(dl_tensor->data) + dl_tensor->byte_offset);
     return (double)(p[idx * d_ptr->Strides(0)]);
   });
@@ -988,11 +988,11 @@ int64_t NDArray::get_item_as_int64(const Any& index) const {
     } break;
     case TypeIndex::kRuntimeTuple: {
       // TODO: support tuple
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return 0;
     } break;
     default: {
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return 0;
     } break;
   }
@@ -1005,11 +1005,11 @@ double NDArray::get_item_as_double(const Any& index) const {
     } break;
     case TypeIndex::kRuntimeTuple: {
       // TODO: support tuple
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return 0;
     } break;
     default: {
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return 0;
     } break;
   }
@@ -1018,20 +1018,20 @@ double NDArray::get_item_as_double(const Any& index) const {
 RTValue NDArray::fused_get_item(const int64_t* indexes, size_t num_indexes) const {
   const DLTensor* dl_tensor = &(get_mutable()->dl_tensor);
   const int64_t* strides = get_mutable()->StridesBegin();
-  MXCHECK(num_indexes <= dl_tensor->ndim);
-  MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+  HSCHECK(num_indexes <= dl_tensor->ndim);
+  HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
     auto* p = reinterpret_cast<DT*>(static_cast<char*>(dl_tensor->data) + dl_tensor->byte_offset);
     int i = 0;
     for (size_t pos = 0; pos < num_indexes; ++pos) {
       int64_t index = index_correction(indexes[pos], dl_tensor->shape[i]);
-      MXCHECK(0 <= index && index < dl_tensor->shape[i])
+      HSCHECK(0 <= index && index < dl_tensor->shape[i])
           << "[NDArray.get_item] index " << index << " is out of bounds for axis " << i
           << " with size " << dl_tensor->shape[i];
       p += strides[i] * index;
       ++i;
     }
     if (dl_tensor->ndim == num_indexes) {
-      MXCHECK(dl_tensor->device.device_type == kDLCPU)
+      HSCHECK(dl_tensor->device.device_type == kDLCPU)
           << "[NDArray]: get scalar value is only supported for cpu array, but get "
           << dl_tensor->device.device_type;
       return ElementData2AnyValue(*p);
@@ -1059,19 +1059,19 @@ int64_t NDArray::fused_get_item_as_int64(const int64_t* indexes, size_t num_inde
   auto* d_ptr = get_mutable();
   const DLTensor* dl_tensor = &(d_ptr->dl_tensor);
   const int64_t* strides = d_ptr->StridesBegin();
-  MXCHECK(num_indexes == dl_tensor->ndim);
-  MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+  HSCHECK(num_indexes == dl_tensor->ndim);
+  HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
     auto* p = reinterpret_cast<DT*>(static_cast<char*>(dl_tensor->data) + dl_tensor->byte_offset);
     int i = 0;
     for (size_t pos = 0; pos < num_indexes; ++pos) {
       auto index = index_correction(indexes[pos], dl_tensor->shape[i]);
-      MXCHECK(0 <= index && index < dl_tensor->shape[i])
+      HSCHECK(0 <= index && index < dl_tensor->shape[i])
           << "[NDArray.get_item] index " << index << " is out of bounds for axis " << i
           << " with size " << dl_tensor->shape[i];
       p += strides[i] * index;
       ++i;
     }
-    MXCHECK(dl_tensor->device.device_type == kDLCPU)
+    HSCHECK(dl_tensor->device.device_type == kDLCPU)
         << "[NDArray]: get scalar value is only supported for cpu array, but get "
         << dl_tensor->device.device_type;
     return int64_t(*p);
@@ -1087,19 +1087,19 @@ double NDArray::fused_get_item_as_double(const int64_t* indexes, size_t num_inde
   auto* d_ptr = get_mutable();
   const DLTensor* dl_tensor = &(d_ptr->dl_tensor);
   const int64_t* strides = d_ptr->StridesBegin();
-  MXCHECK(num_indexes == dl_tensor->ndim);
-  MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+  HSCHECK(num_indexes == dl_tensor->ndim);
+  HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
     auto* p = reinterpret_cast<DT*>(static_cast<char*>(dl_tensor->data) + dl_tensor->byte_offset);
     int i = 0;
     for (size_t pos = 0; pos < num_indexes; ++pos) {
       auto index = index_correction(indexes[pos], dl_tensor->shape[i]);
-      MXCHECK(0 <= index && index < dl_tensor->shape[i])
+      HSCHECK(0 <= index && index < dl_tensor->shape[i])
           << "[NDArray.get_item] index " << index << " is out of bounds for axis " << i
           << " with size " << dl_tensor->shape[i];
       p += strides[i] * index;
       ++i;
     }
-    MXCHECK(dl_tensor->device.device_type == kDLCPU)
+    HSCHECK(dl_tensor->device.device_type == kDLCPU)
         << "[NDArray]: get scalar value is only supported for cpu array, but get "
         << dl_tensor->device.device_type;
     return double(*p);
@@ -1154,18 +1154,18 @@ void NDArray::set_item_helper(void* dst_data,
                               int dst_ndim,
                               const Any& item) const {
   const DLTensor* dl_tensor = &(get_mutable()->dl_tensor);
-  if (item.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeNDArray) {
+  if (item.type_code() == ::hercules::runtime::TypeIndex::kRuntimeNDArray) {
     NDArray src = item.AsObjectRefNoCheck<NDArray>();
     const DLTensor* src_tensor = &(src.get_mutable()->dl_tensor);
-    MXCHECK(dst_ndim == src_tensor->ndim) << "[NDArray::set_item_helper] dimensional mismatch";
-    MXCHECK(std::equal(dst_shape, dst_shape + dst_ndim, src_tensor->shape))
+    HSCHECK(dst_ndim == src_tensor->ndim) << "[NDArray::set_item_helper] dimensional mismatch";
+    HSCHECK(std::equal(dst_shape, dst_shape + dst_ndim, src_tensor->shape))
         << "[NDArray::set_item_helper] shape mismatch";
     const auto& src_strides = src.get_mutable()->StridesBegin();
     void* src_data =
         static_cast<void*>(static_cast<char*>(src_tensor->data) + src_tensor->byte_offset);
-    MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
-      MATX_NDARRAY_TYPE_SWITCH(src_tensor->dtype, SRC_DT, {
-        if (::matxscript::runtime::IsContiguous(dst_shape, dst_strides, dst_ndim) &&
+    HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+      HVM_NDARRAY_TYPE_SWITCH(src_tensor->dtype, SRC_DT, {
+        if (::hercules::runtime::IsContiguous(dst_shape, dst_strides, dst_ndim) &&
             src.IsContiguous()) {
           Assign(static_cast<DT*>(dst_data),
                  static_cast<SRC_DT*>(src_data),
@@ -1180,30 +1180,30 @@ void NDArray::set_item_helper(void* dst_data,
         }
       });
     });
-  } else if (item.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeList) {
+  } else if (item.type_code() == ::hercules::runtime::TypeIndex::kRuntimeList) {
     List src_list = item.AsObjectRefNoCheck<List>();
-    MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+    HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
       std::vector<int64_t> shape;
       auto data = ListHelper::IsNDArray<DT>(src_list, shape);
-      MXCHECK(data != nullptr) << "[NDArray::set_item] item shape is invalid";
+      HSCHECK(data != nullptr) << "[NDArray::set_item] item shape is invalid";
       int ndim = shape.size();
-      MXCHECK(dst_ndim == ndim) << "[NDArray::set_item] dimensional mismatch";
-      MXCHECK(std::equal(dst_shape, dst_shape + dst_ndim, shape.begin()))
+      HSCHECK(dst_ndim == ndim) << "[NDArray::set_item] dimensional mismatch";
+      HSCHECK(std::equal(dst_shape, dst_shape + dst_ndim, shape.begin()))
           << "[NDArray::set_item] shape mismatch";
       std::vector<int64_t> strides = GenStridesFromShape(shape);
-      if (::matxscript::runtime::IsContiguous(dst_shape, dst_strides, dst_ndim)) {
+      if (::hercules::runtime::IsContiguous(dst_shape, dst_strides, dst_ndim)) {
         Assign(static_cast<DT*>(dst_data), data->data(), dst_shape[0] * dst_strides[0]);
       } else {
         Assign(static_cast<DT*>(dst_data),
                data->data(),
                dst_strides,
-               ::matxscript::runtime::BeginPtr(strides),
+               ::hercules::runtime::BeginPtr(strides),
                dst_shape,
                dst_ndim);
       }
     });
   } else {
-    MXTHROW << "unsupported item type, type_code" << item.type_code();
+    HSTHROW << "unsupported item type, type_code" << item.type_code();
   }
 }
 
@@ -1211,12 +1211,12 @@ void NDArray::set_item(int64_t index, int64_t value) const {
   const DLTensor* dl_tensor = &(get_mutable()->dl_tensor);
   const int64_t* strides = get_mutable()->StridesBegin();
   // TODO: fix broadcast
-  MXCHECK(dl_tensor->ndim == 1);
-  MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+  HSCHECK(dl_tensor->ndim == 1);
+  HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
     DT* p = reinterpret_cast<DT*>(static_cast<unsigned char*>(dl_tensor->data) +
                                   dl_tensor->byte_offset);
     index = index_correction(index, dl_tensor->shape[0]);
-    MXCHECK(0 <= index && index < dl_tensor->shape[0])
+    HSCHECK(0 <= index && index < dl_tensor->shape[0])
         << "[NDArray.set_item] index " << index << " is out of bounds for axis " << 0
         << " with size " << dl_tensor->shape[0];
     p += strides[0] * index;
@@ -1229,12 +1229,12 @@ void NDArray::set_item(int64_t index, double value) const {
   const DLTensor* dl_tensor = &(get_mutable()->dl_tensor);
   const int64_t* strides = get_mutable()->StridesBegin();
   // TODO: fix broadcast
-  MXCHECK(dl_tensor->ndim == 1);
-  MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+  HSCHECK(dl_tensor->ndim == 1);
+  HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
     DT* p = reinterpret_cast<DT*>(static_cast<unsigned char*>(dl_tensor->data) +
                                   dl_tensor->byte_offset);
     index = index_correction(index, dl_tensor->shape[0]);
-    MXCHECK(0 <= index && index < dl_tensor->shape[0])
+    HSCHECK(0 <= index && index < dl_tensor->shape[0])
         << "[NDArray.set_item] index " << index << " is out of bounds for axis " << 0
         << " with size " << dl_tensor->shape[0];
     p += strides[0] * index;
@@ -1256,11 +1256,11 @@ void NDArray::set_item(int64_t index, const Any& item) const {
       const DLTensor* dl_tensor = &(get_mutable()->dl_tensor);
       const int64_t* strides = get_mutable()->StridesBegin();
       void* dst_data = nullptr;
-      MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+      HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
         DT* p = reinterpret_cast<DT*>(static_cast<unsigned char*>(dl_tensor->data) +
                                       dl_tensor->byte_offset);
         index = index_correction(index, dl_tensor->shape[0]);
-        MXCHECK(0 <= index && index < dl_tensor->shape[0])
+        HSCHECK(0 <= index && index < dl_tensor->shape[0])
             << "[NDArray.set_item] index " << index << " is out of bounds for axis " << 0
             << " with size " << dl_tensor->shape[0];
         p += strides[0] * index;
@@ -1279,11 +1279,11 @@ void NDArray::set_item(const Any& index, int64_t value) const {
     } break;
     case TypeIndex::kRuntimeTuple: {
       // TODO: support tuple
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return;
     } break;
     default: {
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return;
     } break;
   }
@@ -1296,11 +1296,11 @@ void NDArray::set_item(const Any& index, double value) const {
     } break;
     case TypeIndex::kRuntimeTuple: {
       // TODO: support tuple
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return;
     } break;
     default: {
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return;
     } break;
   }
@@ -1313,11 +1313,11 @@ void NDArray::set_item(const Any& index, const Any& item) const {
     } break;
     case TypeIndex::kRuntimeTuple: {
       // TODO: support tuple
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return;
     } break;
     default: {
-      MXTHROW << "unsupported index type, type_code" << index.type_code();
+      HSTHROW << "unsupported index type, type_code" << index.type_code();
       return;
     } break;
   }
@@ -1327,14 +1327,14 @@ void NDArray::fused_set_item(const int64_t* indexes, size_t num_indexes, int64_t
   const DLTensor* dl_tensor = &(get_mutable()->dl_tensor);
   const int64_t* strides = get_mutable()->StridesBegin();
   // TODO: fix broadcast
-  MXCHECK(num_indexes == dl_tensor->ndim);
-  MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+  HSCHECK(num_indexes == dl_tensor->ndim);
+  HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
     DT* p = reinterpret_cast<DT*>(static_cast<unsigned char*>(dl_tensor->data) +
                                   dl_tensor->byte_offset);
     int i = 0;
     for (size_t pos = 0; pos < num_indexes; ++pos) {
       auto index = index_correction(indexes[pos], dl_tensor->shape[i]);
-      MXCHECK(0 <= index && index < dl_tensor->shape[i])
+      HSCHECK(0 <= index && index < dl_tensor->shape[i])
           << "[NDArray.set_item] index " << index << " is out of bounds for axis " << i
           << " with size " << dl_tensor->shape[i];
       p += strides[i++] * index;
@@ -1352,14 +1352,14 @@ void NDArray::fused_set_item(const int64_t* indexes, size_t num_indexes, double 
   const DLTensor* dl_tensor = &(get_mutable()->dl_tensor);
   const int64_t* strides = get_mutable()->StridesBegin();
   // TODO: fix broadcast
-  MXCHECK(num_indexes == dl_tensor->ndim);
-  MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+  HSCHECK(num_indexes == dl_tensor->ndim);
+  HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
     DT* p = reinterpret_cast<DT*>(static_cast<unsigned char*>(dl_tensor->data) +
                                   dl_tensor->byte_offset);
     int i = 0;
     for (size_t pos = 0; pos < num_indexes; ++pos) {
       auto index = index_correction(indexes[pos], dl_tensor->shape[i]);
-      MXCHECK(0 <= index && index < dl_tensor->shape[i])
+      HSCHECK(0 <= index && index < dl_tensor->shape[i])
           << "[NDArray.set_item] index " << index << " is out of bounds for axis " << i
           << " with size " << dl_tensor->shape[i];
       p += strides[i++] * index;
@@ -1386,13 +1386,13 @@ void NDArray::fused_set_item(const int64_t* indexes, size_t num_indexes, const A
       const DLTensor* dl_tensor = &(get_mutable()->dl_tensor);
       const int64_t* strides = get_mutable()->StridesBegin();
       void* dst_data = nullptr;
-      MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+      HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
         DT* p = reinterpret_cast<DT*>(static_cast<unsigned char*>(dl_tensor->data) +
                                       dl_tensor->byte_offset);
         int i = 0;
         for (size_t pos = 0; pos < num_indexes; ++pos) {
           auto index = index_correction(indexes[pos], dl_tensor->shape[i]);
-          MXCHECK(0 <= index && index < dl_tensor->shape[i])
+          HSCHECK(0 <= index && index < dl_tensor->shape[i])
               << "[NDArray.set_item] index " << index << " is out of bounds for axis " << i
               << " with size " << dl_tensor->shape[i];
           p += strides[i++] * index;
@@ -1415,7 +1415,7 @@ void NDArray::fused_set_item(const std::initializer_list<int64_t>& indexes, cons
 }
 
 NDArray NDArray::get_slice(int64_t begin, int64_t end, int64_t step) const {
-  MXCHECK_GT(step, 0) << "[NDArray::get_slice step must greater than 0";
+  HSCHECK_GT(step, 0) << "[NDArray::get_slice step must greater than 0";
   const DLTensor* dl_tensor = &(get_mutable()->dl_tensor);
   begin = slice_index_correction(begin, dl_tensor->shape[0]);
   end = slice_index_correction(end, dl_tensor->shape[0]);
@@ -1432,13 +1432,13 @@ NDArray NDArray::get_slice(int64_t begin, int64_t end, int64_t step) const {
   std::vector<int64_t> strides = get_mutable()->StridesVec();
   shape[0] = (end - begin + step - 1) / step;
   strides[0] *= step;
-  bool contiguous = ::matxscript::runtime::IsContiguous(shape, strides, shape.size());
+  bool contiguous = ::hercules::runtime::IsContiguous(shape, strides, shape.size());
   NDArray ret = Internal::Create(shape, strides, dl_tensor->dtype, dl_tensor->device, contiguous);
   get_mutable()->IncRef();
   ret.get_mutable()->dl_tensor.byte_offset = dl_tensor->byte_offset;
   ret.get_mutable()->manager_ctx = get_mutable();
   void* p = static_cast<void*>(static_cast<char*>(dl_tensor->data) + dl_tensor->byte_offset);
-  MATX_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
+  HVM_NDARRAY_TYPE_SWITCH(dl_tensor->dtype, DT, {
     ret.get_mutable()->dl_tensor.data =
         static_cast<DT*>(dl_tensor->data) + get_mutable()->Strides(0) * begin;
   });
@@ -1456,7 +1456,7 @@ void NDArray::set_slice(int64_t begin, int64_t end, const Any& item) const {
   void* p = static_cast<void*>(static_cast<char*>(dl_tensor->data) + dl_tensor->byte_offset);
   void* dst_data = nullptr;
   const int64_t* dst_strides = get_mutable()->StridesBegin();
-  MATX_NDARRAY_TYPE_SWITCH(
+  HVM_NDARRAY_TYPE_SWITCH(
       dl_tensor->dtype, DT, { dst_data = static_cast<DT*>(p) + dst_strides[0] * begin; });
   int64_t dst_shape[dl_tensor->ndim];
   std::copy(dl_tensor->shape, dl_tensor->shape + dl_tensor->ndim, dst_shape);
@@ -1482,35 +1482,35 @@ NDArray NDArray::transpose(const Any& axes) const {
     for (int64_t i = 0; i < ndim; ++i) {
       permutation.push_back(ndim - 1 - i);
     }
-  } else if (axes.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeList) {
+  } else if (axes.type_code() == ::hercules::runtime::TypeIndex::kRuntimeList) {
     const auto& l = axes.AsObjectRefNoCheck<List>();
-    MXCHECK(l.size() == ndim) << "axes don't match array";
+    HSCHECK(l.size() == ndim) << "axes don't match array";
     for (const auto& e : l) {
-      MXCHECK(e.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeInteger)
+      HSCHECK(e.type_code() == ::hercules::runtime::TypeIndex::kRuntimeInteger)
           << "[NDArray::transpose] axes element must be an integer";
       int64_t axis = index_correction(e.As<int64_t>(), ndim);
-      MXCHECK(0 <= axis && axis < ndim) << "[NDArray::transpose] axis  " << axis
+      HSCHECK(0 <= axis && axis < ndim) << "[NDArray::transpose] axis  " << axis
                                         << " is out of bounds for array of dimension " << ndim;
       permutation.push_back(axis);
     }
-  } else if (axes.type_code() == ::matxscript::runtime::TypeIndex::kRuntimeTuple) {
+  } else if (axes.type_code() == ::hercules::runtime::TypeIndex::kRuntimeTuple) {
     const auto& t = axes.AsObjectRefNoCheck<Tuple>();
-    MXCHECK(t.size() == ndim) << "axes don't match array";
+    HSCHECK(t.size() == ndim) << "axes don't match array";
     for (int i = 0; i < t.size(); ++i) {
-      MXCHECK(t[i].type_code() == ::matxscript::runtime::TypeIndex::kRuntimeInteger)
+      HSCHECK(t[i].type_code() == ::hercules::runtime::TypeIndex::kRuntimeInteger)
           << "[NDArray::transpose] axes element must be an integer";
       int64_t axis = index_correction(t[i].As<int64_t>(), ndim);
-      MXCHECK(0 <= axis && axis < ndim) << "[NDArray::transpose] axis  " << axis
+      HSCHECK(0 <= axis && axis < ndim) << "[NDArray::transpose] axis  " << axis
                                         << " is out of bounds for array of dimension " << ndim;
       permutation.push_back(axis);
     }
   } else {
-    MXTHROW << "unsupported axes type, type_code: " << axes.type_code();
+    HSTHROW << "unsupported axes type, type_code: " << axes.type_code();
     return None.As<NDArray>();
   }
 
   // check unique
-  MXCHECK(std::unordered_set<int64_t>(permutation.begin(), permutation.end()).size() == ndim)
+  HSCHECK(std::unordered_set<int64_t>(permutation.begin(), permutation.end()).size() == ndim)
       << "repeated axis in axes";
 
   std::vector<int64_t> shape(ndim);
@@ -1521,7 +1521,7 @@ NDArray NDArray::transpose(const Any& axes) const {
     strides[i] = get_mutable()->Strides(permutation[i]);
   }
 
-  bool contiguous = ::matxscript::runtime::IsContiguous(shape, strides, shape.size());
+  bool contiguous = ::hercules::runtime::IsContiguous(shape, strides, shape.size());
   NDArray ret = Internal::Create(shape, strides, dl_tensor->dtype, dl_tensor->device, contiguous);
   get_mutable()->IncRef();
   ret.get_mutable()->dl_tensor.byte_offset = dl_tensor->byte_offset;
@@ -1535,7 +1535,7 @@ NDArray NDArray::as_type(const unicode_view& dtype_str) const {
 
   auto src_container = get_mutable();
   const DLTensor* src_tensor = &(src_container->dl_tensor);
-  ::matxscript::runtime::DataType dst_dtype(String2DLDataType(UTF8Encode(dtype_str)));
+  ::hercules::runtime::DataType dst_dtype(String2DLDataType(UTF8Encode(dtype_str)));
   auto ret = Empty(src_container->ShapeVec(), dst_dtype, src_tensor->device);
   auto dst_container = ret.get_mutable();
   const DLTensor* dst_tensor = &(dst_container->dl_tensor);
@@ -1543,8 +1543,8 @@ NDArray NDArray::as_type(const unicode_view& dtype_str) const {
       static_cast<void*>(static_cast<char*>(src_tensor->data) + src_tensor->byte_offset);
   auto dst_data =
       static_cast<void*>(static_cast<char*>(dst_tensor->data) + dst_tensor->byte_offset);
-  MATX_NDARRAY_TYPE_SWITCH(dst_dtype, DST_DT, {
-    MATX_NDARRAY_TYPE_SWITCH(src_tensor->dtype, SRC_DT, {
+  HVM_NDARRAY_TYPE_SWITCH(dst_dtype, DST_DT, {
+    HVM_NDARRAY_TYPE_SWITCH(src_tensor->dtype, SRC_DT, {
       if (IsContiguous()) {
         Assign(static_cast<DST_DT*>(dst_data),
                static_cast<SRC_DT*>(src_data),
@@ -1578,8 +1578,8 @@ void NDArray::AssignNDArray(const NDArray& src, NDArray& dst) {
   const DLTensor* src_tensor = &(src_container->dl_tensor);
   DLTensor* dst_tensor = &(dst_container->dl_tensor);
 
-  MATX_NDARRAY_TYPE_SWITCH(src_tensor->dtype, SRC_DT, {
-    MATX_NDARRAY_TYPE_SWITCH(dst_tensor->dtype, DST_DT, {
+  HVM_NDARRAY_TYPE_SWITCH(src_tensor->dtype, SRC_DT, {
+    HVM_NDARRAY_TYPE_SWITCH(dst_tensor->dtype, DST_DT, {
       void* src_data = static_cast<char*>(src_tensor->data) + src_tensor->byte_offset;
       void* dst_data = static_cast<char*>(dst_tensor->data) + dst_tensor->byte_offset;
       if (src.IsContiguous() && dst.IsContiguous()) {
@@ -1602,10 +1602,10 @@ NDArray NDArray::Contiguous() const {
   if (IsContiguous()) {
     return *this;
   }
-  MXCHECK(data_ != nullptr);
+  HSCHECK(data_ != nullptr);
   const DLTensor* dptr = operator->();
   const DLDevice src_dev = dptr->device;
-  MXCHECK(src_dev.device_type == kDLCPU);
+  HSCHECK(src_dev.device_type == kDLCPU);
   auto container = get_mutable();
   std::vector<int64_t> src_shape(std::move(container->ShapeVec()));
   DLDataType src_dtype = dptr->dtype;
@@ -1626,7 +1626,7 @@ void NDArray::check_dtype_valid(const unicode_view& dtype_str) {
   }
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(NDArray::Container);
+HERCULES_REGISTER_OBJECT_TYPE(NDArray::Container);
 
 template <typename DType>
 static inline void PrintNDArray(int64_t ndim,
@@ -1679,7 +1679,7 @@ static inline void PrintNDArray(int64_t ndim,
 static inline void PrintNDArray(const NDArray& tensor, std::ostream& ss, int depth = 0) {
   int64_t strides_buf[8];
   auto dtype = tensor.DataType();
-  ss << "<matx.NDArray shape=(";
+  ss << "<hvm.NDArray shape=(";
   auto* shape_ptr = tensor.GetShapePtr();
   for (auto dim_pos = 0; dim_pos < tensor->ndim; ++dim_pos) {
     if (dim_pos > 0) {
@@ -1714,12 +1714,12 @@ static inline void PrintNDArray(const NDArray& tensor, std::ostream& ss, int dep
                                tensor->dtype,
                                stream);
     gpu_device->CreateEventSync(stream);
-    MATX_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
+    HVM_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
       PrintNDArray(tensor->ndim, static_cast<DT*>(to), tensor->shape, strides, ss, depth);
     });
     cpu_device->Free(DLDevice{kDLCPU, 0}, to);
   } else {
-    MATX_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
+    HVM_NDARRAY_TYPE_SWITCH_WITH_BOOL(dtype, DT, {
       PrintNDArray(tensor->ndim, static_cast<DT*>(tensor->data), tensor->shape, strides, ss, depth);
     });
   }
@@ -1732,28 +1732,28 @@ std::ostream& operator<<(std::ostream& os, NDArray const& n) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
-using namespace ::matxscript::runtime;
+using namespace ::hercules::runtime;
 
-void MATXScriptNDArrayDLPackDeleter(DLManagedTensor* tensor) {
+void HerculesNDArrayDLPackDeleter(DLManagedTensor* tensor) {
   NDArray::Internal::NDArrayDLPackDeleter(tensor);
 }
 
-int MATXScriptArrayGetTypeIndex(MATXScriptTensorHandle handle, unsigned* out_tindex) {
+int HerculesArrayGetTypeIndex(HerculesTensorHandle handle, unsigned* out_tindex) {
   API_BEGIN();
-  *out_tindex = MATXScriptArrayHandleToObjectHandle(handle)->type_index();
+  *out_tindex = HerculesArrayHandleToObjectHandle(handle)->type_index();
   API_END();
 }
 
-int MATXScriptArrayAlloc(const matx_script_index_t* shape,
+int HerculesArrayAlloc(const hvm_script_index_t* shape,
                          int ndim,
                          int dtype_code,
                          int dtype_bits,
                          int dtype_lanes,
                          int device_type,
                          int device_id,
-                         MATXScriptTensorHandle* out) {
+                         HerculesTensorHandle* out) {
   API_BEGIN();
   DLDataType dtype;
   dtype.code = static_cast<uint8_t>(dtype_code);
@@ -1767,7 +1767,7 @@ int MATXScriptArrayAlloc(const matx_script_index_t* shape,
   API_END();
 }
 
-int MATXScriptNDArrayAlloc(const matx_script_index_t* shape,
+int HerculesNDArrayAlloc(const hvm_script_index_t* shape,
                            int ndim,
                            int dtype_code,
                            int dtype_bits,
@@ -1789,50 +1789,50 @@ int MATXScriptNDArrayAlloc(const matx_script_index_t* shape,
   API_END();
 }
 
-int MATXScriptArrayFree(MATXScriptTensorHandle handle) {
+int HerculesArrayFree(HerculesTensorHandle handle) {
   API_BEGIN();
   NDArray::Internal::FFIDecRef(handle);
   API_END();
 }
 
-int MATXScriptArrayCopyFromTo(MATXScriptTensorHandle from,
-                              MATXScriptTensorHandle to,
-                              MATXScriptStreamHandle stream) {
+int HerculesArrayCopyFromTo(HerculesTensorHandle from,
+                              HerculesTensorHandle to,
+                              HerculesStreamHandle stream) {
   API_BEGIN();
   NDArray::CopyFromTo(from, to, stream);
   API_END();
 }
 
-int MATXScriptArrayFromDLPack(DLManagedTensor* from, MATXScriptTensorHandle* out) {
+int HerculesArrayFromDLPack(DLManagedTensor* from, HerculesTensorHandle* out) {
   API_BEGIN();
   *out = NDArray::Internal::MoveToFFIHandle(NDArray::FromDLPack(from));
   API_END();
 }
 
-int MATXScriptGetDLTensor(::matxscript::runtime::NDArray::Container* handle,
-                          MATXScriptTensorHandle* out) {
+int HerculesGetDLTensor(::hercules::runtime::NDArray::Container* handle,
+                          HerculesTensorHandle* out) {
   API_BEGIN();
-  *out = reinterpret_cast<MATXScriptTensorHandle>(static_cast<NDArray::ContainerBase*>(handle));
+  *out = reinterpret_cast<HerculesTensorHandle>(static_cast<NDArray::ContainerBase*>(handle));
   API_END();
 }
 
-int MATXScriptArrayToDLPack(MATXScriptTensorHandle from, DLManagedTensor** out) {
+int HerculesArrayToDLPack(HerculesTensorHandle from, DLManagedTensor** out) {
   API_BEGIN();
   *out = NDArray::Internal::ToDLPack(from);
   API_END();
 }
 
-void MATXScriptDLManagedTensorCallDeleter(DLManagedTensor* dltensor) {
+void HerculesDLManagedTensorCallDeleter(DLManagedTensor* dltensor) {
   (*(dltensor->deleter))(dltensor);
 }
 
-int MATXScriptArrayCopyFromBytes(MATXScriptTensorHandle handle, void* data, size_t nbytes) {
+int HerculesArrayCopyFromBytes(HerculesTensorHandle handle, void* data, size_t nbytes) {
   API_BEGIN();
   ArrayCopyFromBytes(handle, data, nbytes);
   API_END();
 }
 
-int MATXScriptArrayCopyToBytes(MATXScriptTensorHandle handle, void* data, size_t nbytes) {
+int HerculesArrayCopyToBytes(HerculesTensorHandle handle, void* data, size_t nbytes) {
   API_BEGIN();
   ArrayCopyToBytes(handle, data, nbytes);
   API_END();

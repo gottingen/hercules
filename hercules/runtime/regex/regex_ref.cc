@@ -34,10 +34,10 @@
 #include <hercules/runtime/regex/regex_private.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(RegexNode);
+HERCULES_REGISTER_OBJECT_TYPE(RegexNode);
 
 RegexNode::RegexNode(const string_view& pattern,
                      bool ignore_case,
@@ -313,4 +313,4 @@ bool IsConvertible<Regex>(const Object* node) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

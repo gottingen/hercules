@@ -21,7 +21,7 @@
 
 #include <hercules/pipeline/op_kernel.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // const static char* VARIABLE_OP_NAME = "VariableOp";
@@ -43,4 +43,4 @@ class VariableOp : public OpKernel {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

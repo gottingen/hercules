@@ -28,7 +28,7 @@
 #include <hercules/runtime/str_escape.h>
 #include <cstdint>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // Compared to the virtual function implemented in an object,
@@ -61,7 +61,7 @@ RTValue kernel_object___dispatch__(const Any& self, string_view func_name, PyArg
 int64_t kernel_object___len__(const Any& self);
 template <typename SELF_TYPE,
           typename = typename std::enable_if<!all_is_runtime_value<SELF_TYPE>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_object___len__(const SELF_TYPE& self) {
+HERCULES_ALWAYS_INLINE int64_t kernel_object___len__(const SELF_TYPE& self) {
   return kernel_object___len__(static_cast<const Any&>(RTView(self)));
 }
 
@@ -71,7 +71,7 @@ template <
     typename SELF_TYPE,
     typename KEY_TYPE,
     typename = typename std::enable_if<!all_is_runtime_value<SELF_TYPE, KEY_TYPE>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE RTValue kernel_object___getitem__(const SELF_TYPE& self,
+HERCULES_ALWAYS_INLINE RTValue kernel_object___getitem__(const SELF_TYPE& self,
                                                            const KEY_TYPE& key) {
   return kernel_object___getitem__(static_cast<const Any&>(RTView(self)),
                                    static_cast<const Any&>(RTView(key)));
@@ -84,7 +84,7 @@ template <typename SELF_TYPE,
           typename ITEM_TYPE,
           typename = typename std::enable_if<
               !all_is_runtime_value<SELF_TYPE, KEY_TYPE, ITEM_TYPE>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE RTValue kernel_object___setitem__(const SELF_TYPE& self,
+HERCULES_ALWAYS_INLINE RTValue kernel_object___setitem__(const SELF_TYPE& self,
                                                            const KEY_TYPE& key,
                                                            const ITEM_TYPE& item) {
   return kernel_object___setitem__(static_cast<const Any&>(RTView(self)),
@@ -98,7 +98,7 @@ template <
     typename SELF_TYPE,
     typename KEY_TYPE,
     typename = typename std::enable_if<!all_is_runtime_value<SELF_TYPE, KEY_TYPE>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE RTValue kernel_object___delitem__(const SELF_TYPE& self,
+HERCULES_ALWAYS_INLINE RTValue kernel_object___delitem__(const SELF_TYPE& self,
                                                            const KEY_TYPE& item) {
   return kernel_object___delitem__(static_cast<const Any&>(RTView(self)),
                                    static_cast<const Any&>(RTView(item)));
@@ -115,7 +115,7 @@ template <typename SELF_TYPE,
           typename STEP_TYPE,
           typename = typename std::enable_if<
               !all_is_runtime_value<SELF_TYPE, START_TYPE, END_TYPE, STEP_TYPE>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE RTValue kernel_object___getslice__(const SELF_TYPE& self,
+HERCULES_ALWAYS_INLINE RTValue kernel_object___getslice__(const SELF_TYPE& self,
                                                             const START_TYPE& start,
                                                             const END_TYPE& end,
                                                             const STEP_TYPE& step) {
@@ -136,7 +136,7 @@ template <typename SELF_TYPE,
           typename ITEM_TYPE,
           typename = typename std::enable_if<
               !all_is_runtime_value<SELF_TYPE, START_TYPE, END_TYPE, ITEM_TYPE>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE RTValue kernel_object___setslice__(const SELF_TYPE& self,
+HERCULES_ALWAYS_INLINE RTValue kernel_object___setslice__(const SELF_TYPE& self,
                                                             const START_TYPE& start,
                                                             const END_TYPE& end,
                                                             const ITEM_TYPE& item) {
@@ -150,7 +150,7 @@ MATXSCRIPT_ALWAYS_INLINE RTValue kernel_object___setslice__(const SELF_TYPE& sel
 RTValue kernel_object___reversed__(const Any& self);
 template <typename SELF_TYPE,
           typename = typename std::enable_if<!all_is_runtime_value<SELF_TYPE>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE RTValue kernel_object___reversed__(const SELF_TYPE& self) {
+HERCULES_ALWAYS_INLINE RTValue kernel_object___reversed__(const SELF_TYPE& self) {
   return kernel_object___reversed__(static_cast<const Any&>(RTView(self)));
 }
 
@@ -160,7 +160,7 @@ template <
     typename SELF_TYPE,
     typename ITEM_TYPE,
     typename = typename std::enable_if<!all_is_runtime_value<SELF_TYPE, ITEM_TYPE>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE bool kernel_object___contains__(const SELF_TYPE& self,
+HERCULES_ALWAYS_INLINE bool kernel_object___contains__(const SELF_TYPE& self,
                                                          const ITEM_TYPE& item) {
   return kernel_object___contains__(static_cast<const Any&>(RTView(self)),
                                     static_cast<const Any&>(RTView(item)));
@@ -170,7 +170,7 @@ MATXSCRIPT_ALWAYS_INLINE bool kernel_object___contains__(const SELF_TYPE& self,
 RTValue kernel_object___hash__(const Any& self);
 template <typename SELF_TYPE,
           typename = typename std::enable_if<!all_is_runtime_value<SELF_TYPE>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE RTValue kernel_object___hash__(const SELF_TYPE& self) {
+HERCULES_ALWAYS_INLINE RTValue kernel_object___hash__(const SELF_TYPE& self) {
   return kernel_object___hash__(static_cast<const Any&>(RTView(self)));
 }
 
@@ -178,7 +178,7 @@ MATXSCRIPT_ALWAYS_INLINE RTValue kernel_object___hash__(const SELF_TYPE& self) {
 RTValue kernel_object___getattr__(const Any& self, string_view attr);
 template <typename SELF_TYPE,
           typename = typename std::enable_if<!all_is_runtime_value<SELF_TYPE>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE RTValue kernel_object___getattr__(const SELF_TYPE& self,
+HERCULES_ALWAYS_INLINE RTValue kernel_object___getattr__(const SELF_TYPE& self,
                                                            string_view attr) {
   return kernel_object___getattr__(static_cast<const Any&>(RTView(self)), attr);
 }
@@ -189,7 +189,7 @@ template <
     typename SELF_TYPE,
     typename ITEM_TYPE,
     typename = typename std::enable_if<!all_is_runtime_value<SELF_TYPE, ITEM_TYPE>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE RTValue kernel_object___setattr__(const SELF_TYPE& self,
+HERCULES_ALWAYS_INLINE RTValue kernel_object___setattr__(const SELF_TYPE& self,
                                                            string_view attr,
                                                            const ITEM_TYPE& item) {
   return kernel_object___setattr__(
@@ -380,19 +380,19 @@ RTValue kernel_math_iterable_min(const Set& arg);
 RTValue kernel_math_iterable_min(const Any& arg);
 RTValue kernel_math_min(PyArgs args);
 
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_math_int_min(std::initializer_list<int64_t> args) {
+HERCULES_ALWAYS_INLINE int64_t kernel_math_int_min(std::initializer_list<int64_t> args) {
   return std::min(args);
 }
 
-MATXSCRIPT_ALWAYS_INLINE double kernel_math_double_min(std::initializer_list<double> args) {
+HERCULES_ALWAYS_INLINE double kernel_math_double_min(std::initializer_list<double> args) {
   return std::min(args);
 }
 
-MATXSCRIPT_ALWAYS_INLINE int64_t kernel_math_int_max(std::initializer_list<int64_t> args) {
+HERCULES_ALWAYS_INLINE int64_t kernel_math_int_max(std::initializer_list<int64_t> args) {
   return std::max(args);
 }
 
-MATXSCRIPT_ALWAYS_INLINE double kernel_math_double_max(std::initializer_list<double> args) {
+HERCULES_ALWAYS_INLINE double kernel_math_double_max(std::initializer_list<double> args) {
   return std::max(args);
 }
 
@@ -406,7 +406,7 @@ RTValue kernel_builtins_print(PyArgs args = {},
                               string_view end = "\n",
                               FILE* file = stdout);
 
-MATXSCRIPT_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os, const Any& arg) {
+HERCULES_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os, const Any& arg) {
   if (arg.IsString()) {
     auto view = arg.AsNoCheck<string_view>();
     os << "b'" << BytesEscape(view.data(), view.size()) << "'";
@@ -419,26 +419,26 @@ MATXSCRIPT_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os, const 
 }
 
 template <typename ItemType>
-MATXSCRIPT_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os,
+HERCULES_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os,
                                                         const FTList<ItemType>& arg) {
   os << arg;
 }
 
 template <typename ItemType>
-MATXSCRIPT_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os,
+HERCULES_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os,
                                                         const FTSet<ItemType>& arg) {
   os << arg;
 }
 
 template <typename KeyType, typename ValueType>
-MATXSCRIPT_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os,
+HERCULES_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os,
                                                         const FTDict<KeyType, ValueType>& arg) {
   os << arg;
 }
 
 template <typename UnpackArg,
           typename = typename std::enable_if<!is_runtime_value<UnpackArg>::value>::type>
-MATXSCRIPT_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os, const UnpackArg& arg) {
+HERCULES_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os, const UnpackArg& arg) {
   GenericValueConverter<RTView> Converter;
   kernel_builtins_print_one(os, static_cast<const Any&>(Converter(arg)));
 }
@@ -446,7 +446,7 @@ MATXSCRIPT_ALWAYS_INLINE void kernel_builtins_print_one(std::ostream& os, const 
 template <size_t I>
 struct kernel_builtins_print_details {
   template <typename UnpackArg, class... ARGS>
-  static MATXSCRIPT_ALWAYS_INLINE void run(string_view sep,
+  static HERCULES_ALWAYS_INLINE void run(string_view sep,
                                            std::ostream& os,
                                            const UnpackArg& arg,
                                            ARGS&&... args) {
@@ -459,7 +459,7 @@ struct kernel_builtins_print_details {
 template <>
 struct kernel_builtins_print_details<1> {
   template <typename UnpackArg, class... ARGS>
-  static MATXSCRIPT_ALWAYS_INLINE void run(string_view sep,
+  static HERCULES_ALWAYS_INLINE void run(string_view sep,
                                            std::ostream& os,
                                            const UnpackArg& arg,
                                            ARGS&&... args) {
@@ -468,7 +468,7 @@ struct kernel_builtins_print_details<1> {
 };
 
 template <class... ARGS>
-MATXSCRIPT_ALWAYS_INLINE RTValue
+HERCULES_ALWAYS_INLINE RTValue
 kernel_builtins_print(const string_view& sep, const string_view& end, FILE* file, ARGS&&... args) {
   std::stringstream os;
   if (sizeof...(args) > 0) {
@@ -481,7 +481,7 @@ kernel_builtins_print(const string_view& sep, const string_view& end, FILE* file
 }
 
 template <class TYPE>
-MATXSCRIPT_ALWAYS_INLINE bool kernel_builtins_isinstance(const Any& value) {
+HERCULES_ALWAYS_INLINE bool kernel_builtins_isinstance(const Any& value) {
   return value.template Is<TYPE>();
 }
 
@@ -503,4 +503,4 @@ RTValue ParallelStarMap(const UserDataRef& func, const Any& inputs, void* sessio
 RTValue ApplyAsync(const UserDataRef& func, const PyArgs& inputs, void* session_handle);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

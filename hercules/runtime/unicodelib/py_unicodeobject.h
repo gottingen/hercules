@@ -26,7 +26,7 @@
 
 #include <hercules/runtime/container/string_view.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /* Py_UCS4 and Py_UCS2 are typedefs for the respective
@@ -146,7 +146,7 @@ std::string PyUnicode_AsEncodedString(const unicode_string& unicode, /* Unicode 
 );
 
 /* Build an encoding map. */
-// TODO(matx-team): fix same as include/unicodeobject.h
+// TODO(hvm-team): fix same as include/unicodeobject.h
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

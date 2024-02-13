@@ -24,7 +24,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /*! \brief Dict node content in Dict */
@@ -63,58 +63,58 @@ class DictNode : public Object {
 
   static constexpr const uint32_t _type_index = TypeIndex::kRuntimeDict;
   static constexpr const char* _type_key = "runtime.Dict";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(DictNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(DictNode, Object);
 
  public:
   // iterators
-  MATXSCRIPT_ALWAYS_INLINE iterator begin() {
+  HERCULES_ALWAYS_INLINE iterator begin() {
     return data_container.begin();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE const_iterator begin() const {
+  HERCULES_ALWAYS_INLINE const_iterator begin() const {
     return data_container.begin();
   }
-  MATXSCRIPT_ALWAYS_INLINE iterator end() {
+  HERCULES_ALWAYS_INLINE iterator end() {
     return data_container.end();
   }
-  MATXSCRIPT_ALWAYS_INLINE const_iterator end() const {
+  HERCULES_ALWAYS_INLINE const_iterator end() const {
     return data_container.end();
   }
 
  public:
   template <class KEY_T>
-  MATXSCRIPT_ALWAYS_INLINE const_iterator find(const KEY_T& key) const {
+  HERCULES_ALWAYS_INLINE const_iterator find(const KEY_T& key) const {
     return data_container.find(key);
   }
 
   template <class KEY_T>
-  MATXSCRIPT_ALWAYS_INLINE iterator find(const KEY_T& key) {
+  HERCULES_ALWAYS_INLINE iterator find(const KEY_T& key) {
     return data_container.find(key);
   }
 
   template <typename It>
-  MATXSCRIPT_ALWAYS_INLINE void insert(It begin, It end) {
+  HERCULES_ALWAYS_INLINE void insert(It begin, It end) {
     return data_container.insert(begin, end);
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void insert(std::initializer_list<value_type> il) {
+  HERCULES_ALWAYS_INLINE void insert(std::initializer_list<value_type> il) {
     return data_container.insert(il);
   }
 
-  MATXSCRIPT_ALWAYS_INLINE mapped_type& operator[](key_type key) {
+  HERCULES_ALWAYS_INLINE mapped_type& operator[](key_type key) {
     return data_container[std::move(key)];
   }
 
   template <typename Key, typename... Args>
-  MATXSCRIPT_ALWAYS_INLINE std::pair<iterator, bool> emplace(Key&& key, Args&&... args) {
+  HERCULES_ALWAYS_INLINE std::pair<iterator, bool> emplace(Key&& key, Args&&... args) {
     return data_container.emplace(std::forward<Key>(key), std::forward<Args>(args)...);
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void clear() {
+  HERCULES_ALWAYS_INLINE void clear() {
     data_container.clear();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE void reserve(int64_t new_size) {
+  HERCULES_ALWAYS_INLINE void reserve(int64_t new_size) {
     if (new_size > 0) {
       data_container.reserve(new_size);
     }
@@ -122,20 +122,20 @@ class DictNode : public Object {
 
  public:
   // const methods in std::unordered_map
-  MATXSCRIPT_ALWAYS_INLINE size_t size() const {
+  HERCULES_ALWAYS_INLINE size_t size() const {
     return data_container.size();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE int64_t bucket_count() const {
+  HERCULES_ALWAYS_INLINE int64_t bucket_count() const {
     return data_container.bucket_count();
   }
 
-  MATXSCRIPT_ALWAYS_INLINE bool empty() const {
+  HERCULES_ALWAYS_INLINE bool empty() const {
     return data_container.empty();
   }
 
   template <class KEY_U>
-  MATXSCRIPT_ALWAYS_INLINE bool contains(KEY_U const& key) const {
+  HERCULES_ALWAYS_INLINE bool contains(KEY_U const& key) const {
     return data_container.find(key) != data_container.end();
   }
 
@@ -148,4 +148,4 @@ class DictNode : public Object {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

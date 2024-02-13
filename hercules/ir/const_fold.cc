@@ -28,11 +28,11 @@
 
 #include <hercules/ir/prim_var.h>
 
-namespace matxscript {
+namespace hercules {
 namespace arith {
 
 PrimExpr SymbolicLimits::pos_inf_ = PrimVar("pos_inf", DataType::Handle());
 PrimExpr SymbolicLimits::neg_inf_ = PrimVar("neg_inf", DataType::Handle());
 
 }  // namespace arith
-}  // namespace matxscript
+}  // namespace hercules

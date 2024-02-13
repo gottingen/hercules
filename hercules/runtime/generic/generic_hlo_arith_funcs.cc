@@ -24,7 +24,7 @@
 #include <hercules/runtime/container_private.h>
 #include <hercules/runtime/global_type_index.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 RTValue ArithOps::add(const Any& lhs, const Any& rhs) {
@@ -163,7 +163,7 @@ RTValue ArithOps::floordiv(int64_t lhs, const Any& rhs) {
     } break;
     case TypeIndex::kRuntimeFloat: {
       double result = std::floor(static_cast<double>(lhs) / rhs.value_.data.v_float64);
-      MXCHECK(!std::isnan(result) && !std::isinf(result)) << "ValueError: math domain error";
+      HSCHECK(!std::isnan(result) && !std::isinf(result)) << "ValueError: math domain error";
       return result;
     } break;
     default: {
@@ -350,23 +350,23 @@ bool ArithOps::eq(const Any& lhs, const Any& rhs) {
       return lhs_ptr->ptr == rhs_ptr->ptr;
     } break;
     case TypeIndex::kRuntimeObjectRValueRefArg: {
-      MXTHROW << "TypeError: unequalable type: 'ObjectRValueRefArg'";
+      HSTHROW << "TypeError: unequalable type: 'ObjectRValueRefArg'";
       return false;
     } break;
     case TypeIndex::kRuntimePackedFuncHandle: {
-      MXTHROW << "TypeError: unequalable type: 'PackedFunc'";
+      HSTHROW << "TypeError: unequalable type: 'PackedFunc'";
       return false;
     } break;
     case TypeIndex::kRuntimeDLTensorHandle: {
-      MXTHROW << "TypeError: unequalable type: 'DLTensorHandle'";
+      HSTHROW << "TypeError: unequalable type: 'DLTensorHandle'";
       return false;
     } break;
     case TypeIndex::kRuntimeContext: {
-      MXTHROW << "TypeError: unequalable type: 'Context'";
+      HSTHROW << "TypeError: unequalable type: 'Context'";
       return false;
     } break;
-    case TypeIndex::kMATXByteArray: {
-      MXTHROW << "TypeError: unequalable type: 'ByteArray'";
+    case TypeIndex::kHVMByteArray: {
+      HSTHROW << "TypeError: unequalable type: 'ByteArray'";
       return false;
     } break;
     default: {
@@ -448,4 +448,4 @@ bool ArithOps::ge(const Any& lhs, const Any& rhs) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

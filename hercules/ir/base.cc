@@ -21,7 +21,7 @@
  */
 #include <hercules/ir/base.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 const Type& BaseExprNode::checked_type() const {
@@ -29,4 +29,4 @@ const Type& BaseExprNode::checked_type() const {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

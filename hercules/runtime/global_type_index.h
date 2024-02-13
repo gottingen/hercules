@@ -24,7 +24,7 @@
 #include <hercules/runtime/container/string_view.h>
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 /*!
  * \brief Namespace for the list of type index.
@@ -42,7 +42,7 @@ static constexpr int32_t kRuntimeInteger = -3;
 static constexpr int32_t kRuntimeFloat = -4;
 
 /*! \brief PackedFunc Struct type. */
-static constexpr int32_t kMATXByteArray = -5;
+static constexpr int32_t kHVMByteArray = -5;
 static constexpr int32_t kRuntimeDataType = -6;
 static constexpr int32_t kRuntimeContext = -7;
 static constexpr int32_t kRuntimeDLTensorHandle = -8;
@@ -209,8 +209,8 @@ struct type_index_traits<char32_t[]> {
 
 };  // namespace TypeIndex
 
-MATX_DLL const char* TypeIndex2Str(int32_t type_code);
-MATX_DLL int32_t Str2TypeIndex(string_view str);
+HERCULES_DLL const char* TypeIndex2Str(int32_t type_code);
+HERCULES_DLL int32_t Str2TypeIndex(string_view str);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

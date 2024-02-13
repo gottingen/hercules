@@ -26,11 +26,11 @@
 #include <hercules/runtime/py_args.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_DLL UserDataRef make_native_function(string_view func_name);
-MATX_DLL RTValue call_native_function(string_view func_name, PyArgs args);
+HERCULES_DLL UserDataRef make_native_function(string_view func_name);
+HERCULES_DLL RTValue call_native_function(string_view func_name, PyArgs args);
 
 template <typename... ARGS>
 inline RTValue call_native_function(string_view func_name, ARGS&&... args) {
@@ -39,4 +39,4 @@ inline RTValue call_native_function(string_view func_name, ARGS&&... args) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

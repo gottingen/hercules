@@ -2,7 +2,7 @@
 // clang-format off
 // Taken from https://github.com/veelion/python-farmhash/blob/master/src/farmhash.cc
 // with fixes applied:
-// - add namespace ::matxscript::runtime for fix conflict with origin version
+// - add namespace ::hercules::runtime for fix conflict with origin version
 
 // Copyright (c) 2014 Google, Inc.
 //
@@ -193,7 +193,7 @@
 #define uint64_in_expected_order(x) (x)
 #endif
 
-namespace matxscript {
+namespace hercules {
 namespace runtime  {
 
 STATIC_INLINE uint64_t Fetch64(const char *p) {
@@ -249,7 +249,7 @@ STATIC_INLINE uint64_t Rotate64(uint64_t val, int shift) {
 #endif
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 // FARMHASH PORTABILITY LAYER: debug mode or max speed?
 // One may use -DFARMHASH_DEBUG=1 or -DFARMHASH_DEBUG=0 to force the issue.
@@ -354,7 +354,7 @@ STATIC_INLINE __m128i Fetch128(const char* s) {
 #undef PERMUTE3
 #define PERMUTE3(a, b, c) do { std::swap(a, b); std::swap(a, c); } while (0)
 
-namespace matxscript {
+namespace hercules {
 namespace runtime  {
 
 // Some primes between 2^63 and 2^64 for various uses.
@@ -410,10 +410,10 @@ template <> uint128_t DebugTweak(uint128_t x) {
 }
 
 }  // runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 using namespace std;
-using namespace ::matxscript::runtime;
+using namespace ::hercules::runtime;
 namespace farmhashna {
 #undef Fetch
 #define Fetch Fetch64
@@ -1874,7 +1874,7 @@ uint128_t Fingerprint128(const char* s, size_t len) {
   return CityHash128(s, len);
 }
 }  // namespace farmhashcc
-namespace matxscript {
+namespace hercules {
 namespace runtime  {
 
 // BASIC STRING HASHING
@@ -1974,7 +1974,7 @@ uint128_t Fingerprint128(const char* s, size_t len) {
 //   farmhashns::Hash32{,WithSeed}()
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 #if FARMHASHSELFTEST
 

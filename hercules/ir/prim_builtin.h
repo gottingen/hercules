@@ -21,10 +21,10 @@
  */
 
 /*!
- * \file matx/ir/prim_builtin.h
+ * \file hvm/ir/prim_builtin.h
  * \brief TIR builtin intrinsics.
  *
- * builtin intrinsics are stored as matx:Op.
+ * builtin intrinsics are stored as hvm:Op.
  * They are processed in the same way as we process Ops.
  *
  * It is not necessary to create a function for every Op,
@@ -37,7 +37,7 @@
 
 #include <hercules/ir/op_expr.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*! \brief Collection of builtin intrinsics as ops */
@@ -45,42 +45,42 @@ namespace builtin {
 /*!
  * \brief Reinterpret the value using the target type.
  */
-MATX_DLL const Op& reinterpret();
+HERCULES_DLL const Op& reinterpret();
 
 /*!
  * \brief Marks a condition is likely going to happen.
  */
-MATX_DLL const Op& likely();
+HERCULES_DLL const Op& likely();
 
 /*!
  * \brief Bitwise and operator.
  */
-MATX_DLL const Op& bitwise_and();
+HERCULES_DLL const Op& bitwise_and();
 
 /*!
  * \brief Bitwise or operator.
  */
-MATX_DLL const Op& bitwise_or();
+HERCULES_DLL const Op& bitwise_or();
 
 /*!
  * \brief Bitwise xor operator.
  */
-MATX_DLL const Op& bitwise_xor();
+HERCULES_DLL const Op& bitwise_xor();
 
 /*!
  * \brief Bitwise not operator.
  */
-MATX_DLL const Op& bitwise_not();
+HERCULES_DLL const Op& bitwise_not();
 
 /*!
  * \brief Left shift
  */
-MATX_DLL const Op& shift_left();
+HERCULES_DLL const Op& shift_left();
 
 /*!
  * \brief Right shift
  */
-MATX_DLL const Op& shift_right();
+HERCULES_DLL const Op& shift_right();
 
 /*!
  * \brief See pesudo code
@@ -91,7 +91,7 @@ MATX_DLL const Op& shift_right();
  *    return (v1 << 32) | v0;
  *  }
  */
-MATX_DLL const Op& large_uint_imm();
+HERCULES_DLL const Op& large_uint_imm();
 
 /*!
  * \brief Execute a multiplication between two Q-numbers x and y
@@ -99,7 +99,7 @@ MATX_DLL const Op& large_uint_imm();
  * The default rounding rule is to the nearest value, rounding half up
  * (i.e., round(x.1) = x and round (x.5) = x+1)
  */
-MATX_DLL const Op& q_multiply_shift();
+HERCULES_DLL const Op& q_multiply_shift();
 
 /*!
  * \brief See pesudo code
@@ -108,7 +108,7 @@ MATX_DLL const Op& q_multiply_shift();
  *     return &op->buffer_var[index];
  *  }
  */
-MATX_DLL const Op& address_of();
+HERCULES_DLL const Op& address_of();
 
 /*!
  * \brief Same as select, used for unsafe memory access.
@@ -117,7 +117,7 @@ MATX_DLL const Op& address_of();
  *    return cond ? a : b;
  *  }
  */
-MATX_DLL const Op& if_then_else();
+HERCULES_DLL const Op& if_then_else();
 
 /*!
  * \brief See pesudo code
@@ -126,17 +126,17 @@ MATX_DLL const Op& if_then_else();
  *     return handle == nullptr
  *  }
  */
-MATX_DLL const Op& isnullptr();
+HERCULES_DLL const Op& isnullptr();
 
 /*!
  * \brief Check if value is nan
  */
-MATX_DLL const Op& isnan();
+HERCULES_DLL const Op& isnan();
 
 /*!
  * \brief Popcount
  */
-MATX_DLL const Op& popcount();
+HERCULES_DLL const Op& popcount();
 
 /*!
  * \brief Fused multiply add
@@ -145,7 +145,7 @@ MATX_DLL const Op& popcount();
  *    return a * b + c;
  *  }
  */
-MATX_DLL const Op& fma();
+HERCULES_DLL const Op& fma();
 
 /*!
  * \brief Call an extern C function with given name
@@ -157,9 +157,9 @@ MATX_DLL const Op& fma();
  *
  * \note This intrinsic does not provide any type checking,
  *       and is main used for backward compatibility reasons.
- *       Always consider use pre-registered and typed matx::Op first.
+ *       Always consider use pre-registered and typed hvm::Op first.
  */
-MATX_DLL const Op& call_extern();
+HERCULES_DLL const Op& call_extern();
 
 /*!
  * \brief Call an pure extern C function with given name
@@ -171,9 +171,9 @@ MATX_DLL const Op& call_extern();
  *
  * \note This intrinsic does not provide any type checking,
  *       and is main used for backward compatibility reasons.
- *       Always consider use pre-registered and typed matx::Op first.
+ *       Always consider use pre-registered and typed hvm::Op first.
  */
-MATX_DLL const Op& call_pure_extern();
+HERCULES_DLL const Op& call_pure_extern();
 
 /*!
  * \brief Call an LLVM intrinsic with a given intrinsic id
@@ -185,7 +185,7 @@ MATX_DLL const Op& call_pure_extern();
  *
  * \note This op does not provide any type checking.
  */
-MATX_DLL const Op& call_llvm_intrin();
+HERCULES_DLL const Op& call_llvm_intrin();
 
 /*!
  * \brief Call an LLVM pure intrinsic with a given intrinsic id
@@ -197,7 +197,7 @@ MATX_DLL const Op& call_llvm_intrin();
  *
  * \note This op does not provide any type checking.
  */
-MATX_DLL const Op& call_llvm_pure_intrin();
+HERCULES_DLL const Op& call_llvm_pure_intrin();
 
 /*!
  * \brief Call an SPIRV pure GLSL450 intrinsic.
@@ -208,31 +208,31 @@ MATX_DLL const Op& call_llvm_pure_intrin();
  *
  * \note This op does not provide any type checking.
  */
-MATX_DLL const Op& call_spirv_pure_glsl450();
+HERCULES_DLL const Op& call_spirv_pure_glsl450();
 
 // TODO(tvm-team) revisit the builtins below
 // some of them can simply become ops with special codegen attr.
 /*!
  * \brief Prefetch a cacheline
  */
-MATX_DLL const Op& prefetch();
+HERCULES_DLL const Op& prefetch();
 
 // TODO(tvm-team) replace the usage of the vector operations by Shuffle.
 /*!
  * \brief Get the high level half of the vector
  */
-MATX_DLL const Op& vectorhigh();
+HERCULES_DLL const Op& vectorhigh();
 
 /*!
  * \brief Get the low-level half of the vector
  */
-MATX_DLL const Op& vectorlow();
+HERCULES_DLL const Op& vectorlow();
 
 /*!
  * \brief Concat two vectors.
  */
-MATX_DLL const Op& vectorcombine();
+HERCULES_DLL const Op& vectorcombine();
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

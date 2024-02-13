@@ -21,7 +21,7 @@
  */
 
 /*!
- * \file matx/runtime/attr_registry.h
+ * \file hvm/runtime/attr_registry.h
  * \brief Common global registry for objects that also have additional attrs.
  */
 #pragma once
@@ -37,7 +37,7 @@
 #include <hercules/ir/_base/cow_map_ref.h>
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*!
@@ -116,9 +116,9 @@ class AttrRegistry {
       op_map->data_.resize(index + 1, std::make_pair(runtime::RTValue(), 0));
     }
     std::pair<runtime::RTValue, int>& p = op_map->data_[index];
-    MXCHECK(p.second != plevel) << "Attribute " << attr_name << " of " << key->AttrRegistryName()
+    HSCHECK(p.second != plevel) << "Attribute " << attr_name << " of " << key->AttrRegistryName()
                                 << " is already registered with same plevel=" << plevel;
-    MXCHECK(value.type_code() != runtime::TypeIndex::kRuntimeNullptr)
+    HSCHECK(value.type_code() != runtime::TypeIndex::kRuntimeNullptr)
         << "Registered packed_func is Null for " << attr_name << " of operator "
         << key->AttrRegistryName();
     if (p.second < plevel && value.type_code() != runtime::TypeIndex::kRuntimeNullptr) {
@@ -152,7 +152,7 @@ class AttrRegistry {
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = attrs_.find(attr_name);
     if (it == attrs_.end()) {
-      MXLOG(FATAL) << "Attribute \'" << attr_name << "\' is not registered";
+      HSLOG(FATAL) << "Attribute \'" << attr_name << "\' is not registered";
     }
     return *it->second.get();
   }
@@ -187,4 +187,4 @@ class AttrRegistry {
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

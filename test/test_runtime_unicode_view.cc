@@ -21,7 +21,7 @@
 #include <hercules/runtime/container.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(UnicodeView, ConstChars) {
@@ -140,4 +140,4 @@ TEST(UnicodeView, Constant) {
 // TODO(mxd) : add more unicode_view test
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

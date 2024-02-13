@@ -26,11 +26,11 @@
 #define MSGPACK_EMBED_STACK_SIZE  (1024)
 #include "unpack_define.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace serialization {
 
-typedef MATXScriptAny msgpack_unpack_object;
+typedef HerculesAny msgpack_unpack_object;
 
 typedef int (*MessagePackExtensionCallBack)(int8_t typecode,
                                             const char* pos,
@@ -260,6 +260,6 @@ static int unpack_callback_ext(unpack_user* u, const char* base, const char* pos
 
 }  // namespace serialization
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 #include "unpack_template.h"

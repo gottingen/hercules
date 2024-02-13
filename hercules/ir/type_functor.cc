@@ -31,10 +31,10 @@
 
 #include <hercules/ir/printer/text_printer.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using ::matxscript::runtime::GetRef;
+using ::hercules::runtime::GetRef;
 
 /******************************************************************************
  * TypeVisitor
@@ -173,7 +173,7 @@ Type TypeMutator::VisitType_(const FuncTypeNode* op) {
     if (const TypeVarNode* tin = new_type_param.as<TypeVarNode>()) {
       type_params.push_back(GetRef<TypeVar>(tin));
     } else {
-      MXLOG(FATAL) << new_type_param;
+      HSLOG(FATAL) << new_type_param;
     }
   }
 
@@ -184,7 +184,7 @@ Type TypeMutator::VisitType_(const FuncTypeNode* op) {
     if (const TypeConstraintNode* tin = new_type_cs.as<TypeConstraintNode>()) {
       type_constraints.push_back(GetRef<TypeConstraint>(tin));
     } else {
-      MXLOG(FATAL) << new_type_cs;
+      HSLOG(FATAL) << new_type_cs;
     }
   }
 
@@ -371,4 +371,4 @@ Type Bind(const Type& type, const Map<TypeVar, Type>& args_map) {
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

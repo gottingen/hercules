@@ -28,7 +28,7 @@
 
 #include "test_util.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(FileUtil, GetFileFormat) {
@@ -71,7 +71,7 @@ TEST(FileUtil, BaseName) {
 
 TEST(Copy, copy_regular_file) {
   namespace fs = ghc::filesystem;
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
 
   TemporaryDirectory t(TempOpt::change_path);
   std::cout << t.path() << std::endl;
@@ -83,10 +83,10 @@ TEST(Copy, copy_regular_file) {
   fs::create_directory("dir2");
 
   int ret = 1;
-  ret = ::matxscript::runtime::FileUtil::Copy("dir1/file1", "dir2");
+  ret = ::hercules::runtime::FileUtil::Copy("dir1/file1", "dir2");
   ASSERT_EQ(ret, 0);
 
-  ret = ::matxscript::runtime::FileUtil::Copy("dir1/file2", "dir2");
+  ret = ::hercules::runtime::FileUtil::Copy("dir1/file2", "dir2");
   ASSERT_EQ(ret, 0);
 
   ASSERT_TRUE(fs::exists("dir2/file1"));
@@ -98,7 +98,7 @@ TEST(Copy, copy_regular_file) {
 
 TEST(Copy, copy_symlink_file) {
   namespace fs = ghc::filesystem;
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
 
   TemporaryDirectory t(TempOpt::change_path);
   std::cout << t.path() << std::endl;
@@ -115,16 +115,16 @@ TEST(Copy, copy_symlink_file) {
   // !!!NOTICE!!!
   // DeprecatedCopy can't handle symlink file properly.
   int ret = 1;
-  ret = ::matxscript::runtime::FileUtil::Copy("dir1/file1_sym", "dir2");
+  ret = ::hercules::runtime::FileUtil::Copy("dir1/file1_sym", "dir2");
   ASSERT_EQ(ret, 0);
 
-  ret = ::matxscript::runtime::FileUtil::Copy("dir1/file2_sym", "dir2");
+  ret = ::hercules::runtime::FileUtil::Copy("dir1/file2_sym", "dir2");
   ASSERT_EQ(ret, 0);
 }
 
 TEST(Copy, copy_regular_dir) {
   namespace fs = ghc::filesystem;
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
 
   TemporaryDirectory t(TempOpt::change_path);
   std::cout << t.path() << std::endl;
@@ -137,7 +137,7 @@ TEST(Copy, copy_regular_dir) {
   fs::create_directory("dir2");
 
   int ret = 1;
-  ret = ::matxscript::runtime::FileUtil::Copy("dir1", "dir2");
+  ret = ::hercules::runtime::FileUtil::Copy("dir1", "dir2");
   ASSERT_EQ(ret, 0);
 
   ASSERT_TRUE(fs::exists("dir2/dir1/file1"));
@@ -149,7 +149,7 @@ TEST(Copy, copy_regular_dir) {
 
 TEST(Copy, copy_regular_dir_already_exists) {
   namespace fs = ghc::filesystem;
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
 
   TemporaryDirectory t(TempOpt::change_path);
   std::cout << t.path() << std::endl;
@@ -163,7 +163,7 @@ TEST(Copy, copy_regular_dir_already_exists) {
   fs::create_directory("dir2/dir1");
 
   int ret = 1;
-  ret = ::matxscript::runtime::FileUtil::Copy("dir1", "dir2");
+  ret = ::hercules::runtime::FileUtil::Copy("dir1", "dir2");
   ASSERT_EQ(ret, 0);
 
   ASSERT_TRUE(fs::exists("dir2/dir1/file1"));
@@ -175,7 +175,7 @@ TEST(Copy, copy_regular_dir_already_exists) {
 
 TEST(Copy, copy_symlink_dir) {
   namespace fs = ghc::filesystem;
-  using namespace ::matxscript::test;
+  using namespace ::hercules::test;
 
   TemporaryDirectory t(TempOpt::change_path);
   std::cout << t.path() << std::endl;
@@ -189,7 +189,7 @@ TEST(Copy, copy_symlink_dir) {
   fs::create_directory("dir2");
 
   int ret = 1;
-  ret = ::matxscript::runtime::FileUtil::Copy("dir1_sym", "dir2");
+  ret = ::hercules::runtime::FileUtil::Copy("dir1_sym", "dir2");
   ASSERT_EQ(ret, 0);
 
   ASSERT_TRUE(fs::exists("dir2/dir1_sym/file1"));
@@ -200,4 +200,4 @@ TEST(Copy, copy_symlink_dir) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

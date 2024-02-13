@@ -22,7 +22,7 @@
  */
 
 /*!
- * \file matx/ir/module.h
+ * \file hvm/ir/module.h
  * \brief IRModule that holds the functions and type definitions.
  */
 #pragma once
@@ -38,7 +38,7 @@
 #include <hercules/ir/type.h>
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class IRModule;
@@ -64,40 +64,40 @@ class IRModuleNode : public Object {
     v->Visit("body", &body);
   }
 
-  MATX_DLL bool SEqualReduce(const IRModuleNode* other, SEqualReducer equal) const;
+  HERCULES_DLL bool SEqualReduce(const IRModuleNode* other, SEqualReducer equal) const;
 
-  MATX_DLL void SHashReduce(SHashReducer hash_reduce) const;
+  HERCULES_DLL void SHashReduce(SHashReducer hash_reduce) const;
 
   /*!
    * \brief Change a function to public.
    * \param stmt The function, class or others.
    */
-  MATX_DLL void AddExportFunction(const StringRef& func_name);
+  HERCULES_DLL void AddExportFunction(const StringRef& func_name);
 
   /*!
    * \brief Add a stmt to the module.
    * \param stmt The function, class or others.
    */
-  MATX_DLL void Add(const Stmt& stmt);
+  HERCULES_DLL void Add(const Stmt& stmt);
 
   /*!
    * \brief Update the stmts inside this environment by
    *        stmts in another environment.
    * \param other The other environment.
    */
-  MATX_DLL void Update(const IRModule& other);
+  HERCULES_DLL void Update(const IRModule& other);
 
   /*!
    * \brief Look up a global function or class by its string name
    * \param name The name of the function/class.
    * \returns The Stmt named by the argument.
    */
-  MATX_DLL Stmt Lookup(const StringRef& name) const;
+  HERCULES_DLL Stmt Lookup(const StringRef& name) const;
 
   static constexpr const char* _type_key = "ir.IRModule";
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(IRModuleNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(IRModuleNode, Object);
 
  private:
   friend class IRModule;
@@ -113,7 +113,7 @@ class IRModule : public ObjectRef {
    * \brief constructor
    * \param body Stmts in the module.
    */
-  MATX_DLL explicit IRModule(Array<Stmt> body);
+  HERCULES_DLL explicit IRModule(Array<Stmt> body);
 
   /*! \brief default constructor */
   IRModule() : IRModule(Array<Stmt>({})) {
@@ -127,7 +127,7 @@ class IRModule : public ObjectRef {
   /*! \return mutable pointers to the node. */
   IRModuleNode* operator->() const {
     auto* ptr = get_mutable();
-    MXCHECK(ptr != nullptr);
+    HSCHECK(ptr != nullptr);
     return static_cast<IRModuleNode*>(ptr);
   }
 
@@ -138,7 +138,7 @@ class IRModule : public ObjectRef {
   static constexpr bool _type_is_nullable = false;
 
   // allow copy on write.
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(IRModuleNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(IRModuleNode);
 };
 
 /*!
@@ -150,7 +150,7 @@ class IRModule : public ObjectRef {
  *       Use AsText if you want to store the text.
  * \sa AsText.
  */
-MATX_DLL StringRef PrettyPrint(const ObjectRef& node);
+HERCULES_DLL StringRef PrettyPrint(const ObjectRef& node);
 
 /*!
  * \brief Render the node as a string in the text format.
@@ -166,8 +166,8 @@ MATX_DLL StringRef PrettyPrint(const ObjectRef& node);
  * \sa PrettyPrint.
  * \return The text representation.
  */
-MATX_DLL StringRef AsText(const ObjectRef& node,
+HERCULES_DLL StringRef AsText(const ObjectRef& node,
                           bool show_meta_data = true,
                           runtime::TypedNativeFunction<StringRef(ObjectRef)> annotate = nullptr);
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

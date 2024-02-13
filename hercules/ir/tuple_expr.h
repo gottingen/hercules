@@ -27,7 +27,7 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/object.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /*! \brief TupleExpr container */
@@ -63,7 +63,7 @@ class TupleExprNode : public HLOExprNode {
   }
 
   static constexpr const char* _type_key = "ir.TupleExpr";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TupleExprNode, HLOExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(TupleExprNode, HLOExprNode);
 };
 
 class TupleExpr : public HLOExpr {
@@ -73,10 +73,10 @@ class TupleExpr : public HLOExpr {
    * \param fields The fields of a TupleExpr.
    * \param span The source span of the expression.
    */
-  MATX_DLL explicit TupleExpr(Array<BaseExpr> fields, Span span = Span());
+  HERCULES_DLL explicit TupleExpr(Array<BaseExpr> fields, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(TupleExpr, HLOExpr, TupleExprNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(TupleExpr, HLOExpr, TupleExprNode);
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

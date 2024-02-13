@@ -36,7 +36,7 @@
 #include <hercules/ir/base.h>
 #include <hercules/ir/prim_var.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 /*!
  * \brief Evaluates an expression.
@@ -62,7 +62,7 @@ class ExprStmtNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.ExprStmt";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ExprStmtNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ExprStmtNode, StmtNode);
 };
 
 /*!
@@ -71,9 +71,9 @@ class ExprStmtNode : public StmtNode {
  */
 class ExprStmt : public Stmt {
  public:
-  MATX_DLL explicit ExprStmt(BaseExpr expr, Span span = Span());
+  HERCULES_DLL explicit ExprStmt(BaseExpr expr, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(ExprStmt, Stmt, ExprStmtNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(ExprStmt, Stmt, ExprStmtNode);
 };
 
 /*!
@@ -102,7 +102,7 @@ class AllocaVarStmtNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.AllocaVarStmt";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(AllocaVarStmtNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(AllocaVarStmtNode, StmtNode);
 };
 
 /*!
@@ -111,12 +111,12 @@ class AllocaVarStmtNode : public StmtNode {
  */
 class AllocaVarStmt : public Stmt {
  public:
-  MATX_DLL explicit AllocaVarStmt(StringRef name,
+  HERCULES_DLL explicit AllocaVarStmt(StringRef name,
                                   Type ty,
                                   BaseExpr init_value = BaseExpr(),
                                   Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(AllocaVarStmt, Stmt, AllocaVarStmtNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(AllocaVarStmt, Stmt, AllocaVarStmtNode);
 };
 
 /*!
@@ -145,7 +145,7 @@ class AssignStmtNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.AssignStmt";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(AssignStmtNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(AssignStmtNode, StmtNode);
 };
 
 /*!
@@ -154,9 +154,9 @@ class AssignStmtNode : public StmtNode {
  */
 class AssignStmt : public Stmt {
  public:
-  MATX_DLL explicit AssignStmt(BaseExpr lhs, BaseExpr rhs, Span span = Span());
+  HERCULES_DLL explicit AssignStmt(BaseExpr lhs, BaseExpr rhs, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(AssignStmt, Stmt, AssignStmtNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(AssignStmt, Stmt, AssignStmtNode);
 };
 
 /*!
@@ -182,7 +182,7 @@ class ReturnStmtNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.ReturnStmt";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ReturnStmtNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ReturnStmtNode, StmtNode);
 };
 
 /*!
@@ -191,14 +191,14 @@ class ReturnStmtNode : public StmtNode {
  */
 class ReturnStmt : public Stmt {
  public:
-  MATX_DLL explicit ReturnStmt(BaseExpr value, Span span = Span());
+  HERCULES_DLL explicit ReturnStmt(BaseExpr value, Span span = Span());
 
   explicit ReturnStmt(int value, Span span = Span()) : ReturnStmt(PrimExpr(value), span) {
   }
   explicit ReturnStmt(float value, Span span = Span()) : ReturnStmt(PrimExpr(value), span) {
   }
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(ReturnStmt, Stmt, ReturnStmtNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(ReturnStmt, Stmt, ReturnStmtNode);
 };
 
 /*!
@@ -234,7 +234,7 @@ class AssertStmtNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.AssertStmt";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(AssertStmtNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(AssertStmtNode, StmtNode);
 };
 
 /*!
@@ -243,9 +243,9 @@ class AssertStmtNode : public StmtNode {
  */
 class AssertStmt : public Stmt {
  public:
-  MATX_DLL AssertStmt(BaseExpr condition, BaseExpr message, Stmt body, Span span = Span());
+  HERCULES_DLL AssertStmt(BaseExpr condition, BaseExpr message, Stmt body, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(AssertStmt, Stmt, AssertStmtNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(AssertStmt, Stmt, AssertStmtNode);
 };
 
 /*!
@@ -281,7 +281,7 @@ class SeqStmtNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.SeqStmt";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(SeqStmtNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(SeqStmtNode, StmtNode);
 };
 
 /*! \brief Sequence statement. */
@@ -291,7 +291,7 @@ class SeqStmt : public Stmt {
    * \brief Construct SeqStmt.
    * \param seq The sequence.
    */
-  MATX_DLL explicit SeqStmt(Array<Stmt> seq, Span span = Span());
+  HERCULES_DLL explicit SeqStmt(Array<Stmt> seq, Span span = Span());
 
   /*! \return get the size of the sequence */
   size_t size() const {
@@ -354,7 +354,7 @@ class SeqStmt : public Stmt {
     Array<Stmt>* seq_;
   };
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(SeqStmt, Stmt, SeqStmtNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(SeqStmt, Stmt, SeqStmtNode);
 };
 
 /*!
@@ -387,7 +387,7 @@ class IfThenElseNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.IfThenElse";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(IfThenElseNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(IfThenElseNode, StmtNode);
 };
 
 /*!
@@ -396,12 +396,12 @@ class IfThenElseNode : public StmtNode {
  */
 class IfThenElse : public Stmt {
  public:
-  MATX_DLL IfThenElse(BaseExpr condition,
+  HERCULES_DLL IfThenElse(BaseExpr condition,
                       Stmt then_case,
                       Stmt else_case = Stmt(),
                       Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(IfThenElse, Stmt, IfThenElseNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(IfThenElse, Stmt, IfThenElseNode);
 };
 
 /*!
@@ -427,7 +427,7 @@ class ExceptionHandlerNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.ExceptionHandler";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ExceptionHandlerNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ExceptionHandlerNode, StmtNode);
 };
 
 /*!
@@ -436,9 +436,9 @@ class ExceptionHandlerNode : public StmtNode {
  */
 class ExceptionHandler : public Stmt {
  public:
-  MATX_DLL ExceptionHandler(BaseExpr e, Stmt body, Span span = Span());
+  HERCULES_DLL ExceptionHandler(BaseExpr e, Stmt body, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(ExceptionHandler, Stmt, ExceptionHandlerNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(ExceptionHandler, Stmt, ExceptionHandlerNode);
 };
 
 /*!
@@ -464,7 +464,7 @@ class TryExceptNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.TryExcept";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(TryExceptNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(TryExceptNode, StmtNode);
 };
 
 /*!
@@ -473,9 +473,9 @@ class TryExceptNode : public StmtNode {
  */
 class TryExcept : public Stmt {
  public:
-  MATX_DLL TryExcept(Stmt body, Array<ExceptionHandler> handlers, Span span = Span());
+  HERCULES_DLL TryExcept(Stmt body, Array<ExceptionHandler> handlers, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(TryExcept, Stmt, TryExceptNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(TryExcept, Stmt, TryExceptNode);
 };
 
 /*!
@@ -498,7 +498,7 @@ class RaiseNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.Raise";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(RaiseNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(RaiseNode, StmtNode);
 };
 
 /*!
@@ -507,9 +507,9 @@ class RaiseNode : public StmtNode {
  */
 class Raise : public Stmt {
  public:
-  MATX_DLL Raise(BaseExpr exc, Span span = Span());
+  HERCULES_DLL Raise(BaseExpr exc, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Raise, Stmt, RaiseNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Raise, Stmt, RaiseNode);
 };
 
 /*! \brief Additional annotation of for loop. */
@@ -590,7 +590,7 @@ class ForNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.For";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ForNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ForNode, StmtNode);
 };
 
 /*!
@@ -599,7 +599,7 @@ class ForNode : public StmtNode {
  */
 class For : public Stmt {
  public:
-  MATX_DLL For(PrimVar loop_var,
+  HERCULES_DLL For(PrimVar loop_var,
                BaseExpr min,
                BaseExpr max,
                BaseExpr step,
@@ -607,7 +607,7 @@ class For : public Stmt {
                Stmt body,
                Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(For, Stmt, ForNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(For, Stmt, ForNode);
 };
 
 class AutoForNode : public StmtNode {
@@ -667,7 +667,7 @@ class AutoForNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.AutoFor";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(AutoForNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(AutoForNode, StmtNode);
 };
 
 /*!
@@ -679,15 +679,15 @@ class AutoFor : public Stmt {
   static const char* TEMP_VALUE_VAR_KEY;
   static const char* TEMP_ENUMERATE_POS_VAR_KEY;
 
-  MATX_DLL AutoFor(BaseExpr loop_var, BaseExpr container, Stmt body, Span span = Span())
+  HERCULES_DLL AutoFor(BaseExpr loop_var, BaseExpr container, Stmt body, Span span = Span())
       : AutoFor(Array<BaseExpr>{std::move(loop_var)},
                 std::move(container),
                 std::move(body),
                 std::move(span)) {
   }
-  MATX_DLL AutoFor(Array<BaseExpr> loop_vars, BaseExpr container, Stmt body, Span span = Span());
+  HERCULES_DLL AutoFor(Array<BaseExpr> loop_vars, BaseExpr container, Stmt body, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(AutoFor, Stmt, AutoForNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(AutoFor, Stmt, AutoForNode);
 };
 
 class WhileNode : public StmtNode {
@@ -713,14 +713,14 @@ class WhileNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.While";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(WhileNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(WhileNode, StmtNode);
 };
 
 class While : public Stmt {
  public:
-  MATX_DLL While(BaseExpr cond, Stmt body, Span span = Span());
+  HERCULES_DLL While(BaseExpr cond, Stmt body, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(While, Stmt, WhileNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(While, Stmt, WhileNode);
 };
 
 class BreakNode : public StmtNode {
@@ -736,13 +736,13 @@ class BreakNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.Break";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(BreakNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(BreakNode, StmtNode);
 };
 
 class Break : public Stmt {
  public:
   Break();
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(Break, Stmt, BreakNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(Break, Stmt, BreakNode);
 };
 
 class ContinueNode : public StmtNode {
@@ -758,13 +758,13 @@ class ContinueNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.Continue";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ContinueNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ContinueNode, StmtNode);
 };
 
 class Continue : public Stmt {
  public:
   Continue();
-  MATXSCRIPT_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(Continue, Stmt, ContinueNode);
+  HERCULES_DEFINE_NOTNULLABLE_OBJECT_REF_METHODS(Continue, Stmt, ContinueNode);
 };
 
 /*! \brief HLOYield */
@@ -797,7 +797,7 @@ class HLOYieldNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.HLOYield";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(HLOYieldNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(HLOYieldNode, StmtNode);
 };
 
 class HLOYield : public Stmt {
@@ -808,14 +808,14 @@ class HLOYield : public Stmt {
    * \param label The label fields of a HLOYield.
    * \param span The source span of the expression.
    */
-  MATX_DLL explicit HLOYield(BaseExpr symbol, BaseExpr label, Span span = Span());
-  MATX_DLL explicit HLOYield(BaseExpr symbol, Span span = Span());
+  HERCULES_DLL explicit HLOYield(BaseExpr symbol, BaseExpr label, Span span = Span());
+  HERCULES_DLL explicit HLOYield(BaseExpr symbol, Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(HLOYield, Stmt, HLOYieldNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(HLOYield, Stmt, HLOYieldNode);
 };
 
 // overload printing of for type.
-MATX_DLL std::ostream& operator<<(std::ostream& os, ForType for_type);
+HERCULES_DLL std::ostream& operator<<(std::ostream& os, ForType for_type);
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

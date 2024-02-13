@@ -38,35 +38,35 @@
      !(defined __MINGW64__) && !(defined __ANDROID__)) &&                                 \
     !defined(__CYGWIN__) && !defined(__EMSCRIPTEN__) && !defined(__RISCV__) &&            \
     !defined(__hexagon__)
-#ifndef MATXSCRIPT_LOG_STACK_TRACE
-#define MATXSCRIPT_LOG_STACK_TRACE 1
+#ifndef HERCULES_LOG_STACK_TRACE
+#define HERCULES_LOG_STACK_TRACE 1
 #endif
-#ifndef MATXSCRIPT_LOG_STACK_TRACE_SIZE
-#define MATXSCRIPT_LOG_STACK_TRACE_SIZE 10
+#ifndef HERCULES_LOG_STACK_TRACE_SIZE
+#define HERCULES_LOG_STACK_TRACE_SIZE 10
 #endif
 #endif
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-extern bool ENV_ENABLE_MATX_LOG_STACK_TRACE;
+extern bool ENV_ENABLE_HVM_LOG_STACK_TRACE;
 
-#ifdef MATXSCRIPT_LOG_STACK_TRACE
+#ifdef HERCULES_LOG_STACK_TRACE
 // get stack trace logging depth from env variable.
 inline size_t LogStackTraceLevel() {
   size_t level;
-  if (auto var = std::getenv("MATXSCRIPT_LOG_STACK_TRACE_DEPTH")) {
+  if (auto var = std::getenv("HERCULES_LOG_STACK_TRACE_DEPTH")) {
     if (1 == sscanf(var, "%zu", &level)) {
       return level + 1;
     }
   }
-  return MATXSCRIPT_LOG_STACK_TRACE_SIZE;
+  return HERCULES_LOG_STACK_TRACE_SIZE;
 }
 
 // By default skip the first frame because
 // that belongs to ~LogMessageFatal
 std::string StackTrace(size_t start_frame = 1,
-                       const size_t stack_size = MATXSCRIPT_LOG_STACK_TRACE_SIZE);
+                       const size_t stack_size = HERCULES_LOG_STACK_TRACE_SIZE);
 
 #else
 inline size_t LogStackTraceLevel() {
@@ -81,7 +81,7 @@ inline std::string StackTrace(size_t start_frame = 1, const size_t stack_size = 
 
 /*!
  * \brief exception class that will be thrown by
- *  default logger if MATXSCRIPT_LOG_FATAL_THROW == 1
+ *  default logger if HERCULES_LOG_FATAL_THROW == 1
  */
 struct Error : public std::runtime_error {
   /*!
@@ -93,7 +93,7 @@ struct Error : public std::runtime_error {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 // use a light version of glog
 #include <assert.h>
@@ -106,47 +106,47 @@ struct Error : public std::runtime_error {
 #pragma warning(disable : 4068)
 #endif
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-#define MATXSCRIPT_CHECK_BINARY_OP(name, op, x, y)                    \
+#define HERCULES_CHECK_BINARY_OP(name, op, x, y)                    \
   if (!((x)op(y)))                                                    \
-  ::matxscript::runtime::LogMessageFatal(__FILE__, __LINE__).stream() \
+  ::hercules::runtime::LogMessageFatal(__FILE__, __LINE__).stream() \
       << "Check failed: " << #x " " #op " " #y << " (" << (x) << " vs. " << (y) << "): "
 
 // Always-on checking
-#define MXCHECK(x) \
+#define HSCHECK(x) \
   if (!(x))        \
-  ::matxscript::runtime::LogMessageFatal(__FILE__, __LINE__).stream() << "Check failed: " #x << ": "
-#define MXTHROW ::matxscript::runtime::LogMessageFatal(__FILE__, __LINE__).stream() << ": "
-#define MXCHECK_LT(x, y) MATXSCRIPT_CHECK_BINARY_OP(_LT, <, x, y)
-#define MXCHECK_GT(x, y) MATXSCRIPT_CHECK_BINARY_OP(_GT, >, x, y)
-#define MXCHECK_LE(x, y) MATXSCRIPT_CHECK_BINARY_OP(_LE, <=, x, y)
-#define MXCHECK_GE(x, y) MATXSCRIPT_CHECK_BINARY_OP(_GE, >=, x, y)
-#define MXCHECK_EQ(x, y) MATXSCRIPT_CHECK_BINARY_OP(_EQ, ==, x, y)
-#define MXCHECK_NE(x, y) MATXSCRIPT_CHECK_BINARY_OP(_NE, !=, x, y)
-#define MXCHECK_NOTNULL(x)                                                           \
-  ((x) == NULL ? ::matxscript::runtime::LogMessageFatal(__FILE__, __LINE__).stream() \
+  ::hercules::runtime::LogMessageFatal(__FILE__, __LINE__).stream() << "Check failed: " #x << ": "
+#define HSTHROW ::hercules::runtime::LogMessageFatal(__FILE__, __LINE__).stream() << ": "
+#define HSCHECK_LT(x, y) HERCULES_CHECK_BINARY_OP(_LT, <, x, y)
+#define HSCHECK_GT(x, y) HERCULES_CHECK_BINARY_OP(_GT, >, x, y)
+#define HSCHECK_LE(x, y) HERCULES_CHECK_BINARY_OP(_LE, <=, x, y)
+#define HSCHECK_GE(x, y) HERCULES_CHECK_BINARY_OP(_GE, >=, x, y)
+#define HSCHECK_EQ(x, y) HERCULES_CHECK_BINARY_OP(_EQ, ==, x, y)
+#define HSCHECK_NE(x, y) HERCULES_CHECK_BINARY_OP(_NE, !=, x, y)
+#define HSCHECK_NOTNULL(x)                                                           \
+  ((x) == NULL ? ::hercules::runtime::LogMessageFatal(__FILE__, __LINE__).stream() \
                      << "Check  notnull: " #x << ' ',                                \
    (x)                                                                               \
                : (x))
 
-#define MXLOG_DEBUG \
-  ::matxscript::runtime::LogMessage(__FILE__, __LINE__, ::matxscript::runtime::LoggingLevel::DEBUG)
-#define MXLOG_INFO \
-  ::matxscript::runtime::LogMessage(__FILE__, __LINE__, ::matxscript::runtime::LoggingLevel::INFO)
-#define MXLOG_ERROR \
-  ::matxscript::runtime::LogMessage(__FILE__, __LINE__, ::matxscript::runtime::LoggingLevel::ERROR)
-#define MXLOG_WARNING                \
-  ::matxscript::runtime::LogMessage( \
-      __FILE__, __LINE__, ::matxscript::runtime::LoggingLevel::WARNING)
-#define MXLOG_FATAL ::matxscript::runtime::LogMessageFatal(__FILE__, __LINE__)
-#define MXLOG_QFATAL MXLOG_FATAL
+#define HSLOG_DEBUG \
+  ::hercules::runtime::LogMessage(__FILE__, __LINE__, ::hercules::runtime::LoggingLevel::DEBUG)
+#define HSLOG_INFO \
+  ::hercules::runtime::LogMessage(__FILE__, __LINE__, ::hercules::runtime::LoggingLevel::INFO)
+#define HSLOG_ERROR \
+  ::hercules::runtime::LogMessage(__FILE__, __LINE__, ::hercules::runtime::LoggingLevel::ERROR)
+#define HSLOG_WARNING                \
+  ::hercules::runtime::LogMessage( \
+      __FILE__, __LINE__, ::hercules::runtime::LoggingLevel::WARNING)
+#define HSLOG_FATAL ::hercules::runtime::LogMessageFatal(__FILE__, __LINE__)
+#define HSLOG_QFATAL HSLOG_FATAL
 
-#define MXLOG(severity) MXLOG_##severity.stream()
-#define MXLG MXLOG_INFO.stream()
-#define MXLOG_IF(severity, condition) \
-  !(condition) ? (void)0 : ::matxscript::runtime::LogMessageVoidify() & MXLOG(severity)
+#define HSLOG(severity) HSLOG_##severity.stream()
+#define HSLG HSLOG_INFO.stream()
+#define HSLOG_IF(severity, condition) \
+  !(condition) ? (void)0 : ::hercules::runtime::LogMessageVoidify() & HSLOG(severity)
 
 class DateLogger {
  public:
@@ -156,7 +156,7 @@ class DateLogger {
 #endif
   }
   const char* HumanDate() {
-#if !defined(_LIBCPP_SGX_CONFIG) && MATXSCRIPT_LOG_NODATE == 0
+#if !defined(_LIBCPP_SGX_CONFIG) && HERCULES_LOG_NODATE == 0
 #if defined(_MSC_VER)
     _strtime_s(buffer_, sizeof(buffer_));
 #else
@@ -189,7 +189,7 @@ class NullStream : public std::ostream {
 };
 
 template <class T>
-MATXSCRIPT_ALWAYS_INLINE constexpr NullStream& operator<<(NullStream& os, const T&) {
+HERCULES_ALWAYS_INLINE constexpr NullStream& operator<<(NullStream& os, const T&) {
   return os;
 }
 
@@ -208,9 +208,9 @@ static constexpr int64_t NOTSET = 0;
 
 extern NullStream null_stream;
 
-MATX_DLL void SetLoggingLevel(int64_t level);
+HERCULES_DLL void SetLoggingLevel(int64_t level);
 
-MATX_DLL int64_t GetLoggingLevel();
+HERCULES_DLL int64_t GetLoggingLevel();
 
 #ifndef _LIBCPP_SGX_NO_IOSTREAMS
 class LogMessage {
@@ -280,13 +280,13 @@ class LogMessageFatal : public LogMessage {
   LogMessageFatal(const LogMessageFatal&);
   void operator=(const LogMessageFatal&);
 };
-#elif MATXSCRIPT_LOG_FATAL_THROW == 0
+#elif HERCULES_LOG_FATAL_THROW == 0
 class LogMessageFatal : public LogMessage {
  public:
   LogMessageFatal(const char* file, int line) : LogMessage(file, line) {
   }
   ~LogMessageFatal() {
-    if (ENV_ENABLE_MATX_LOG_STACK_TRACE) {
+    if (ENV_ENABLE_HVM_LOG_STACK_TRACE) {
       log_stream_ << "\n" << StackTrace(1, LogStackTraceLevel()) << "\n";
     }
     abort();
@@ -305,9 +305,9 @@ class LogMessageFatal {
   std::ostringstream& stream() {
     return Entry::ThreadLocal()->log_stream;
   }
-  MATXSCRIPT_NO_INLINE ~LogMessageFatal() MATXSCRIPT_THROW_EXCEPTION {
-#if MATXSCRIPT_LOG_STACK_TRACE
-    if (ENV_ENABLE_MATX_LOG_STACK_TRACE) {
+  HERCULES_NO_INLINE ~LogMessageFatal() HERCULES_THROW_EXCEPTION {
+#if HERCULES_LOG_STACK_TRACE
+    if (ENV_ENABLE_HVM_LOG_STACK_TRACE) {
       Entry::ThreadLocal()->log_stream << "\n" << StackTrace(1, LogStackTraceLevel()) << "\n";
     }
 #endif
@@ -317,19 +317,19 @@ class LogMessageFatal {
  private:
   struct Entry {
     std::ostringstream log_stream;
-    MATXSCRIPT_NO_INLINE void Init(const char* file, int line) {
+    HERCULES_NO_INLINE void Init(const char* file, int line) {
       DateLogger date;
       log_stream.str("");
       log_stream.clear();
       log_stream << "[" << date.HumanDate() << "] " << file << ":" << line << ": ";
     }
-    ::matxscript::runtime::Error Finalize() {
-#if MATXSCRIPT_LOG_BEFORE_THROW
+    ::hercules::runtime::Error Finalize() {
+#if HERCULES_LOG_BEFORE_THROW
       LOG(ERROR) << log_stream.str();
 #endif
-      return ::matxscript::runtime::Error(log_stream.str());
+      return ::hercules::runtime::Error(log_stream.str());
     }
-    MATXSCRIPT_NO_INLINE static Entry* ThreadLocal() {
+    HERCULES_NO_INLINE static Entry* ThreadLocal() {
       static thread_local Entry* result = new Entry();
       return result;
     }
@@ -355,4 +355,4 @@ class LogMessageVoidify {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

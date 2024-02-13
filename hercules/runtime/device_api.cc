@@ -26,14 +26,14 @@
 #include <hercules/runtime/c_runtime_api.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class DeviceAPIManager {
  public:
   static const int kMaxDeviceAPI = 32;
   // Get API
-  static DeviceAPI* Get(const MATXScriptDevice& ctx) {
+  static DeviceAPI* Get(const HerculesDevice& ctx) {
     return Get(ctx.device_type);
   }
   static DeviceAPI* Get(int dev_type, bool allow_missing = false) {
@@ -78,9 +78,9 @@ class DeviceAPIManager {
         return nullptr;
       }
       if (type < api_load_msg_.size() && !api_load_msg_[type].empty()) {
-        MXTHROW << api_load_msg_[kDLCUDA];
+        HSTHROW << api_load_msg_[kDLCUDA];
       } else {
-        MXTHROW << dev_name << " device load failed!!!"
+        HSTHROW << dev_name << " device load failed!!!"
                 << " maybe you need to fill env 'LD_LIBRARY_PATH'";
       }
       return nullptr;
@@ -101,37 +101,37 @@ class DeviceAPIManager {
       return api_[type];
     } else {
       if (!allow_missing) {
-        MXTHROW << "device type " << type << " is not supported now!!!";
+        HSTHROW << "device type " << type << " is not supported now!!!";
       }
       return nullptr;
     }
   }
 };
 
-DeviceAPI* DeviceAPI::Get(MATXScriptDevice device, bool allow_missing) {
+DeviceAPI* DeviceAPI::Get(HerculesDevice device, bool allow_missing) {
   return DeviceAPIManager::Get(static_cast<int>(device.device_type), allow_missing);
 }
 
-void DeviceAPI::SetErrorMessage(MATXScriptDevice device, String msg) {
+void DeviceAPI::SetErrorMessage(HerculesDevice device, String msg) {
   return DeviceAPIManager::SetErrorMessage(static_cast<int>(device.device_type), std::move(msg));
 }
 
-MATXScriptStreamHandle DeviceAPI::CreateStream(MATXScriptDevice device) {
-  MXTHROW << "Device does not support stream api.";
+HerculesStreamHandle DeviceAPI::CreateStream(HerculesDevice device) {
+  HSTHROW << "Device does not support stream api.";
   return nullptr;
 }
 
-void DeviceAPI::FreeStream(MATXScriptDevice device, MATXScriptStreamHandle stream) {
-  MXTHROW << "Device does not support stream api.";
+void DeviceAPI::FreeStream(HerculesDevice device, HerculesStreamHandle stream) {
+  HSTHROW << "Device does not support stream api.";
 }
 
-void DeviceAPI::SyncStreamFromTo(MATXScriptDevice device,
-                                 MATXScriptStreamHandle event_src,
-                                 MATXScriptStreamHandle event_dst) {
-  MXTHROW << "Device does not support stream api.";
+void DeviceAPI::SyncStreamFromTo(HerculesDevice device,
+                                 HerculesStreamHandle event_src,
+                                 HerculesStreamHandle event_dst) {
+  HSTHROW << "Device does not support stream api.";
 }
 
-DeviceStreamGuard::DeviceStreamGuard(MATXScriptDevice device, std::shared_ptr<void> stream) {
+DeviceStreamGuard::DeviceStreamGuard(HerculesDevice device, std::shared_ptr<void> stream) {
   this->device_ = device;
   this->new_stream_ = std::move(stream);
   this->device_api_ = DeviceAPI::Get(device_);
@@ -165,7 +165,7 @@ int DeviceNameToType(const string_view& name) {
   };
   auto iter = name2type.find(name);
   if (iter == name2type.end()) {
-    MXTHROW << "unsupported device name:" << name;
+    HSTHROW << "unsupported device name:" << name;
   }
   return iter->second;
 }
@@ -181,4 +181,4 @@ std::ostream& operator<<(std::ostream& os, DLDevice dev) {  // NOLINT(*)
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

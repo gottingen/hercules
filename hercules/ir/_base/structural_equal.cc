@@ -32,7 +32,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 using namespace runtime;
@@ -43,7 +43,7 @@ bool ReflectionVTable::SEqualReduce(const Object* self,
                                     SEqualReducer equal) const {
   uint32_t tindex = self->type_index();
   if (tindex >= fsequal_reduce_.size() || fsequal_reduce_[tindex] == nullptr) {
-    MXLOG(FATAL) << "TypeError: SEqualReduce of " << self->GetTypeKey()
+    HSLOG(FATAL) << "TypeError: SEqualReduce of " << self->GetTypeKey()
                  << " is not registered via TVM_REGISTER_NODE_TYPE."
                  << " Did you forget to set _type_has_method_sequal_reduce=true?";
   }
@@ -146,13 +146,13 @@ bool SEqualReducer::EnumAttrsEqual(int lhs,
 }
 
 const ObjectPathPair& SEqualReducer::GetCurrentObjectPaths() const {
-  MXCHECK(tracing_data_ != nullptr)
+  HSCHECK(tracing_data_ != nullptr)
       << "GetCurrentObjectPaths() can only be called when path tracing is enabled";
   return tracing_data_->current_paths;
 }
 
 void SEqualReducer::RecordMismatchPaths(const ObjectPathPair& paths) const {
-  MXCHECK(tracing_data_ != nullptr)
+  HSCHECK(tracing_data_ != nullptr)
       << "RecordMismatchPaths() can only be called when path tracing is enabled";
   if (!tracing_data_->first_mismatch->defined()) {
     *tracing_data_->first_mismatch = paths;
@@ -256,7 +256,7 @@ class SEqualHandlerDefault::Impl {
 
   void MarkGraphNode() {
     // need to push to pending tasks in this case
-    MXCHECK(!allow_push_to_stack_ && !task_stack_.empty());
+    HSCHECK(!allow_push_to_stack_ && !task_stack_.empty());
     task_stack_.back().graph_equal = true;
   }
 
@@ -287,8 +287,8 @@ class SEqualHandlerDefault::Impl {
       return false;
     }
 
-    MXCHECK_EQ(pending_tasks_.size(), 1U);
-    MXCHECK(allow_push_to_stack_);
+    HSCHECK_EQ(pending_tasks_.size(), 1U);
+    HSCHECK(allow_push_to_stack_);
     task_stack_.emplace_back(std::move(pending_tasks_.back()));
     pending_tasks_.clear();
     return RunTasks();
@@ -300,7 +300,7 @@ class SEqualHandlerDefault::Impl {
                             bool map_free_vars,
                             const Optional<ObjectPathPair>& current_paths) {
     auto compute = [=]() {
-      MXCHECK(lhs.defined() && rhs.defined() && lhs->type_index() == rhs->type_index());
+      HSCHECK(lhs.defined() && rhs.defined() && lhs->type_index() == rhs->type_index());
       // skip entries that already have equality maps.
       auto it = equal_map_lhs_.find(lhs);
       if (it != equal_map_lhs_.end()) {
@@ -352,7 +352,7 @@ class SEqualHandlerDefault::Impl {
       } else {
         oss << ":" << std::endl << rhs;
       }
-      MXLOG(FATAL) << oss.str();
+      HSLOG(FATAL) << oss.str();
     }
     return result;
   }
@@ -380,7 +380,7 @@ class SEqualHandlerDefault::Impl {
         // We can safely mark lhs and rhs as equal to each other.
         auto it = equal_map_lhs_.find(entry.lhs);
         if (it != equal_map_lhs_.end()) {
-          MXCHECK(it->second.same_as(entry.rhs));
+          HSCHECK(it->second.same_as(entry.rhs));
         }
         // create the map if the quality is graph equal.
         if (entry.graph_equal) {
@@ -395,7 +395,7 @@ class SEqualHandlerDefault::Impl {
         // Expand the objects
         // The SEqual of the object can call into this->SEqualReduce
         // which populates the pending tasks.
-        MXCHECK_EQ(pending_tasks_.size(), 0U);
+        HSCHECK_EQ(pending_tasks_.size(), 0U);
         allow_push_to_stack_ = false;
         if (!parent_->DispatchSEqualReduce(
                 entry.lhs, entry.rhs, entry.map_free_vars, entry.current_paths))
@@ -520,7 +520,7 @@ bool SEqualHandlerDefault::DispatchSEqualReduce(const ObjectRef& lhs,
   return impl->DispatchSEqualReduce(lhs, rhs, map_free_vars, current_paths);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("node.StructuralEqual")
+HERCULES_REGISTER_GLOBAL("node.StructuralEqual")
     .set_body_typed(
         [](const ObjectRef& lhs, const ObjectRef& rhs, bool assert_mode, bool map_free_vars) {
           Optional<ObjectPathPair> first_mismatch;
@@ -528,12 +528,12 @@ MATXSCRIPT_REGISTER_GLOBAL("node.StructuralEqual")
               .Equal(lhs, rhs, map_free_vars);
         });
 
-MATXSCRIPT_REGISTER_GLOBAL("node.GetFirstStructuralMismatch")
+HERCULES_REGISTER_GLOBAL("node.GetFirstStructuralMismatch")
     .set_body_typed([](const ObjectRef& lhs, const ObjectRef& rhs, bool map_free_vars) {
       Optional<ObjectPathPair> first_mismatch;
       bool equal =
           SEqualHandlerDefault(false, &first_mismatch, true).Equal(lhs, rhs, map_free_vars);
-      MXCHECK(equal == !first_mismatch.defined());
+      HSCHECK(equal == !first_mismatch.defined());
       return first_mismatch;
     });
 
@@ -542,4 +542,4 @@ bool StructuralEqual::operator()(const ObjectRef& lhs, const ObjectRef& rhs) con
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

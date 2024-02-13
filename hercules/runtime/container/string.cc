@@ -30,7 +30,7 @@
 #include <hercules/runtime/runtime_value.h>
 #include <hercules/runtime/utf8_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 bool String::isSane() const noexcept {
@@ -39,7 +39,7 @@ bool String::isSane() const noexcept {
          begin()[size()] == '\0';
 }
 
-#ifdef MATXSCRIPT_RUNTIME_STRING_UNICODE_ENABLE_INVARIANT_CHECK
+#ifdef HERCULES_RUNTIME_STRING_UNICODE_ENABLE_INVARIANT_CHECK
 namespace {
 struct Invariant {
   Invariant& operator=(const Invariant&) = delete;
@@ -58,7 +58,7 @@ struct Invariant {
 #define STRING_INVARIANT_CHECK(s) Invariant invariant_checker(s)
 #else
 #define STRING_INVARIANT_CHECK(s)
-#endif  // MATXSCRIPT_RUNTIME_STRING_UNICODE_ENABLE_INVARIANT_CHECK
+#endif  // HERCULES_RUNTIME_STRING_UNICODE_ENABLE_INVARIANT_CHECK
 
 /******************************************************************************
  * Generic String Iterator
@@ -125,19 +125,19 @@ String::self_view String::view() const noexcept {
   return self_view{data_.data(), data_.size(), data_.category()};
 }
 
-// MATXScriptAny
-void String::MoveTo(MATXScriptAny* value) noexcept {
+// HerculesAny
+void String::MoveTo(HerculesAny* value) noexcept {
   data_.MoveTo(&value->data.v_str_store, &value->pad);
   value->code = TypeIndex::kRuntimeString;
 }
 
-String String::MoveFromNoCheck(MATXScriptAny* value) noexcept {
+String String::MoveFromNoCheck(HerculesAny* value) noexcept {
   return String(ContainerType::MoveFromCHost(value));
 }
 
 String& String::operator=(const String& other) {
   STRING_INVARIANT_CHECK(*this);
-  if (MATXSCRIPT_UNLIKELY(&other == this)) {
+  if (HERCULES_UNLIKELY(&other == this)) {
     return *this;
   }
   if (other.data_.category() == ContainerType::Category::isLarge) {
@@ -148,7 +148,7 @@ String& String::operator=(const String& other) {
 }
 
 String& String::operator=(String&& other) noexcept {
-  if (MATXSCRIPT_UNLIKELY(&other == this)) {
+  if (HERCULES_UNLIKELY(&other == this)) {
     // Compatibility with std::basic_string<>,
     // C++11 21.4.2 [string.cons] / 23 requires self-move-assignment support.
     return *this;
@@ -361,7 +361,7 @@ String& String::append(self_view str, size_type pos, size_type n) {
 
 String& String::append(const char* s, size_type n) {
   STRING_INVARIANT_CHECK(*this);
-  if (MATXSCRIPT_UNLIKELY(!n)) {
+  if (HERCULES_UNLIKELY(!n)) {
     // Unlikely but must be done
     return *this;
   }
@@ -376,7 +376,7 @@ String& String::append(const char* s, size_type n) {
   // over pointers. See discussion at http://goo.gl/Cy2ya for more
   // info.
   std::less_equal<const value_type*> le;
-  if (MATXSCRIPT_UNLIKELY(le(oldData, s) && !le(oldData + oldSize, s))) {
+  if (HERCULES_UNLIKELY(le(oldData, s) && !le(oldData + oldSize, s))) {
     assert(le(s + n, oldData + oldSize));
     // expandNoinit() could have moved the storage, restore the source.
     s = data() + (s - oldData);
@@ -405,7 +405,7 @@ void String::push_back(const char c) {
 }
 
 String& String::assign(const String& str) {
-  if (MATXSCRIPT_UNLIKELY(&str == this)) {
+  if (HERCULES_UNLIKELY(&str == this)) {
     return *this;
   }
   if (str.data_.category() == ContainerType::Category::isLarge) {
@@ -687,28 +687,28 @@ bool IsConvertible<String>(const Object* node) {
   return node ? node->IsInstance<String::ContainerType>() : String::_type_is_nullable;
 }
 
-MATX_REGISTER_GLOBAL("runtime.String").set_body_typed([](std::string str) {
+HVM_REGISTER_GLOBAL("runtime.String").set_body_typed([](std::string str) {
   return String(std::move(str));
 });
 
-MATX_REGISTER_GLOBAL("runtime.GetFFIString").set_body_typed([](String str) {
+HVM_REGISTER_GLOBAL("runtime.GetFFIString").set_body_typed([](String str) {
   return std::string(str);
 });
 
 // runtime member function
-MATX_REGISTER_GLOBAL("runtime.StringLen").set_body_typed([](String str) {
+HVM_REGISTER_GLOBAL("runtime.StringLen").set_body_typed([](String str) {
   return static_cast<int64_t>(str.size());
 });
 
-MATX_REGISTER_GLOBAL("runtime.StringAdd").set_body_typed([](String lhs, String rhs) {
+HVM_REGISTER_GLOBAL("runtime.StringAdd").set_body_typed([](String lhs, String rhs) {
   return lhs + rhs;
 });
 
-MATX_REGISTER_GLOBAL("runtime.StringEqual").set_body_typed([](String lhs, String rhs) {
+HVM_REGISTER_GLOBAL("runtime.StringEqual").set_body_typed([](String lhs, String rhs) {
   return lhs == rhs;
 });
 
-MATX_REGISTER_GLOBAL("runtime.StringHash").set_body_typed([](String str) {
+HVM_REGISTER_GLOBAL("runtime.StringHash").set_body_typed([](String str) {
   return static_cast<int64_t>(std::hash<String>()(str));
 });
 */
@@ -766,4 +766,4 @@ typename String::const_reverse_iterator String::crend() const noexcept {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

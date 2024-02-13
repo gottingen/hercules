@@ -37,7 +37,7 @@
 #include <hercules/runtime/container/string_view.h>
 #include <hercules/runtime/logging.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace FileUtil {
 
@@ -75,15 +75,15 @@ std::string GetFileExtension(string_view file_name) {
 std::string GetMetaFilePath(string_view file_name) {
   size_t pos = file_name.find_last_of(".");
   if (pos != std::string::npos) {
-    return std::string(file_name.substr(0, pos)) + ".matx_meta.json";
+    return std::string(file_name.substr(0, pos)) + ".hvm_meta.json";
   } else {
-    return std::string(file_name) + ".matx_meta.json";
+    return std::string(file_name) + ".hvm_meta.json";
   }
 }
 
 void LoadBinaryFromFile(string_view file_name, std::string* data) {
   std::ifstream fs(std::string(file_name), std::ios::in | std::ios::binary);
-  MXCHECK(!fs.fail()) << "Cannot open " << file_name;
+  HSCHECK(!fs.fail()) << "Cannot open " << file_name;
   // get its size:
   fs.seekg(0, std::ios::end);
   size_t size = static_cast<size_t>(fs.tellg());
@@ -94,7 +94,7 @@ void LoadBinaryFromFile(string_view file_name, std::string* data) {
 
 void SaveBinaryToFile(string_view file_name, string_view data) {
   std::ofstream fs(std::string(file_name), std::ios::out | std::ios::binary);
-  MXCHECK(!fs.fail()) << "Cannot open " << file_name;
+  HSCHECK(!fs.fail()) << "Cannot open " << file_name;
   fs.write(&data[0], data.size());
 }
 
@@ -156,7 +156,7 @@ void Mkdir(string_view dir) {
   try {
     fs::create_directories(p);
   } catch (const fs::filesystem_error& e) {
-    MXLOG(FATAL) << e.what();
+    HSLOG(FATAL) << e.what();
     std::cerr << e.what() << std::endl;
   }
 }
@@ -168,10 +168,10 @@ int Copy(string_view src, string_view dest) {
   fs::path dest_path{std::string{dest}};
 
   if (!fs::exists(src_path) || !fs::exists(dest_path)) {
-    MXLOG(FATAL) << "[Bundle][src:" << src << "][dst:" << dest << "] input src or dest is null";
+    HSLOG(FATAL) << "[Bundle][src:" << src << "][dst:" << dest << "] input src or dest is null";
     return -1;
   }
-  MXLOG(INFO) << "[Bundle][src:" << src << "][is_link:" << IsLinkDir(src) << "][dst:" << dest
+  HSLOG(INFO) << "[Bundle][src:" << src << "][is_link:" << IsLinkDir(src) << "][dst:" << dest
               << "] wait...";
 
   // handle regular_file and symlink_file
@@ -181,7 +181,7 @@ int Copy(string_view src, string_view dest) {
       fs::copy(src_path, dest_path, copy_options);
     } catch (const fs::filesystem_error& e) {
       std::cerr << e.what() << std::endl;
-      MXLOG(FATAL) << e.what();
+      HSLOG(FATAL) << e.what();
       return -1;
     }
   }
@@ -199,7 +199,7 @@ int Copy(string_view src, string_view dest) {
       fs::copy(src_path, dest_path, copy_options);
     } catch (const fs::filesystem_error& e) {
       std::cerr << e.what() << std::endl;
-      MXLOG(FATAL) << e.what();
+      HSLOG(FATAL) << e.what();
       return -1;
     }
   }
@@ -209,4 +209,4 @@ int Copy(string_view src, string_view dest) {
 
 }  // namespace FileUtil
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

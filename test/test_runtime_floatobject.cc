@@ -22,7 +22,7 @@
 
 #include <hercules/runtime/builtins_modules/_floatobject.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(PythonBuiltins, floatobject_float_rem) {
@@ -56,4 +56,4 @@ TEST(PythonBuiltins, floatobject_float_floor_div) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

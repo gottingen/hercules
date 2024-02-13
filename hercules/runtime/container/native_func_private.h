@@ -25,7 +25,7 @@
 #include <hercules/runtime/py_args.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // Global Function User Struct
@@ -59,4 +59,4 @@ struct NativeFuncUserData : ILightUserData {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

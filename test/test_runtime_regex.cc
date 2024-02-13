@@ -24,7 +24,7 @@
 #include <hercules/runtime/registry.h>
 #include "pcre.h"
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(RegexPattern, FFI) {
@@ -178,4 +178,4 @@ TEST(RegexPattern, GSub_For_Space) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

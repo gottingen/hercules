@@ -30,7 +30,7 @@
 #include <hercules/runtime/registry.h>
 #include <hercules/runtime/str_escape.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 // SEQualReduce traits for runtime containers.
 struct StringNodeTrait {
@@ -58,8 +58,8 @@ StringNode::operator StringNode::self_view() const noexcept {
   return data_container.view();
 }
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(StringNode);
-MATXSCRIPT_REGISTER_REFLECTION_VTABLE(StringNode, StringNodeTrait)
+HERCULES_REGISTER_OBJECT_TYPE(StringNode);
+HERCULES_REGISTER_REFLECTION_VTABLE(StringNode, StringNodeTrait)
     .set_creator([](const runtime::String& bytes) {
       return runtime::ObjectInternal::GetObjectPtr(StringRef(bytes));
     })
@@ -189,28 +189,28 @@ StringNode* StringRef::CreateOrGetStringNode() {
   return static_cast<StringNode*>(data_.get());
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.String").set_body_typed([](runtime::String str) {
+HERCULES_REGISTER_GLOBAL("runtime.String").set_body_typed([](runtime::String str) {
   return StringRef(std::move(str));
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.GetFFIString").set_body_typed([](StringRef str) {
+HERCULES_REGISTER_GLOBAL("runtime.GetFFIString").set_body_typed([](StringRef str) {
   return str.operator runtime::String();
 });
 
 // runtime member function
-MATXSCRIPT_REGISTER_GLOBAL("runtime.StringLen").set_body_typed([](StringRef str) {
+HERCULES_REGISTER_GLOBAL("runtime.StringLen").set_body_typed([](StringRef str) {
   return static_cast<int64_t>(str.size());
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.StringAdd").set_body_typed([](StringRef lhs, StringRef rhs) {
+HERCULES_REGISTER_GLOBAL("runtime.StringAdd").set_body_typed([](StringRef lhs, StringRef rhs) {
   return lhs + rhs;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.StringEqual").set_body_typed([](StringRef lhs, StringRef rhs) {
+HERCULES_REGISTER_GLOBAL("runtime.StringEqual").set_body_typed([](StringRef lhs, StringRef rhs) {
   return lhs == rhs;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.StringHash").set_body_typed([](StringRef str) {
+HERCULES_REGISTER_GLOBAL("runtime.StringHash").set_body_typed([](StringRef str) {
   return static_cast<int64_t>(std::hash<StringRef>()(str));
 });
 
@@ -225,7 +225,7 @@ typename StringRef::iterator StringRef::begin() {
 
 typename StringRef::const_iterator StringRef::begin() const {
   auto n = GetStringNode();
-  MXCHECK(n != nullptr) << "[String.begin] container is null";
+  HSCHECK(n != nullptr) << "[String.begin] container is null";
   return n->data_container.data();
 }
 
@@ -236,7 +236,7 @@ typename StringRef::iterator StringRef::end() {
 
 typename StringRef::const_iterator StringRef::end() const {
   auto n = GetStringNode();
-  MXCHECK(n != nullptr) << "[String.end] container is null";
+  HSCHECK(n != nullptr) << "[String.end] container is null";
   return n->data_container.data() + n->data_container.length();
 }
 
@@ -256,12 +256,12 @@ typename StringRef::const_reverse_iterator StringRef::rend() const {
   return const_reverse_iterator(begin());
 }
 
-using namespace ::matxscript::ir::printer;
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+using namespace ::hercules::ir::printer;
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<StringRef>("", [](StringRef s, ObjectPath p, IRDocsifier d) -> Doc {
       // TODO: optimize MultipleLines
       return LiteralDoc::Str(s, p);
     });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

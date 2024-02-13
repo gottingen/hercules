@@ -22,7 +22,7 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
@@ -30,36 +30,36 @@ namespace builtin {
  * Trie builtin methods
  *****************************************************************************/
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(trie, update, update)
+HERCULES_IR_DEFINE_HLO_METHOD(trie, update, update)
     .set_num_inputs(2)
     .set_num_inputs_max(3)
-    .add_argument("self", "matx.Trie", "")
+    .add_argument("self", "hvm.Trie", "")
     .add_argument("w", "bytes_view|unicode_view|any_view", "")
     .add_argument("val", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(trie, prefix_search, prefix_search)
+HERCULES_IR_DEFINE_HLO_METHOD(trie, prefix_search, prefix_search)
     .set_num_inputs(2)
     .set_num_inputs_max(3)
-    .add_argument("self", "matx.Trie", "")
+    .add_argument("self", "hvm.Trie", "")
     .add_argument("w", "bytes_view|unicode_view|any_view", "")
     .add_argument("pos", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(trie, prefix_search_all, prefix_search_all)
+HERCULES_IR_DEFINE_HLO_METHOD(trie, prefix_search_all, prefix_search_all)
     .set_num_inputs(2)
-    .add_argument("self", "matx.Trie", "")
+    .add_argument("self", "hvm.Trie", "")
     .add_argument("w", "bytes_view|unicode_view|any_view", "")
     .add_argument("pos", "int", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(trie, save, save)
+HERCULES_IR_DEFINE_HLO_METHOD(trie, save, save)
     .set_num_inputs(2)
-    .add_argument("self", "matx.Trie", "")
+    .add_argument("self", "hvm.Trie", "")
     .add_argument("file_path", "unicode_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_METHOD(trie, load, load)
+HERCULES_IR_DEFINE_HLO_METHOD(trie, load, load)
     .set_num_inputs(2)
-    .add_argument("self", "matx.Trie", "")
+    .add_argument("self", "hvm.Trie", "")
     .add_argument("file_path", "unicode_view", "");
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

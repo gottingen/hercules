@@ -26,7 +26,7 @@
 #include <hercules/runtime/logging.h>
 #include <hercules/runtime/utf8_util.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 PrefixMatcher::PrefixMatcher(const std::set<std::string>& dic) {
@@ -38,7 +38,7 @@ PrefixMatcher::PrefixMatcher(const std::set<std::string>& dic) {
     key.push_back(it.data());
   }
   trie_ = std::make_unique<cedar_t>();
-  MXCHECK_EQ(0, trie_->build(key.size(), const_cast<const char**>(&key[0]), nullptr, nullptr));
+  HSCHECK_EQ(0, trie_->build(key.size(), const_cast<const char**>(&key[0]), nullptr, nullptr));
 }
 
 int PrefixMatcher::PrefixMatch(const char* w, size_t w_len, bool* found) const {
@@ -88,4 +88,4 @@ int PrefixMatcher::PrefixSearch(const char* w, size_t w_len) const {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

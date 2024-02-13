@@ -36,11 +36,11 @@
 #include <hercules/ir/type.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using namespace ::matxscript::runtime;
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::runtime;
+using namespace ::hercules::ir::printer;
 
 bool BaseFuncNode::HasGlobalName() const {
   auto global_symbol = GetAttr<StringRef>(attr::kGlobalSymbol);
@@ -49,7 +49,7 @@ bool BaseFuncNode::HasGlobalName() const {
 
 StringRef BaseFuncNode::GetGlobalName() const {
   auto global_symbol = GetAttr<StringRef>(attr::kGlobalSymbol);
-  MXCHECK(global_symbol.defined()) << "Expect BaseFunc to have the global_symbol attribute";
+  HSCHECK(global_symbol.defined()) << "Expect BaseFunc to have the global_symbol attribute";
   return global_symbol.value();
 }
 
@@ -60,7 +60,7 @@ bool BaseFuncNode::HasBoundName() const {
 
 StringRef BaseFuncNode::GetBoundName() const {
   auto global_symbol = GetAttr<StringRef>(attr::kBoundSymbol);
-  MXCHECK(global_symbol.defined()) << "Expect BaseFunc to have the bound_symbol attribute";
+  HSCHECK(global_symbol.defined()) << "Expect BaseFunc to have the bound_symbol attribute";
   return global_symbol.value();
 }
 
@@ -147,9 +147,9 @@ StringRef PrimFuncNode::GetReprName() const {
   return "primfn";
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(PrimFuncNode);
+HERCULES_REGISTER_NODE_TYPE(PrimFuncNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.PrimFunc")
+HERCULES_REGISTER_GLOBAL("ir.PrimFunc")
     .set_body_typed([](Array<PrimVar> params,
                        Array<PrimExpr> default_params,
                        Stmt body,
@@ -162,7 +162,7 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.PrimFunc")
                       std::move(attrs));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::PrimFunc>("", [](ir::PrimFunc func, ObjectPath p, IRDocsifier d) -> Doc {
       With<IRFrame> f(d, func);
       (*f)->AddDispatchToken(d, "ir");
@@ -217,8 +217,8 @@ Function::Function(Array<BaseExpr> params,
                    DictAttrs attrs,
                    Span span) {
   ObjectPtr<FunctionNode> n = make_object<FunctionNode>();
-  MXCHECK(params.defined());
-  MXCHECK(type_params.defined());
+  HSCHECK(params.defined());
+  HSCHECK(type_params.defined());
   // TODO(mxiandi) : check params is Var or PrimVar
   n->params = std::move(params);
   n->default_params = std::move(default_params);
@@ -239,7 +239,7 @@ FuncType FunctionNode::func_type_annotation() const {
     } else if (auto* hlo_var = param.as<HLOVarNode>()) {
       param_type = hlo_var->type_annotation;
     } else {
-      MXCHECK(false) << "Function's param is not a PrimVar or HLOVar";
+      HSCHECK(false) << "Function's param is not a PrimVar or HLOVar";
     }
     param_types.push_back(param_type);
   }
@@ -268,9 +268,9 @@ StringRef FunctionNode::GetReprName() const {
   return "fn";
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(FunctionNode);
+HERCULES_REGISTER_NODE_TYPE(FunctionNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Function")
+HERCULES_REGISTER_GLOBAL("ir.Function")
     .set_body_typed([](Array<BaseExpr> params,
                        Array<BaseExpr> default_params,
                        Stmt body,
@@ -287,7 +287,7 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.Function")
                       std::move(span));
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::Function>("", [](ir::Function func, ObjectPath p, IRDocsifier d) -> Doc {
       With<IRFrame> f(d, func);
       (*f)->AddDispatchToken(d, "ir");
@@ -344,7 +344,7 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
 LambdaFunction::LambdaFunction(
     Array<BaseExpr> captures, Array<BaseExpr> params, Stmt body, Type ret_type, Span span) {
   ObjectPtr<LambdaFunctionNode> n = make_object<LambdaFunctionNode>();
-  MXCHECK(params.defined());
+  HSCHECK(params.defined());
   // TODO(mxiandi) : check params is Var or PrimVar
   n->captures = std::move(captures);
   n->params = std::move(params);
@@ -354,9 +354,9 @@ LambdaFunction::LambdaFunction(
   data_ = std::move(n);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(LambdaFunctionNode);
+HERCULES_REGISTER_NODE_TYPE(LambdaFunctionNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.LambdaFunction")
+HERCULES_REGISTER_GLOBAL("ir.LambdaFunction")
     .set_body_typed(
         [](Array<BaseExpr> captures, Array<BaseExpr> params, Stmt body, Type ret_type, Span span) {
           return LambdaFunction(std::move(captures),
@@ -390,13 +390,13 @@ struct LambdaFunctionToComprehension {
       elt.push_back(d->AsDoc<ExprDoc>(op->args[1], p->Attr("args")->ArrayIndex(1)));
       elt.push_back(d->AsDoc<ExprDoc>(op->args[2], p->Attr("args")->ArrayIndex(2)));
     } else {
-      MXTHROW << "internal error: ";
+      HSTHROW << "internal error: ";
     }
   }
 
   void VisitStmt_(const IfThenElseNode* op, ObjectPath p) {
     ExprDoc cond = d->AsDoc<ExprDoc>(op->condition, p->Attr("condition"));
-    MXCHECK(!op->else_case.defined()) << "invalid syntax";
+    HSCHECK(!op->else_case.defined()) << "invalid syntax";
     docs.back().ifs.push_back(cond);
     this->Visit(op->then_case, p->Attr("then_case"));
   }
@@ -459,7 +459,7 @@ struct LambdaFunctionToComprehension {
     } else if (auto const* node = op.as<ExprStmtNode>()) {
       this->Visit(node->expr, p->Attr("expr"));
     } else {
-      MXTHROW << "internal error: " << op->GetTypeKey();
+      HSTHROW << "internal error: " << op->GetTypeKey();
     }
   }
 
@@ -479,7 +479,7 @@ struct LambdaFunctionToComprehension {
 
 }  // namespace
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::LambdaFunction>(
         "", [](ir::LambdaFunction func, ObjectPath p, IRDocsifier d) -> Doc {
           // Currently Lambda functions are mainly used to represent Comprehension.
@@ -490,9 +490,9 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
                    obj->IsInstance<ir::BufferNode>();
           });
           // Step 1. Handle `func->params`
-          MXCHECK(func->params.empty()) << "internal error";
+          HSCHECK(func->params.empty()) << "internal error";
           // Step 2. Handle `func->body`
-          MXCHECK(func->body->IsInstance<SeqStmtNode>()) << "internal error";
+          HSCHECK(func->body->IsInstance<SeqStmtNode>()) << "internal error";
           const auto* body_node = func->body.as<SeqStmtNode>();
           ObjectRef for_n{nullptr};
           int count = 0;
@@ -503,22 +503,22 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
               count++;
             }
           }
-          MXCHECK(count == 1 && for_n.defined()) << "internal error";
+          HSCHECK(count == 1 && for_n.defined()) << "internal error";
           LambdaFunctionToComprehension helper;
           helper.d = d;
           helper.Visit(for_n, p->Attr("body")->ArrayIndex(i));
 
           if (func->ret_type->IsInstance<ListTypeNode>()) {
-            MXCHECK(helper.elt.size() == 1) << "internal error";
+            HSCHECK(helper.elt.size() == 1) << "internal error";
             return ListCompDoc(helper.elt[0], helper.GenCompList());
           } else if (func->ret_type->IsInstance<SetTypeNode>()) {
-            MXCHECK(helper.elt.size() == 1) << "internal error";
+            HSCHECK(helper.elt.size() == 1) << "internal error";
             return SetCompDoc(helper.elt[0], helper.GenCompList());
           } else if (func->ret_type->IsInstance<DictTypeNode>()) {
-            MXCHECK(helper.elt.size() == 2) << "internal error";
+            HSCHECK(helper.elt.size() == 2) << "internal error";
             return DictCompDoc(helper.elt[0], helper.elt[1], helper.GenCompList());
           } else {
-            MXTHROW << "unexpected lambda function ret_type: " << func->ret_type;
+            HSTHROW << "unexpected lambda function ret_type: " << func->ret_type;
           }
           return ExprDoc{nullptr};
         });
@@ -527,13 +527,13 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
  * BaseFunc
  *****************************************************************************/
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.BaseFunc_Attrs").set_body_typed([](BaseFunc func) {
+HERCULES_REGISTER_GLOBAL("ir.BaseFunc_Attrs").set_body_typed([](BaseFunc func) {
   return func->attrs;
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.BaseFuncCopy").set_body_typed([](BaseFunc func) { return func; });
+HERCULES_REGISTER_GLOBAL("ir.BaseFuncCopy").set_body_typed([](BaseFunc func) { return func; });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.BaseFuncWithAttr")
+HERCULES_REGISTER_GLOBAL("ir.BaseFuncWithAttr")
     .set_body_typed([](BaseFunc func, StringRef key, RTValue arg_val) -> BaseFunc {
       ObjectRef value = StringRef::CanConvertFrom(arg_val) ? arg_val.As<StringRef>()
                                                            : arg_val.AsObjectRef<ObjectRef>();
@@ -542,14 +542,14 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.BaseFuncWithAttr")
       } else if (func->IsInstance<FunctionNode>()) {
         return WithAttr(runtime::Downcast<Function>(std::move(func)), std::move(key), value);
       } else {
-        MXTHROW << "Do not support function type " << func->GetTypeKey();
+        HSTHROW << "Do not support function type " << func->GetTypeKey();
         return func;
       }
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.BaseFunc_GetFuncType").set_body_typed([](BaseFunc func) {
+HERCULES_REGISTER_GLOBAL("ir.BaseFunc_GetFuncType").set_body_typed([](BaseFunc func) {
   return func->func_type_annotation();
 });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

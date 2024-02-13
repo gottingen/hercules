@@ -35,12 +35,12 @@
 #include <hercules/runtime/functor.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using ::matxscript::runtime::Downcast;
-using ::matxscript::runtime::GetRef;
-using ::matxscript::runtime::NativeFunction;
+using ::hercules::runtime::Downcast;
+using ::hercules::runtime::GetRef;
+using ::hercules::runtime::NativeFunction;
 
 void StmtVisitor::VisitStmt_(const AllocaVarStmtNode* op) {
   this->VisitExpr(op->var);
@@ -1090,4 +1090,4 @@ BaseExpr Substitute(BaseExpr expr, std::function<Optional<BaseExpr>(const BaseEx
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

@@ -32,7 +32,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class TrieNode;
@@ -86,17 +86,17 @@ template <>
 bool IsConvertible<Trie>(const Object* node);
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE Trie Any::As<Trie>() const {
-  MATXSCRIPT_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeTrie);
+HERCULES_ALWAYS_INLINE Trie Any::As<Trie>() const {
+  HERCULES_RUNTIME_VALUE_CHECK_TYPE_CODE(value_.code, TypeIndex::kRuntimeTrie);
   return Trie(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 template <>
-MATXSCRIPT_ALWAYS_INLINE Trie Any::AsNoCheck<Trie>() const {
+HERCULES_ALWAYS_INLINE Trie Any::AsNoCheck<Trie>() const {
   return Trie(GetObjectPtr<Object>(static_cast<Object*>(value_.data.v_handle)));
 }
 
 std::ostream& operator<<(std::ostream& os, Trie const& n);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

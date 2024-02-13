@@ -22,18 +22,18 @@
 #include <hercules/ir/hlo_builtin.h>
 #include "./hlo_builtin_macros.h"
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 namespace builtin {
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(pickle, serialize)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(pickle, serialize)
     .set_num_inputs(1)
     .add_argument("value", "any_view", "");
 
-MATXSCRIPT_IR_DEFINE_HLO_MODULE_FUNC(pickle, deserialize)
+HERCULES_IR_DEFINE_HLO_MODULE_FUNC(pickle, deserialize)
     .set_num_inputs(1)
     .add_argument("str", "unicode_view", "");
 
 }  // namespace builtin
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

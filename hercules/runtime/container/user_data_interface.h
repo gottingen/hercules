@@ -23,7 +23,7 @@
 #include <hercules/runtime/py_args.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct UserDataStructType {
@@ -59,4 +59,4 @@ struct ILightUserData {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

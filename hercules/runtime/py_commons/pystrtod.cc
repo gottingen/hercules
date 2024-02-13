@@ -35,7 +35,7 @@
 #include <hercules/runtime/uchar_util.h>
 #include <hercules/runtime/unfixed_buffer.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace py_builtins {
 
@@ -1196,4 +1196,4 @@ String PyOS_double_to_string(double val, char format_code, int precision, int fl
 
 }  // namespace py_builtins
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

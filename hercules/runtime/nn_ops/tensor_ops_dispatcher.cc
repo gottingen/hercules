@@ -22,12 +22,12 @@
 
 namespace {
 
-using namespace ::matxscript::runtime;
+using namespace ::hercules::runtime;
 
 // only an simple example
 static NDArray tensor_ops_zeros(const RTValue& shape) {
   if (!shape.IsObjectRef<List>()) {
-    MXTHROW << "expect shape is list type, but get " << shape.type_name();
+    HSTHROW << "expect shape is list type, but get " << shape.type_name();
   }
   int64_t bytes_len = 1;
   auto ls = shape.AsObjectRefNoCheck<List>();
@@ -45,7 +45,7 @@ static NDArray tensor_ops_zeros(const RTValue& shape) {
   return ret;
 }
 
-MATX_REGISTER_NATIVE_NAMED_FUNC("numpy_ops_zeros", tensor_ops_zeros);
-MATX_REGISTER_NATIVE_NAMED_FUNC("torch_ops_zeros", tensor_ops_zeros);
+HVM_REGISTER_NATIVE_NAMED_FUNC("numpy_ops_zeros", tensor_ops_zeros);
+HVM_REGISTER_NATIVE_NAMED_FUNC("torch_ops_zeros", tensor_ops_zeros);
 
 }  // namespace

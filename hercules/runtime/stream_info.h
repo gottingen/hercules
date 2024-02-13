@@ -19,7 +19,7 @@
  */
 #pragma once
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 struct StreamInfo {
@@ -28,4 +28,4 @@ struct StreamInfo {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

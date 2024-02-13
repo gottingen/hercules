@@ -21,7 +21,7 @@
  * under the License.
  */
 /*!
- * \file matx/ir/tensor_stmt.h
+ * \file hvm/ir/tensor_stmt.h
  * \brief ir.map_block.
  */
 #pragma once
@@ -37,7 +37,7 @@
 #include <hercules/ir/prim_var.h>
 #include <hercules/ir/range_expr.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 /******************************************************************************
@@ -150,7 +150,7 @@ class BufferNode : public Object {
   static constexpr const char* _type_key = "ir.Buffer";
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(BufferNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(BufferNode, Object);
 };
 
 /*!
@@ -162,7 +162,7 @@ class Buffer : public ObjectRef {
  public:
   // User can specify data_alignment and offset_factor to be 0
   // A default value will be picked.
-  MATX_DLL Buffer(PrimVar data,
+  HERCULES_DLL Buffer(PrimVar data,
                   runtime::DataType dtype,
                   Array<PrimExpr> shape,
                   Array<PrimExpr> strides,
@@ -179,16 +179,16 @@ class Buffer : public ObjectRef {
    * \param begin The beginning index
    * \param dtype The data type to be loaded.
    */
-  MATX_DLL PrimExpr vload(Array<PrimExpr> begin, runtime::DataType dtype) const;
+  HERCULES_DLL PrimExpr vload(Array<PrimExpr> begin, runtime::DataType dtype) const;
   /*!
    * \brief Create a Stmt that does a vector store at begin index.
    * \param begin The beginning index
    * \param value The value to be stored.
    */
-  MATX_DLL Stmt vstore(Array<PrimExpr> begin, PrimExpr value) const;
+  HERCULES_DLL Stmt vstore(Array<PrimExpr> begin, PrimExpr value) const;
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Buffer, ObjectRef, BufferNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(BufferNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Buffer, ObjectRef, BufferNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(BufferNode);
 };
 
 /******************************************************************************
@@ -222,7 +222,7 @@ class BufferRegionNode : public Object {
   static constexpr const char* _type_key = "ir.BufferRegion";
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(BufferRegionNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(BufferRegionNode, Object);
 };
 
 /*!
@@ -231,14 +231,14 @@ class BufferRegionNode : public Object {
  */
 class BufferRegion : public ObjectRef {
  public:
-  MATX_DLL explicit BufferRegion(Buffer buffer, Array<RangeExpr> region);
+  HERCULES_DLL explicit BufferRegion(Buffer buffer, Array<RangeExpr> region);
 
   /*!
    * \brief Create a BufferRegion which is full region of the given buffer.
    * \param buffer The buffer to generate full BufferRegion.
    * \return The BufferRegion which covers all region of the given buffer
    */
-  MATX_DLL static BufferRegion FullRegion(Buffer buffer);
+  HERCULES_DLL static BufferRegion FullRegion(Buffer buffer);
 
   /*!
    * \brief Create a BufferRegion which is a single point of the given buffer.
@@ -246,10 +246,10 @@ class BufferRegion : public ObjectRef {
    * \param indices The access point indices of the buffer
    * \return The BufferRegion which is the single point of the given buffer.
    */
-  MATX_DLL static BufferRegion FromPoint(Buffer buffer, Array<PrimExpr> indices);
+  HERCULES_DLL static BufferRegion FromPoint(Buffer buffer, Array<PrimExpr> indices);
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(BufferRegion, ObjectRef, BufferRegionNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(BufferRegionNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(BufferRegion, ObjectRef, BufferRegionNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(BufferRegionNode);
 };
 
 /******************************************************************************
@@ -289,7 +289,7 @@ class MatchBufferRegionNode : public Object {
   static constexpr const char* _type_key = "ir.MatchBufferRegion";
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(MatchBufferRegionNode, Object);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(MatchBufferRegionNode, Object);
 };
 
 /*!
@@ -298,10 +298,10 @@ class MatchBufferRegionNode : public Object {
  */
 class MatchBufferRegion : public ObjectRef {
  public:
-  MATX_DLL explicit MatchBufferRegion(Buffer buffer, BufferRegion source);
+  HERCULES_DLL explicit MatchBufferRegion(Buffer buffer, BufferRegion source);
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(MatchBufferRegion, ObjectRef, MatchBufferRegionNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(MatchBufferRegionNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(MatchBufferRegion, ObjectRef, MatchBufferRegionNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(MatchBufferRegionNode);
 };
 
 /******************************************************************************
@@ -343,7 +343,7 @@ class BufferLoadNode : public PrimExprNode {
   }
 
   static constexpr const char* _type_key = "ir.BufferLoad";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(BufferLoadNode, PrimExprNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(BufferLoadNode, PrimExprNode);
 
  private:
   /*! \brief Set the dtype based on the buffer/indices
@@ -365,9 +365,9 @@ class BufferLoadNode : public PrimExprNode {
  */
 class BufferLoad : public PrimExpr {
  public:
-  MATX_DLL explicit BufferLoad(Buffer buffer, Array<PrimExpr> indices, Span span = Span());
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(BufferLoad, PrimExpr, BufferLoadNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(BufferLoadNode);
+  HERCULES_DLL explicit BufferLoad(Buffer buffer, Array<PrimExpr> indices, Span span = Span());
+  HERCULES_DEFINE_OBJECT_REF_METHODS(BufferLoad, PrimExpr, BufferLoadNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(BufferLoadNode);
 };
 
 /******************************************************************************
@@ -412,7 +412,7 @@ class BufferStoreNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.BufferStore";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(BufferStoreNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(BufferStoreNode, StmtNode);
 };
 
 /*!
@@ -421,13 +421,13 @@ class BufferStoreNode : public StmtNode {
  */
 class BufferStore : public Stmt {
  public:
-  MATX_DLL explicit BufferStore(Buffer buffer,
+  HERCULES_DLL explicit BufferStore(Buffer buffer,
                                 PrimExpr value,
                                 Array<PrimExpr> indices,
                                 Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(BufferStore, Stmt, BufferStoreNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(BufferStoreNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(BufferStore, Stmt, BufferStoreNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(BufferStoreNode);
 };
 
 /******************************************************************************
@@ -504,7 +504,7 @@ class ComputeBlockNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.ComputeBlock";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ComputeBlockNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ComputeBlockNode, StmtNode);
 };
 
 /*!
@@ -513,7 +513,7 @@ class ComputeBlockNode : public StmtNode {
  */
 class ComputeBlock : public Stmt {
  public:
-  MATX_DLL explicit ComputeBlock(
+  HERCULES_DLL explicit ComputeBlock(
       Array<PrimIterVar> iter_vars,
       Array<BufferRegion> reads,
       Array<BufferRegion> writes,
@@ -525,8 +525,8 @@ class ComputeBlock : public Stmt {
       Map<StringRef, ObjectRef> annotations = Map<StringRef, ObjectRef>(),
       Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(ComputeBlock, Stmt, ComputeBlockNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(ComputeBlockNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(ComputeBlock, Stmt, ComputeBlockNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(ComputeBlockNode);
 };
 
 /*!
@@ -562,7 +562,7 @@ class ComputeBlockRealizeNode : public StmtNode {
   }
 
   static constexpr const char* _type_key = "ir.ComputeBlockRealize";
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(ComputeBlockRealizeNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(ComputeBlockRealizeNode, StmtNode);
 };
 
 /*!
@@ -571,13 +571,13 @@ class ComputeBlockRealizeNode : public StmtNode {
  */
 class ComputeBlockRealize : public Stmt {
  public:
-  MATX_DLL explicit ComputeBlockRealize(Array<PrimExpr> iter_values,
+  HERCULES_DLL explicit ComputeBlockRealize(Array<PrimExpr> iter_values,
                                         PrimExpr predicate,
                                         ComputeBlock block,
                                         Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(ComputeBlockRealize, Stmt, ComputeBlockRealizeNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(ComputeBlockRealizeNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(ComputeBlockRealize, Stmt, ComputeBlockRealizeNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(ComputeBlockRealizeNode);
 };
 
 /*!
@@ -642,12 +642,12 @@ class AllocateNode : public StmtNode {
    * \param extents The extents of the buffer.
    * \return The result.
    */
-  MATX_DLL static int64_t ConstantAllocationSize(const Array<PrimExpr>& extents);
+  HERCULES_DLL static int64_t ConstantAllocationSize(const Array<PrimExpr>& extents);
 
   static constexpr const char* _type_key = "ir.Allocate";
   static constexpr const bool _type_has_method_sequal_reduce = true;
   static constexpr const bool _type_has_method_shash_reduce = true;
-  MATXSCRIPT_DECLARE_FINAL_OBJECT_INFO(AllocateNode, StmtNode);
+  HERCULES_DECLARE_FINAL_OBJECT_INFO(AllocateNode, StmtNode);
 };
 
 /*!
@@ -656,7 +656,7 @@ class AllocateNode : public StmtNode {
  */
 class Allocate : public Stmt {
  public:
-  MATX_DLL Allocate(PrimVar buffer_var,
+  HERCULES_DLL Allocate(PrimVar buffer_var,
                     runtime::DataType dtype,
                     Array<PrimExpr> extents,
                     PrimExpr condition,
@@ -664,9 +664,9 @@ class Allocate : public Stmt {
                     Map<StringRef, ObjectRef> annotations = Map<StringRef, ObjectRef>(),
                     Span span = Span());
 
-  MATXSCRIPT_DEFINE_OBJECT_REF_METHODS(Allocate, Stmt, AllocateNode);
-  MATXSCRIPT_DEFINE_OBJECT_REF_COW_METHOD(AllocateNode);
+  HERCULES_DEFINE_OBJECT_REF_METHODS(Allocate, Stmt, AllocateNode);
+  HERCULES_DEFINE_OBJECT_REF_COW_METHOD(AllocateNode);
 };
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

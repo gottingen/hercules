@@ -24,7 +24,7 @@
 #include <hercules/runtime/memory.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 template <>
@@ -122,4 +122,4 @@ std::ostream& operator<<(std::ostream& os, File const& n) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

@@ -23,7 +23,7 @@
 #include <iostream>
 
 namespace {
-using namespace ::matxscript::runtime;
+using namespace ::hercules::runtime;
 
 struct UserCustomClass : public IUserDataRoot {
   // flags for convert check
@@ -73,7 +73,7 @@ struct UserCustomClass : public IUserDataRoot {
         return age;
       } break;
       default: {
-        MXCHECK(false) << "index overflow";
+        HSCHECK(false) << "index overflow";
         return nullptr;
       } break;
     }
@@ -88,7 +88,7 @@ struct UserCustomClass : public IUserDataRoot {
         age = val.As<int64_t>();
       } break;
       default: {
-        MXTHROW << "index overflow";
+        HSTHROW << "index overflow";
       } break;
     }
   }
@@ -115,8 +115,8 @@ struct UserCustomClassView : public IUserDataSharedViewRoot {
   }
   // UserDataRef
   UserCustomClassView(UserDataRef ref) {
-    MXCHECK_EQ(UserCustomClass::tag_s_2_71828182846_, ref.tag());
-    MXCHECK_EQ(UserCustomClass::var_num_s_2_71828182846_, ref.size());
+    HSCHECK_EQ(UserCustomClass::tag_s_2_71828182846_, ref.tag());
+    HSCHECK_EQ(UserCustomClass::var_num_s_2_71828182846_, ref.size());
     ptr = (UserCustomClass*)(ref.check_codegen_ptr());
     ud_ref = std::move(ref);
   }
@@ -140,7 +140,7 @@ struct UserCustomClassView : public IUserDataSharedViewRoot {
   }
 };
 
-MATX_DLL RTValue UserCustomClass__F___init__(UserCustomClassView self, Unicode name, int64_t age) {
+HERCULES_DLL RTValue UserCustomClass__F___init__(UserCustomClassView self, Unicode name, int64_t age) {
   self->name = name;
   self->age = age;
   return (None);
@@ -183,7 +183,7 @@ UserDataRef UserCustomClass__F___init___wrapper(Unicode name, int64_t age) {
 
 }  // namespace
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 TEST(UserStruct, Converter) {
@@ -243,4 +243,4 @@ TEST(UserStruct, FTSet) {
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

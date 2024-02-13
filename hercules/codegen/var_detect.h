@@ -25,7 +25,7 @@
 #include <hercules/ir/stmt_functor.h>
 #include <hercules/runtime/bytes_hash.h>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
 class VarDetector : public StmtExprVisitor {
@@ -132,4 +132,4 @@ BaseFunc SubstituteYieldFunctionVars(BaseFunc f, Map<BaseExpr, BaseExpr>& var_ma
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

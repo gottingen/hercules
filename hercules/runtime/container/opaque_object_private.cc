@@ -19,14 +19,14 @@
  */
 #include <hercules/runtime/container/opaque_object_private.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 /******************************************************************************
  * OpaqueObject container
  *****************************************************************************/
 
-MATXSCRIPT_REGISTER_OBJECT_TYPE(OpaqueObjectNode);
+HERCULES_REGISTER_OBJECT_TYPE(OpaqueObjectNode);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

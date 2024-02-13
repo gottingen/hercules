@@ -35,7 +35,7 @@
 #include <hercules/runtime/runtime_port.h>
 #include <hercules/runtime/unicodelib/py_unicodeobject.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class unicode_view {
@@ -196,7 +196,7 @@ class unicode_view {
   // Returns the ith element of the `unicode_view` using the array operator.
   // Note that this operator does not perform any bounds checking.
   constexpr const_reference operator[](size_type i) const noexcept {
-    return MATXSCRIPT_ASSERT(i < size()), ptr_[i];
+    return HERCULES_ASSERT(i < size()), ptr_[i];
   }
 
   // unicode_view::at()
@@ -205,7 +205,7 @@ class unicode_view {
   // and an exception of type `std::out_of_range` will be thrown on invalid
   // access.
   constexpr const_reference at(size_type i) const {
-    return MATXSCRIPT_LIKELY(i < size()) ? ptr_[i] : throw std::out_of_range("unicode_view::at"),
+    return HERCULES_LIKELY(i < size()) ? ptr_[i] : throw std::out_of_range("unicode_view::at"),
            ptr_[i];
   }
 
@@ -213,14 +213,14 @@ class unicode_view {
   //
   // Returns the first element of a `unicode_view`.
   constexpr const_reference front() const noexcept {
-    return MATXSCRIPT_ASSERT(!empty()), ptr_[0];
+    return HERCULES_ASSERT(!empty()), ptr_[0];
   }
 
   // unicode_view::back()
   //
   // Returns the last element of a `unicode_view`.
   constexpr const_reference back() const noexcept {
-    return MATXSCRIPT_ASSERT(!empty()), ptr_[size() - 1];
+    return HERCULES_ASSERT(!empty()), ptr_[size() - 1];
   }
 
   // unicode_view::data()
@@ -241,7 +241,7 @@ class unicode_view {
   // Removes the first `n` characters from the `unicode_view`. Note that the
   // underlying std::string is not changed, only the view.
   void remove_prefix(size_type n) noexcept {
-    MATXSCRIPT_ASSERT(n <= length_);
+    HERCULES_ASSERT(n <= length_);
     ptr_ += n;
     length_ -= n;
   }
@@ -251,7 +251,7 @@ class unicode_view {
   // Removes the last `n` characters from the `unicode_view`. Note that the
   // underlying std::string is not changed, only the view.
   void remove_suffix(size_type n) noexcept {
-    MATXSCRIPT_ASSERT(n <= length_);
+    HERCULES_ASSERT(n <= length_);
     length_ -= n;
   }
 
@@ -279,7 +279,7 @@ class unicode_view {
   // Copies the contents of the `unicode_view` at offset `pos` and length `n`
   // into `buf`.
   size_type copy(value_type* buf, size_type n, size_type pos = 0) const {
-    if (MATXSCRIPT_UNLIKELY(pos > length_)) {
+    if (HERCULES_UNLIKELY(pos > length_)) {
       throw std::out_of_range("unicode_view::copy");
     }
     size_type rlen = (std::min)(length_ - pos, n);
@@ -296,7 +296,7 @@ class unicode_view {
   // `n`) as another unicode_view. This function throws `std::out_of_bounds` if
   // `pos > size`.
   unicode_view substr(size_type pos, size_type n = npos) const {
-    return MATXSCRIPT_UNLIKELY(pos > length_)
+    return HERCULES_UNLIKELY(pos > length_)
                ? (throw std::out_of_range("unicode_view::substr"), unicode_view{})
                : unicode_view(ptr_ + pos, Min(n, length_ - pos));
   }
@@ -492,15 +492,15 @@ inline unicode_view ClippedSubstr(unicode_view s, size_t pos, size_t n = unicode
 }
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules
 
 namespace std {
 
 template <>
-struct hash<::matxscript::runtime::unicode_view> {
-  std::size_t operator()(const ::matxscript::runtime::unicode_view& str) const {
-    constexpr size_t ele_size = sizeof(::matxscript::runtime::unicode_view::value_type);
-    return ::matxscript::runtime::BytesHash(str.data(), str.size() * ele_size);
+struct hash<::hercules::runtime::unicode_view> {
+  std::size_t operator()(const ::hercules::runtime::unicode_view& str) const {
+    constexpr size_t ele_size = sizeof(::hercules::runtime::unicode_view::value_type);
+    return ::hercules::runtime::BytesHash(str.data(), str.size() * ele_size);
   }
 };
 

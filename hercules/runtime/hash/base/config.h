@@ -16,7 +16,7 @@
 // limitations under the License.
 //
 //
-// MATXSCRIPT_HAVE_INTRINSIC_INT128
+// HERCULES_HAVE_INTRINSIC_INT128
 //
 // Checks whether the __int128 compiler extension for a 128-bit integral type is
 // supported.
@@ -33,20 +33,20 @@
 #if (defined(__clang__) && !defined(_WIN32)) ||           \
     (defined(__CUDACC__) && __CUDACC_VER_MAJOR__ >= 9) || \
     (defined(__GNUC__) && !defined(__clang__) && !defined(__CUDACC__))
-#define MATXSCRIPT_HAVE_INTRINSIC_INT128 1
+#define HERCULES_HAVE_INTRINSIC_INT128 1
 #elif defined(__CUDACC__)
 // __CUDACC_VER__ is a full version number before CUDA 9, and is defined to a
 // string explaining that it has been removed starting with CUDA 9. We use
 // nested #ifs because there is no short-circuiting in the preprocessor.
 // NOTE: `__CUDACC__` could be undefined while `__CUDACC_VER__` is defined.
 #if __CUDACC_VER__ >= 70000
-#define MATXSCRIPT_HAVE_INTRINSIC_INT128 1
+#define HERCULES_HAVE_INTRINSIC_INT128 1
 #endif  // __CUDACC_VER__ >= 70000
 #endif  // defined(__CUDACC__)
-#endif  // MATXSCRIPT_HAVE_INTRINSIC_INT128
+#endif  // HERCULES_HAVE_INTRINSIC_INT128
 
-// MATXSCRIPT_IS_LITTLE_ENDIAN
-// MATXSCRIPT_IS_BIG_ENDIAN
+// HERCULES_IS_LITTLE_ENDIAN
+// HERCULES_IS_BIG_ENDIAN
 //
 // Checks the endianness of the platform.
 //
@@ -56,17 +56,17 @@
 // Otherwise, if _WIN32, assume little endian. Otherwise, bail with an error.
 #if (defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) && \
      __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-#define MATXSCRIPT_IS_LITTLE_ENDIAN 1
+#define HERCULES_IS_LITTLE_ENDIAN 1
 #elif defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && \
     __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define MATXSCRIPT_IS_BIG_ENDIAN 1
+#define HERCULES_IS_BIG_ENDIAN 1
 #elif defined(_WIN32)
-#define MATXSCRIPT_IS_LITTLE_ENDIAN 1
+#define HERCULES_IS_LITTLE_ENDIAN 1
 #else
 #error "absl endian detection needs to be set up for your compiler"
 #endif
 
-// MATXSCRIPT_HAVE_BUILTIN()
+// HERCULES_HAVE_BUILTIN()
 //
 // Checks whether the compiler supports a Clang Feature Checking Macro, and if
 // so, checks whether it supports the provided builtin function "x" where x
@@ -76,19 +76,19 @@
 // Note: Use this macro to avoid an extra level of #ifdef __has_builtin check.
 // http://releases.llvm.org/3.3/tools/clang/docs/LanguageExtensions.html
 #ifdef __has_builtin
-#define MATXSCRIPT_HAVE_BUILTIN(x) __has_builtin(x)
+#define HERCULES_HAVE_BUILTIN(x) __has_builtin(x)
 #else
-#define MATXSCRIPT_HAVE_BUILTIN(x) 0
+#define HERCULES_HAVE_BUILTIN(x) 0
 #endif
 
-// MATXSCRIPT_PREDICT_TRUE, MATXSCRIPT_PREDICT_FALSE
+// HERCULES_PREDICT_TRUE, HERCULES_PREDICT_FALSE
 //
 // Enables the compiler to prioritize compilation using static analysis for
 // likely paths within a boolean branch.
 //
 // Example:
 //
-//   if (MATXSCRIPT_PREDICT_TRUE(expression)) {
+//   if (HERCULES_PREDICT_TRUE(expression)) {
 //     return result;                        // Faster if more likely
 //   } else {
 //     return 0;
@@ -103,10 +103,10 @@
 // branch in a codebase is likely counterproductive; however, annotating
 // specific branches that are both hot and consistently mispredicted is likely
 // to yield performance improvements.
-#if MATXSCRIPT_HAVE_BUILTIN(__builtin_expect) || (defined(__GNUC__) && !defined(__clang__))
-#define MATXSCRIPT_PREDICT_FALSE(x) (__builtin_expect(false || (x), false))
-#define MATXSCRIPT_PREDICT_TRUE(x) (__builtin_expect(false || (x), true))
+#if HERCULES_HAVE_BUILTIN(__builtin_expect) || (defined(__GNUC__) && !defined(__clang__))
+#define HERCULES_PREDICT_FALSE(x) (__builtin_expect(false || (x), false))
+#define HERCULES_PREDICT_TRUE(x) (__builtin_expect(false || (x), true))
 #else
-#define MATXSCRIPT_PREDICT_FALSE(x) (x)
-#define MATXSCRIPT_PREDICT_TRUE(x) (x)
+#define HERCULES_PREDICT_FALSE(x) (x)
+#define HERCULES_PREDICT_TRUE(x) (x)
 #endif

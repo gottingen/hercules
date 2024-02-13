@@ -27,7 +27,7 @@
 
 #include <hercules/runtime/container/string.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace regex {
 
@@ -182,4 +182,4 @@ class RegexPattern {
 
 }  // namespace regex
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

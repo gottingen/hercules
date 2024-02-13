@@ -22,7 +22,7 @@
 #include <hercules/pipeline/op_kernel.h>
 #include <memory>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class Symbol;
@@ -117,4 +117,4 @@ class InterpreterOp : public OpKernel {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

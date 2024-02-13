@@ -26,14 +26,14 @@
 #include <hercules/runtime/registry.h>
 #include <iostream>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 using namespace runtime;
 
 TEST(IR, AllocaVarStmt) {
   DataType int_ty = DataType::Int(64);
-  const auto* printer = ::matxscript::runtime::FunctionRegistry::Get("node.IRTextPrinter_Print");
-  const auto* build_module = ::matxscript::runtime::FunctionRegistry::Get("module.build.c");
+  const auto* printer = ::hercules::runtime::FunctionRegistry::Get("node.IRTextPrinter_Print");
+  const auto* build_module = ::hercules::runtime::FunctionRegistry::Get("module.build.c");
 
   AllocaVarStmt alloca_stmt("b", PrimType(int_ty), IntImm(int_ty, 0));
   AssignStmt assign_stmt(alloca_stmt->var, PrimExpr(10));
@@ -59,9 +59,9 @@ TEST(IR, AllocaVarStmt) {
 
   IRModule mod;
   mod->Add(func);
-  ::matxscript::runtime::Module m = (*build_module)({mod}).As<Module>();
+  ::hercules::runtime::Module m = (*build_module)({mod}).As<Module>();
   std::cout << m->GetSource() << std::endl;
 }
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

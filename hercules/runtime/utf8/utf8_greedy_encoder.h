@@ -22,7 +22,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace utf8_details {
 
@@ -34,4 +34,4 @@ ptrdiff_t GreedyEncoder(const uint32_t* s_ptr,
 
 }  // namespace utf8_details
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

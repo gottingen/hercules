@@ -25,12 +25,12 @@
 #include <hercules/runtime/container/string.h>
 #include <hercules/runtime/runtime_port.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATX_DLL String GenerateFuncRegistryNames(const std::vector<String>& function_names);
-MATX_DLL std::vector<string_view> ReadFuncRegistryNames(const char* names);
-MATX_DLL int LookupFuncRegistryName(const char* names, string_view target);
+HERCULES_DLL String GenerateFuncRegistryNames(const std::vector<String>& function_names);
+HERCULES_DLL std::vector<string_view> ReadFuncRegistryNames(const char* names);
+HERCULES_DLL int LookupFuncRegistryName(const char* names, string_view target);
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

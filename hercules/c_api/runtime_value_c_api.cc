@@ -23,17 +23,17 @@
 #include <hercules/runtime/ft_container.h>
 #include <hercules/runtime/registry.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.RTValue_GetTypeCode").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 1) << "[runtime.RTValue_GetTypeCode] Expect 1 arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.RTValue_GetTypeCode").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 1) << "[runtime.RTValue_GetTypeCode] Expect 1 arguments but get "
                              << args.size();
   return args[0].type_code();
 });
 
-MATXSCRIPT_REGISTER_GLOBAL("runtime.RTValue_Repr").set_body([](PyArgs args) -> RTValue {
-  MXCHECK(1 == args.size()) << "RuntimeObjectRepr expect " << 1 << " arguments but get "
+HERCULES_REGISTER_GLOBAL("runtime.RTValue_Repr").set_body([](PyArgs args) -> RTValue {
+  HSCHECK(1 == args.size()) << "RuntimeObjectRepr expect " << 1 << " arguments but get "
                             << args.size();
   std::stringstream os;
   os << args[0];
@@ -41,4 +41,4 @@ MATXSCRIPT_REGISTER_GLOBAL("runtime.RTValue_Repr").set_body([](PyArgs args) -> R
 });
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

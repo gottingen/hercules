@@ -22,7 +22,7 @@
  */
 
 /*!
- * \file matx/ir/tensor_stmt.cc
+ * \file hvm/ir/tensor_stmt.cc
  */
 #include <hercules/ir/tensor_stmt.h>
 
@@ -43,16 +43,16 @@
 
 #include <utility>
 
-namespace matxscript {
+namespace hercules {
 namespace ir {
 
-using ::matxscript::runtime::Downcast;
-using ::matxscript::runtime::GetRef;
-using ::matxscript::runtime::PyArgs;
-using ::matxscript::runtime::RTValue;
-using ::matxscript::runtime::RTView;
+using ::hercules::runtime::Downcast;
+using ::hercules::runtime::GetRef;
+using ::hercules::runtime::PyArgs;
+using ::hercules::runtime::RTValue;
+using ::hercules::runtime::RTView;
 
-using namespace ::matxscript::ir::printer;
+using namespace ::hercules::ir::printer;
 
 // Buffer
 Buffer::Buffer(PrimVar data,
@@ -80,11 +80,11 @@ Buffer::Buffer(PrimVar data,
   // TODO(Lunderberg): Use an explicit pointer cast for the data
   // pointer.  Should be done alongside extensions to StmtExprMutator
   // to more easily handle buffer/buffer_var updates.
-  MXCHECK(data->type_annotation.defined())
+  HSCHECK(data->type_annotation.defined())
       << "Variable " << data->name_hint << " is missing a type annotation.";
-  MXCHECK(data->type_annotation.as<PointerTypeNode>())
+  HSCHECK(data->type_annotation.as<PointerTypeNode>())
       << "Variable " << data->name_hint << " is not a pointer.";
-  // MXCHECK(data->type_annotation.as<PointerTypeNode>()->element_type.as<PrimTypeNode>())
+  // HSCHECK(data->type_annotation.as<PointerTypeNode>()->element_type.as<PrimTypeNode>())
   //     << "Variable " << data->name_hint << " does not point to a primitive.";
 
   auto n = runtime::make_object<BufferNode>();
@@ -120,15 +120,15 @@ Buffer::Buffer(PrimVar data,
 PrimExpr Buffer::vload(Array<PrimExpr> begin, DataType value_dtype) const {
   // specially handle bool, stored as DataType::Int(8)
   const BufferNode* n = operator->();
-  MXCHECK(n != nullptr);
-  MXCHECK(value_dtype.element_of() == n->dtype.element_of() &&
+  HSCHECK(n != nullptr);
+  HSCHECK(value_dtype.element_of() == n->dtype.element_of() &&
           value_dtype.lanes() % n->dtype.lanes() == 0)
       << "Cannot load " << value_dtype << " from buffer of " << n->dtype;
 
   Array<PrimExpr> indices = begin;
   int factor = value_dtype.lanes() / n->dtype.lanes();
   if (factor > 1) {
-    MXTHROW << "ramp is not supported!!!";
+    HSTHROW << "ramp is not supported!!!";
     // indices.Set(indices.size() - 1, Ramp(indices[indices.size() - 1], 1, factor));
   }
   return BufferLoad(*this, indices);
@@ -137,43 +137,43 @@ PrimExpr Buffer::vload(Array<PrimExpr> begin, DataType value_dtype) const {
 Stmt Buffer::vstore(Array<PrimExpr> begin, PrimExpr value) const {
   // specially handle bool, stored as DataType::Int(8)
   const BufferNode* n = operator->();
-  MXCHECK(n != nullptr);
+  HSCHECK(n != nullptr);
   DataType value_dtype = value.dtype();
-  MXCHECK(value_dtype.element_of() == n->dtype.element_of() &&
+  HSCHECK(value_dtype.element_of() == n->dtype.element_of() &&
           value_dtype.lanes() % n->dtype.lanes() == 0)
       << "Cannot store " << value_dtype << " to buffer of " << n->dtype;
 
   Array<PrimExpr> indices = begin;
   int factor = value_dtype.lanes() / n->dtype.lanes();
   if (factor > 1) {
-    MXTHROW << "ramp is not supported!!!";
+    HSTHROW << "ramp is not supported!!!";
     // indices.Set(indices.size() - 1, Ramp(indices[indices.size() - 1], 1, factor));
   }
   return BufferStore(*this, value, indices);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(BufferNode);
+HERCULES_REGISTER_NODE_TYPE(BufferNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.Buffer").set_body([](PyArgs args) -> RTValue {
-  MXCHECK_EQ(args.size(), 11);
+HERCULES_REGISTER_GLOBAL("ir.Buffer").set_body([](PyArgs args) -> RTValue {
+  HSCHECK_EQ(args.size(), 11);
   auto buffer_type = args[8].As<StringRef>();
   BufferType type = (buffer_type == "auto_broadcast") ? kAutoBroadcast : kDefault;
-  return Buffer(MATXSCRIPT_TYPE_AS(args[0], PrimVar),
+  return Buffer(HERCULES_TYPE_AS(args[0], PrimVar),
                 args[1].As<runtime::DataType>(),
-                MATXSCRIPT_TYPE_AS(args[2], Array<PrimExpr>),
-                MATXSCRIPT_TYPE_AS(args[3], Array<PrimExpr>),
-                MATXSCRIPT_TYPE_AS(args[4], PrimExpr),
+                HERCULES_TYPE_AS(args[2], Array<PrimExpr>),
+                HERCULES_TYPE_AS(args[3], Array<PrimExpr>),
+                HERCULES_TYPE_AS(args[4], PrimExpr),
                 args[5].As<runtime::String>(),
-                MATXSCRIPT_TYPE_AS(args[6], int),
-                MATXSCRIPT_TYPE_AS(args[7], int),
+                HERCULES_TYPE_AS(args[6], int),
+                HERCULES_TYPE_AS(args[7], int),
                 type,
-                MATXSCRIPT_TYPE_AS(args[9], Array<IntImm>),
-                MATXSCRIPT_TYPE_AS(args[10], Span));
+                HERCULES_TYPE_AS(args[9], Array<IntImm>),
+                HERCULES_TYPE_AS(args[10], Span));
 });
 
 // BufferRegion
 BufferRegion::BufferRegion(Buffer buffer, Array<RangeExpr> region) {
-  MXCHECK_EQ(buffer->shape.size(), region.size())
+  HSCHECK_EQ(buffer->shape.size(), region.size())
       << "The dimension between " << buffer << " and region " << region
       << " mismatched, the buffer is " << buffer;
   ObjectPtr<BufferRegionNode> node = runtime::make_object<BufferRegionNode>();
@@ -198,29 +198,29 @@ BufferRegion BufferRegion::FromPoint(Buffer buffer, Array<PrimExpr> indices) {
   return BufferRegion(std::move(buffer), std::move(region));
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.BufferRegion")
+HERCULES_REGISTER_GLOBAL("ir.BufferRegion")
     .set_body_typed([](Buffer buffer, Array<RangeExpr> region) {
       return BufferRegion(std::move(buffer), std::move(region));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(BufferRegionNode);
+HERCULES_REGISTER_NODE_TYPE(BufferRegionNode);
 
 // MatchBufferRegion
 MatchBufferRegion::MatchBufferRegion(Buffer buffer, BufferRegion source) {
-  MXTHROW << "NotImplementedError: MatchBufferRegion";
+  HSTHROW << "NotImplementedError: MatchBufferRegion";
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.MatchBufferRegion")
+HERCULES_REGISTER_GLOBAL("ir.MatchBufferRegion")
     .set_body_typed([](Buffer buffer, BufferRegion source) {
       return MatchBufferRegion(std::move(buffer), std::move(source));
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(MatchBufferRegionNode);
+HERCULES_REGISTER_NODE_TYPE(MatchBufferRegionNode);
 
 // BufferLoad
 void BufferLoadNode::LegalizeDType() {
   for (int i = 0; i < static_cast<int>(indices.size()) - 1; i++) {
-    MXCHECK(indices[i].dtype().is_scalar())
+    HSCHECK(indices[i].dtype().is_scalar())
         << "Only the last index of a buffer access may be a vector type.";
   }
 
@@ -231,7 +231,7 @@ void BufferLoadNode::LegalizeDType() {
 }
 
 BufferLoad::BufferLoad(Buffer buffer, Array<PrimExpr> indices, Span span) {
-  MXCHECK_EQ(buffer->shape.size(), indices.size())
+  HSCHECK_EQ(buffer->shape.size(), indices.size())
       << "Buffer " << buffer->name << " is " << buffer->shape.size()
       << "-dimensional, cannot be indexed with the " << indices.size()
       << "-dimensional indices provided.";
@@ -245,34 +245,34 @@ BufferLoad::BufferLoad(Buffer buffer, Array<PrimExpr> indices, Span span) {
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.BufferLoad")
+HERCULES_REGISTER_GLOBAL("ir.BufferLoad")
     .set_body_typed([](Buffer buffer, Array<PrimExpr> indices, Span span) {
       return BufferLoad(buffer, indices, span);
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(BufferLoadNode);
+HERCULES_REGISTER_NODE_TYPE(BufferLoadNode);
 
 // BufferStore
 BufferStore::BufferStore(Buffer buffer, PrimExpr value, Array<PrimExpr> indices, Span span) {
-  MXCHECK_EQ(buffer->shape.size(), indices.size())
+  HSCHECK_EQ(buffer->shape.size(), indices.size())
       << "Buffer " << buffer->name << " is " << buffer->shape.size()
       << "-dimensional, cannot be indexed with the " << indices.size()
       << "-dimensional indices provided.";
 
   for (int i = 0; i < static_cast<int>(indices.size()) - 1; i++) {
-    MXCHECK(indices[i].dtype().is_scalar())
+    HSCHECK(indices[i].dtype().is_scalar())
         << "Only the last index of a buffer access may be a vector type.";
   }
 
   int index_lanes = indices.size() ? indices.back().dtype().lanes() : 1;
   int buffer_lanes = buffer->dtype.lanes();
 
-  MXCHECK_EQ(index_lanes * buffer_lanes, value.dtype().lanes())
+  HSCHECK_EQ(index_lanes * buffer_lanes, value.dtype().lanes())
       << "Cannot store value with " << value.dtype().lanes() << ", expected value with "
       << index_lanes * buffer_lanes << " (" << index_lanes << " index lanes * " << buffer_lanes
       << " buffer element lanes)";
   if (buffer->dtype.with_lanes(buffer_lanes * index_lanes) != value.dtype()) {
-    MXLOG(FATAL) << "TypeError: dtype mismatch on BufferStore: "      //
+    HSLOG(FATAL) << "TypeError: dtype mismatch on BufferStore: "      //
                  << "buffer's dtype is `" << buffer->dtype            //
                  << "`, the lanes of indexing are: `" << index_lanes  //
                  << "`, but RHS's dtype is `" << value.dtype() << "`";
@@ -286,12 +286,12 @@ BufferStore::BufferStore(Buffer buffer, PrimExpr value, Array<PrimExpr> indices,
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.BufferStore")
+HERCULES_REGISTER_GLOBAL("ir.BufferStore")
     .set_body_typed([](Buffer buffer, PrimExpr value, Array<PrimExpr> indices, Span span) {
       return BufferStore(buffer, value, indices, span);
     });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(BufferStoreNode);
+HERCULES_REGISTER_NODE_TYPE(BufferStoreNode);
 
 // ComputeBlock
 ComputeBlock::ComputeBlock(Array<PrimIterVar> iter_vars,
@@ -318,9 +318,9 @@ ComputeBlock::ComputeBlock(Array<PrimIterVar> iter_vars,
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ComputeBlockNode);
+HERCULES_REGISTER_NODE_TYPE(ComputeBlockNode);
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ComputeBlock")
+HERCULES_REGISTER_GLOBAL("ir.ComputeBlock")
     .set_body_typed([](Array<PrimIterVar> iter_vars,
                        Array<BufferRegion> reads,
                        Array<BufferRegion> writes,
@@ -348,9 +348,9 @@ ComputeBlockRealize::ComputeBlockRealize(Array<PrimExpr> values,
                                          PrimExpr predicate,
                                          ComputeBlock block,
                                          Span span) {
-  MXCHECK_EQ(block->iter_vars.size(), values.size())
+  HSCHECK_EQ(block->iter_vars.size(), values.size())
       << "ValueError: ComputeBlockRealize needs to have the same number of iter_vars and binding values";
-  MXCHECK(predicate.dtype().is_bool())
+  HSCHECK(predicate.dtype().is_bool())
       << "TypeError: Expect Block.predicate to be a bool expression";
   ObjectPtr<ComputeBlockRealizeNode> node = runtime::make_object<ComputeBlockRealizeNode>();
   node->iter_values = std::move(values);
@@ -360,14 +360,14 @@ ComputeBlockRealize::ComputeBlockRealize(Array<PrimExpr> values,
   data_ = std::move(node);
 }
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.ComputeBlockRealize")
+HERCULES_REGISTER_GLOBAL("ir.ComputeBlockRealize")
     .set_body_typed(
         [](Array<PrimExpr> iter_values, PrimExpr predicate, ComputeBlock block, Span span) {
           return ComputeBlockRealize(
               std::move(iter_values), std::move(predicate), std::move(block), std::move(span));
         });
 
-MATXSCRIPT_REGISTER_NODE_TYPE(ComputeBlockRealizeNode);
+HERCULES_REGISTER_NODE_TYPE(ComputeBlockRealizeNode);
 
 Map<StringRef, ExprDoc> BufferAttrs(ir::Buffer buffer,
                                     const ObjectPath& buffer_p,
@@ -398,7 +398,7 @@ Map<StringRef, ExprDoc> BufferAttrs(ir::Buffer buffer,
     return e->IsInstance<PrimVarNode>() && !d->IsVarDefined(e);
   };
   auto add_out_of_line_var_def = [&](const PrimVar& var, const ObjectPath& var_p) {
-    MXCHECK(!d->IsVarDefined(var));
+    HSCHECK(!d->IsVarDefined(var));
     ExprDoc lhs = DefineVar(var, frame, d);
     lhs->source_paths.push_back(var_p);
     var_def_lhs.push_back(lhs);
@@ -406,7 +406,7 @@ Map<StringRef, ExprDoc> BufferAttrs(ir::Buffer buffer,
   };
   auto try_inline_def =
       [&](const PrimExpr& e, const ObjectPath& e_p, std::function<ExprDoc()> inline_f) {
-        MXCHECK(is_new_var(e));
+        HSCHECK(is_new_var(e));
         PrimVar var = Downcast<PrimVar>(e);
         if (use_count[var.get()] == 1) {
           d->Define(e, frame, inline_f);
@@ -588,14 +588,14 @@ Array<Doc> BufferSlices(const Array<RangeExpr>& region, const ObjectPath& p, con
   return indices;
 }
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::BufferRegion>(
         "", [](ir::BufferRegion buffer_region, ObjectPath p, IRDocsifier d) -> Doc {
           ExprDoc prefix = d->AsDoc<ExprDoc>(buffer_region->buffer, p->Attr("buffer"));
           return prefix[BufferSlices(buffer_region->region, p->Attr("region"), d)];
         });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
     .set_dispatch<ir::Buffer>("", [](ir::Buffer buffer, ObjectPath p, IRDocsifier d) -> Doc {
       if (!d->IsVarDefined(buffer)) {
         if (Optional<Frame> opt_f = FindLowestVarDef(buffer, d)) {
@@ -607,11 +607,11 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)  //
       if (Optional<ExprDoc> doc = d->GetVarDoc(buffer)) {
         return doc.value();
       }
-      MXLOG(FATAL) << "IndexError: Buffer is not defined in the environment: " << buffer;
+      HSLOG(FATAL) << "IndexError: Buffer is not defined in the environment: " << buffer;
       return Doc{nullptr};
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::MatchBufferRegion>(
         "", [](ir::MatchBufferRegion stmt, ObjectPath p, IRDocsifier d) -> Doc {
           Frame frame = d->frames.back();
@@ -622,7 +622,7 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
           return AssignDoc(lhs, rhs, NullOpt);
         });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::BufferLoad>(  //
         "",
         [](ir::BufferLoad load, ObjectPath p, IRDocsifier d) -> Doc {
@@ -630,7 +630,7 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
           return buffer[BufferIndices(load->indices, p->Attr("indices"), d)];
         });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::BufferStore>(  //
         "",
         [](ir::BufferStore store, ObjectPath p, IRDocsifier d) -> Doc {
@@ -640,12 +640,12 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
                            NullOpt);
         });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.BufferVLoad")
+HERCULES_REGISTER_GLOBAL("ir.BufferVLoad")
     .set_body_typed([](const Buffer& buf, Array<PrimExpr> begin, runtime::DataType dtype) {
       return buf.vload(begin, dtype);
     });
 
-MATXSCRIPT_REGISTER_GLOBAL("ir.BufferVStore")
+HERCULES_REGISTER_GLOBAL("ir.BufferVStore")
     .set_body_typed([](const Buffer& buf, Array<PrimExpr> begin, PrimExpr value) {
       return buf.vstore(begin, value);
     });
@@ -656,7 +656,7 @@ Doc PrintBlock(IRDocsifier d,
                Optional<ir::ComputeBlockRealize> opt_realize,
                Optional<ObjectPath> opt_realize_p) {
   With<IRFrame> frame(d, block);
-  MXCHECK_EQ(opt_realize.defined(), opt_realize_p.defined());
+  HSCHECK_EQ(opt_realize.defined(), opt_realize_p.defined());
   const ir::ComputeBlockRealizeNode* realize =
       opt_realize.defined() ? opt_realize.value().get() : nullptr;
   const ObjectPathNode* realize_p = opt_realize_p.defined() ? opt_realize_p.get() : nullptr;
@@ -735,7 +735,7 @@ Doc PrintBlock(IRDocsifier d,
 
   // Step 2. Handle block predicate
   if (realize) {
-    MXCHECK(realize->predicate.defined() && realize->predicate->dtype.is_bool());
+    HSCHECK(realize->predicate.defined() && realize->predicate->dtype.is_bool());
     if (!ir::is_one(realize->predicate)) {
       (*frame)->stmts.push_back(ExprStmtDoc(
           Dialect(d, "where")
@@ -800,7 +800,7 @@ Doc PrintBlock(IRDocsifier d,
                   (*frame)->stmts);
 }
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::ComputeBlockRealize>(
         "", [](ir::ComputeBlockRealize realize, ObjectPath p, IRDocsifier d) -> Doc {
           Doc doc = PrintBlock(d, realize->block, p->Attr("block"), realize, p);
@@ -810,7 +810,7 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
           return doc;
         });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::ComputeBlock>("",
                                     [](ir::ComputeBlock block, ObjectPath p, IRDocsifier d) -> Doc {
                                       return PrintBlock(d, block, p, NullOpt, NullOpt);
@@ -824,7 +824,7 @@ Allocate::Allocate(PrimVar buffer_var,
                    Stmt body,
                    Map<StringRef, ObjectRef> annotations,
                    Span span) {
-  MXCHECK(IsPointerType(buffer_var->type_annotation, dtype) ||
+  HSCHECK(IsPointerType(buffer_var->type_annotation, dtype) ||
           (dtype.is_bool() && IsPointerType(buffer_var->type_annotation, DataType::Int(8))))
       << "The allocated data type (" << dtype
       << ") does not match the type annotation of the buffer " << buffer_var << " ("
@@ -832,12 +832,12 @@ Allocate::Allocate(PrimVar buffer_var,
       << "). The data type should be an element of the pointer type.";
 
   for (size_t i = 0; i < extents.size(); ++i) {
-    MXCHECK(extents[i].defined());
-    MXCHECK(extents[i].dtype().is_scalar());
+    HSCHECK(extents[i].defined());
+    HSCHECK(extents[i].dtype().is_scalar());
   }
-  MXCHECK(body.defined());
-  MXCHECK(condition.defined());
-  MXCHECK(condition.dtype().is_bool());
+  HSCHECK(body.defined());
+  HSCHECK(condition.defined());
+  HSCHECK(condition.dtype().is_bool());
 
   ObjectPtr<AllocateNode> node = runtime::make_object<AllocateNode>();
   node->buffer_var = std::move(buffer_var);
@@ -849,8 +849,8 @@ Allocate::Allocate(PrimVar buffer_var,
   node->span = std::move(span);
   data_ = std::move(node);
 }
-MATXSCRIPT_REGISTER_NODE_TYPE(AllocateNode);
-MATXSCRIPT_REGISTER_GLOBAL("ir.Allocate")
+HERCULES_REGISTER_NODE_TYPE(AllocateNode);
+HERCULES_REGISTER_GLOBAL("ir.Allocate")
     .set_body_typed([](PrimVar buffer_var,
                        DataType type,
                        Array<PrimExpr> extents,
@@ -861,7 +861,7 @@ MATXSCRIPT_REGISTER_GLOBAL("ir.Allocate")
       return Allocate(buffer_var, type, extents, condition, body, annotations, span);
     });
 
-MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
+HERCULES_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
     .set_dispatch<ir::Allocate>(  //
         "",
         [](ir::Allocate stmt, ObjectPath stmt_p, IRDocsifier d) -> Doc {
@@ -893,4 +893,4 @@ MATXSCRIPT_STATIC_IR_FUNCTOR(IRDocsifier, vtable)
         });
 
 }  // namespace ir
-}  // namespace matxscript
+}  // namespace hercules

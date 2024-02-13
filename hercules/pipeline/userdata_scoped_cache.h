@@ -25,7 +25,7 @@
 #include <hercules/pipeline/userdata_cache.h>
 #include <hercules/runtime/container.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 class UserDataScopedCache {
@@ -63,4 +63,4 @@ class UserDataScopedCache {
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

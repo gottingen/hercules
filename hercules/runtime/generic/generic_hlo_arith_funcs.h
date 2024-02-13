@@ -32,7 +32,7 @@
 #include <hercules/runtime/object.h>
 #include <hercules/runtime/runtime_value.h>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 
 // Compared to the virtual function implemented in an object,
@@ -869,10 +869,10 @@ struct Math<R(Args...)> {
   template <FuncType func>
   static inline R check_call(Args... args) {
     auto r = func(std::forward<Args>(args)...);
-    MXCHECK(!std::isnan(r) && !std::isinf(r)) << "ValueError: math domain error";
+    HSCHECK(!std::isnan(r) && !std::isinf(r)) << "ValueError: math domain error";
     return r;
   }
 };
 
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

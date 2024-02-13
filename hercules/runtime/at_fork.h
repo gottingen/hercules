@@ -32,7 +32,7 @@
 #include <map>
 #include <mutex>
 
-namespace matxscript {
+namespace hercules {
 namespace runtime {
 namespace internal {
 
@@ -48,4 +48,4 @@ struct AtFork {
 
 }  // namespace internal
 }  // namespace runtime
-}  // namespace matxscript
+}  // namespace hercules

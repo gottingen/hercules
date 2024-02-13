@@ -21,4 +21,4 @@
 
 #include "runtime_port.h"
 
-extern "C" MATX_DLL int MATXSCRIPT_FLAGS_GLIBCXX_USE_CXX11_ABI;
+extern "C" HERCULES_DLL int HERCULES_FLAGS_GLIBCXX_USE_CXX11_ABI;
