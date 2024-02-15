@@ -406,8 +406,7 @@ void JitObject::Init() {
   HSCHECK(belong_to_ != nullptr) << "belong_to_ is not set";
   auto abs_dso_path = resource_path_ + dso_path;
   if (HERCULES_FLAGS_GLIBCXX_USE_CXX11_ABI) {
-    HSCHECK((!dso_path.empty()) && FileUtil::IsRegularFile(abs_dso_path) &&
-            FileUtil::Exists(abs_dso_path))
+    HSCHECK((!dso_path.empty()) && FileUtil::IsRegularFile(abs_dso_path) && FileUtil::Exists(abs_dso_path))
         << "dso path not found: " << abs_dso_path << "\n"
         << "Please check gcc8 was available when tracing a model for c++ server";
   } else {
