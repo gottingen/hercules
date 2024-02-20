@@ -17,14 +17,10 @@
 
 #include "hercules/cir/transform/manager.h"
 
-namespace hercules {
-namespace ir {
-namespace analyze {
+namespace hercules::ir::analyze {
 
-Result *Analysis::doGetAnalysis(const std::string &key) {
-  return manager ? manager->getAnalysisResult(key) : nullptr;
-}
+    Result *Analysis::doGetAnalysis(const std::string &key) {
+        return manager ? manager->getAnalysisResult(key) : nullptr;
+    }
 
-} // namespace analyze
-} // namespace ir
-} // namespace hercules
+} // namespace hercules::ir::analyze

@@ -28,63 +28,75 @@
 
 namespace hercules::ast {
 
-/**
- * IR context object description.
- * This represents an identifier that can be either a function, a class (type), or a
- * variable.
- */
-struct TranslateItem {
-  enum Kind { Func, Type, Var } kind;
-  /// IR handle.
-  union {
-    hercules::ir::Var *var;
-    hercules::ir::Func *func;
-    hercules::ir::types::Type *type;
-  } handle;
-  /// Base function pointer.
-  hercules::ir::BodiedFunc *base;
+    /**
+     * IR context object description.
+     * This represents an identifier that can be either a function, a class (type), or a
+     * variable.
+     */
+    struct TranslateItem {
+        enum Kind {
+            Func, Type, Var
+        } kind;
+        /// IR handle.
+        union {
+            hercules::ir::Var *var;
+            hercules::ir::Func *func;
+            hercules::ir::types::Type *type;
+        } handle;
+        /// Base function pointer.
+        hercules::ir::BodiedFunc *base;
 
-  TranslateItem(Kind k, hercules::ir::BodiedFunc *base)
-      : kind(k), handle{nullptr}, base(base) {}
-  const hercules::ir::BodiedFunc *getBase() const { return base; }
-  hercules::ir::Func *getFunc() const { return kind == Func ? handle.func : nullptr; }
-  hercules::ir::types::Type *getType() const {
-    return kind == Type ? handle.type : nullptr;
-  }
-  hercules::ir::Var *getVar() const { return kind == Var ? handle.var : nullptr; }
-};
+        TranslateItem(Kind k, hercules::ir::BodiedFunc *base)
+                : kind(k), handle{nullptr}, base(base) {}
 
-/**
- * A variable table (context) for the IR translation stage.
- */
-struct TranslateContext : public Context<TranslateItem> {
-  /// A pointer to the shared cache.
-  Cache *cache;
-  /// Stack of function bases.
-  std::vector<hercules::ir::BodiedFunc *> bases;
-  /// Stack of IR series (blocks).
-  std::vector<hercules::ir::SeriesFlow *> series;
-  /// Stack of sequence items for attribute initialization.
-  std::vector<std::vector<std::pair<ExprAttr, ir::Value *>>> seqItems;
+        const hercules::ir::BodiedFunc *getBase() const { return base; }
 
-public:
-  TranslateContext(Cache *cache);
+        hercules::ir::Func *getFunc() const { return kind == Func ? handle.func : nullptr; }
 
-  using Context<TranslateItem>::add;
-  /// Convenience method for adding an object to the context.
-  std::shared_ptr<TranslateItem> add(TranslateItem::Kind kind, const std::string &name,
-                                     void *type);
-  std::shared_ptr<TranslateItem> find(const std::string &name) const override;
-  std::shared_ptr<TranslateItem> forceFind(const std::string &name) const;
+        hercules::ir::types::Type *getType() const {
+            return kind == Type ? handle.type : nullptr;
+        }
 
-  /// Convenience method for adding a series.
-  void addSeries(hercules::ir::SeriesFlow *s);
-  void popSeries();
+        hercules::ir::Var *getVar() const { return kind == Var ? handle.var : nullptr; }
+    };
 
-public:
-  hercules::ir::Module *getModule() const;
-  hercules::ir::BodiedFunc *getBase() const;
-  hercules::ir::SeriesFlow *getSeries() const;
-};
+    /**
+     * A variable table (context) for the IR translation stage.
+     */
+    struct TranslateContext : public Context<TranslateItem> {
+        /// A pointer to the shared cache.
+        Cache *cache;
+        /// Stack of function bases.
+        std::vector<hercules::ir::BodiedFunc *> bases;
+        /// Stack of IR series (blocks).
+        std::vector<hercules::ir::SeriesFlow *> series;
+        /// Stack of sequence items for attribute initialization.
+        std::vector<std::vector<std::pair<ExprAttr, ir::Value *>>> seqItems;
+
+    public:
+        TranslateContext(Cache *cache);
+
+        using Context<TranslateItem>::add;
+
+        /// Convenience method for adding an object to the context.
+        std::shared_ptr<TranslateItem> add(TranslateItem::Kind kind, const std::string &name,
+                                           void *type);
+
+        std::shared_ptr<TranslateItem> find(const std::string &name) const override;
+
+        std::shared_ptr<TranslateItem> forceFind(const std::string &name) const;
+
+        /// Convenience method for adding a series.
+        void addSeries(hercules::ir::SeriesFlow *s);
+
+        void popSeries();
+
+    public:
+        hercules::ir::Module *getModule() const;
+
+        hercules::ir::BodiedFunc *getBase() const;
+
+        hercules::ir::SeriesFlow *getSeries() const;
+    };
 
 } // namespace hercules::ast

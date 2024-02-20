@@ -19,7 +19,7 @@
 #include <vector>
 
 namespace hercules {
-int startJupyterKernel(const std::string &argv0,
-                       const std::vector<std::string> &plugins,
-                       const std::string &configPath);
+    int startJupyterKernel(const std::string &argv0,
+                           const std::vector<std::string> &plugins,
+                           const std::string &configPath);
 } // namespace hercules

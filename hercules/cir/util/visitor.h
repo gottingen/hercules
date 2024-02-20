@@ -22,8 +22,7 @@
 #define VISIT(x) virtual void visit(hercules::ir::x *)
 #define CONST_VISIT(x) virtual void visit(const hercules::ir::x *)
 
-namespace hercules {
-namespace ir {
+namespace hercules::ir {
 class Node;
 
 namespace types {
@@ -267,8 +266,7 @@ public:
 };
 
 } // namespace util
-} // namespace ir
-} // namespace hercules
+} // namespace hercules::ir
 
 #undef VISIT
 #undef CONST_VISIT

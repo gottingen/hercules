@@ -21,52 +21,50 @@
 #include "hercules/cir/llvm/llvm.h"
 #include "hercules/compiler/debug_listener.h"
 
-namespace hercules {
-namespace jit {
+namespace hercules::jit {
 
-class Engine {
-private:
-  std::unique_ptr<llvm::orc::ExecutionSession> sess;
-  std::unique_ptr<llvm::orc::EPCIndirectionUtils> epciu;
+    class Engine {
+    private:
+        std::unique_ptr<llvm::orc::ExecutionSession> sess;
+        std::unique_ptr<llvm::orc::EPCIndirectionUtils> epciu;
 
-  llvm::DataLayout layout;
-  llvm::orc::MangleAndInterner mangle;
+        llvm::DataLayout layout;
+        llvm::orc::MangleAndInterner mangle;
 
-  llvm::orc::RTDyldObjectLinkingLayer objectLayer;
-  llvm::orc::IRCompileLayer compileLayer;
-  llvm::orc::IRTransformLayer optimizeLayer;
-  llvm::orc::CompileOnDemandLayer codLayer;
+        llvm::orc::RTDyldObjectLinkingLayer objectLayer;
+        llvm::orc::IRCompileLayer compileLayer;
+        llvm::orc::IRTransformLayer optimizeLayer;
+        llvm::orc::CompileOnDemandLayer codLayer;
 
-  llvm::orc::JITDylib &mainJD;
+        llvm::orc::JITDylib &mainJD;
 
-  std::unique_ptr<DebugListener> dbListener;
+        std::unique_ptr<DebugListener> dbListener;
 
-  static void handleLazyCallThroughError();
+        static void handleLazyCallThroughError();
 
-  static llvm::Expected<llvm::orc::ThreadSafeModule>
-  optimizeModule(llvm::orc::ThreadSafeModule module,
-                 const llvm::orc::MaterializationResponsibility &R);
+        static llvm::Expected<llvm::orc::ThreadSafeModule>
+        optimizeModule(llvm::orc::ThreadSafeModule module,
+                       const llvm::orc::MaterializationResponsibility &R);
 
-public:
-  Engine(std::unique_ptr<llvm::orc::ExecutionSession> sess,
-         std::unique_ptr<llvm::orc::EPCIndirectionUtils> epciu,
-         llvm::orc::JITTargetMachineBuilder jtmb, llvm::DataLayout layout);
+    public:
+        Engine(std::unique_ptr<llvm::orc::ExecutionSession> sess,
+               std::unique_ptr<llvm::orc::EPCIndirectionUtils> epciu,
+               llvm::orc::JITTargetMachineBuilder jtmb, llvm::DataLayout layout);
 
-  ~Engine();
+        ~Engine();
 
-  static llvm::Expected<std::unique_ptr<Engine>> create();
+        static llvm::Expected<std::unique_ptr<Engine>> create();
 
-  const llvm::DataLayout &getDataLayout() const { return layout; }
+        const llvm::DataLayout &getDataLayout() const { return layout; }
 
-  llvm::orc::JITDylib &getMainJITDylib() { return mainJD; }
+        llvm::orc::JITDylib &getMainJITDylib() { return mainJD; }
 
-  DebugListener *getDebugListener() const { return dbListener.get(); }
+        DebugListener *getDebugListener() const { return dbListener.get(); }
 
-  llvm::Error addModule(llvm::orc::ThreadSafeModule module,
-                        llvm::orc::ResourceTrackerSP rt = nullptr);
+        llvm::Error addModule(llvm::orc::ThreadSafeModule module,
+                              llvm::orc::ResourceTrackerSP rt = nullptr);
 
-  llvm::Expected<llvm::orc::ExecutorSymbolDef> lookup(llvm::StringRef name);
-};
+        llvm::Expected<llvm::orc::ExecutorSymbolDef> lookup(llvm::StringRef name);
+    };
 
-} // namespace jit
-} // namespace hercules
+} // namespace hercules::jit

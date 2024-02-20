@@ -25,50 +25,65 @@
 
 namespace hercules::ast::types {
 
-struct Trait : public Type {
-  bool canRealize() const override;
-  bool isInstantiated() const override;
-  std::string realizedName() const override;
+    struct Trait : public Type {
+        bool canRealize() const override;
 
-protected:
-  explicit Trait(const std::shared_ptr<Type> &);
-  explicit Trait(Cache *);
-};
+        bool isInstantiated() const override;
 
-struct CallableTrait : public Trait {
-  std::vector<TypePtr> args; // tuple with arg types, ret type
+        std::string realizedName() const override;
 
-public:
-  explicit CallableTrait(Cache *cache, std::vector<TypePtr> args);
-  int unify(Type *typ, Unification *undo) override;
-  TypePtr generalize(int atLevel) override;
-  TypePtr instantiate(int atLevel, int *unboundCount,
-                      std::unordered_map<int, TypePtr> *cache) override;
-  std::string debugString(char mode) const override;
-};
+    protected:
+        explicit Trait(const std::shared_ptr<Type> &);
 
-struct TypeTrait : public Trait {
-  TypePtr type;
+        explicit Trait(Cache *);
+    };
 
-public:
-  explicit TypeTrait(TypePtr type);
-  int unify(Type *typ, Unification *undo) override;
-  TypePtr generalize(int atLevel) override;
-  TypePtr instantiate(int atLevel, int *unboundCount,
-                      std::unordered_map<int, TypePtr> *cache) override;
-  std::string debugString(char mode) const override;
-};
+    struct CallableTrait : public Trait {
+        std::vector<TypePtr> args; // tuple with arg types, ret type
 
-struct VariableTupleTrait : public Trait {
-  TypePtr size;
+    public:
+        explicit CallableTrait(Cache *cache, std::vector<TypePtr> args);
 
-public:
-  explicit VariableTupleTrait(TypePtr size);
-  int unify(Type *typ, Unification *undo) override;
-  TypePtr generalize(int atLevel) override;
-  TypePtr instantiate(int atLevel, int *unboundCount,
-                      std::unordered_map<int, TypePtr> *cache) override;
-  std::string debugString(char mode) const override;
-};
+        int unify(Type *typ, Unification *undo) override;
+
+        TypePtr generalize(int atLevel) override;
+
+        TypePtr instantiate(int atLevel, int *unboundCount,
+                            std::unordered_map<int, TypePtr> *cache) override;
+
+        std::string debugString(char mode) const override;
+    };
+
+    struct TypeTrait : public Trait {
+        TypePtr type;
+
+    public:
+        explicit TypeTrait(TypePtr type);
+
+        int unify(Type *typ, Unification *undo) override;
+
+        TypePtr generalize(int atLevel) override;
+
+        TypePtr instantiate(int atLevel, int *unboundCount,
+                            std::unordered_map<int, TypePtr> *cache) override;
+
+        std::string debugString(char mode) const override;
+    };
+
+    struct VariableTupleTrait : public Trait {
+        TypePtr size;
+
+    public:
+        explicit VariableTupleTrait(TypePtr size);
+
+        int unify(Type *typ, Unification *undo) override;
+
+        TypePtr generalize(int atLevel) override;
+
+        TypePtr instantiate(int atLevel, int *unboundCount,
+                            std::unordered_map<int, TypePtr> *cache) override;
+
+        std::string debugString(char mode) const override;
+    };
 
 } // namespace hercules::ast::types

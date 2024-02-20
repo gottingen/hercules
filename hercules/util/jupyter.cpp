@@ -17,12 +17,12 @@
 #include <cstdio>
 
 namespace hercules {
-int startJupyterKernel(const std::string &argv0,
-                       const std::vector<std::string> &plugins,
-                       const std::string &configPath) {
-  fprintf(stderr,
-          "Jupyter support not included. Please install Hercules Jupyter plugin.\n");
-  return EXIT_FAILURE;
-}
+    int startJupyterKernel(const std::string &argv0,
+                           const std::vector<std::string> &plugins,
+                           const std::string &configPath) {
+        fprintf(stderr,
+                "Jupyter support not included. Please install Hercules Jupyter plugin.\n");
+        return EXIT_FAILURE;
+    }
 
 } // namespace hercules

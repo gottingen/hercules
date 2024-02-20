@@ -35,20 +35,20 @@
 typedef int64_t seq_int_t;
 
 struct seq_str_t {
-  seq_int_t len;
-  char *str;
+    seq_int_t len;
+    char *str;
 };
 
 struct seq_time_t {
-  int16_t year;
-  int16_t yday;
-  int8_t sec;
-  int8_t min;
-  int8_t hour;
-  int8_t mday;
-  int8_t mon;
-  int8_t wday;
-  int8_t isdst;
+    int16_t year;
+    int16_t yday;
+    int8_t sec;
+    int8_t min;
+    int8_t hour;
+    int8_t mday;
+    int8_t mon;
+    int8_t wday;
+    int8_t isdst;
 };
 
 SEQ_FUNC int seq_flags;
@@ -113,37 +113,42 @@ SEQ_FUNC bool seq_rlock_acquire(void *lock, bool block, double timeout);
 SEQ_FUNC void seq_rlock_release(void *lock);
 
 namespace hercules {
-namespace runtime {
-class JITError : public std::runtime_error {
-private:
-  std::string output;
-  std::string type;
-  std::string file;
-  int line;
-  int col;
-  std::vector<uintptr_t> backtrace;
+    namespace runtime {
+        class JITError : public std::runtime_error {
+        private:
+            std::string output;
+            std::string type;
+            std::string file;
+            int line;
+            int col;
+            std::vector<uintptr_t> backtrace;
 
-public:
-  JITError(const std::string &output, const std::string &what, const std::string &type,
-           const std::string &file, int line, int col,
-           std::vector<uintptr_t> backtrace = {})
-      : std::runtime_error(what), output(output), type(type), file(file), line(line),
-        col(col), backtrace(std::move(backtrace)) {}
+        public:
+            JITError(const std::string &output, const std::string &what, const std::string &type,
+                     const std::string &file, int line, int col,
+                     std::vector<uintptr_t> backtrace = {})
+                    : std::runtime_error(what), output(output), type(type), file(file), line(line),
+                      col(col), backtrace(std::move(backtrace)) {}
 
-  std::string getOutput() const { return output; }
-  std::string getType() const { return type; }
-  std::string getFile() const { return file; }
-  int getLine() const { return line; }
-  int getCol() const { return col; }
-  std::vector<uintptr_t> getBacktrace() const { return backtrace; }
-};
+            std::string getOutput() const { return output; }
 
-std::string makeBacktraceFrameString(uintptr_t pc, const std::string &func = "",
-                                     const std::string &file = "", int line = 0,
-                                     int col = 0);
+            std::string getType() const { return type; }
 
-std::string getCapturedOutput();
+            std::string getFile() const { return file; }
 
-void setJITErrorCallback(std::function<void(const JITError &)> callback);
-} // namespace runtime
+            int getLine() const { return line; }
+
+            int getCol() const { return col; }
+
+            std::vector<uintptr_t> getBacktrace() const { return backtrace; }
+        };
+
+        std::string makeBacktraceFrameString(uintptr_t pc, const std::string &func = "",
+                                             const std::string &file = "", int line = 0,
+                                             int col = 0);
+
+        std::string getCapturedOutput();
+
+        void setJITErrorCallback(std::function<void(const JITError &)> callback);
+    } // namespace runtime
 } // namespace hercules

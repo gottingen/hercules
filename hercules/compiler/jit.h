@@ -31,57 +31,65 @@
 
 #include "hercules/compiler/jit_extern.h"
 
-namespace hercules {
-namespace jit {
+namespace hercules::jit {
 
-class JIT {
-public:
-  struct PythonData {
-    ir::types::Type *cobj;
-    std::unordered_map<std::string, ir::Func *> cache;
+    class JIT {
+    public:
+        struct PythonData {
+            ir::types::Type *cobj;
+            std::unordered_map<std::string, ir::Func *> cache;
 
-    PythonData();
-    ir::types::Type *getCObjType(ir::Module *M);
-  };
+            PythonData();
 
-private:
-  std::unique_ptr<Compiler> compiler;
-  std::unique_ptr<Engine> engine;
-  std::unique_ptr<PythonData> pydata;
-  std::string mode;
+            ir::types::Type *getCObjType(ir::Module *M);
+        };
 
-public:
-  explicit JIT(const std::string &argv0, const std::string &mode = "");
+    private:
+        std::unique_ptr<Compiler> compiler;
+        std::unique_ptr<Engine> engine;
+        std::unique_ptr<PythonData> pydata;
+        std::string mode;
 
-  Compiler *getCompiler() const { return compiler.get(); }
-  Engine *getEngine() const { return engine.get(); }
+    public:
+        explicit JIT(const std::string &argv0, const std::string &mode = "");
 
-  // General
-  llvm::Error init();
-  llvm::Error compile(const ir::Func *input);
-  llvm::Expected<ir::Func *> compile(const std::string &code,
-                                     const std::string &file = "", int line = 0);
-  llvm::Expected<void *> address(const ir::Func *input);
-  llvm::Expected<std::string> run(const ir::Func *input);
-  llvm::Expected<std::string> execute(const std::string &code,
-                                      const std::string &file = "", int line = 0,
-                                      bool debug = false);
+        Compiler *getCompiler() const { return compiler.get(); }
 
-  // Python
-  llvm::Expected<void *> runPythonWrapper(const ir::Func *wrapper, void *arg);
-  llvm::Expected<ir::Func *> getWrapperFunc(const std::string &name,
-                                            const std::vector<std::string> &types);
-  JITResult executePython(const std::string &name,
-                          const std::vector<std::string> &types,
-                          const std::string &pyModule,
-                          const std::vector<std::string> &pyVars, void *arg,
-                          bool debug);
-  JITResult executeSafe(const std::string &code, const std::string &file, int line,
-                        bool debug);
+        Engine *getEngine() const { return engine.get(); }
 
-  // Errors
-  llvm::Error handleJITError(const runtime::JITError &e);
-};
+        // General
+        llvm::Error init();
 
-} // namespace jit
-} // namespace hercules
+        llvm::Error compile(const ir::Func *input);
+
+        llvm::Expected<ir::Func *> compile(const std::string &code,
+                                           const std::string &file = "", int line = 0);
+
+        llvm::Expected<void *> address(const ir::Func *input);
+
+        llvm::Expected<std::string> run(const ir::Func *input);
+
+        llvm::Expected<std::string> execute(const std::string &code,
+                                            const std::string &file = "", int line = 0,
+                                            bool debug = false);
+
+        // Python
+        llvm::Expected<void *> runPythonWrapper(const ir::Func *wrapper, void *arg);
+
+        llvm::Expected<ir::Func *> getWrapperFunc(const std::string &name,
+                                                  const std::vector<std::string> &types);
+
+        JITResult executePython(const std::string &name,
+                                const std::vector<std::string> &types,
+                                const std::string &pyModule,
+                                const std::vector<std::string> &pyVars, void *arg,
+                                bool debug);
+
+        JITResult executeSafe(const std::string &code, const std::string &file, int line,
+                              bool debug);
+
+        // Errors
+        llvm::Error handleJITError(const runtime::JITError &e);
+    };
+
+} // namespace hercules::jit

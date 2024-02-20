@@ -18,79 +18,80 @@
 #include "hercules/cir/module.h"
 #include "hercules/cir/value.h"
 
-namespace hercules {
-namespace ir {
+namespace hercules::ir {
 
 /// CIR constant base. Once created, constants are immutable.
-class Const : public AcceptorExtend<Const, Value> {
-private:
-  /// the type
-  types::Type *type;
+    class Const : public AcceptorExtend<Const, Value> {
+    private:
+        /// the type
+        types::Type *type;
 
-public:
-  static const char NodeId;
+    public:
+        static const char NodeId;
 
-  /// Constructs a constant.
-  /// @param type the type
-  /// @param name the name
-  explicit Const(types::Type *type, std::string name = "")
-      : AcceptorExtend(std::move(name)), type(type) {}
+        /// Constructs a constant.
+        /// @param type the type
+        /// @param name the name
+        explicit Const(types::Type *type, std::string name = "")
+                : AcceptorExtend(std::move(name)), type(type) {}
 
-private:
-  types::Type *doGetType() const override { return type; }
+    private:
+        types::Type *doGetType() const override { return type; }
 
-  std::vector<types::Type *> doGetUsedTypes() const override { return {type}; }
-  int doReplaceUsedType(const std::string &name, types::Type *newType) override;
-};
+        std::vector<types::Type *> doGetUsedTypes() const override { return {type}; }
 
-template <typename ValueType>
-class TemplatedConst : public AcceptorExtend<TemplatedConst<ValueType>, Const> {
-private:
-  ValueType val;
+        int doReplaceUsedType(const std::string &name, types::Type *newType) override;
+    };
 
-public:
-  static const char NodeId;
+    template<typename ValueType>
+    class TemplatedConst : public AcceptorExtend<TemplatedConst<ValueType>, Const> {
+    private:
+        ValueType val;
 
-  using AcceptorExtend<TemplatedConst<ValueType>, Const>::getModule;
-  using AcceptorExtend<TemplatedConst<ValueType>, Const>::getSrcInfo;
-  using AcceptorExtend<TemplatedConst<ValueType>, Const>::getType;
+    public:
+        static const char NodeId;
 
-  TemplatedConst(ValueType v, types::Type *type, std::string name = "")
-      : AcceptorExtend<TemplatedConst<ValueType>, Const>(type, std::move(name)),
-        val(v) {}
+        using AcceptorExtend<TemplatedConst<ValueType>, Const>::getModule;
+        using AcceptorExtend<TemplatedConst<ValueType>, Const>::getSrcInfo;
+        using AcceptorExtend<TemplatedConst<ValueType>, Const>::getType;
 
-  /// @return the internal value.
-  ValueType getVal() const { return val; }
-  /// Sets the value.
-  /// @param v the value
-  void setVal(ValueType v) { val = v; }
-};
+        TemplatedConst(ValueType v, types::Type *type, std::string name = "")
+                : AcceptorExtend<TemplatedConst<ValueType>, Const>(type, std::move(name)),
+                  val(v) {}
 
-using IntConst = TemplatedConst<int64_t>;
-using FloatConst = TemplatedConst<double>;
-using BoolConst = TemplatedConst<bool>;
-using StringConst = TemplatedConst<std::string>;
+        /// @return the internal value.
+        ValueType getVal() const { return val; }
 
-template <typename T> const char TemplatedConst<T>::NodeId = 0;
+        /// Sets the value.
+        /// @param v the value
+        void setVal(ValueType v) { val = v; }
+    };
 
-template <>
-class TemplatedConst<std::string>
-    : public AcceptorExtend<TemplatedConst<std::string>, Const> {
-private:
-  std::string val;
+    using IntConst = TemplatedConst<int64_t>;
+    using FloatConst = TemplatedConst<double>;
+    using BoolConst = TemplatedConst<bool>;
+    using StringConst = TemplatedConst<std::string>;
 
-public:
-  static const char NodeId;
+    template<typename T> const char TemplatedConst<T>::NodeId = 0;
 
-  TemplatedConst(std::string v, types::Type *type, std::string name = "")
-      : AcceptorExtend(type, std::move(name)), val(std::move(v)) {}
+    template<>
+    class TemplatedConst<std::string>
+            : public AcceptorExtend<TemplatedConst<std::string>, Const> {
+    private:
+        std::string val;
 
-  /// @return the internal value.
-  std::string getVal() const { return val; }
-  /// Sets the value.
-  /// @param v the value
-  void setVal(std::string v) { val = std::move(v); }
-};
+    public:
+        static const char NodeId;
 
-} // namespace ir
-} // namespace hercules
+        TemplatedConst(std::string v, types::Type *type, std::string name = "")
+                : AcceptorExtend(type, std::move(name)), val(std::move(v)) {}
+
+        /// @return the internal value.
+        std::string getVal() const { return val; }
+
+        /// Sets the value.
+        /// @param v the value
+        void setVal(std::string v) { val = std::move(v); }
+    };
+
+} // namespace hercules::ir
