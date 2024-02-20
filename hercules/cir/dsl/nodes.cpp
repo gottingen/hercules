@@ -15,20 +15,16 @@
 
 #include "nodes.h"
 
-namespace hercules {
-namespace ir {
-namespace dsl {
+namespace hercules::ir::dsl::types {
+    const char CustomType::NodeId = 0;
+} // namespace hercules::ir::dsl::types
 
-namespace types {
-const char CustomType::NodeId = 0;
-}
+namespace hercules::ir::dsl {
 
-const char CustomConst::NodeId = 0;
+    const char CustomConst::NodeId = 0;
 
-const char CustomFlow::NodeId = 0;
+    const char CustomFlow::NodeId = 0;
 
-const char CustomInstr::NodeId = 0;
+    const char CustomInstr::NodeId = 0;
 
-} // namespace dsl
-} // namespace ir
-} // namespace hercules
+} // namespace hercules::ir::dsl

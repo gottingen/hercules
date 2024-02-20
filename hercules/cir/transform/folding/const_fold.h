@@ -21,30 +21,26 @@
 #include "hercules/cir/transform/folding/rule.h"
 #include "hercules/cir/transform/pass.h"
 
-namespace hercules {
-namespace ir {
-namespace transform {
-namespace folding {
+namespace hercules::ir::transform::folding {
 
-class FoldingPass : public OperatorPass, public Rewriter {
-private:
-  bool pyNumerics;
+    class FoldingPass : public OperatorPass, public Rewriter {
+    private:
+        bool pyNumerics;
 
-  void registerStandardRules(Module *m);
+        void registerStandardRules(Module *m);
 
-public:
-  /// Constructs a folding pass.
-  FoldingPass(bool pyNumerics = false)
-      : OperatorPass(/*childrenFirst=*/true), pyNumerics(pyNumerics) {}
+    public:
+        /// Constructs a folding pass.
+        FoldingPass(bool pyNumerics = false)
+                : OperatorPass(/*childrenFirst=*/true), pyNumerics(pyNumerics) {}
 
-  static const std::string KEY;
-  std::string getKey() const override { return KEY; }
+        static const std::string KEY;
 
-  void run(Module *m) override;
-  void handle(CallInstr *v) override;
-};
+        std::string getKey() const override { return KEY; }
 
-} // namespace folding
-} // namespace transform
-} // namespace ir
-} // namespace hercules
+        void run(Module *m) override;
+
+        void handle(CallInstr *v) override;
+    };
+
+} // namespace hercules::ir::transform::folding

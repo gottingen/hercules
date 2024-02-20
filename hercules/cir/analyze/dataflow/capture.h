@@ -24,77 +24,73 @@
 #include "hercules/cir/analyze/dataflow/reaching.h"
 #include "hercules/cir/cir.h"
 
-namespace hercules {
-namespace ir {
-namespace analyze {
-namespace dataflow {
+namespace hercules::ir::analyze::dataflow {
 
-/// Information about how a function argument is captured.
-struct CaptureInfo {
-  /// vector of other argument indices capturing this one
-  std::vector<unsigned> argCaptures;
-  /// true if the return value of the function captures this argument
-  bool returnCaptures = false;
-  /// true if this argument is externally captured e.g. by assignment to global
-  bool externCaptures = false;
-  /// true if this argument is modified
-  bool modified = false;
 
-  /// @return true if anything captures
-  operator bool() const {
-    return !argCaptures.empty() || returnCaptures || externCaptures;
-  }
+    /// Information about how a function argument is captured.
+    struct CaptureInfo {
+        /// vector of other argument indices capturing this one
+        std::vector<unsigned> argCaptures;
+        /// true if the return value of the function captures this argument
+        bool returnCaptures = false;
+        /// true if this argument is externally captured e.g. by assignment to global
+        bool externCaptures = false;
+        /// true if this argument is modified
+        bool modified = false;
 
-  /// Returns an instance denoting no captures.
-  /// @return an instance denoting no captures
-  static CaptureInfo nothing() { return {}; }
+        /// @return true if anything captures
+        operator bool() const {
+            return !argCaptures.empty() || returnCaptures || externCaptures;
+        }
 
-  /// Returns an instance denoting unknown capture status.
-  /// @param func the function containing this argument
-  /// @param type the argument's type
-  /// @return an instance denoting unknown capture status
-  static CaptureInfo unknown(const Func *func, types::Type *type);
-};
+        /// Returns an instance denoting no captures.
+        /// @return an instance denoting no captures
+        static CaptureInfo nothing() { return {}; }
 
-/// Capture analysis result.
-struct CaptureResult : public Result {
-  /// the corresponding reaching definitions result
-  RDResult *rdResult = nullptr;
+        /// Returns an instance denoting unknown capture status.
+        /// @param func the function containing this argument
+        /// @param type the argument's type
+        /// @return an instance denoting unknown capture status
+        static CaptureInfo unknown(const Func *func, types::Type *type);
+    };
 
-  /// the corresponding dominator result
-  DominatorResult *domResult = nullptr;
+    /// Capture analysis result.
+    struct CaptureResult : public Result {
+        /// the corresponding reaching definitions result
+        RDResult *rdResult = nullptr;
 
-  /// map from function id to capture information, where
-  /// each element of the value vector corresponds to an
-  /// argument of the function
-  std::unordered_map<id_t, std::vector<CaptureInfo>> results;
-};
+        /// the corresponding dominator result
+        DominatorResult *domResult = nullptr;
 
-/// Capture analysis that runs on all functions.
-class CaptureAnalysis : public Analysis {
-private:
-  /// the reaching definitions analysis key
-  std::string rdAnalysisKey;
-  /// the dominator analysis key
-  std::string domAnalysisKey;
+        /// map from function id to capture information, where
+        /// each element of the value vector corresponds to an
+        /// argument of the function
+        std::unordered_map<id_t, std::vector<CaptureInfo>> results;
+    };
 
-public:
-  static const std::string KEY;
-  std::string getKey() const override { return KEY; }
+    /// Capture analysis that runs on all functions.
+    class CaptureAnalysis : public Analysis {
+    private:
+        /// the reaching definitions analysis key
+        std::string rdAnalysisKey;
+        /// the dominator analysis key
+        std::string domAnalysisKey;
 
-  /// Initializes a capture analysis.
-  /// @param rdAnalysisKey the reaching definitions analysis key
-  /// @param domAnalysisKey the dominator analysis key
-  explicit CaptureAnalysis(std::string rdAnalysisKey, std::string domAnalysisKey)
-      : rdAnalysisKey(std::move(rdAnalysisKey)),
-        domAnalysisKey(std::move(domAnalysisKey)) {}
+    public:
+        static const std::string KEY;
 
-  std::unique_ptr<Result> run(const Module *m) override;
-};
+        std::string getKey() const override { return KEY; }
 
-CaptureInfo escapes(const BodiedFunc *func, const Value *value, CaptureResult *cr);
+        /// Initializes a capture analysis.
+        /// @param rdAnalysisKey the reaching definitions analysis key
+        /// @param domAnalysisKey the dominator analysis key
+        explicit CaptureAnalysis(std::string rdAnalysisKey, std::string domAnalysisKey)
+                : rdAnalysisKey(std::move(rdAnalysisKey)),
+                  domAnalysisKey(std::move(domAnalysisKey)) {}
 
-} // namespace dataflow
-} // namespace analyze
-} // namespace ir
-} // namespace hercules
+        std::unique_ptr<Result> run(const Module *m) override;
+    };
+
+    CaptureInfo escapes(const BodiedFunc *func, const Value *value, CaptureResult *cr);
+
+} // namespace hercules::ir::analyze::dataflow

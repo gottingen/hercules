@@ -19,74 +19,69 @@
 #include "hercules/cir/analyze/module/global_vars.h"
 #include "hercules/cir/util/cloning.h"
 
-namespace hercules {
-namespace ir {
-namespace transform {
-namespace folding {
-namespace {
-bool okConst(Value *v) {
-  return v && (isA<IntConst>(v) || isA<FloatConst>(v) || isA<BoolConst>(v));
-}
-} // namespace
+namespace hercules::ir::transform::folding {
 
-const std::string ConstPropPass::KEY = "core-folding-const-prop";
+    namespace {
+        bool okConst(Value *v) {
+            return v && (isA<IntConst>(v) || isA<FloatConst>(v) || isA<BoolConst>(v));
+        }
+    } // namespace
 
-void ConstPropPass::handle(VarValue *v) {
-  auto *M = v->getModule();
+    const std::string ConstPropPass::KEY = "core-folding-const-prop";
 
-  auto *var = v->getVar();
+    void ConstPropPass::handle(VarValue *v) {
+        auto *M = v->getModule();
 
-  Value *replacement;
-  if (var->isGlobal()) {
-    auto *r = getAnalysisResult<analyze::module::GlobalVarsResult>(globalVarsKey);
-    if (!r)
-      return;
+        auto *var = v->getVar();
 
-    auto it = r->assignments.find(var->getId());
-    if (it == r->assignments.end())
-      return;
+        Value *replacement;
+        if (var->isGlobal()) {
+            auto *r = getAnalysisResult<analyze::module::GlobalVarsResult>(globalVarsKey);
+            if (!r)
+                return;
 
-    auto *constDef = M->getValue(it->second);
-    if (!okConst(constDef))
-      return;
+            auto it = r->assignments.find(var->getId());
+            if (it == r->assignments.end())
+                return;
 
-    util::CloneVisitor cv(M);
-    replacement = cv.clone(constDef);
-  } else {
-    auto *r = getAnalysisResult<analyze::dataflow::RDResult>(reachingDefKey);
-    if (!r)
-      return;
-    auto *c = r->cfgResult;
+            auto *constDef = M->getValue(it->second);
+            if (!okConst(constDef))
+                return;
 
-    auto it = r->results.find(getParentFunc()->getId());
-    auto it2 = c->graphs.find(getParentFunc()->getId());
-    if (it == r->results.end() || it2 == c->graphs.end())
-      return;
+            util::CloneVisitor cv(M);
+            replacement = cv.clone(constDef);
+        } else {
+            auto *r = getAnalysisResult<analyze::dataflow::RDResult>(reachingDefKey);
+            if (!r)
+                return;
+            auto *c = r->cfgResult;
 
-    auto *rd = it->second.get();
-    auto *cfg = it2->second.get();
+            auto it = r->results.find(getParentFunc()->getId());
+            auto it2 = c->graphs.find(getParentFunc()->getId());
+            if (it == r->results.end() || it2 == c->graphs.end())
+                return;
 
-    auto reaching = rd->getReachingDefinitions(var, v);
+            auto *rd = it->second.get();
+            auto *cfg = it2->second.get();
 
-    if (reaching.size() != 1)
-      return;
+            auto reaching = rd->getReachingDefinitions(var, v);
 
-    auto def = *reaching.begin();
-    if (def == -1)
-      return;
+            if (reaching.size() != 1)
+                return;
 
-    auto *constDef = cfg->getValue(def);
-    if (!okConst(constDef))
-      return;
+            auto def = *reaching.begin();
+            if (def == -1)
+                return;
 
-    util::CloneVisitor cv(M);
-    replacement = cv.clone(constDef);
-  }
+            auto *constDef = cfg->getValue(def);
+            if (!okConst(constDef))
+                return;
 
-  v->replaceAll(replacement);
-}
+            util::CloneVisitor cv(M);
+            replacement = cv.clone(constDef);
+        }
 
-} // namespace folding
-} // namespace transform
-} // namespace ir
-} // namespace hercules
+        v->replaceAll(replacement);
+    }
+
+}  // namespace hercules::ir::transform::folding

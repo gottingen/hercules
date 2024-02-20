@@ -21,62 +21,57 @@
 #include "hercules/cir/util/irtools.h"
 #include "hercules/cir/util/matching.h"
 
-namespace hercules {
-namespace ir {
-namespace transform {
-namespace lowering {
-namespace {
-Value *callStage(Module *M, PipelineFlow::Stage *stage, Value *last) {
-  std::vector<Value *> args;
-  for (auto *arg : *stage) {
-    args.push_back(arg ? arg : last);
-  }
-  return M->N<CallInstr>(stage->getCallee()->getSrcInfo(), stage->getCallee(), args);
-}
+namespace hercules::ir::transform::lowering {
 
-Value *convertPipelineToForLoopsHelper(Module *M, BodiedFunc *parent,
-                                       const std::vector<PipelineFlow::Stage *> &stages,
-                                       unsigned idx = 0, Value *last = nullptr) {
-  if (idx >= stages.size())
-    return last;
+    namespace {
+        Value *callStage(Module *M, PipelineFlow::Stage *stage, Value *last) {
+            std::vector<Value *> args;
+            for (auto *arg: *stage) {
+                args.push_back(arg ? arg : last);
+            }
+            return M->N<CallInstr>(stage->getCallee()->getSrcInfo(), stage->getCallee(), args);
+        }
 
-  auto *stage = stages[idx];
-  if (idx == 0)
-    return convertPipelineToForLoopsHelper(M, parent, stages, idx + 1,
-                                           stage->getCallee());
+        Value *convertPipelineToForLoopsHelper(Module *M, BodiedFunc *parent,
+                                               const std::vector<PipelineFlow::Stage *> &stages,
+                                               unsigned idx = 0, Value *last = nullptr) {
+            if (idx >= stages.size())
+                return last;
 
-  auto *prev = stages[idx - 1];
-  if (prev->isGenerator()) {
-    auto *var = M->Nr<Var>(prev->getOutputElementType());
-    parent->push_back(var);
-    auto *body = convertPipelineToForLoopsHelper(
-        M, parent, stages, idx + 1, callStage(M, stage, M->Nr<VarValue>(var)));
-    auto *loop = M->N<ForFlow>(last->getSrcInfo(), last, util::series(body), var);
-    if (stage->isParallel())
-      loop->setParallel();
-    return loop;
-  } else {
-    return convertPipelineToForLoopsHelper(M, parent, stages, idx + 1,
-                                           callStage(M, stage, last));
-  }
-}
+            auto *stage = stages[idx];
+            if (idx == 0)
+                return convertPipelineToForLoopsHelper(M, parent, stages, idx + 1,
+                                                       stage->getCallee());
 
-Value *convertPipelineToForLoops(PipelineFlow *p, BodiedFunc *parent) {
-  std::vector<PipelineFlow::Stage *> stages;
-  for (auto &stage : *p) {
-    stages.push_back(&stage);
-  }
-  return convertPipelineToForLoopsHelper(p->getModule(), parent, stages);
-}
-} // namespace
+            auto *prev = stages[idx - 1];
+            if (prev->isGenerator()) {
+                auto *var = M->Nr<Var>(prev->getOutputElementType());
+                parent->push_back(var);
+                auto *body = convertPipelineToForLoopsHelper(
+                        M, parent, stages, idx + 1, callStage(M, stage, M->Nr<VarValue>(var)));
+                auto *loop = M->N<ForFlow>(last->getSrcInfo(), last, util::series(body), var);
+                if (stage->isParallel())
+                    loop->setParallel();
+                return loop;
+            } else {
+                return convertPipelineToForLoopsHelper(M, parent, stages, idx + 1,
+                                                       callStage(M, stage, last));
+            }
+        }
 
-const std::string PipelineLowering::KEY = "core-pipeline-lowering";
+        Value *convertPipelineToForLoops(PipelineFlow *p, BodiedFunc *parent) {
+            std::vector<PipelineFlow::Stage *> stages;
+            for (auto &stage: *p) {
+                stages.push_back(&stage);
+            }
+            return convertPipelineToForLoopsHelper(p->getModule(), parent, stages);
+        }
+    } // namespace
 
-void PipelineLowering::handle(PipelineFlow *v) {
-  v->replaceAll(convertPipelineToForLoops(v, cast<BodiedFunc>(getParentFunc())));
-}
+    const std::string PipelineLowering::KEY = "core-pipeline-lowering";
 
-} // namespace lowering
-} // namespace transform
-} // namespace ir
-} // namespace hercules
+    void PipelineLowering::handle(PipelineFlow *v) {
+        v->replaceAll(convertPipelineToForLoops(v, cast<BodiedFunc>(getParentFunc())));
+    }
+
+} // namespace hercules::ir::transform::lowering

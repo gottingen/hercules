@@ -17,32 +17,27 @@
 
 #include "hercules/cir/transform/pass.h"
 
-namespace hercules {
-namespace ir {
-namespace transform {
-namespace cleanup {
+namespace hercules::ir::transform::cleanup {
 
-/// Demotes global variables that are used in only one
-/// function to locals of that function.
-class GlobalDemotionPass : public Pass {
-private:
-  /// number of variables we've demoted
-  int numDemotions;
+    /// Demotes global variables that are used in only one
+    /// function to locals of that function.
+    class GlobalDemotionPass : public Pass {
+    private:
+        /// number of variables we've demoted
+        int numDemotions;
 
-public:
-  static const std::string KEY;
+    public:
+        static const std::string KEY;
 
-  /// Constructs a global variable demotion pass
-  GlobalDemotionPass() : Pass(), numDemotions(0) {}
+        /// Constructs a global variable demotion pass
+        GlobalDemotionPass() : Pass(), numDemotions(0) {}
 
-  std::string getKey() const override { return KEY; }
-  void run(Module *v) override;
+        std::string getKey() const override { return KEY; }
 
-  /// @return number of variables we've demoted
-  int getNumDemotions() const { return numDemotions; }
-};
+        void run(Module *v) override;
 
-} // namespace cleanup
-} // namespace transform
-} // namespace ir
-} // namespace hercules
+        /// @return number of variables we've demoted
+        int getNumDemotions() const { return numDemotions; }
+    };
+
+} // namespace hercules::ir::transform::cleanup

@@ -17,9 +17,7 @@
 
 #include "hercules/cir/cir.h"
 
-namespace hercules {
-namespace ir {
-namespace util {
+namespace hercules::ir::util {
 
 /// Checks whether a function has a given attribute.
 /// @param func the function
@@ -216,6 +214,4 @@ types::Type *getReturnType(const Func *func);
 /// @param rType the new return type
 void setReturnType(Func *func, types::Type *rType);
 
-} // namespace util
-} // namespace ir
-} // namespace hercules
+} // namespace hercules::ir::util

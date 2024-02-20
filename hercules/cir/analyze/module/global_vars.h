@@ -19,25 +19,21 @@
 
 #include "hercules/cir/analyze/analysis.h"
 
-namespace hercules {
-namespace ir {
-namespace analyze {
-namespace module {
+namespace hercules::ir::analyze::module {
 
-struct GlobalVarsResult : public Result {
-  std::unordered_map<id_t, id_t> assignments;
-  explicit GlobalVarsResult(std::unordered_map<id_t, id_t> assignments)
-      : assignments(std::move(assignments)) {}
-};
+    struct GlobalVarsResult : public Result {
+        std::unordered_map<id_t, id_t> assignments;
 
-class GlobalVarsAnalyses : public Analysis {
-  static const std::string KEY;
-  std::string getKey() const override { return KEY; }
+        explicit GlobalVarsResult(std::unordered_map<id_t, id_t> assignments)
+                : assignments(std::move(assignments)) {}
+    };
 
-  std::unique_ptr<Result> run(const Module *m) override;
-};
+    class GlobalVarsAnalyses : public Analysis {
+        static const std::string KEY;
 
-} // namespace module
-} // namespace analyze
-} // namespace ir
-} // namespace hercules
+        std::string getKey() const override { return KEY; }
+
+        std::unique_ptr<Result> run(const Module *m) override;
+    };
+
+} // namespace hercules::ir::analyze::module

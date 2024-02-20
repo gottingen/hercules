@@ -18,35 +18,32 @@
 #include "hercules/cir/transform/pass.h"
 #include "hercules/cir/transform/rewrite.h"
 
-namespace hercules {
-namespace ir {
-namespace transform {
-namespace cleanup {
+namespace hercules::ir::transform::cleanup {
 
-/// Canonicalization pass that flattens nested series
-/// flows, puts operands in a predefined order, etc.
-class CanonicalizationPass : public OperatorPass, public Rewriter {
-private:
-  std::string sideEffectsKey;
+    /// Canonicalization pass that flattens nested series
+    /// flows, puts operands in a predefined order, etc.
+    class CanonicalizationPass : public OperatorPass, public Rewriter {
+    private:
+        std::string sideEffectsKey;
 
-public:
-  /// Constructs a canonicalization pass
-  /// @param sideEffectsKey the side effect analysis' key
-  CanonicalizationPass(const std::string &sideEffectsKey)
-      : OperatorPass(/*childrenFirst=*/true), sideEffectsKey(sideEffectsKey) {}
+    public:
+        /// Constructs a canonicalization pass
+        /// @param sideEffectsKey the side effect analysis' key
+        CanonicalizationPass(const std::string &sideEffectsKey)
+                : OperatorPass(/*childrenFirst=*/true), sideEffectsKey(sideEffectsKey) {}
 
-  static const std::string KEY;
-  std::string getKey() const override { return KEY; }
+        static const std::string KEY;
 
-  void run(Module *m) override;
-  void handle(CallInstr *) override;
-  void handle(SeriesFlow *) override;
+        std::string getKey() const override { return KEY; }
 
-private:
-  void registerStandardRules(Module *m);
-};
+        void run(Module *m) override;
 
-} // namespace cleanup
-} // namespace transform
-} // namespace ir
-} // namespace hercules
+        void handle(CallInstr *) override;
+
+        void handle(SeriesFlow *) override;
+
+    private:
+        void registerStandardRules(Module *m);
+    };
+
+} // namespace hercules::ir::transform::cleanup

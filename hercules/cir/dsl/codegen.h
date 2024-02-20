@@ -20,54 +20,47 @@
 #include "hercules/cir/llvm/llvm.h"
 #include "hercules/cir/types/types.h"
 
-namespace hercules {
-namespace ir {
+namespace hercules::ir::analyze::dataflow {
+    class CFVisitor;
 
-namespace analyze {
-namespace dataflow {
-class CFVisitor;
-} // namespace dataflow
-} // namespace analyze
+}  // namespace hercules::ir::analyze::dataflow
 
 class LLVMVisitor;
 
-namespace dsl {
-namespace codegen {
+namespace hercules::ir::dsl::codegen {
 
-/// Builder for LLVM types.
-struct TypeBuilder {
-  virtual ~TypeBuilder() noexcept = default;
+    /// Builder for LLVM types.
+    struct TypeBuilder {
+        virtual ~TypeBuilder() noexcept = default;
 
-  /// Construct the LLVM type.
-  /// @param the LLVM visitor
-  /// @return the LLVM type
-  virtual llvm::Type *buildType(LLVMVisitor *visitor) = 0;
-  /// Construct the LLVM debug type.
-  /// @param the LLVM visitor
-  /// @return the LLVM debug type
-  virtual llvm::DIType *buildDebugType(LLVMVisitor *visitor) = 0;
-};
+        /// Construct the LLVM type.
+        /// @param the LLVM visitor
+        /// @return the LLVM type
+        virtual llvm::Type *buildType(LLVMVisitor *visitor) = 0;
 
-/// Builder for LLVM values.
-struct ValueBuilder {
-  virtual ~ValueBuilder() noexcept = default;
+        /// Construct the LLVM debug type.
+        /// @param the LLVM visitor
+        /// @return the LLVM debug type
+        virtual llvm::DIType *buildDebugType(LLVMVisitor *visitor) = 0;
+    };
 
-  /// Construct the LLVM value.
-  /// @param the LLVM visitor
-  /// @return the LLVM value
-  virtual llvm::Value *buildValue(LLVMVisitor *visitor) = 0;
-};
+    /// Builder for LLVM values.
+    struct ValueBuilder {
+        virtual ~ValueBuilder() noexcept = default;
 
-/// Builder for control flow graphs.
-struct CFBuilder {
-  virtual ~CFBuilder() noexcept = default;
+        /// Construct the LLVM value.
+        /// @param the LLVM visitor
+        /// @return the LLVM value
+        virtual llvm::Value *buildValue(LLVMVisitor *visitor) = 0;
+    };
 
-  /// Construct the control-flow nodes.
-  /// @param graph the graph
-  virtual void buildCFNodes(analyze::dataflow::CFVisitor *visitor) = 0;
-};
+    /// Builder for control flow graphs.
+    struct CFBuilder {
+        virtual ~CFBuilder() noexcept = default;
 
-} // namespace codegen
-} // namespace dsl
-} // namespace ir
-} // namespace hercules
+        /// Construct the control-flow nodes.
+        /// @param graph the graph
+        virtual void buildCFNodes(analyze::dataflow::CFVisitor *visitor) = 0;
+    };
+
+}  // namespace hercules::ir::dsl::codegen

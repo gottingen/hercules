@@ -17,20 +17,16 @@
 
 #include "hercules/cir/transform/pass.h"
 
-namespace hercules {
-namespace ir {
-namespace transform {
-namespace cleanup {
+namespace hercules::ir::transform::cleanup {
 
-/// Cleanup pass that physically replaces nodes.
-class ReplaceCleanupPass : public Pass {
-public:
-  static const std::string KEY;
-  std::string getKey() const override { return KEY; }
-  void run(Module *module) override;
-};
+    /// Cleanup pass that physically replaces nodes.
+    class ReplaceCleanupPass : public Pass {
+    public:
+        static const std::string KEY;
 
-} // namespace cleanup
-} // namespace transform
-} // namespace ir
-} // namespace hercules
+        std::string getKey() const override { return KEY; }
+
+        void run(Module *module) override;
+    };
+
+} // namespace hercules::ir::transform::cleanup

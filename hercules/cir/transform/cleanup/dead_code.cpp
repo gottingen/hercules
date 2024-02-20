@@ -18,105 +18,100 @@
 #include "hercules/cir/analyze/module/side_effect.h"
 #include "hercules/cir/util/cloning.h"
 
-namespace hercules {
-namespace ir {
-namespace transform {
-namespace cleanup {
-namespace {
-BoolConst *boolConst(Value *v) { return cast<BoolConst>(v); }
+namespace hercules::ir::transform::cleanup {
 
-IntConst *intConst(Value *v) { return cast<IntConst>(v); }
-} // namespace
+    namespace {
+        BoolConst *boolConst(Value *v) { return cast<BoolConst>(v); }
 
-const std::string DeadCodeCleanupPass::KEY = "core-cleanup-dce";
+        IntConst *intConst(Value *v) { return cast<IntConst>(v); }
+    } // namespace
 
-void DeadCodeCleanupPass::run(Module *m) {
-  numReplacements = 0;
-  OperatorPass::run(m);
-}
+    const std::string DeadCodeCleanupPass::KEY = "core-cleanup-dce";
 
-void DeadCodeCleanupPass::handle(SeriesFlow *v) {
-  auto *r = getAnalysisResult<analyze::module::SideEffectResult>(sideEffectsKey);
-  auto it = v->begin();
-  while (it != v->end()) {
-    if (!r->hasSideEffect(*it)) {
-      LOG_IR("[{}] no side effect, deleting: {}", KEY, **it);
-      numReplacements++;
-      it = v->erase(it);
-    } else {
-      ++it;
+    void DeadCodeCleanupPass::run(Module *m) {
+        numReplacements = 0;
+        OperatorPass::run(m);
     }
-  }
-}
 
-void DeadCodeCleanupPass::handle(IfFlow *v) {
-  auto *cond = boolConst(v->getCond());
-  if (!cond)
-    return;
+    void DeadCodeCleanupPass::handle(SeriesFlow *v) {
+        auto *r = getAnalysisResult<analyze::module::SideEffectResult>(sideEffectsKey);
+        auto it = v->begin();
+        while (it != v->end()) {
+            if (!r->hasSideEffect(*it)) {
+                LOG_IR("[{}] no side effect, deleting: {}", KEY, **it);
+                numReplacements++;
+                it = v->erase(it);
+            } else {
+                ++it;
+            }
+        }
+    }
 
-  auto *M = v->getModule();
-  auto condVal = cond->getVal();
+    void DeadCodeCleanupPass::handle(IfFlow *v) {
+        auto *cond = boolConst(v->getCond());
+        if (!cond)
+            return;
 
-  util::CloneVisitor cv(M);
-  if (condVal) {
-    doReplacement(v, cv.clone(v->getTrueBranch()));
-  } else if (auto *f = v->getFalseBranch()) {
-    doReplacement(v, cv.clone(f));
-  } else {
-    doReplacement(v, M->Nr<SeriesFlow>());
-  }
-}
+        auto *M = v->getModule();
+        auto condVal = cond->getVal();
 
-void DeadCodeCleanupPass::handle(WhileFlow *v) {
-  auto *cond = boolConst(v->getCond());
-  if (!cond)
-    return;
+        util::CloneVisitor cv(M);
+        if (condVal) {
+            doReplacement(v, cv.clone(v->getTrueBranch()));
+        } else if (auto *f = v->getFalseBranch()) {
+            doReplacement(v, cv.clone(f));
+        } else {
+            doReplacement(v, M->Nr<SeriesFlow>());
+        }
+    }
 
-  auto *M = v->getModule();
-  auto condVal = cond->getVal();
-  if (!condVal) {
-    doReplacement(v, M->Nr<SeriesFlow>());
-  }
-}
+    void DeadCodeCleanupPass::handle(WhileFlow *v) {
+        auto *cond = boolConst(v->getCond());
+        if (!cond)
+            return;
 
-void DeadCodeCleanupPass::handle(ImperativeForFlow *v) {
-  auto *start = intConst(v->getStart());
-  auto *end = intConst(v->getEnd());
-  if (!start || !end)
-    return;
+        auto *M = v->getModule();
+        auto condVal = cond->getVal();
+        if (!condVal) {
+            doReplacement(v, M->Nr<SeriesFlow>());
+        }
+    }
 
-  auto stepVal = v->getStep();
-  auto startVal = start->getVal();
-  auto endVal = end->getVal();
+    void DeadCodeCleanupPass::handle(ImperativeForFlow *v) {
+        auto *start = intConst(v->getStart());
+        auto *end = intConst(v->getEnd());
+        if (!start || !end)
+            return;
 
-  auto *M = v->getModule();
-  if ((stepVal < 0 && startVal <= endVal) || (stepVal > 0 && startVal >= endVal)) {
-    doReplacement(v, M->Nr<SeriesFlow>());
-  }
-}
+        auto stepVal = v->getStep();
+        auto startVal = start->getVal();
+        auto endVal = end->getVal();
 
-void DeadCodeCleanupPass::handle(TernaryInstr *v) {
-  auto *cond = boolConst(v->getCond());
-  if (!cond)
-    return;
+        auto *M = v->getModule();
+        if ((stepVal < 0 && startVal <= endVal) || (stepVal > 0 && startVal >= endVal)) {
+            doReplacement(v, M->Nr<SeriesFlow>());
+        }
+    }
 
-  auto *M = v->getModule();
-  auto condVal = cond->getVal();
+    void DeadCodeCleanupPass::handle(TernaryInstr *v) {
+        auto *cond = boolConst(v->getCond());
+        if (!cond)
+            return;
 
-  util::CloneVisitor cv(M);
-  if (condVal) {
-    doReplacement(v, cv.clone(v->getTrueValue()));
-  } else {
-    doReplacement(v, cv.clone(v->getFalseValue()));
-  }
-}
+        auto *M = v->getModule();
+        auto condVal = cond->getVal();
 
-void DeadCodeCleanupPass::doReplacement(Value *og, Value *v) {
-  numReplacements++;
-  og->replaceAll(v);
-}
+        util::CloneVisitor cv(M);
+        if (condVal) {
+            doReplacement(v, cv.clone(v->getTrueValue()));
+        } else {
+            doReplacement(v, cv.clone(v->getFalseValue()));
+        }
+    }
 
-} // namespace cleanup
-} // namespace transform
-} // namespace ir
-} // namespace hercules
+    void DeadCodeCleanupPass::doReplacement(Value *og, Value *v) {
+        numReplacements++;
+        og->replaceAll(v);
+    }
+
+} // namespace hercules::ir::transform::cleanup

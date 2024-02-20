@@ -17,35 +17,39 @@
 
 #include <vector>
 
-namespace hercules {
-namespace ir {
-namespace util {
+namespace hercules::ir::util {
 
-/// Base for CIR visitor contexts.
-template <typename Frame> class CIRContext {
-private:
-  std::vector<Frame> frames;
 
-public:
-  /// Emplaces a frame onto the stack.
-  /// @param args a parameter pack of the arguments
-  template <typename... Args> void emplaceFrame(Args... args) {
-    frames.emplace_back(args...);
-  }
-  /// Replaces a frame.
-  /// @param newFrame the new frame
-  void replaceFrame(Frame newFrame) {
-    frames.pop_back();
-    frames.push_back(newFrame);
-  }
-  /// @return all frames
-  std::vector<Frame> &getFrames() { return frames; }
-  /// @return the current frame
-  Frame &getFrame() { return frames.back(); }
-  /// Pops a frame.
-  void popFrame() { return frames.pop_back(); }
-};
+    /// Base for CIR visitor contexts.
+    template<typename Frame>
+    class CIRContext {
+    private:
+        std::vector<Frame> frames;
 
-} // namespace util
-} // namespace ir
-} // namespace hercules
+    public:
+        /// Emplaces a frame onto the stack.
+        /// @param args a parameter pack of the arguments
+        template<typename... Args>
+        void emplaceFrame(Args... args) {
+            frames.emplace_back(args...);
+        }
+
+        /// Replaces a frame.
+        /// @param newFrame the new frame
+        void replaceFrame(Frame newFrame) {
+            frames.pop_back();
+            frames.push_back(newFrame);
+        }
+
+        /// @return all frames
+        std::vector<Frame> &getFrames() { return frames; }
+
+        /// @return the current frame
+        Frame &getFrame() { return frames.back(); }
+
+        /// Pops a frame.
+        void popFrame() { return frames.pop_back(); }
+    };
+
+
+} // namespace hercules::ir::util

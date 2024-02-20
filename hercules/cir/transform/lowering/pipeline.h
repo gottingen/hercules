@@ -17,20 +17,16 @@
 
 #include "hercules/cir/transform/pass.h"
 
-namespace hercules {
-namespace ir {
-namespace transform {
-namespace lowering {
+namespace hercules::ir::transform::lowering {
 
-/// Converts pipelines to for-loops
-class PipelineLowering : public OperatorPass {
-public:
-  static const std::string KEY;
-  std::string getKey() const override { return KEY; }
-  void handle(PipelineFlow *v) override;
-};
+    /// Converts pipelines to for-loops
+    class PipelineLowering : public OperatorPass {
+    public:
+        static const std::string KEY;
 
-} // namespace lowering
-} // namespace transform
-} // namespace ir
-} // namespace hercules
+        std::string getKey() const override { return KEY; }
+
+        void handle(PipelineFlow *v) override;
+    };
+
+} // namespace hercules::ir::transform::lowering
