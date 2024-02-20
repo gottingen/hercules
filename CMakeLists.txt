@@ -438,11 +438,12 @@ target_link_libraries(hercules PUBLIC ${STATIC_LIBCPP} fmt herculesc hercules_ju
 include(FetchContent)
 FetchContent_Declare(
         googletest
-        URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/googletest-release-1.12.1/googletest-release-1.12.1"
+        #URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-option(INSTALL_GTEST "Enable installation of googletest." OFF)
+option(INSTALL_GTEST "Enable installation of googletest." ON)
 FetchContent_MakeAvailable(googletest)
 enable_testing()
 set(HERCULES_TEST_CPPFILES
