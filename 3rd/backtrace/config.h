@@ -20,7 +20,7 @@
 /* #undef HAVE_DLFCN_H */
 
 /* Define if dl_iterate_phdr is available. */
-#define HAVE_DL_ITERATE_PHDR 1
+/* #undef HAVE_DL_ITERATE_PHDR */
 
 /* Define to 1 if you have the fcntl function */
 /* #undef HAVE_FCNTL */
