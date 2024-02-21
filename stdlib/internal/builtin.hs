@@ -455,9 +455,18 @@ class complex:
 
         buf = __array__[byte](32)
         n = len(v)
-        need_dyn_alloc = n >= len(buf)
+        need_dyn_alloc = False
+        if n >= len(buf):
+            need_dyn_alloc = True
 
-        s = alloc_atomic(n + 1) if need_dyn_alloc else buf.ptr
+        #need_dyn_alloc = n >= len(buf)
+
+        s = buf.ptr
+        ss = cobj()
+        if need_dyn_alloc:
+            s = alloc_atomic(n + 1)
+            ss = s
+        ##s = alloc_atomic(n + 1) if need_dyn_alloc else buf.ptr
         str.memcpy(s, v.ptr, n)
         s[n] = byte(0)
 
@@ -494,7 +503,7 @@ class complex:
 
                 if not (s[0] == byte(106) or s[0] == byte(74)):  # 'j' 'J'
                     if need_dyn_alloc:
-                        free(s)
+                        free(ss)
                     parse_error()
 
                 s += 1
@@ -512,7 +521,7 @@ class complex:
 
             if not (s[0] == byte(106) or s[0] == byte(74)):  # 'j' 'J'
                 if need_dyn_alloc:
-                    free(s)
+                    free(ss)
                 parse_error()
 
             s += 1
@@ -523,7 +532,7 @@ class complex:
         if got_bracket:
             if s[0] != byte(41):  # ')'
                 if need_dyn_alloc:
-                    free(s)
+                    free(ss)
                 parse_error()
             s += 1
             while str._isspace(s[0]):
@@ -531,11 +540,11 @@ class complex:
 
         if s - start != n:
             if need_dyn_alloc:
-                free(s)
+                free(ss)
             parse_error()
 
         if need_dyn_alloc:
-            free(s)
+            free(ss)
         return complex(x, y)
 
 @extend

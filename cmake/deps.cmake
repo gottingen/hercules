@@ -52,7 +52,7 @@ if (bz2_ADDED)
             COMPILE_FLAGS "-D_FILE_OFFSET_BITS=64"
             POSITION_INDEPENDENT_CODE ON)
 endif ()
-
+#[[
 CPMAddPackage(
         NAME bdwgc
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/bdwgc-8.0.5"
@@ -66,10 +66,10 @@ CPMAddPackage(
 if (bdwgc_ADDED)
     set_target_properties(cord PROPERTIES EXCLUDE_FROM_ALL ON)
 endif ()
-
+]]
 CPMAddPackage(
         NAME openmp
-        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/openmp"
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/openmp-13"
         EXCLUDE_FROM_ALL YES
         OPTIONS "CMAKE_BUILD_TYPE Release"
         "OPENMP_ENABLE_LIBOMPTARGET OFF"

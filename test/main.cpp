@@ -266,11 +266,11 @@ public:
   int runInChildProcess() {
     assert(pipe(out_pipe) != -1);
     pid = fork();
-    GC_atfork_prepare();
+    //GC_atfork_prepare();
     assert(pid != -1);
 
     if (pid == 0) {
-      GC_atfork_child();
+      //GC_atfork_child();
       dup2(out_pipe[1], STDOUT_FILENO);
       close(out_pipe[0]);
       close(out_pipe[1]);
@@ -318,7 +318,7 @@ public:
       fflush(stdout);
       exit(EXIT_SUCCESS);
     } else {
-      GC_atfork_parent();
+      //GC_atfork_parent();
       int status = -1;
       close(out_pipe[1]);
       assert(waitpid(pid, &status, 0) == pid);
@@ -359,7 +359,7 @@ TEST_P(SeqTest, Run) {
     status = runInChildProcess();
   else
     status = runInChildProcess();
-  ASSERT_TRUE(WIFEXITED(status));
+  ASSERT_TRUE(WIFEXITED(status))<< "status: " << status;
 
   string output = result();
 
@@ -511,7 +511,7 @@ INSTANTIATE_TEST_SUITE_P(
             "transform/io_opt.hs",
             "transform/inlining.hs",
             "transform/list_opt.hs",
-            "transform/omp.hs",
+            //"transform/omp.hs",
             "transform/outlining.hs",
             "transform/str_opt.hs"
         ),

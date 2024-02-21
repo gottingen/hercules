@@ -85,7 +85,8 @@ set(HERCULESRT_FILES hercules/runtime/lib.h hercules/runtime/lib.cpp
         hercules/runtime/re.cpp hercules/runtime/exc.cpp
         hercules/runtime/gpu.cpp)
 add_library(herculesrt SHARED ${HERCULESRT_FILES})
-add_dependencies(herculesrt zlibstatic gc backtrace bz2 liblzma re2)
+add_dependencies(herculesrt zlibstatic backtrace bz2 liblzma re2)
+#add_dependencies(herculesrt zlibstatic gc backtrace bz2 liblzma re2)
 if (APPLE AND APPLE_ARM)
     add_dependencies(herculesrt unwind_shared)
 endif ()
@@ -98,14 +99,14 @@ if (APPLE)
     target_link_libraries(
             herculesrt
             PRIVATE -Wl,-force_load,$<TARGET_FILE:zlibstatic>
-            -Wl,-force_load,$<TARGET_FILE:gc>
+            #-Wl,-force_load,$<TARGET_FILE:gc>
             -Wl,-force_load,$<TARGET_FILE:bz2>
             -Wl,-force_load,$<TARGET_FILE:liblzma>
             -Wl,-force_load,$<TARGET_FILE:re2>)
 else ()
     target_link_libraries(
             herculesrt
-            PRIVATE -Wl,--whole-archive $<TARGET_FILE:zlibstatic> $<TARGET_FILE:gc>
+            PRIVATE -Wl,--whole-archive $<TARGET_FILE:zlibstatic> #$<TARGET_FILE:gc>
             $<TARGET_FILE:bz2> $<TARGET_FILE:liblzma> $<TARGET_FILE:re2>
             -Wl,--no-whole-archive)
 endif ()
