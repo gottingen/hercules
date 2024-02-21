@@ -17,7 +17,6 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <fstream>
-#include <gc.h>
 #include <iostream>
 #include <sstream>
 #include <string>

@@ -139,7 +139,7 @@ namespace hercules::ir {
         int doReplaceUsedValue(id_t id, Value *newValue) override;
     };
 
-/// Flow representing a for loop.
+    /// Flow representing a for loop.
     class ForFlow : public AcceptorExtend<ForFlow, Flow> {
     private:
         /// the iterator
@@ -229,7 +229,7 @@ namespace hercules::ir {
         int doReplaceUsedVariable(id_t id, Var *newVar) override;
     };
 
-/// Flow representing an imperative for loop.
+    /// Flow representing an imperative for loop.
     class ImperativeForFlow : public AcceptorExtend<ImperativeForFlow, Flow> {
     private:
         /// the initial value
@@ -541,12 +541,12 @@ namespace hercules::ir {
         int doReplaceUsedVariable(id_t id, Var *newVar) override;
     };
 
-/// Flow that represents a pipeline. Pipelines with only function
-/// stages are expressions and have a concrete type. Pipelines with
-/// generator stages are not expressions and have no type. This
-/// representation allows for stages that output generators but do
-/// not get explicitly iterated in the pipeline, since generator
-/// stages are denoted by a separate flag.
+    /// Flow that represents a pipeline. Pipelines with only function
+    /// stages are expressions and have a concrete type. Pipelines with
+    /// generator stages are not expressions and have no type. This
+    /// representation allows for stages that output generators but do
+    /// not get explicitly iterated in the pipeline, since generator
+    /// stages are denoted by a separate flag.
     class PipelineFlow : public AcceptorExtend<PipelineFlow, Flow> {
     public:
         /// Represents a single stage in a pipeline.
