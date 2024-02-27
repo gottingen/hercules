@@ -29,14 +29,14 @@ namespace hercules {
                                                                  sectionName, isReadOnly);
         void *start = result;
         void *end = result + size;
-        seq_gc_add_roots(start, end);
+        hs_gc_add_roots(start, end);
         roots.emplace_back(start, end);
         return result;
     }
 
     BoehmGCMemoryManager::~BoehmGCMemoryManager() {
         for (const auto &root: roots) {
-            seq_gc_remove_roots(root.first, root.second);
+            hs_gc_remove_roots(root.first, root.second);
         }
     }
 
@@ -203,7 +203,7 @@ namespace hercules {
 
             if (static_cast<int>(AG.getMemProt()) &
                 static_cast<int>(llvm::orc::MemProt::Write)) {
-                seq_gc_add_roots((void *) Seg.Addr.getValue(), (void *) SegAddr.getValue());
+                hs_gc_add_roots((void *) Seg.Addr.getValue(), (void *) SegAddr.getValue());
             }
         }
 

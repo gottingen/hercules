@@ -639,7 +639,7 @@ namespace hercules::ir {
         auto *excType = llvm::StructType::get(getTypeInfoType(), B->getInt8PtrTy());
         auto *excVal =
                 B->CreatePointerCast(B->CreateConstGEP1_64(B->getInt8Ty(), unwindException,
-                                                           (uint64_t) seq_exc_offset()),
+                                                           (uint64_t) hs_exc_offset()),
                                      excType->getPointerTo());
         auto *loadedExc = B->CreateLoad(excType, excVal);
         auto *objPtr = B->CreateExtractValue(loadedExc, 1);
@@ -738,13 +738,13 @@ namespace hercules::ir {
                 /*Initializer=*/nullptr, "PyType_Type");
 
         auto allocUncollectable = llvm::cast<llvm::Function>(
-                M->getOrInsertFunction("seq_alloc_uncollectable", ptr, i64).getCallee());
+                M->getOrInsertFunction("hs_alloc_uncollectable", ptr, i64).getCallee());
         allocUncollectable->setDoesNotThrow();
         allocUncollectable->setReturnDoesNotAlias();
         allocUncollectable->setOnlyAccessesInaccessibleMemory();
 
         auto free = llvm::cast<llvm::Function>(
-                M->getOrInsertFunction("seq_free", B->getVoidTy(), ptr).getCallee());
+                M->getOrInsertFunction("hs_free", B->getVoidTy(), ptr).getCallee());
         free->setDoesNotThrow();
 
         // Helpers
@@ -1295,7 +1295,7 @@ namespace hercules::ir {
     }
 
     llvm::FunctionCallee LLVMVisitor::makeAllocFunc(bool atomic) {
-        auto f = M->getOrInsertFunction(atomic ? "seq_alloc_atomic" : "seq_alloc",
+        auto f = M->getOrInsertFunction(atomic ? "hs_alloc_atomic" : "hs_alloc",
                                         B->getInt8PtrTy(), B->getInt64Ty());
         auto *g = cast<llvm::Function>(f.getCallee());
         g->setDoesNotThrow();
@@ -1305,13 +1305,13 @@ namespace hercules::ir {
     }
 
     llvm::FunctionCallee LLVMVisitor::makePersonalityFunc() {
-        return M->getOrInsertFunction("seq_personality", B->getInt32Ty(), B->getInt32Ty(),
+        return M->getOrInsertFunction("hs_personality", B->getInt32Ty(), B->getInt32Ty(),
                                       B->getInt32Ty(), B->getInt64Ty(), B->getInt8PtrTy(),
                                       B->getInt8PtrTy());
     }
 
     llvm::FunctionCallee LLVMVisitor::makeExcAllocFunc() {
-        auto f = M->getOrInsertFunction("seq_alloc_exc", B->getInt8PtrTy(), B->getInt32Ty(),
+        auto f = M->getOrInsertFunction("hs_alloc_exc", B->getInt8PtrTy(), B->getInt32Ty(),
                                         B->getInt8PtrTy());
         auto *g = cast<llvm::Function>(f.getCallee());
         g->setDoesNotThrow();
@@ -1319,14 +1319,14 @@ namespace hercules::ir {
     }
 
     llvm::FunctionCallee LLVMVisitor::makeThrowFunc() {
-        auto f = M->getOrInsertFunction("seq_throw", B->getVoidTy(), B->getInt8PtrTy());
+        auto f = M->getOrInsertFunction("hs_throw", B->getVoidTy(), B->getInt8PtrTy());
         auto *g = cast<llvm::Function>(f.getCallee());
         g->setDoesNotReturn();
         return f;
     }
 
     llvm::FunctionCallee LLVMVisitor::makeTerminateFunc() {
-        auto f = M->getOrInsertFunction("seq_terminate", B->getVoidTy(), B->getInt8PtrTy());
+        auto f = M->getOrInsertFunction("hs_terminate", B->getVoidTy(), B->getInt8PtrTy());
         auto *g = cast<llvm::Function>(f.getCallee());
         g->setDoesNotReturn();
         return f;
@@ -1475,7 +1475,7 @@ namespace hercules::ir {
                 llvm::StructType::get(*context, {B->getInt64Ty(), strType->getPointerTo()});
 
         auto *initFunc = llvm::cast<llvm::Function>(
-                M->getOrInsertFunction("seq_init", B->getVoidTy(), B->getInt32Ty()).getCallee());
+                M->getOrInsertFunction("hs_init", B->getVoidTy(), B->getInt32Ty()).getCallee());
         auto *strlenFunc = llvm::cast<llvm::Function>(
                 M->getOrInsertFunction("strlen", B->getInt64Ty(), B->getInt8PtrTy()).getCallee());
 
@@ -1537,9 +1537,9 @@ namespace hercules::ir {
         llvm::Value *argStorage = getVar(x->getArgVar());
         seqassertn(argStorage, "argument storage missing");
         B->CreateStore(arr, argStorage);
-        const int flags = (db.debug ? SEQ_FLAG_DEBUG : 0) |
-                          (db.capture ? SEQ_FLAG_CAPTURE_OUTPUT : 0) |
-                          (db.standalone ? SEQ_FLAG_STANDALONE : 0);
+        const int flags = (db.debug ? HS_FLAG_DEBUG : 0) |
+                          (db.capture ? HS_FLAG_CAPTURE_OUTPUT : 0) |
+                          (db.standalone ? HS_FLAG_STANDALONE : 0);
         B->CreateCall(initFunc, B->getInt32(flags));
 
         // Put the entire program in a new function
@@ -2887,7 +2887,7 @@ namespace hercules::ir {
                         0));
 
         // check for foreign exceptions
-        B->CreateCondBr(B->CreateICmpEQ(unwindExceptionClass, B->getInt64(seq_exc_class())),
+        B->CreateCondBr(B->CreateICmpEQ(unwindExceptionClass, B->getInt64(hs_exc_class())),
                         tc.exceptionRouteBlock, externalExcBlock);
 
         // external exception (currently assumed to be unreachable)
@@ -2899,7 +2899,7 @@ namespace hercules::ir {
         unwindException = B->CreateExtractValue(B->CreateLoad(padType, tc.catchStore), 0);
         llvm::Value *excVal =
                 B->CreatePointerCast(B->CreateConstGEP1_64(B->getInt8Ty(), unwindException,
-                                                           (uint64_t) seq_exc_offset()),
+                                                           (uint64_t) hs_exc_offset()),
                                      excType->getPointerTo());
 
         llvm::Value *loadedExc = B->CreateLoad(excType, excVal);

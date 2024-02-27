@@ -28,7 +28,7 @@
 
 namespace hercules::ir::transform {
 
-/// Utility class to run a series of passes.
+    /// Utility class to run a series of passes.
     class PassManager {
     private:
         /// Manager for keys of passes.

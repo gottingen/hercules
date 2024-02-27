@@ -383,7 +383,7 @@ class A:
 a = A() #! argument 'ga' has recursive default value
 
 #%% call_err_4,barebones
-seq_print_full(1, name="56", name=2) #! keyword argument repeated: name
+hs_print_full(1, name="56", name=2) #! keyword argument repeated: name
 
 #%% call_partial,barebones
 def foo(i, j, k):

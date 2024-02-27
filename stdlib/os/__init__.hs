@@ -30,7 +30,7 @@ class EnvMap:
 
     def _init_if_needed(self):
         if len(self._map) == 0:
-            env = _C.seq_env()
+            env = _C.hs_env()
             p = env[0]
             i = 0
             while p:

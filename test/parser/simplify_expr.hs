@@ -312,15 +312,15 @@ print a[0], a[1] #: 5 5
 a = __array__[int](2, 3) #! '__array__[int]' object has no method '__new__' with arguments (int, int)
 
 #%% call_err_1,barebones
-seq_print(1, name="56", 2) #! positional argument follows keyword argument
+hs_print(1, name="56", 2) #! positional argument follows keyword argument
 
 #%% call_err_2,barebones
 x = (1, 2)
-seq_print(1, name=*x) #! syntax error, unexpected '*'
+hs_print(1, name=*x) #! syntax error, unexpected '*'
 
 #%% call_err_3,barebones
 x = (1, 2)
-seq_print(1, name=**x) #! syntax error, unexpected '*'
+hs_print(1, name=**x) #! syntax error, unexpected '*'
 
 #%% call_collections
 from collections import namedtuple as nt

@@ -299,24 +299,24 @@ class __internal__:
         %0 = trunc i{=F} %what to i{=T}
         ret i{=T} %0
 
-    def seq_assert(file: str, line: int, msg: str) -> AssertionError:
+    def hs_assert(file: str, line: int, msg: str) -> AssertionError:
         s = f": {msg}" if msg else ""
         s = f"Assert failed{s} ({file}:{line.__repr__()})"
         return AssertionError(s)
 
-    def seq_assert_test(file: str, line: int, msg: str):
-        from C import seq_print(str)
+    def hs_assert_test(file: str, line: int, msg: str):
+        from C import hs_print(str)
         s = f": {msg}" if msg else ""
         s = f"\033[1;31mTEST FAILED:\033[0m {file} (line {line}){s}\n"
-        seq_print(s)
+        hs_print(s)
 
     def check_errno(prefix: str):
         @pure
         @C
-        def seq_check_errno() -> str:
+        def hs_check_errno() -> str:
             pass
 
-        msg = seq_check_errno()
+        msg = hs_check_errno()
         if msg:
             raise OSError(prefix + msg)
 

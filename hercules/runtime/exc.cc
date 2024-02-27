@@ -44,15 +44,15 @@ struct Backtrace {
         if (count >= LIMIT || !function || !filename) {
             return;
         } else if (count == 0) {
-            frames = (BacktraceFrame *) seq_alloc(LIMIT * sizeof(*frames));
+            frames = (BacktraceFrame *) hs_alloc(LIMIT * sizeof(*frames));
         }
 
         size_t functionLen = strlen(function) + 1;
-        auto *functionDup = (char *) seq_alloc_atomic(functionLen);
+        auto *functionDup = (char *) hs_alloc_atomic(functionLen);
         memcpy(functionDup, function, functionLen);
 
         size_t filenameLen = strlen(filename) + 1;
-        auto *filenameDup = (char *) seq_alloc_atomic(filenameLen);
+        auto *filenameDup = (char *) hs_alloc_atomic(filenameLen);
         memcpy(filenameDup, filename, filenameLen);
 
         frames[count++] = {functionDup, filenameDup, pc, lineno};
@@ -63,10 +63,10 @@ struct Backtrace {
     void free() {
         for (auto i = 0; i < count; i++) {
             auto *frame = &frames[i];
-            seq_free(frame->function);
-            seq_free(frame->filename);
+            hs_free(frame->function);
+            hs_free(frame->filename);
         }
-        seq_free(frames);
+        hs_free(frames);
         frames = nullptr;
         count = 0;
     }
@@ -136,51 +136,51 @@ struct OurBaseException_t {
 typedef struct OurBaseException_t OurException;
 
 struct SeqExcHeader_t {
-    seq_str_t type;
-    seq_str_t msg;
-    seq_str_t func;
-    seq_str_t file;
-    seq_int_t line;
-    seq_int_t col;
+    hs_str_t type;
+    hs_str_t msg;
+    hs_str_t func;
+    hs_str_t file;
+    hs_int_t line;
+    hs_int_t col;
     void *python_type;
 };
 
-void seq_exc_init() {
-    ourBaseFromUnwindOffset = seq_exc_offset();
-    ourBaseExceptionClass = seq_exc_class();
+void hs_exc_init() {
+    ourBaseFromUnwindOffset = hs_exc_offset();
+    ourBaseExceptionClass = hs_exc_class();
 }
 
-static void seq_delete_exc(_Unwind_Exception *expToDelete) {
+static void hs_delete_exc(_Unwind_Exception *expToDelete) {
     if (!expToDelete || expToDelete->exception_class != ourBaseExceptionClass)
         return;
     auto *exc = (OurException *) ((char *) expToDelete + ourBaseFromUnwindOffset);
-    if (seq_flags & SEQ_FLAG_DEBUG) {
+    if (hs_flags & HS_FLAG_DEBUG) {
         exc->bt.free();
     }
-    seq_free(exc);
+    hs_free(exc);
 }
 
-static void seq_delete_unwind_exc(_Unwind_Reason_Code reason,
+static void hs_delete_unwind_exc(_Unwind_Reason_Code reason,
                                   _Unwind_Exception *expToDelete) {
-    seq_delete_exc(expToDelete);
+    hs_delete_exc(expToDelete);
 }
 
 static struct backtrace_state *state = nullptr;
 static std::mutex stateLock;
 
-SEQ_FUNC void *seq_alloc_exc(int type, void *obj) {
+HS_FUNC void *hs_alloc_exc(int type, void *obj) {
     const size_t size = sizeof(OurException);
-    auto *e = (OurException *) memset(seq_alloc(size), 0, size);
+    auto *e = (OurException *) memset(hs_alloc(size), 0, size);
     assert(e);
     e->type.type = type;
     e->obj = obj;
     e->unwindException.exception_class = ourBaseExceptionClass;
-    e->unwindException.exception_cleanup = seq_delete_unwind_exc;
-    if (seq_flags & SEQ_FLAG_DEBUG) {
+    e->unwindException.exception_cleanup = hs_delete_unwind_exc;
+    if (hs_flags & HS_FLAG_DEBUG) {
         e->bt.frames = nullptr;
         e->bt.count = 0;
 
-        if (seq_flags & SEQ_FLAG_STANDALONE) {
+        if (hs_flags & HS_FLAG_STANDALONE) {
             if (!state) {
                 stateLock.lock();
                 if (!state)
@@ -199,7 +199,7 @@ SEQ_FUNC void *seq_alloc_exc(int type, void *obj) {
     return &(e->unwindException);
 }
 
-static void print_from_last_dot(seq_str_t s, std::ostringstream &buf) {
+static void print_from_last_dot(hs_str_t s, std::ostringstream &buf) {
     char *p = s.str;
     int64_t n = s.len;
 
@@ -216,18 +216,18 @@ static void print_from_last_dot(seq_str_t s, std::ostringstream &buf) {
 
 static std::function<void(const hercules::runtime::JITError &)> jitErrorCallback;
 
-SEQ_FUNC void seq_terminate(void *exc) {
-    auto *base = (OurBaseException_t *) ((char *) exc + seq_exc_offset());
+HS_FUNC void hs_terminate(void *exc) {
+    auto *base = (OurBaseException_t *) ((char *) exc + hs_exc_offset());
     void *obj = base->obj;
     auto *hdr = (SeqExcHeader_t *) obj;
 
     if (std::string(hdr->type.str, hdr->type.len) == "SystemExit") {
-        seq_int_t status = *(seq_int_t *) (hdr + 1);
+        hs_int_t status = *(hs_int_t *) (hdr + 1);
         exit((int) status);
     }
 
     std::ostringstream buf;
-    if (seq_flags & SEQ_FLAG_CAPTURE_OUTPUT)
+    if (hs_flags & HS_FLAG_CAPTURE_OUTPUT)
         buf << hercules::runtime::getCapturedOutput();
 
     buf << "\033[1m";
@@ -250,7 +250,7 @@ SEQ_FUNC void seq_terminate(void *exc) {
     }
     buf << "\n";
 
-    if ((seq_flags & SEQ_FLAG_DEBUG) && (seq_flags & SEQ_FLAG_STANDALONE)) {
+    if ((hs_flags & HS_FLAG_DEBUG) && (hs_flags & HS_FLAG_STANDALONE)) {
         auto *bt = &base->bt;
         if (bt->count > 0) {
             buf << "\n\033[1mBacktrace:\033[0m\n";
@@ -266,7 +266,7 @@ SEQ_FUNC void seq_terminate(void *exc) {
     }
 
     auto output = buf.str();
-    if (seq_flags & SEQ_FLAG_STANDALONE) {
+    if (hs_flags & HS_FLAG_STANDALONE) {
         fwrite(output.data(), 1, output.size(), stderr);
         abort();
     } else {
@@ -276,7 +276,7 @@ SEQ_FUNC void seq_terminate(void *exc) {
         std::string type(hdr->type.str, hdr->type.len);
 
         std::vector<uintptr_t> backtrace;
-        if (seq_flags & SEQ_FLAG_DEBUG) {
+        if (hs_flags & HS_FLAG_DEBUG) {
             for (unsigned i = 0; i < bt->count; i++) {
                 backtrace.push_back(bt->frames[i].pc);
             }
@@ -290,10 +290,10 @@ SEQ_FUNC void seq_terminate(void *exc) {
     }
 }
 
-SEQ_FUNC void seq_throw(void *exc) {
+HS_FUNC void hs_throw(void *exc) {
     _Unwind_Reason_Code code = _Unwind_RaiseException((_Unwind_Exception *) exc);
     (void) code;
-    seq_terminate(exc);
+    hs_terminate(exc);
 }
 
 static uintptr_t readULEB128(const uint8_t **data) {
@@ -440,7 +440,7 @@ static bool handleActionValue(int64_t *resultAction, uint8_t TTypeEncoding,
     auto *excp = (struct OurBaseException_t *) (((char *) exceptionObject) +
                                                 ourBaseFromUnwindOffset);
     OurExceptionType_t *excpType = &(excp->type);
-    seq_int_t type = excpType->type;
+    hs_int_t type = excpType->type;
 
     const uint8_t *actionPos = (uint8_t *) actionEntry, *tempActionPos;
     int64_t typeOffset = 0, actionOffset;
@@ -596,7 +596,7 @@ static _Unwind_Reason_Code handleLsda(int version, const uint8_t *lsda,
     return ret;
 }
 
-SEQ_FUNC _Unwind_Reason_Code seq_personality(int version, _Unwind_Action actions,
+HS_FUNC _Unwind_Reason_Code hs_personality(int version, _Unwind_Action actions,
                                              uint64_t exceptionClass,
                                              _Unwind_Exception *exceptionObject,
                                              _Unwind_Context *context) {
@@ -605,12 +605,12 @@ SEQ_FUNC _Unwind_Reason_Code seq_personality(int version, _Unwind_Action actions
     return handleLsda(version, lsda, actions, exceptionClass, exceptionObject, context);
 }
 
-SEQ_FUNC int64_t seq_exc_offset() {
+HS_FUNC int64_t hs_exc_offset() {
     static OurBaseException_t dummy = {};
     return (int64_t) ((uintptr_t) &dummy - (uintptr_t) &(dummy.unwindException));
 }
 
-SEQ_FUNC uint64_t seq_exc_class() {
+HS_FUNC uint64_t hs_exc_class() {
     return genClass(ourBaseExcpClassChars, sizeof(ourBaseExcpClassChars));
 }
 

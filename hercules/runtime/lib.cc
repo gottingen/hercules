@@ -53,28 +53,28 @@ extern "C" void __kmpc_set_gc_callbacks(gc_setup_callback get_stack_base,
                                         gc_roots_callback add_roots,
                                         gc_roots_callback del_roots);
 
-void seq_exc_init();
+void hs_exc_init();
 
 #ifdef HERCULES_GPU
-void seq_nvptx_init();
+void hs_nvptx_init();
 #endif
 
-int seq_flags;
+int hs_flags;
 
-SEQ_FUNC void seq_init(int flags) {
+HS_FUNC void hs_init(int flags) {
     GC_INIT();
     GC_set_warn_proc(GC_ignore_warn_proc);
     GC_allow_register_threads();
     __kmpc_set_gc_callbacks(GC_get_stack_base, (gc_setup_callback) GC_register_my_thread,
                             GC_add_roots, GC_remove_roots);
-    seq_exc_init();
+    hs_exc_init();
 #ifdef HERCULES_GPU
-    seq_nvptx_init();
+    hs_nvptx_init();
 #endif
-    seq_flags = flags;
+    hs_flags = flags;
 }
 
-SEQ_FUNC bool seq_is_macos() {
+HS_FUNC bool hs_is_macos() {
 #ifdef __APPLE__
     return true;
 #else
@@ -82,30 +82,30 @@ SEQ_FUNC bool seq_is_macos() {
 #endif
 }
 
-SEQ_FUNC seq_int_t seq_pid() { return (seq_int_t) getpid(); }
+HS_FUNC hs_int_t hs_pid() { return (hs_int_t) getpid(); }
 
-SEQ_FUNC seq_int_t seq_time() {
+HS_FUNC hs_int_t hs_time() {
     auto duration = std::chrono::system_clock::now().time_since_epoch();
-    seq_int_t nanos =
+    hs_int_t nanos =
             std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
     return nanos;
 }
 
-SEQ_FUNC seq_int_t seq_time_monotonic() {
+HS_FUNC hs_int_t hs_time_monotonic() {
     auto duration = std::chrono::steady_clock::now().time_since_epoch();
-    seq_int_t nanos =
+    hs_int_t nanos =
             std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
     return nanos;
 }
 
-SEQ_FUNC seq_int_t seq_time_highres() {
+HS_FUNC hs_int_t hs_time_highres() {
     auto duration = std::chrono::high_resolution_clock::now().time_since_epoch();
-    seq_int_t nanos =
+    hs_int_t nanos =
             std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count();
     return nanos;
 }
 
-static void copy_time_c_to_seq(struct tm *x, seq_time_t *output) {
+static void copy_time_c_to_seq(struct tm *x, hs_time_t *output) {
     output->year = x->tm_year;
     output->yday = x->tm_yday;
     output->sec = x->tm_sec;
@@ -117,7 +117,7 @@ static void copy_time_c_to_seq(struct tm *x, seq_time_t *output) {
     output->isdst = x->tm_isdst;
 }
 
-static void copy_time_seq_to_c(seq_time_t *x, struct tm *output) {
+static void copy_time_hs_to_c(hs_time_t *x, struct tm *output) {
     output->tm_year = x->year;
     output->tm_yday = x->yday;
     output->tm_sec = x->sec;
@@ -129,7 +129,7 @@ static void copy_time_seq_to_c(seq_time_t *x, struct tm *output) {
     output->tm_isdst = x->isdst;
 }
 
-SEQ_FUNC bool seq_localtime(seq_int_t secs, seq_time_t *output) {
+HS_FUNC bool hs_localtime(hs_int_t secs, hs_time_t *output) {
     struct tm result;
     time_t now = (secs >= 0 ? secs : time(nullptr));
     if (now == (time_t) -1 || !localtime_r(&now, &result))
@@ -138,7 +138,7 @@ SEQ_FUNC bool seq_localtime(seq_int_t secs, seq_time_t *output) {
     return true;
 }
 
-SEQ_FUNC bool seq_gmtime(seq_int_t secs, seq_time_t *output) {
+HS_FUNC bool hs_gmtime(hs_int_t secs, hs_time_t *output) {
     struct tm result;
     time_t now = (secs >= 0 ? secs : time(nullptr));
     if (now == (time_t) -1 || !gmtime_r(&now, &result))
@@ -147,25 +147,25 @@ SEQ_FUNC bool seq_gmtime(seq_int_t secs, seq_time_t *output) {
     return true;
 }
 
-SEQ_FUNC seq_int_t seq_mktime(seq_time_t *time) {
+HS_FUNC hs_int_t hs_mktime(hs_time_t *time) {
     struct tm result;
-    copy_time_seq_to_c(time, &result);
+    copy_time_hs_to_c(time, &result);
     return mktime(&result);
 }
 
-SEQ_FUNC void seq_sleep(double secs) {
+HS_FUNC void hs_sleep(double secs) {
     std::this_thread::sleep_for(std::chrono::duration<double, std::ratio<1>>(secs));
 }
 
 extern char **environ;
-SEQ_FUNC char **seq_env() { return environ; }
+HS_FUNC char **hs_env() { return environ; }
 
 /*
  * GC
  */
 #define USE_STANDARD_MALLOC 0
 
-SEQ_FUNC void *seq_alloc(size_t n) {
+HS_FUNC void *hs_alloc(size_t n) {
 #if USE_STANDARD_MALLOC
     return malloc(n);
 #else
@@ -173,7 +173,7 @@ SEQ_FUNC void *seq_alloc(size_t n) {
 #endif
 }
 
-SEQ_FUNC void *seq_alloc_atomic(size_t n) {
+HS_FUNC void *hs_alloc_atomic(size_t n) {
 #if USE_STANDARD_MALLOC
     return malloc(n);
 #else
@@ -181,7 +181,7 @@ SEQ_FUNC void *seq_alloc_atomic(size_t n) {
 #endif
 }
 
-SEQ_FUNC void *seq_alloc_uncollectable(size_t n) {
+HS_FUNC void *hs_alloc_uncollectable(size_t n) {
 #if USE_STANDARD_MALLOC
     return malloc(n);
 #else
@@ -189,7 +189,7 @@ SEQ_FUNC void *seq_alloc_uncollectable(size_t n) {
 #endif
 }
 
-SEQ_FUNC void *seq_alloc_atomic_uncollectable(size_t n) {
+HS_FUNC void *hs_alloc_atomic_uncollectable(size_t n) {
 #if USE_STANDARD_MALLOC
     return malloc(n);
 #else
@@ -197,7 +197,7 @@ SEQ_FUNC void *seq_alloc_atomic_uncollectable(size_t n) {
 #endif
 }
 
-SEQ_FUNC void *seq_calloc(size_t m, size_t n) {
+HS_FUNC void *hs_calloc(size_t m, size_t n) {
 #if USE_STANDARD_MALLOC
     return calloc(m, n);
 #else
@@ -208,7 +208,7 @@ SEQ_FUNC void *seq_calloc(size_t m, size_t n) {
 #endif
 }
 
-SEQ_FUNC void *seq_calloc_atomic(size_t m, size_t n) {
+HS_FUNC void *hs_calloc_atomic(size_t m, size_t n) {
 #if USE_STANDARD_MALLOC
     return calloc(m, n);
 #else
@@ -219,7 +219,7 @@ SEQ_FUNC void *seq_calloc_atomic(size_t m, size_t n) {
 #endif
 }
 
-SEQ_FUNC void *seq_realloc(void *p, size_t newsize, size_t oldsize) {
+HS_FUNC void *hs_realloc(void *p, size_t newsize, size_t oldsize) {
 #if USE_STANDARD_MALLOC
     return realloc(p, newsize);
 #else
@@ -227,7 +227,7 @@ SEQ_FUNC void *seq_realloc(void *p, size_t newsize, size_t oldsize) {
 #endif
 }
 
-SEQ_FUNC void seq_free(void *p) {
+HS_FUNC void hs_free(void *p) {
 #if USE_STANDARD_MALLOC
     free(p);
 #else
@@ -235,31 +235,31 @@ SEQ_FUNC void seq_free(void *p) {
 #endif
 }
 
-SEQ_FUNC void seq_register_finalizer(void *p, void (*f)(void *obj, void *data)) {
+HS_FUNC void hs_register_finalizer(void *p, void (*f)(void *obj, void *data)) {
 #if !USE_STANDARD_MALLOC
     GC_REGISTER_FINALIZER(p, f, nullptr, nullptr, nullptr);
 #endif
 }
 
-SEQ_FUNC void seq_gc_add_roots(void *start, void *end) {
+HS_FUNC void hs_gc_add_roots(void *start, void *end) {
 #if !USE_STANDARD_MALLOC
     GC_add_roots(start, end);
 #endif
 }
 
-SEQ_FUNC void seq_gc_remove_roots(void *start, void *end) {
+HS_FUNC void hs_gc_remove_roots(void *start, void *end) {
 #if !USE_STANDARD_MALLOC
     GC_remove_roots(start, end);
 #endif
 }
 
-SEQ_FUNC void seq_gc_clear_roots() {
+HS_FUNC void hs_gc_clear_roots() {
 #if !USE_STANDARD_MALLOC
     GC_clear_roots();
 #endif
 }
 
-SEQ_FUNC void seq_gc_exclude_static_roots(void *start, void *end) {
+HS_FUNC void hs_gc_exclude_static_roots(void *start, void *end) {
 #if !USE_STANDARD_MALLOC
     GC_exclude_static_roots(start, end);
 #endif
@@ -268,11 +268,11 @@ SEQ_FUNC void seq_gc_exclude_static_roots(void *start, void *end) {
 /*
  * String conversion
  */
-static seq_str_t string_conv(const std::string &s) {
+static hs_str_t string_conv(const std::string &s) {
     auto n = s.size();
-    auto *p = (char *) seq_alloc_atomic(n);
+    auto *p = (char *) hs_alloc_atomic(n);
     memcpy(p, s.data(), n);
-    return {(seq_int_t) n, p};
+    return {(hs_int_t) n, p};
 }
 
 template<typename T>
@@ -286,7 +286,7 @@ std::string default_format(double n) {
 }
 
 template<typename T>
-seq_str_t fmt_conv(T n, seq_str_t format, bool *error) {
+hs_str_t fmt_conv(T n, hs_str_t format, bool *error) {
     *error = false;
     try {
         if (format.len == 0) {
@@ -302,23 +302,23 @@ seq_str_t fmt_conv(T n, seq_str_t format, bool *error) {
     }
 }
 
-SEQ_FUNC seq_str_t seq_str_int(seq_int_t n, seq_str_t format, bool *error) {
-    return fmt_conv<seq_int_t>(n, format, error);
+HS_FUNC hs_str_t hs_str_int(hs_int_t n, hs_str_t format, bool *error) {
+    return fmt_conv<hs_int_t>(n, format, error);
 }
 
-SEQ_FUNC seq_str_t seq_str_uint(seq_int_t n, seq_str_t format, bool *error) {
+HS_FUNC hs_str_t hs_str_uint(hs_int_t n, hs_str_t format, bool *error) {
     return fmt_conv<uint64_t>(n, format, error);
 }
 
-SEQ_FUNC seq_str_t seq_str_float(double f, seq_str_t format, bool *error) {
+HS_FUNC hs_str_t hs_str_float(double f, hs_str_t format, bool *error) {
     return fmt_conv<double>(f, format, error);
 }
 
-SEQ_FUNC seq_str_t seq_str_ptr(void *p, seq_str_t format, bool *error) {
+HS_FUNC hs_str_t hs_str_ptr(void *p, hs_str_t format, bool *error) {
     return fmt_conv(fmt::ptr(p), format, error);
 }
 
-SEQ_FUNC seq_str_t seq_str_str(seq_str_t s, seq_str_t format, bool *error) {
+HS_FUNC hs_str_t hs_str_str(hs_str_t s, hs_str_t format, bool *error) {
     std::string t(s.str, s.len);
     return fmt_conv(t, format, error);
 }
@@ -327,23 +327,23 @@ SEQ_FUNC seq_str_t seq_str_str(seq_str_t s, seq_str_t format, bool *error) {
  * General I/O
  */
 
-SEQ_FUNC seq_str_t seq_check_errno() {
+HS_FUNC hs_str_t hs_check_errno() {
     if (errno) {
         std::string msg = strerror(errno);
-        auto *buf = (char *) seq_alloc_atomic(msg.size());
+        auto *buf = (char *) hs_alloc_atomic(msg.size());
         memcpy(buf, msg.data(), msg.size());
-        return {(seq_int_t) msg.size(), buf};
+        return {(hs_int_t) msg.size(), buf};
     }
     return {0, nullptr};
 }
 
-SEQ_FUNC void seq_print(seq_str_t str) { seq_print_full(str, stdout); }
+HS_FUNC void hs_print(hs_str_t str) { hs_print_full(str, stdout); }
 
 static std::ostringstream capture;
 static std::mutex captureLock;
 
-SEQ_FUNC void seq_print_full(seq_str_t str, FILE *fo) {
-    if ((seq_flags & SEQ_FLAG_CAPTURE_OUTPUT) && (fo == stdout || fo == stderr)) {
+HS_FUNC void hs_print_full(hs_str_t str, FILE *fo) {
+    if ((hs_flags & HS_FLAG_CAPTURE_OUTPUT) && (fo == stdout || fo == stderr)) {
         captureLock.lock();
         capture.write(str.str, str.len);
         captureLock.unlock();
@@ -358,21 +358,21 @@ std::string hercules::runtime::getCapturedOutput() {
     return result;
 }
 
-SEQ_FUNC void *seq_stdin() { return stdin; }
+HS_FUNC void *hs_stdin() { return stdin; }
 
-SEQ_FUNC void *seq_stdout() { return stdout; }
+HS_FUNC void *hs_stdout() { return stdout; }
 
-SEQ_FUNC void *seq_stderr() { return stderr; }
+HS_FUNC void *hs_stderr() { return stderr; }
 
 /*
  * Threading
  */
 
-SEQ_FUNC void *seq_lock_new() {
-    return (void *) new(seq_alloc_atomic(sizeof(std::timed_mutex))) std::timed_mutex();
+HS_FUNC void *hs_lock_new() {
+    return (void *) new(hs_alloc_atomic(sizeof(std::timed_mutex))) std::timed_mutex();
 }
 
-SEQ_FUNC bool seq_lock_acquire(void *lock, bool block, double timeout) {
+HS_FUNC bool hs_lock_acquire(void *lock, bool block, double timeout) {
     auto *m = (std::timed_mutex *) lock;
     if (timeout < 0.0) {
         if (block) {
@@ -386,17 +386,17 @@ SEQ_FUNC bool seq_lock_acquire(void *lock, bool block, double timeout) {
     }
 }
 
-SEQ_FUNC void seq_lock_release(void *lock) {
+HS_FUNC void hs_lock_release(void *lock) {
     auto *m = (std::timed_mutex *) lock;
     m->unlock();
 }
 
-SEQ_FUNC void *seq_rlock_new() {
-    return (void *) new(seq_alloc_atomic(sizeof(std::recursive_timed_mutex)))
+HS_FUNC void *hs_rlock_new() {
+    return (void *) new(hs_alloc_atomic(sizeof(std::recursive_timed_mutex)))
             std::recursive_timed_mutex();
 }
 
-SEQ_FUNC bool seq_rlock_acquire(void *lock, bool block, double timeout) {
+HS_FUNC bool hs_rlock_acquire(void *lock, bool block, double timeout) {
     auto *m = (std::recursive_timed_mutex *) lock;
     if (timeout < 0.0) {
         if (block) {
@@ -410,7 +410,7 @@ SEQ_FUNC bool seq_rlock_acquire(void *lock, bool block, double timeout) {
     }
 }
 
-SEQ_FUNC void seq_rlock_release(void *lock) {
+HS_FUNC void hs_rlock_release(void *lock) {
     auto *m = (std::recursive_timed_mutex *) lock;
     m->unlock();
 }

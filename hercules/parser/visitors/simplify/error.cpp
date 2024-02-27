@@ -27,10 +27,10 @@ namespace hercules::ast {
     /// Transform asserts.
     /// @example
     ///   `assert foo()` ->
-    ///   `if not foo(): raise __internal__.seq_assert([file], [line], "")`
+    ///   `if not foo(): raise __internal__.hs_assert([file], [line], "")`
     ///   `assert foo(), msg` ->
-    ///   `if not foo(): raise __internal__.seq_assert([file], [line], str(msg))`
-    /// Use `seq_assert_test` instead of `seq_assert` and do not raise anything during unit
+    ///   `if not foo(): raise __internal__.hs_assert([file], [line], str(msg))`
+    /// Use `hs_assert_test` instead of `hs_assert` and do not raise anything during unit
     /// testing (i.e., when the enclosing function is marked with `@test`).
     void SimplifyVisitor::visit(AssertStmt *stmt) {
         ExprPtr msg = N<StringExpr>("");
@@ -39,7 +39,7 @@ namespace hercules::ast {
         auto test = ctx->inFunction() && (ctx->getBase()->attributes &&
                                           ctx->getBase()->attributes->has(Attr::Test));
         auto ex = N<CallExpr>(
-                N<DotExpr>("__internal__", test ? "seq_assert_test" : "seq_assert"),
+                N<DotExpr>("__internal__", test ? "hs_assert_test" : "hs_assert"),
                 N<StringExpr>(stmt->getSrcInfo().file), N<IntExpr>(stmt->getSrcInfo().line), msg);
         auto cond = N<UnaryExpr>("!", clone(stmt->expr));
         if (test) {

@@ -22,11 +22,11 @@ ROOT_PATH=${THIS_PATH}/../
 BUILD_PATH=${ROOT_PATH}/build
 
 # mkdir lib
-if [ ! -d "${BUILD_PATH}" ]; then
-  mkdir -p "${BUILD_PATH}"
-else
-  rm -rf "${BUILD_PATH:?}/*"
+if [ -d "${BUILD_PATH}" ]; then
+  rm -rf "${BUILD_PATH}"
 fi
+
+mkdir -p "${BUILD_PATH}"
 
 # build test
 cd "${BUILD_PATH}"
@@ -35,7 +35,7 @@ make -j8
 
 # export env
 PYTHONLIB=`find_libpython`
-export HERCULES_PATH=${PYTHONLIB}
+export HERCULES_PYTHON=${PYTHONLIB}
 export PYTHONPATH=${ROOT_PATH}/test/python
 cd "${ROOT_PATH}"
 ./build/hercules_test

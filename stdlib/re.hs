@@ -44,7 +44,7 @@ class Span:
 
 @C
 @pure
-def seq_re_match(re: cobj,
+def hs_re_match(re: cobj,
                  anchor: int,
                  string: str,
                  pos: int,
@@ -53,7 +53,7 @@ def seq_re_match(re: cobj,
 
 @C
 @pure
-def seq_re_match_one(re: cobj,
+def hs_re_match_one(re: cobj,
                      anchor: int,
                      string: str,
                      pos: int,
@@ -62,36 +62,36 @@ def seq_re_match_one(re: cobj,
 
 @C
 @pure
-def seq_re_pattern_groups(re: cobj) -> int:
+def hs_re_pattern_groups(re: cobj) -> int:
     pass
 
 @C
 @pure
-def seq_re_group_name_to_index(re: cobj, name: str) -> int:
+def hs_re_group_name_to_index(re: cobj, name: str) -> int:
     pass
 
 @C
 @pure
-def seq_re_group_index_to_name(re: cobj, index: int) -> str:
+def hs_re_group_index_to_name(re: cobj, index: int) -> str:
     pass
 
 @C
 @pure
-def seq_re_pattern_error(re: cobj) -> str:
+def hs_re_pattern_error(re: cobj) -> str:
     pass
 
 @C
 @pure
-def seq_re_escape(pattern: str) -> str:
+def hs_re_escape(pattern: str) -> str:
     pass
 
 @C
-def seq_re_purge() -> None:
+def hs_re_purge() -> None:
     pass
 
 @C
 @pure
-def seq_re_compile(pattern: str, flags: int) -> cobj:
+def hs_re_compile(pattern: str, flags: int) -> cobj:
     pass
 
 class error(Static[Exception]):
@@ -112,8 +112,8 @@ class Pattern:
     _re: cobj
 
 def compile(pattern: str, flags: int = 0):
-    re = seq_re_compile(pattern, flags)
-    err_msg = seq_re_pattern_error(re)
+    re = hs_re_compile(pattern, flags)
+    err_msg = hs_re_pattern_error(re)
     if err_msg:
         raise error(err_msg, pattern)
     return Pattern(pattern, flags, re)
@@ -143,10 +143,10 @@ def subn(pattern: str, repl, string: str, count: int = 0, flags: int = 0):
     return compile(pattern, flags).subn(repl, string, count)
 
 def escape(pattern: str):
-    return seq_re_escape(pattern)
+    return hs_re_escape(pattern)
 
 def purge():
-    seq_re_purge()
+    hs_re_purge()
 
 @tuple
 class Match:
@@ -162,7 +162,7 @@ class Match:
         return self._spans[g]
 
     def _get_group_str(self, g: str, n: int):
-        return self._get_group_int(seq_re_group_name_to_index(self.re._re, g), n)
+        return self._get_group_int(hs_re_group_name_to_index(self.re._re, g), n)
 
     def _get_group(self, g, n: int):
         if isinstance(g, int):
@@ -330,7 +330,7 @@ class Match:
         max_group = self.lastindex
         if max_group is None:
             return None
-        return seq_re_group_index_to_name(self.re._re, max_group)
+        return hs_re_group_index_to_name(self.re._re, max_group)
 
     def groups(self, default: Optional[str] = None):
         def get_or_default(item, default):
@@ -360,13 +360,13 @@ class Match:
 class Pattern:
     @property
     def groups(self):
-        return seq_re_pattern_groups(self._re)
+        return hs_re_pattern_groups(self._re)
 
     @property
     def groupindex(self):
         d = {}
         for i in range(1, self.groups + 1):
-            name = seq_re_group_index_to_name(self._re, i)
+            name = hs_re_group_index_to_name(self._re, i)
             if name:
                 d[name] = i
         return d
@@ -378,7 +378,7 @@ class Pattern:
         if posx > endposx:
             return None
 
-        spans = seq_re_match(self._re, anchor, string, posx, endposx)
+        spans = hs_re_match(self._re, anchor, string, posx, endposx)
         if not spans[0]:
             return None
 
@@ -392,7 +392,7 @@ class Pattern:
             return
 
         while True:
-            spans = seq_re_match(self._re, anchor, string, posx, endposx)
+            spans = hs_re_match(self._re, anchor, string, posx, endposx)
 
             if not spans[0]:
                 break

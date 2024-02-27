@@ -16,9 +16,9 @@
 
 argv = list(__argv__, len(__argv__))
 
-stdin = File(_C.seq_stdin())
-stdout = File(_C.seq_stdout())
-stderr = File(_C.seq_stderr())
+stdin = File(_C.hs_stdin())
+stdout = File(_C.hs_stdout())
+stderr = File(_C.hs_stderr())
 
 def exit(status: int = 0):
     raise SystemExit(status)

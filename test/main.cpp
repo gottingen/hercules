@@ -250,7 +250,7 @@ static pair<vector<string>, bool> findExpects(const string &filename, bool isCod
 
 string argv0;
 
-class SeqTest : public testing::TestWithParam<
+class HerculesTest : public testing::TestWithParam<
                     tuple<string /*filename*/, bool /*debug*/, string /* case name */,
                           string /* case code */, int /* case line */,
                           bool /* barebones stdlib */, bool /* Python numerics */>> {
@@ -259,7 +259,7 @@ class SeqTest : public testing::TestWithParam<
   pid_t pid;
 
 public:
-  SeqTest() : buf(65536), out_pipe(), pid() {}
+  HerculesTest() : buf(65536), out_pipe(), pid() {}
   string getFilename(const string &basename) {
     return string(TEST_DIR) + "/" + basename;
   }
@@ -331,7 +331,7 @@ public:
   string result() { return string(buf.data()); }
 };
 static string
-getTestNameFromParam(const testing::TestParamInfo<SeqTest::ParamType> &info) {
+getTestNameFromParam(const testing::TestParamInfo<HerculesTest::ParamType> &info) {
   const string basename = get<0>(info.param);
   const bool debug = get<1>(info.param);
 
@@ -348,10 +348,10 @@ getTestNameFromParam(const testing::TestParamInfo<SeqTest::ParamType> &info) {
   return normname + (debug ? "_debug" : "");
 }
 static string
-getTypeTestNameFromParam(const testing::TestParamInfo<SeqTest::ParamType> &info) {
+getTypeTestNameFromParam(const testing::TestParamInfo<HerculesTest::ParamType> &info) {
   return getTestNameFromParam(info) + "_" + get<2>(info.param);
 }
-TEST_P(SeqTest, Run) {
+TEST_P(HerculesTest, Run) {
   const string file = get<0>(GetParam());
   int status;
   bool isCase = !get<2>(GetParam()).empty();
@@ -415,9 +415,8 @@ auto getTypeTests(const vector<string> &files) {
   return cases;
 }
 
-// clang-format off
 INSTANTIATE_TEST_SUITE_P(
-    TypeTests, SeqTest,
+    TypeTests, HerculesTest,
     testing::ValuesIn(getTypeTests({
       "parser/simplify_expr.hs",
       "parser/simplify_stmt.hs",
@@ -429,7 +428,7 @@ INSTANTIATE_TEST_SUITE_P(
     getTypeTestNameFromParam);
 
 INSTANTIATE_TEST_SUITE_P(
-    CoreTests, SeqTest,
+    CoreTests, HerculesTest,
     testing::Combine(
       testing::Values(
         "core/helloworld.hs",
@@ -458,7 +457,7 @@ INSTANTIATE_TEST_SUITE_P(
     getTestNameFromParam);
 
 INSTANTIATE_TEST_SUITE_P(
-    NumericsTests, SeqTest,
+    NumericsTests, HerculesTest,
     testing::Combine(
       testing::Values(
         "core/numerics.hs"
@@ -473,7 +472,7 @@ INSTANTIATE_TEST_SUITE_P(
     getTestNameFromParam);
 
 INSTANTIATE_TEST_SUITE_P(
-    StdlibTests, SeqTest,
+    StdlibTests, HerculesTest,
     testing::Combine(
       testing::Values(
         "stdlib/str_test.hs",
@@ -500,7 +499,7 @@ INSTANTIATE_TEST_SUITE_P(
     getTestNameFromParam);
 
 INSTANTIATE_TEST_SUITE_P(
-    OptTests, SeqTest,
+    OptTests, HerculesTest,
     testing::Combine(
         testing::Values(
             "transform/canonical.hs",

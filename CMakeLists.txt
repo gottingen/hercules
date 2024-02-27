@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(
         Hercules
-        VERSION "0.1.1"
+        VERSION "0.2.1"
         HOMEPAGE_URL "https://github.com/gottingen/hercules"
         DESCRIPTION "high-performance, extensible Python compiler")
 set(HERCULES_JIT_PYTHON_VERSION "0.1.7")
@@ -81,9 +81,16 @@ set(HERCULES_JUPYTER_FILES hercules/util/jupyter.h hercules/util/jupyter.cpp)
 add_library(hercules_jupyter SHARED ${HERCULES_JUPYTER_FILES})
 
 # Hercules runtime library
-set(HERCULESRT_FILES hercules/runtime/lib.h hercules/runtime/lib.cpp
-        hercules/runtime/re.cpp hercules/runtime/exc.cpp
-        hercules/runtime/gpu.cpp)
+set(HERCULESRT_FILES
+        hercules/runtime/lib.h
+        hercules/runtime/hs_str.h
+        hercules/runtime/hs_str.cc
+        hercules/runtime/lib.cc
+        hercules/runtime/re.cc
+        hercules/runtime/exc.cc
+        hercules/runtime/gpu.cc
+)
+
 add_library(herculesrt SHARED ${HERCULESRT_FILES})
 add_dependencies(herculesrt zlibstatic gc backtrace bz2 liblzma re2)
 if (APPLE AND APPLE_ARM)

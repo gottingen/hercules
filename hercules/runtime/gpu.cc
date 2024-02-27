@@ -43,41 +43,41 @@
 static std::vector<CUmodule> modules;
 static CUcontext context;
 
-void seq_nvptx_init() {
+void hs_nvptx_init() {
   CUdevice device;
   check(cuInit(0));
   check(cuDeviceGet(&device, 0));
   check(cuCtxCreate(&context, 0, device));
 }
 
-SEQ_FUNC void seq_nvptx_load_module(const char *filename) {
+HS_FUNC void seq_nvptx_load_module(const char *filename) {
   CUmodule module;
   check(cuModuleLoad(&module, filename));
   modules.push_back(module);
 }
 
-SEQ_FUNC seq_int_t seq_nvptx_device_count() {
+HS_FUNC hs_int_t hs_nvptx_device_count() {
   int devCount;
   check(cuDeviceGetCount(&devCount));
   return devCount;
 }
 
-SEQ_FUNC seq_str_t seq_nvptx_device_name(CUdevice device) {
+HS_FUNC hs_str_t hs_nvptx_device_name(CUdevice device) {
   char name[128];
   check(cuDeviceGetName(name, sizeof(name) - 1, device));
-  auto sz = static_cast<seq_int_t>(strlen(name));
-  auto *p = (char *)seq_alloc_atomic(sz);
+  auto sz = static_cast<hs_int_t>(strlen(name));
+  auto *p = (char *)hs_alloc_atomic(sz);
   memcpy(p, name, sz);
   return {sz, p};
 }
 
-SEQ_FUNC seq_int_t seq_nvptx_device_capability(CUdevice device) {
+HS_FUNC hs_int_t hs_nvptx_device_capability(CUdevice device) {
   int devMajor, devMinor;
   check(cuDeviceComputeCapability(&devMajor, &devMinor, device));
-  return ((seq_int_t)devMajor << 32) | (seq_int_t)devMinor;
+  return ((hs_int_t)devMajor << 32) | (hs_int_t)devMinor;
 }
 
-SEQ_FUNC CUdevice seq_nvptx_device(seq_int_t idx) {
+HS_FUNC CUdevice hs_nvptx_device(hs_int_t idx) {
   CUdevice device;
   check(cuDeviceGet(&device, idx));
   return device;
@@ -90,7 +90,7 @@ static bool name_char_valid(char c, bool first) {
   return ok;
 }
 
-SEQ_FUNC CUfunction seq_nvptx_function(seq_str_t name) {
+HS_FUNC CUfunction seq_nvptx_function(hs_str_t name) {
   CUfunction function;
   CUresult result;
 
@@ -116,7 +116,7 @@ SEQ_FUNC CUfunction seq_nvptx_function(seq_str_t name) {
   return {};
 }
 
-SEQ_FUNC void seq_nvptx_invoke(CUfunction f, unsigned int gridDimX,
+HS_FUNC void seq_nvptx_invoke(CUfunction f, unsigned int gridDimX,
                                unsigned int gridDimY, unsigned int gridDimZ,
                                unsigned int blockDimX, unsigned int blockDimY,
                                unsigned int blockDimZ, unsigned int sharedMemBytes,
@@ -125,7 +125,7 @@ SEQ_FUNC void seq_nvptx_invoke(CUfunction f, unsigned int gridDimX,
                        sharedMemBytes, nullptr, kernelParams, nullptr));
 }
 
-SEQ_FUNC CUdeviceptr seq_nvptx_device_alloc(seq_int_t size) {
+HS_FUNC CUdeviceptr hs_nvptx_device_alloc(hs_int_t size) {
   if (size == 0)
     return {};
 
@@ -134,17 +134,17 @@ SEQ_FUNC CUdeviceptr seq_nvptx_device_alloc(seq_int_t size) {
   return devp;
 }
 
-SEQ_FUNC void seq_nvptx_memcpy_h2d(CUdeviceptr devp, char *hostp, seq_int_t size) {
+HS_FUNC void hs_nvptx_memcpy_h2d(CUdeviceptr devp, char *hostp, hs_int_t size) {
   if (size)
     check(cuMemcpyHtoD(devp, hostp, size));
 }
 
-SEQ_FUNC void seq_nvptx_memcpy_d2h(char *hostp, CUdeviceptr devp, seq_int_t size) {
+HS_FUNC void hs_nvptx_memcpy_d2h(char *hostp, CUdeviceptr devp, hs_int_t size) {
   if (size)
     check(cuMemcpyDtoH(hostp, devp, size));
 }
 
-SEQ_FUNC void seq_nvptx_device_free(CUdeviceptr devp) {
+HS_FUNC void hs_nvptx_device_free(CUdeviceptr devp) {
   if (devp)
     check(cuMemFree(devp));
 }

@@ -23,23 +23,11 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-
 #include <unwind.h>
+#include "hercules/runtime/port.h"
+#include "hercules/runtime/hs_str.h"
 
-#define SEQ_FLAG_DEBUG (1 << 0)          // compiled/running in debug mode
-#define SEQ_FLAG_CAPTURE_OUTPUT (1 << 1) // capture writes to stdout/stderr
-#define SEQ_FLAG_STANDALONE (1 << 2)     // compiled as a standalone object/binary
-
-#define SEQ_FUNC extern "C"
-
-typedef int64_t seq_int_t;
-
-struct seq_str_t {
-    seq_int_t len;
-    char *str;
-};
-
-struct seq_time_t {
+struct hs_time_t {
     int16_t year;
     int16_t yday;
     int8_t sec;
@@ -51,66 +39,65 @@ struct seq_time_t {
     int8_t isdst;
 };
 
-SEQ_FUNC int seq_flags;
+HS_FUNC int hs_flags;
 
-SEQ_FUNC void seq_init(int flags);
+HS_FUNC void hs_init(int flags);
 
-SEQ_FUNC bool seq_is_macos();
-SEQ_FUNC seq_int_t seq_pid();
-SEQ_FUNC seq_int_t seq_time();
-SEQ_FUNC seq_int_t seq_time_monotonic();
-SEQ_FUNC seq_int_t seq_time_highres();
-SEQ_FUNC bool seq_localtime(seq_int_t secs, seq_time_t *output);
-SEQ_FUNC bool seq_gmtime(seq_int_t secs, seq_time_t *output);
-SEQ_FUNC seq_int_t seq_mktime(seq_time_t *time);
-SEQ_FUNC void seq_sleep(double secs);
-SEQ_FUNC char **seq_env();
-SEQ_FUNC void seq_assert_failed(seq_str_t file, seq_int_t line);
+HS_FUNC bool hs_is_macos();
+HS_FUNC hs_int_t hs_pid();
+HS_FUNC hs_int_t hs_time();
+HS_FUNC hs_int_t hs_time_monotonic();
+HS_FUNC hs_int_t hs_time_highres();
+HS_FUNC bool hs_localtime(hs_int_t secs, hs_time_t *output);
+HS_FUNC bool hs_gmtime(hs_int_t secs, hs_time_t *output);
+HS_FUNC hs_int_t hs_mktime(hs_time_t *time);
+HS_FUNC void hs_sleep(double secs);
+HS_FUNC char **hs_env();
+HS_FUNC void hs_assert_failed(hs_str_t file, hs_int_t line);
 
-SEQ_FUNC void *seq_alloc(size_t n);
-SEQ_FUNC void *seq_alloc_atomic(size_t n);
-SEQ_FUNC void *seq_alloc_uncollectable(size_t n);
-SEQ_FUNC void *seq_alloc_atomic_uncollectable(size_t n);
-SEQ_FUNC void *seq_calloc(size_t m, size_t n);
-SEQ_FUNC void *seq_calloc_atomic(size_t m, size_t n);
-SEQ_FUNC void *seq_realloc(void *p, size_t newsize, size_t oldsize);
-SEQ_FUNC void seq_free(void *p);
-SEQ_FUNC void seq_register_finalizer(void *p, void (*f)(void *obj, void *data));
+HS_FUNC void *hs_alloc(size_t n);
+HS_FUNC void *hs_alloc_atomic(size_t n);
+HS_FUNC void *hs_alloc_uncollectable(size_t n);
+HS_FUNC void *hs_alloc_atomic_uncollectable(size_t n);
+HS_FUNC void *hs_calloc(size_t m, size_t n);
+HS_FUNC void *hs_calloc_atomic(size_t m, size_t n);
+HS_FUNC void *hs_realloc(void *p, size_t newsize, size_t oldsize);
+HS_FUNC void hs_free(void *p);
+HS_FUNC void hs_register_finalizer(void *p, void (*f)(void *obj, void *data));
 
-SEQ_FUNC void seq_gc_add_roots(void *start, void *end);
-SEQ_FUNC void seq_gc_remove_roots(void *start, void *end);
-SEQ_FUNC void seq_gc_clear_roots();
-SEQ_FUNC void seq_gc_exclude_static_roots(void *start, void *end);
+HS_FUNC void hs_gc_add_roots(void *start, void *end);
+HS_FUNC void hs_gc_remove_roots(void *start, void *end);
+HS_FUNC void hs_gc_clear_roots();
+HS_FUNC void hs_gc_exclude_static_roots(void *start, void *end);
 
-SEQ_FUNC void *seq_alloc_exc(int type, void *obj);
-SEQ_FUNC void seq_throw(void *exc);
-SEQ_FUNC _Unwind_Reason_Code seq_personality(int version, _Unwind_Action actions,
+HS_FUNC void *hs_alloc_exc(int type, void *obj);
+HS_FUNC void hs_throw(void *exc);
+HS_FUNC _Unwind_Reason_Code hs_personality(int version, _Unwind_Action actions,
                                              uint64_t exceptionClass,
                                              _Unwind_Exception *exceptionObject,
                                              _Unwind_Context *context);
-SEQ_FUNC int64_t seq_exc_offset();
-SEQ_FUNC uint64_t seq_exc_class();
+HS_FUNC int64_t hs_exc_offset();
+HS_FUNC uint64_t hs_exc_class();
 
-SEQ_FUNC seq_str_t seq_str_int(seq_int_t n, seq_str_t format, bool *error);
-SEQ_FUNC seq_str_t seq_str_uint(seq_int_t n, seq_str_t format, bool *error);
-SEQ_FUNC seq_str_t seq_str_float(double f, seq_str_t format, bool *error);
-SEQ_FUNC seq_str_t seq_str_ptr(void *p, seq_str_t format, bool *error);
-SEQ_FUNC seq_str_t seq_str_str(seq_str_t s, seq_str_t format, bool *error);
+HS_FUNC hs_str_t hs_str_int(hs_int_t n, hs_str_t format, bool *error);
+HS_FUNC hs_str_t hs_str_uint(hs_int_t n, hs_str_t format, bool *error);
+HS_FUNC hs_str_t hs_str_float(double f, hs_str_t format, bool *error);
+HS_FUNC hs_str_t hs_str_ptr(void *p, hs_str_t format, bool *error);
+HS_FUNC hs_str_t hs_str_str(hs_str_t s, hs_str_t format, bool *error);
 
-SEQ_FUNC void *seq_stdin();
-SEQ_FUNC void *seq_stdout();
-SEQ_FUNC void *seq_stderr();
+HS_FUNC void *hs_stdin();
+HS_FUNC void *hs_stdout();
+HS_FUNC void *hs_stderr();
 
-SEQ_FUNC void seq_print(seq_str_t str);
-SEQ_FUNC void seq_print_full(seq_str_t str, FILE *fo);
+HS_FUNC void hs_print(hs_str_t str);
+HS_FUNC void hs_print_full(hs_str_t str, FILE *fo);
 
-SEQ_FUNC void *seq_lock_new();
-SEQ_FUNC void *seq_lock_new();
-SEQ_FUNC bool seq_lock_acquire(void *lock, bool block, double timeout);
-SEQ_FUNC void seq_lock_release(void *lock);
-SEQ_FUNC void *seq_rlock_new();
-SEQ_FUNC bool seq_rlock_acquire(void *lock, bool block, double timeout);
-SEQ_FUNC void seq_rlock_release(void *lock);
+HS_FUNC void *hs_lock_new();
+HS_FUNC bool hs_lock_acquire(void *lock, bool block, double timeout);
+HS_FUNC void hs_lock_release(void *lock);
+HS_FUNC void *hs_rlock_new();
+HS_FUNC bool hs_rlock_acquire(void *lock, bool block, double timeout);
+HS_FUNC void hs_rlock_release(void *lock);
 
 namespace hercules::runtime {
     class JITError : public std::runtime_error {

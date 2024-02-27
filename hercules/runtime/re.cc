@@ -37,7 +37,7 @@ using re2::StringPiece;
 #define DOTALL (1 << 5)
 #define VERBOSE (1 << 6)
 
-static inline Regex::Options flags2opt(seq_int_t flags) {
+static inline Regex::Options flags2opt(hs_int_t flags) {
     Regex::Options opt;
     opt.set_log_errors(false);
     opt.set_encoding(Regex::Options::Encoding::EncodingLatin1);
@@ -78,8 +78,8 @@ static inline Regex::Options flags2opt(seq_int_t flags) {
  */
 
 struct Span {
-    seq_int_t start;
-    seq_int_t end;
+    hs_int_t start;
+    hs_int_t end;
 };
 
 template<typename KV>
@@ -91,9 +91,9 @@ struct GCMapAllocator : public std::allocator<KV> {
     template<typename KV1>
     GCMapAllocator(const GCMapAllocator<KV1> &) noexcept {}
 
-    KV *allocate(std::size_t n) { return (KV *) seq_alloc_uncollectable(n * sizeof(KV)); }
+    KV *allocate(std::size_t n) { return (KV *) hs_alloc_uncollectable(n * sizeof(KV)); }
 
-    void deallocate(KV *p, std::size_t n) { seq_free(p); }
+    void deallocate(KV *p, std::size_t n) { hs_free(p); }
 
     template<typename U>
     struct rebind {
@@ -101,18 +101,18 @@ struct GCMapAllocator : public std::allocator<KV> {
     };
 };
 
-static inline seq_str_t convert(const std::string &p) {
-    seq_int_t n = p.size();
-    auto *s = (char *) seq_alloc_atomic(n);
+static inline hs_str_t convert(const std::string &p) {
+    hs_int_t n = p.size();
+    auto *s = (char *) hs_alloc_atomic(n);
     std::memcpy(s, p.data(), n);
     return {n, s};
 }
 
-static inline StringPiece str2sp(const seq_str_t &s) {
+static inline StringPiece str2sp(const hs_str_t &s) {
     return StringPiece(s.str, s.len);
 }
 
-using Key = std::pair<seq_str_t, seq_int_t>;
+using Key = std::pair<hs_str_t, hs_int_t>;
 
 struct KeyEqual {
     bool operator()(const Key &a, const Key &b) const {
@@ -131,7 +131,7 @@ static thread_local std::unordered_map<const Key, Regex, KeyHash, KeyEqual,
         GCMapAllocator<std::pair<const Key, Regex>>>
         cache;
 
-static inline Regex *get(const seq_str_t &p, seq_int_t flags) {
+static inline Regex *get(const hs_str_t &p, hs_int_t flags) {
     auto key = std::make_pair(p, flags);
     auto it = cache.find(key);
     if (it == cache.end()) {
@@ -147,8 +147,8 @@ static inline Regex *get(const seq_str_t &p, seq_int_t flags) {
  * Matching
  */
 
-SEQ_FUNC Span *seq_re_match(Regex *re, seq_int_t anchor, seq_str_t s, seq_int_t pos,
-                            seq_int_t endpos) {
+HS_FUNC Span *hs_re_match(Regex *re, hs_int_t anchor, hs_str_t s, hs_int_t pos,
+                            hs_int_t endpos) {
     const int num_groups = re->NumberOfCapturingGroups() + 1; // need $0
     std::vector<StringPiece> groups;
     groups.resize(num_groups);
@@ -161,65 +161,65 @@ SEQ_FUNC Span *seq_re_match(Regex *re, seq_int_t anchor, seq_str_t s, seq_int_t 
         }
     }
 
-    auto *spans = (Span *) seq_alloc_atomic(num_groups * sizeof(Span));
+    auto *spans = (Span *) hs_alloc_atomic(num_groups * sizeof(Span));
     unsigned i = 0;
     for (const auto &it: groups) {
         if (it.data() == nullptr) {
             spans[i++] = {-1, -1};
         } else {
-            spans[i++] = {static_cast<seq_int_t>(it.data() - s.str),
-                          static_cast<seq_int_t>(it.data() - s.str + it.size())};
+            spans[i++] = {static_cast<hs_int_t>(it.data() - s.str),
+                          static_cast<hs_int_t>(it.data() - s.str + it.size())};
         }
     }
 
     return spans;
 }
 
-SEQ_FUNC Span seq_re_match_one(Regex *re, seq_int_t anchor, seq_str_t s, seq_int_t pos,
-                               seq_int_t endpos) {
+HS_FUNC Span hs_re_match_one(Regex *re, hs_int_t anchor, hs_str_t s, hs_int_t pos,
+                               hs_int_t endpos) {
     StringPiece m;
     if (!re->Match(str2sp(s), pos, endpos, static_cast<Regex::Anchor>(anchor), &m, 1))
         return {-1, -1};
     else
-        return {static_cast<seq_int_t>(m.data() - s.str),
-                static_cast<seq_int_t>(m.data() - s.str + m.size())};
+        return {static_cast<hs_int_t>(m.data() - s.str),
+                static_cast<hs_int_t>(m.data() - s.str + m.size())};
 }
 
 /*
  * General functions
  */
 
-SEQ_FUNC seq_str_t seq_re_escape(seq_str_t p) {
+HS_FUNC hs_str_t hs_re_escape(hs_str_t p) {
     return convert(Regex::QuoteMeta(str2sp(p)));
 }
 
-SEQ_FUNC Regex *seq_re_compile(seq_str_t p, seq_int_t flags) { return get(p, flags); }
+HS_FUNC Regex *hs_re_compile(hs_str_t p, hs_int_t flags) { return get(p, flags); }
 
-SEQ_FUNC void seq_re_purge() { cache.clear(); }
+HS_FUNC void hs_re_purge() { cache.clear(); }
 
 /*
  * Pattern methods
  */
 
-SEQ_FUNC seq_int_t seq_re_pattern_groups(Regex *pattern) {
+HS_FUNC hs_int_t hs_re_pattern_groups(Regex *pattern) {
     return pattern->NumberOfCapturingGroups();
 }
 
-SEQ_FUNC seq_int_t seq_re_group_name_to_index(Regex *pattern, seq_str_t name) {
+HS_FUNC hs_int_t hs_re_group_name_to_index(Regex *pattern, hs_str_t name) {
     const auto &mapping = pattern->NamedCapturingGroups();
     auto it = mapping.find(std::string(name.str, name.len));
     return (it != mapping.end()) ? it->second : -1;
 }
 
-SEQ_FUNC seq_str_t seq_re_group_index_to_name(Regex *pattern, seq_int_t index) {
+HS_FUNC hs_str_t hs_re_group_index_to_name(Regex *pattern, hs_int_t index) {
     const auto &mapping = pattern->CapturingGroupNames();
     auto it = mapping.find(index);
-    seq_str_t empty = {0, nullptr};
+    hs_str_t empty = {0, nullptr};
     return (it != mapping.end()) ? convert(it->second) : empty;
 }
 
-SEQ_FUNC bool seq_re_check_rewrite_string(Regex *pattern, seq_str_t rewrite,
-                                          seq_str_t *error) {
+HS_FUNC bool seq_re_check_rewrite_string(Regex *pattern, hs_str_t rewrite,
+                                          hs_str_t *error) {
     std::string e;
     bool ans = pattern->CheckRewriteString(str2sp(rewrite), &e);
     if (!ans)
@@ -227,7 +227,7 @@ SEQ_FUNC bool seq_re_check_rewrite_string(Regex *pattern, seq_str_t rewrite,
     return ans;
 }
 
-SEQ_FUNC seq_str_t seq_re_pattern_error(Regex *pattern) {
+HS_FUNC hs_str_t hs_re_pattern_error(Regex *pattern) {
     if (pattern->ok())
         return {0, nullptr};
     return convert(pattern->error());

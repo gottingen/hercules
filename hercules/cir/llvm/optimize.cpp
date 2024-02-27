@@ -96,10 +96,10 @@ namespace hercules::ir {
             std::string free;
 
             explicit AllocationRemover(
-                    std::vector<std::string> allocators = {"seq_alloc", "seq_alloc_atomic",
-                                                           "seq_alloc_uncollectable",
-                                                           "seq_alloc_atomic_uncollectable"},
-                    const std::string &realloc = "seq_realloc", const std::string &free = "seq_free")
+                    std::vector<std::string> allocators = {"hs_alloc", "hs_alloc_atomic",
+                                                           "hs_alloc_uncollectable",
+                                                           "hs_alloc_atomic_uncollectable"},
+                    const std::string &realloc = "hs_realloc", const std::string &free = "hs_free")
                     : allocators(std::move(allocators)), realloc(realloc), free(free) {}
 
             static bool sizeOkToDemote(uint64_t size) { return 0 < size && size <= 1024; }

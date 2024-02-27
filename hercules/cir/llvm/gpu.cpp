@@ -341,31 +341,31 @@ namespace hercules::ir {
                     {"modff",                       "__nv_modff"},
 
                     // runtime library functions
-                    {"seq_free",                    "free"},
-                    {"seq_register_finalizer",      ""},
-                    {"seq_gc_add_roots",            ""},
-                    {"seq_gc_remove_roots",         ""},
-                    {"seq_gc_clear_roots",          ""},
-                    {"seq_gc_exclude_static_roots", ""},
+                    {"hs_free",                    "free"},
+                    {"hs_register_finalizer",      ""},
+                    {"hs_gc_add_roots",            ""},
+                    {"hs_gc_remove_roots",         ""},
+                    {"hs_gc_clear_roots",          ""},
+                    {"hs_gc_exclude_static_roots", ""},
             };
 
             // functions that need to be generated as they're not available on GPU
             static const std::vector<std::pair<std::string, Codegen>> fillins = {
-                    {"seq_alloc",
+                    {"hs_alloc",
                             [](llvm::IRBuilder<> &B, const std::vector<llvm::Value *> &args) {
                                 auto *M = B.GetInsertBlock()->getModule();
                                 llvm::Value *mem = B.CreateCall(makeMalloc(M), args[0]);
                                 B.CreateRet(mem);
                             }},
 
-                    {"seq_alloc_atomic",
+                    {"hs_alloc_atomic",
                             [](llvm::IRBuilder<> &B, const std::vector<llvm::Value *> &args) {
                                 auto *M = B.GetInsertBlock()->getModule();
                                 llvm::Value *mem = B.CreateCall(makeMalloc(M), args[0]);
                                 B.CreateRet(mem);
                             }},
 
-                    {"seq_realloc",
+                    {"hs_realloc",
                             [](llvm::IRBuilder<> &B, const std::vector<llvm::Value *> &args) {
                                 auto *M = B.GetInsertBlock()->getModule();
                                 llvm::Value *mem = B.CreateCall(makeMalloc(M), args[1]);
@@ -376,7 +376,7 @@ namespace hercules::ir {
                                 B.CreateRet(mem);
                             }},
 
-                    {"seq_calloc",
+                    {"hs_calloc",
                             [](llvm::IRBuilder<> &B, const std::vector<llvm::Value *> &args) {
                                 auto *M = B.GetInsertBlock()->getModule();
                                 llvm::Value *size = B.CreateMul(args[0], args[1]);
@@ -387,7 +387,7 @@ namespace hercules::ir {
                                 B.CreateRet(mem);
                             }},
 
-                    {"seq_calloc_atomic",
+                    {"hs_calloc_atomic",
                             [](llvm::IRBuilder<> &B, const std::vector<llvm::Value *> &args) {
                                 auto *M = B.GetInsertBlock()->getModule();
                                 llvm::Value *size = B.CreateMul(args[0], args[1]);
@@ -398,13 +398,13 @@ namespace hercules::ir {
                                 B.CreateRet(mem);
                             }},
 
-                    {"seq_alloc_exc",
+                    {"hs_alloc_exc",
                             [](llvm::IRBuilder<> &B, const std::vector<llvm::Value *> &args) {
                                 // TODO: print error message and abort if in debug mode
                                 B.CreateUnreachable();
                             }},
 
-                    {"seq_throw",
+                    {"hs_throw",
                             [](llvm::IRBuilder<> &B,
                                const std::vector<llvm::Value *> &args) { B.CreateUnreachable(); }},
             };
@@ -608,10 +608,10 @@ namespace hercules::ir {
             filenameVar->setUnnamedAddr(llvm::GlobalValue::UnnamedAddr::Global);
             llvm::IRBuilder<> B(context);
 
-            if (auto *init = M->getFunction("seq_init")) {
-                seqassertn(init->hasOneUse(), "seq_init used more than once");
+            if (auto *init = M->getFunction("hs_init")) {
+                seqassertn(init->hasOneUse(), "hs_init used more than once");
                 auto *use = llvm::dyn_cast<llvm::CallBase>(init->use_begin()->getUser());
-                seqassertn(use, "seq_init use was not a call");
+                seqassertn(use, "hs_init use was not a call");
                 B.SetInsertPoint(use->getNextNode());
                 B.CreateCall(g, B.CreateBitCast(filenameVar, B.getInt8PtrTy()));
             }

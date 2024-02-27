@@ -27,7 +27,7 @@ def id(x) -> int:
     else:
         return 0
 
-_stdout = _C.seq_stdout()
+_stdout = _C.hs_stdout()
 
 def print(*args, sep: str = " ", end: str = "\n", file=_stdout, flush: bool = False):
     """
@@ -41,17 +41,17 @@ def print(*args, sep: str = " ", end: str = "\n", file=_stdout, flush: bool = Fa
     i = 0
     for a in args:
         if i and sep:
-            _C.seq_print_full(sep, fp)
-        _C.seq_print_full(str(a), fp)
+            _C.hs_print_full(sep, fp)
+        _C.hs_print_full(str(a), fp)
         i += 1
-    _C.seq_print_full(end, fp)
+    _C.hs_print_full(end, fp)
     if flush:
         _C.fflush(fp)
 
 @extend
 class __internal__:
     def print(*args):
-        print(*args, flush=True, file=_C.seq_stdout())
+        print(*args, flush=True, file=_C.hs_stdout())
 
 def min(*args, key=None, default=None):
     if staticlen(args) == 0:
