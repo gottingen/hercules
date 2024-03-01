@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "gpu.h"
+#include "hercules/cir/llvm/gpu.h"
 
 #include <algorithm>
 #include <memory>

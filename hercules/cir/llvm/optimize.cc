@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "optimize.h"
+#include "hercules/cir/llvm/optimize.h"
 
 #include <algorithm>
 

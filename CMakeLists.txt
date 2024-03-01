@@ -62,22 +62,22 @@ else ()
     set(STATIC_LIBCPP "-static-libstdc++")
 endif ()
 
-add_executable(peg2cpp hercules/util/peg2cpp.cpp)
+add_executable(peg2cpp hercules/util/peg2cpp.cc)
 target_include_directories(peg2cpp PRIVATE ${peglib_SOURCE_DIR})
 target_link_libraries(peg2cpp PRIVATE Threads::Threads fmt)
 add_custom_command(
-        OUTPUT hercules_rules.cpp
+        OUTPUT hercules_rules.cc
         COMMAND peg2cpp ${CMAKE_SOURCE_DIR}/hercules/parser/peg/grammar.peg
-        hercules_rules.cpp hercules
+        hercules_rules.cc hercules
         DEPENDS peg2cpp hercules/parser/peg/grammar.peg)
 add_custom_command(
-        OUTPUT omp_rules.cpp
-        COMMAND peg2cpp ${CMAKE_SOURCE_DIR}/hercules/parser/peg/openmp.peg omp_rules.cpp
+        OUTPUT omp_rules.cc
+        COMMAND peg2cpp ${CMAKE_SOURCE_DIR}/hercules/parser/peg/openmp.peg omp_rules.cc
         omp
         DEPENDS peg2cpp hercules/parser/peg/openmp.peg)
 
 # Hercules Jupyter library
-set(HERCULES_JUPYTER_FILES hercules/util/jupyter.h hercules/util/jupyter.cpp)
+set(HERCULES_JUPYTER_FILES hercules/util/jupyter.h hercules/util/jupyter.cc)
 add_library(hercules_jupyter SHARED ${HERCULES_JUPYTER_FILES})
 
 # Hercules runtime library
@@ -89,6 +89,7 @@ set(HERCULESRT_FILES
         hercules/runtime/re.cc
         hercules/runtime/exc.cc
         hercules/runtime/gpu.cc
+        hercules/runtime/libinfo.cc
 )
 
 add_library(herculesrt SHARED ${HERCULESRT_FILES})
@@ -239,109 +240,109 @@ set(HERCULES_HPPFILES
         hercules/util/common.h
         hercules/compiler/jit_extern.h)
 set(HERCULES_CPPFILES
-        hercules/compiler/compiler.cpp
-        hercules/compiler/debug_listener.cpp
-        hercules/compiler/engine.cpp
-        hercules/compiler/error.cpp
-        hercules/compiler/jit.cpp
-        hercules/compiler/memory_manager.cpp
-        hercules/dsl/plugins.cpp
-        hercules/parser/ast/expr.cpp
-        hercules/parser/ast/stmt.cpp
-        hercules/parser/ast/types/type.cpp
-        hercules/parser/ast/types/link.cpp
-        hercules/parser/ast/types/class.cpp
-        hercules/parser/ast/types/function.cpp
-        hercules/parser/ast/types/union.cpp
-        hercules/parser/ast/types/static.cpp
-        hercules/parser/ast/types/traits.cpp
-        hercules/parser/cache.cpp
-        hercules/parser/common.cpp
-        hercules/parser/peg/peg.cpp
-        hercules/parser/visitors/doc/doc.cpp
-        hercules/parser/visitors/format/format.cpp
-        hercules/parser/visitors/simplify/simplify.cpp
-        hercules/parser/visitors/simplify/ctx.cpp
-        hercules/parser/visitors/simplify/assign.cpp
-        hercules/parser/visitors/simplify/basic.cpp
-        hercules/parser/visitors/simplify/call.cpp
-        hercules/parser/visitors/simplify/class.cpp
-        hercules/parser/visitors/simplify/collections.cpp
-        hercules/parser/visitors/simplify/cond.cpp
-        hercules/parser/visitors/simplify/function.cpp
-        hercules/parser/visitors/simplify/access.cpp
-        hercules/parser/visitors/simplify/import.cpp
-        hercules/parser/visitors/simplify/loops.cpp
-        hercules/parser/visitors/simplify/op.cpp
-        hercules/parser/visitors/simplify/error.cpp
-        hercules/parser/visitors/translate/translate.cpp
-        hercules/parser/visitors/translate/translate_ctx.cpp
-        hercules/parser/visitors/typecheck/typecheck.cpp
-        hercules/parser/visitors/typecheck/infer.cpp
-        hercules/parser/visitors/typecheck/ctx.cpp
-        hercules/parser/visitors/typecheck/assign.cpp
-        hercules/parser/visitors/typecheck/basic.cpp
-        hercules/parser/visitors/typecheck/call.cpp
-        hercules/parser/visitors/typecheck/class.cpp
-        hercules/parser/visitors/typecheck/collections.cpp
-        hercules/parser/visitors/typecheck/cond.cpp
-        hercules/parser/visitors/typecheck/function.cpp
-        hercules/parser/visitors/typecheck/access.cpp
-        hercules/parser/visitors/typecheck/loops.cpp
-        hercules/parser/visitors/typecheck/op.cpp
-        hercules/parser/visitors/typecheck/error.cpp
-        hercules/parser/visitors/visitor.cpp
-        hercules/cir/attribute.cpp
-        hercules/cir/analyze/analysis.cpp
-        hercules/cir/analyze/dataflow/capture.cpp
-        hercules/cir/analyze/dataflow/cfg.cpp
-        hercules/cir/analyze/dataflow/dominator.cpp
-        hercules/cir/analyze/dataflow/reaching.cpp
-        hercules/cir/analyze/module/global_vars.cpp
-        hercules/cir/analyze/module/side_effect.cpp
-        hercules/cir/base.cpp
-        hercules/cir/const.cpp
-        hercules/cir/dsl/nodes.cpp
-        hercules/cir/flow.cpp
-        hercules/cir/func.cpp
-        hercules/cir/instr.cpp
-        hercules/cir/llvm/gpu.cpp
-        hercules/cir/llvm/llvisitor.cpp
-        hercules/cir/llvm/optimize.cpp
-        hercules/cir/module.cpp
-        hercules/cir/transform/cleanup/canonical.cpp
-        hercules/cir/transform/cleanup/dead_code.cpp
-        hercules/cir/transform/cleanup/global_demote.cpp
-        hercules/cir/transform/cleanup/replacer.cpp
-        hercules/cir/transform/folding/const_fold.cpp
-        hercules/cir/transform/folding/const_prop.cpp
-        hercules/cir/transform/folding/folding.cpp
-        hercules/cir/transform/lowering/imperative.cpp
-        hercules/cir/transform/lowering/pipeline.cpp
-        hercules/cir/transform/manager.cpp
-        hercules/cir/transform/parallel/openmp.cpp
-        hercules/cir/transform/parallel/schedule.cpp
-        hercules/cir/transform/pass.cpp
-        hercules/cir/transform/pythonic/dict.cpp
-        hercules/cir/transform/pythonic/generator.cpp
-        hercules/cir/transform/pythonic/io.cpp
-        hercules/cir/transform/pythonic/list.cpp
-        hercules/cir/transform/pythonic/str.cpp
-        hercules/cir/types/types.cpp
-        hercules/cir/util/cloning.cpp
-        hercules/cir/util/format.cpp
-        hercules/cir/util/inlining.cpp
-        hercules/cir/util/irtools.cpp
-        hercules/cir/util/matching.cpp
-        hercules/cir/util/outlining.cpp
-        hercules/cir/util/side_effect.cpp
-        hercules/cir/util/visitor.cpp
-        hercules/cir/value.cpp
-        hercules/cir/var.cpp
-        hercules/util/common.cpp)
+        hercules/compiler/compiler.cc
+        hercules/compiler/debug_listener.cc
+        hercules/compiler/engine.cc
+        hercules/compiler/error.cc
+        hercules/compiler/jit.cc
+        hercules/compiler/memory_manager.cc
+        hercules/dsl/plugins.cc
+        hercules/parser/ast/expr.cc
+        hercules/parser/ast/stmt.cc
+        hercules/parser/ast/types/type.cc
+        hercules/parser/ast/types/link.cc
+        hercules/parser/ast/types/class.cc
+        hercules/parser/ast/types/function.cc
+        hercules/parser/ast/types/union.cc
+        hercules/parser/ast/types/static.cc
+        hercules/parser/ast/types/traits.cc
+        hercules/parser/cache.cc
+        hercules/parser/common.cc
+        hercules/parser/peg/peg.cc
+        hercules/parser/visitors/doc/doc.cc
+        hercules/parser/visitors/format/format.cc
+        hercules/parser/visitors/simplify/simplify.cc
+        hercules/parser/visitors/simplify/ctx.cc
+        hercules/parser/visitors/simplify/assign.cc
+        hercules/parser/visitors/simplify/basic.cc
+        hercules/parser/visitors/simplify/call.cc
+        hercules/parser/visitors/simplify/class.cc
+        hercules/parser/visitors/simplify/collections.cc
+        hercules/parser/visitors/simplify/cond.cc
+        hercules/parser/visitors/simplify/function.cc
+        hercules/parser/visitors/simplify/access.cc
+        hercules/parser/visitors/simplify/import.cc
+        hercules/parser/visitors/simplify/loops.cc
+        hercules/parser/visitors/simplify/op.cc
+        hercules/parser/visitors/simplify/error.cc
+        hercules/parser/visitors/translate/translate.cc
+        hercules/parser/visitors/translate/translate_ctx.cc
+        hercules/parser/visitors/typecheck/typecheck.cc
+        hercules/parser/visitors/typecheck/infer.cc
+        hercules/parser/visitors/typecheck/ctx.cc
+        hercules/parser/visitors/typecheck/assign.cc
+        hercules/parser/visitors/typecheck/basic.cc
+        hercules/parser/visitors/typecheck/call.cc
+        hercules/parser/visitors/typecheck/class.cc
+        hercules/parser/visitors/typecheck/collections.cc
+        hercules/parser/visitors/typecheck/cond.cc
+        hercules/parser/visitors/typecheck/function.cc
+        hercules/parser/visitors/typecheck/access.cc
+        hercules/parser/visitors/typecheck/loops.cc
+        hercules/parser/visitors/typecheck/op.cc
+        hercules/parser/visitors/typecheck/error.cc
+        hercules/parser/visitors/visitor.cc
+        hercules/cir/attribute.cc
+        hercules/cir/analyze/analysis.cc
+        hercules/cir/analyze/dataflow/capture.cc
+        hercules/cir/analyze/dataflow/cfg.cc
+        hercules/cir/analyze/dataflow/dominator.cc
+        hercules/cir/analyze/dataflow/reaching.cc
+        hercules/cir/analyze/module/global_vars.cc
+        hercules/cir/analyze/module/side_effect.cc
+        hercules/cir/base.cc
+        hercules/cir/const.cc
+        hercules/cir/dsl/nodes.cc
+        hercules/cir/flow.cc
+        hercules/cir/func.cc
+        hercules/cir/instr.cc
+        hercules/cir/llvm/gpu.cc
+        hercules/cir/llvm/llvisitor.cc
+        hercules/cir/llvm/optimize.cc
+        hercules/cir/module.cc
+        hercules/cir/transform/cleanup/canonical.cc
+        hercules/cir/transform/cleanup/dead_code.cc
+        hercules/cir/transform/cleanup/global_demote.cc
+        hercules/cir/transform/cleanup/replacer.cc
+        hercules/cir/transform/folding/const_fold.cc
+        hercules/cir/transform/folding/const_prop.cc
+        hercules/cir/transform/folding/folding.cc
+        hercules/cir/transform/lowering/imperative.cc
+        hercules/cir/transform/lowering/pipeline.cc
+        hercules/cir/transform/manager.cc
+        hercules/cir/transform/parallel/openmp.cc
+        hercules/cir/transform/parallel/schedule.cc
+        hercules/cir/transform/pass.cc
+        hercules/cir/transform/pythonic/dict.cc
+        hercules/cir/transform/pythonic/generator.cc
+        hercules/cir/transform/pythonic/io.cc
+        hercules/cir/transform/pythonic/list.cc
+        hercules/cir/transform/pythonic/str.cc
+        hercules/cir/types/types.cc
+        hercules/cir/util/cloning.cc
+        hercules/cir/util/format.cc
+        hercules/cir/util/inlining.cc
+        hercules/cir/util/irtools.cc
+        hercules/cir/util/matching.cc
+        hercules/cir/util/outlining.cc
+        hercules/cir/util/side_effect.cc
+        hercules/cir/util/visitor.cc
+        hercules/cir/value.cc
+        hercules/cir/var.cc
+        hercules/util/common.cc)
 add_library(herculesc SHARED ${HERCULES_HPPFILES})
 target_include_directories(herculesc PRIVATE ${peglib_SOURCE_DIR} ${toml_SOURCE_DIR}/include ${semver_SOURCE_DIR}/include)
-target_sources(herculesc PRIVATE ${HERCULES_CPPFILES} hercules_rules.cpp omp_rules.cpp)
+target_sources(herculesc PRIVATE ${HERCULES_CPPFILES} hercules_rules.cc omp_rules.cc)
 if (ASAN)
     target_compile_options(
             herculesc PRIVATE "-fno-omit-frame-pointer" "-fsanitize=address"
@@ -351,7 +352,7 @@ if (ASAN)
             "-fsanitize-recover=address")
 endif ()
 if (CMAKE_BUILD_TYPE MATCHES Debug)
-    set_source_files_properties(hercules_rules.cpp hercules/parser/peg/peg.cpp
+    set_source_files_properties(hercules_rules.cc hercules/parser/peg/peg.cc
             PROPERTIES COMPILE_FLAGS "-O2")
 endif ()
 llvm_map_components_to_libnames(
@@ -438,7 +439,7 @@ if (APPLE AND APPLE_ARM)
 endif ()
 
 # Hercules command-line tool
-add_executable(hercules hercules/app/main.cpp)
+add_executable(hercules hercules/app/main.cc)
 target_link_libraries(hercules PUBLIC ${STATIC_LIBCPP} fmt herculesc hercules_jupyter Threads::Threads)
 
 # Hercules test Download and unpack googletest at configure time
@@ -454,21 +455,21 @@ option(INSTALL_GTEST "Enable installation of googletest." OFF)
 FetchContent_MakeAvailable(googletest)
 enable_testing()
 set(HERCULES_TEST_CPPFILES
-        test/main.cpp
-        test/cir/analyze/dominator.cpp
-        test/cir/analyze/reaching.cpp
-        test/cir/base.cpp
-        test/cir/constant.cpp
-        test/cir/flow.cpp
-        test/cir/func.cpp
-        test/cir/instr.cpp
-        test/cir/module.cpp
-        test/cir/transform/manager.cpp
-        test/cir/types/types.cpp
-        test/cir/util/matching.cpp
-        test/cir/value.cpp
-        test/cir/var.cpp
-        test/types.cpp)
+        test/hercules_test.cc
+        test/cir/analyze/dominator.cc
+        test/cir/analyze/reaching.cc
+        test/cir/base.cc
+        test/cir/constant.cc
+        test/cir/flow.cc
+        test/cir/func.cc
+        test/cir/instr.cc
+        test/cir/module.cc
+        test/cir/transform/manager.cc
+        test/cir/types/types.cc
+        test/cir/util/matching.cc
+        test/cir/value.cc
+        test/cir/var.cc
+        test/types.cc)
 add_executable(hercules_test ${HERCULES_TEST_CPPFILES})
 target_include_directories(hercules_test PRIVATE test/cir
         "${gc_SOURCE_DIR}/include")

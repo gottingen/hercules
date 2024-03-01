@@ -13,8 +13,7 @@
 // limitations under the License.
 //
 
-#include "analysis.h"
-
+#include "hercules/cir/analyze/analysis.h"
 #include "hercules/cir/transform/manager.h"
 
 namespace hercules::ir::analyze {

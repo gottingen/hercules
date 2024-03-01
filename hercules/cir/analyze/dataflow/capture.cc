@@ -13,8 +13,7 @@
 // limitations under the License.
 //
 
-#include "capture.h"
-
+#include "hercules/cir/analyze/dataflow/capture.h"
 #include <algorithm>
 #include <iterator>
 #include <utility>

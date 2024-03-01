@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "llvisitor.h"
+#include "hercules/cir/llvm/llvisitor.h"
 
 #include <algorithm>
 #include <cctype>

@@ -7,6 +7,11 @@ CPMAddPackage(
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/fmt-9.1.0"
         OPTIONS "CMAKE_POSITION_INDEPENDENT_CODE ON"
         "FMT_INSTALL ON")
+CPMAddPackage(
+        NAME filesystem
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/filesystem-1.5.14"
+        )
+include_directories(${filesystem_SOURCE_DIR}/include)
 
 CPMAddPackage(
         NAME toml

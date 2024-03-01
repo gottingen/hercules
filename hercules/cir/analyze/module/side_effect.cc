@@ -13,8 +13,7 @@
 // limitations under the License.
 //
 
-#include "side_effect.h"
-
+#include "hercules/cir/analyze/module/side_effect.h"
 #include <type_traits>
 #include <utility>
 

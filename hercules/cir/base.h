@@ -56,7 +56,7 @@ namespace hercules::ir {
         virtual id_t getId() const { return id; }
     };
 
-/// Base for named IR nodes.
+    /// Base for named IR nodes.
     class Node {
     private:
         /// the node's name

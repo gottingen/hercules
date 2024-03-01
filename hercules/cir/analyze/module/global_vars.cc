@@ -13,8 +13,7 @@
 // limitations under the License.
 //
 
-#include "global_vars.h"
-
+#include "hercules/cir/analyze/module/global_vars.h"
 #include "hercules/cir/util/operator.h"
 
 namespace hercules::ir::analyze::module {

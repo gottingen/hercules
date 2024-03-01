@@ -23,7 +23,7 @@
 
 namespace hercules::ir::transform::pythonic {
     namespace {
-/// get or __getitem__ call metadata
+        /// get or __getitem__ call metadata
         struct GetCall {
             /// the function, nullptr if not a get call
             Func *func = nullptr;
@@ -35,9 +35,9 @@ namespace hercules::ir::transform::pythonic {
             Const *dflt = nullptr;
         };
 
-/// Identify the call and return its metadata.
-/// @param call the call
-/// @return the metadata
+        /// Identify the call and return its metadata.
+        /// @param call the call
+        /// @return the metadata
         GetCall analyzeGet(CallInstr *call) {
             // extract the function
             auto *func = util::getFunc(call->getCallee());

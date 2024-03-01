@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "cfg.h"
+#include "hercules/cir/analyze/dataflow/cfg.h"
 
 #include <vector>
 

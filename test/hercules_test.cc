@@ -475,6 +475,7 @@ INSTANTIATE_TEST_SUITE_P(
     StdlibTests, HerculesTest,
     testing::Combine(
       testing::Values(
+        "stdlib/libinfo_test.hs",
         "stdlib/str_test.hs",
         "stdlib/re_test.hs",
         "stdlib/math_test.hs",
