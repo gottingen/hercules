@@ -27,9 +27,10 @@
 #include "hercules/config/config.h"
 #include "hercules/parser/ast/error.h"
 
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
-
+#endif
 #define DBG(c, ...)                                                                    \
   fmt::print(hercules::getLogger().log, "{}" c "\n",                                      \
              std::string(size_t(2) * size_t(hercules::getLogger().level), ' '),           \
@@ -77,7 +78,9 @@
 #define seqassertn(expr, msg, ...) ;
 #define seqassert(expr, msg, ...) ;
 #endif
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif
 
 namespace hercules {
 
