@@ -15,7 +15,7 @@
 
 #include "engine.h"
 
-#include "hercules/cir/llvm/optimize.h"
+#include "hercules/hir/llvm/optimize.h"
 #include "hercules/compiler/memory_manager.h"
 
 namespace hercules::jit {

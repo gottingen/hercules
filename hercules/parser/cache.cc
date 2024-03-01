@@ -19,8 +19,8 @@
 #include <string>
 #include <vector>
 
-#include "hercules/cir/pyextension.h"
-#include "hercules/cir/util/irtools.h"
+#include "hercules/hir/pyextension.h"
+#include "hercules/hir/util/irtools.h"
 #include "hercules/parser/common.h"
 #include "hercules/parser/peg/peg.h"
 #include "hercules/parser/visitors/simplify/simplify.h"

@@ -20,7 +20,7 @@
 #include <tuple>
 #include <vector>
 
-#include "hercules/cir/types/types.h"
+#include "hercules/hir/types/types.h"
 #include "hercules/parser/ast.h"
 #include "hercules/parser/common.h"
 #include "hercules/parser/visitors/simplify/simplify.h"

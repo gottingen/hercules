@@ -21,7 +21,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "hercules/cir/cir.h"
+#include "hercules/hir/cir.h"
 #include "hercules/parser/ast.h"
 #include "hercules/parser/cache.h"
 #include "hercules/parser/common.h"

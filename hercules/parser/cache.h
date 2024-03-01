@@ -21,8 +21,8 @@
 #include <string>
 #include <vector>
 
-#include "hercules/cir/cir.h"
-#include "hercules/cir/pyextension.h"
+#include "hercules/hir/cir.h"
+#include "hercules/hir/pyextension.h"
 #include "hercules/parser/ast.h"
 #include "hercules/parser/common.h"
 #include "hercules/parser/ctx.h"

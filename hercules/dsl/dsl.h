@@ -15,9 +15,9 @@
 
 #pragma once
 
-#include "hercules/cir/cir.h"
-#include "hercules/cir/transform/manager.h"
-#include "hercules/cir/transform/pass.h"
+#include "hercules/hir/cir.h"
+#include "hercules/hir/transform/manager.h"
+#include "hercules/hir/transform/pass.h"
 #include "hercules/parser/cache.h"
 #include "llvm/Passes/PassBuilder.h"
 #include <functional>

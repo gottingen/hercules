@@ -18,7 +18,7 @@
 #include <memory>
 #include <vector>
 
-#include "hercules/cir/llvm/llvm.h"
+#include "hercules/hir/llvm/llvm.h"
 #include "hercules/compiler/debug_listener.h"
 
 namespace hercules::jit {

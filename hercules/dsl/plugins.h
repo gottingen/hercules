@@ -20,7 +20,7 @@
 #include <string>
 #include <vector>
 
-#include "hercules/cir/util/iterators.h"
+#include "hercules/hir/util/iterators.h"
 #include "hercules/compiler/error.h"
 #include "hercules/dsl/dsl.h"
 #include "llvm/Support/DynamicLibrary.h"

@@ -20,7 +20,7 @@
 #include <mutex>
 #include <vector>
 
-#include "hercules/cir/llvm/llvm.h"
+#include "hercules/hir/llvm/llvm.h"
 
 namespace hercules {
 

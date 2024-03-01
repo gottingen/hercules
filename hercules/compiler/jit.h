@@ -20,9 +20,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "hercules/cir/llvm/llvisitor.h"
-#include "hercules/cir/transform/manager.h"
-#include "hercules/cir/var.h"
+#include "hercules/hir/llvm/llvisitor.h"
+#include "hercules/hir/transform/manager.h"
+#include "hercules/hir/var.h"
 #include "hercules/compiler/compiler.h"
 #include "hercules/compiler/engine.h"
 #include "hercules/compiler/error.h"

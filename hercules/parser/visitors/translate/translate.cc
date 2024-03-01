@@ -20,8 +20,8 @@
 #include <string>
 #include <vector>
 
-#include "hercules/cir/transform/parallel/schedule.h"
-#include "hercules/cir/util/cloning.h"
+#include "hercules/hir/transform/parallel/schedule.h"
+#include "hercules/hir/util/cloning.h"
 #include "hercules/parser/ast.h"
 #include "hercules/parser/common.h"
 #include "hercules/parser/visitors/translate/translate_ctx.h"
