@@ -149,13 +149,13 @@ namespace hercules::ast {
     };
 
     template<typename TE, typename TS>
-/**
- * Callback AST visitor.
- * This visitor extends base ASTVisitor and stores node's source location (SrcObject).
- * Function simplify() will visit a node and return the appropriate transformation. As
- * each node type (expression or statement) might return a different type,
- * this visitor is generic for each different return type.
- */
+    /**
+     * Callback AST visitor.
+     * This visitor extends base ASTVisitor and stores node's source location (SrcObject).
+     * Function simplify() will visit a node and return the appropriate transformation. As
+     * each node type (expression or statement) might return a different type,
+     * this visitor is generic for each different return type.
+     */
     struct CallbackASTVisitor : public ASTVisitor, public SrcObject {
         virtual TE transform(const std::shared_ptr<Expr> &expr) = 0;
 

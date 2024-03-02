@@ -635,7 +635,7 @@ namespace hercules::ast {
         return vid;
     }
 
-/// Make IR node for a realized type.
+    /// Make IR node for a realized type.
     ir::types::Type *TypecheckVisitor::makeIRType(types::ClassType *t) {
         // Realize if not, and return cached value if it exists
         auto realizedName = t->realizedTypeName();
