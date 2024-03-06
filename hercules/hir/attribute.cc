@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "attribute.h"
+#include "hercules/hir/attribute.h"
 
 #include "hercules/hir/func.h"
 #include "hercules/hir/util/cloning.h"

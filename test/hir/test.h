@@ -4,7 +4,7 @@
 #include "hercules/hir/util/cloning.h"
 #include "gtest/gtest.h"
 
-class CIRCoreTest : public testing::Test {
+class HIRCoreTest : public testing::Test {
 protected:
   std::unique_ptr<hercules::ir::Module> module;
   std::unique_ptr<hercules::ir::util::CloneVisitor> cv;

@@ -523,9 +523,9 @@ namespace hercules::ast {
         return nullptr;
     }
 
-/// Generate thunks in all derived classes for a given virtual function (must be fully
-/// realizable) and the corresponding base class.
-/// @return unique thunk ID.
+    /// Generate thunks in all derived classes for a given virtual function (must be fully
+    /// realizable) and the corresponding base class.
+    /// @return unique thunk ID.
     size_t TypecheckVisitor::getRealizationID(types::ClassType *cp, types::FuncType *fp) {
         seqassert(cp->canRealize() && fp->canRealize() && fp->getRetType()->canRealize(),
                   "{} not realized", fp->debugString(1));
@@ -756,7 +756,7 @@ namespace hercules::ast {
         return ctx->cache->classes[t->name].realizations[realizedName]->ir = handle;
     }
 
-/// Make IR node for a realized function.
+    /// Make IR node for a realized function.
     ir::Func *TypecheckVisitor::makeIRFunction(
             const std::shared_ptr<Cache::Function::FunctionRealization> &r) {
         ir::Func *fn = nullptr;
@@ -814,7 +814,7 @@ namespace hercules::ast {
         return fn;
     }
 
-/// Generate ASTs for dynamically generated functions.
+    /// Generate ASTs for dynamically generated functions.
     std::shared_ptr<FunctionStmt>
     TypecheckVisitor::generateSpecialAst(types::FuncType *type) {
         // Clone the generic AST that is to be realized

@@ -87,7 +87,7 @@ namespace hercules::ir::types {
         types::Type *getTypeValue() const { return value.typeValue; }
     };
 
-    /// Type from which other CIR types derive. Generally types are immutable.
+    /// Type from which other HIR types derive. Generally types are immutable.
     class Type : public ReplaceableNodeBase<Type> {
     private:
         ast::types::TypePtr astType;
@@ -423,7 +423,7 @@ namespace hercules::ir::types {
         Value *doConstruct(std::vector<Value *> args) override;
     };
 
-    /// Type associated with a CIR function.
+    /// Type associated with a HIR function.
     class FuncType : public AcceptorExtend<FuncType, Type> {
     public:
         using const_iterator = std::vector<Type *>::const_iterator;
@@ -498,7 +498,7 @@ namespace hercules::ir::types {
         std::vector<Type *> doGetUsedTypes() const override { return {base}; }
     };
 
-    /// Type of a pointer to another CIR type
+    /// Type of a pointer to another HIR type
     class PointerType : public AcceptorExtend<PointerType, DerivedType> {
     public:
         static const char NodeId;
@@ -513,7 +513,7 @@ namespace hercules::ir::types {
         bool doIsAtomic() const override { return false; }
     };
 
-    /// Type of an optional containing another CIR type
+    /// Type of an optional containing another HIR type
     class OptionalType : public AcceptorExtend<OptionalType, DerivedType> {
     public:
         static const char NodeId;
@@ -528,7 +528,7 @@ namespace hercules::ir::types {
         bool doIsAtomic() const override { return getBase()->isAtomic(); }
     };
 
-    /// Type of a generator yielding another CIR type
+    /// Type of a generator yielding another HIR type
     class GeneratorType : public AcceptorExtend<GeneratorType, DerivedType> {
     public:
         static const char NodeId;

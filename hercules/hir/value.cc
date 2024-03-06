@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "value.h"
+#include "hercules/hir/value.h"
 
 #include "hercules/hir/instr.h"
 #include "hercules/hir/module.h"

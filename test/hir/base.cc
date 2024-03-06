@@ -19,7 +19,7 @@ public:
 
 using namespace hercules::ir;
 
-TEST_F(CIRCoreTest, NodeNoReplacementRTTI) {
+TEST_F(HIRCoreTest, NodeNoReplacementRTTI) {
   auto *derived = module->Nr<IntConst>(1, module->getIntType());
   ASSERT_TRUE(derived);
   ASSERT_FALSE(derived->hasReplacement());
@@ -35,7 +35,7 @@ TEST_F(CIRCoreTest, NodeNoReplacementRTTI) {
   ASSERT_TRUE(cast<Const>(constBase));
 }
 
-TEST_F(CIRCoreTest, NodeNoReplacementAttributes) {
+TEST_F(HIRCoreTest, NodeNoReplacementAttributes) {
   auto *node = module->Nr<IntConst>(1, module->getIntType());
   ASSERT_FALSE(node->hasReplacement());
   ASSERT_FALSE(node->hasAttribute<KeyValueAttribute>());
@@ -45,7 +45,7 @@ TEST_F(CIRCoreTest, NodeNoReplacementAttributes) {
   ASSERT_EQ(1, std::distance(node->attributes_begin(), node->attributes_end()));
 }
 
-TEST_F(CIRCoreTest, NodeReplacementRTTI) {
+TEST_F(HIRCoreTest, NodeReplacementRTTI) {
   Value *node = module->Nr<IntConst>(1, module->getIntType());
   ASSERT_TRUE(node);
   ASSERT_FALSE(node->hasReplacement());
@@ -58,7 +58,7 @@ TEST_F(CIRCoreTest, NodeReplacementRTTI) {
   ASSERT_TRUE(cast<BoolConst>(node));
 }
 
-TEST_F(CIRCoreTest, NodeReplacementDelegates) {
+TEST_F(HIRCoreTest, NodeReplacementDelegates) {
   auto NODE_NAME = "foo";
 
   Value *originalNode = module->Nr<IntConst>(1, module->getIntType());
@@ -83,7 +83,7 @@ TEST_F(CIRCoreTest, NodeReplacementDelegates) {
   newNode->accept(v2);
 }
 
-TEST_F(CIRCoreTest, NodeNonReplaceableFails) {
+TEST_F(HIRCoreTest, NodeNonReplaceableFails) {
   Value *originalNode = module->Nr<IntConst>(1, module->getIntType());
   originalNode->setReplaceable(false);
   ASSERT_DEATH(originalNode->replaceAll(originalNode), "");

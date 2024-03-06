@@ -32,7 +32,7 @@ namespace hercules::ir {
 
     class Var;
 
-    /// CIR object representing a variable.
+    /// HIR object representing a variable.
     class Var : public ReplaceableNodeBase<Var>, public IdMixin {
     private:
         /// the variable's type

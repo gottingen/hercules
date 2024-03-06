@@ -21,7 +21,7 @@
 
 namespace hercules::ir {
 
-    /// CIR function
+    /// HIR function
     class Func : public AcceptorExtend<Func, Var> {
     private:
         /// unmangled (source code) name of the function
@@ -46,7 +46,7 @@ namespace hercules::ir {
     public:
         static const char NodeId;
 
-        /// Constructs an unrealized CIR function.
+        /// Constructs an unrealized HIR function.
         /// @param name the function's name
         explicit Func(std::string name = "")
                 : AcceptorExtend(nullptr, true, false, std::move(name)), generator(false),

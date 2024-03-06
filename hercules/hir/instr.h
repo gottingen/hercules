@@ -26,7 +26,7 @@
 
 namespace hercules::ir {
 
-    /// CIR object representing an "instruction," or discrete operation in the context of a
+    /// HIR object representing an "instruction," or discrete operation in the context of a
     /// block.
     class Instr : public AcceptorExtend<Instr, Value> {
     public:

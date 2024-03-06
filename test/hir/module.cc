@@ -4,7 +4,7 @@
 
 using namespace hercules::ir;
 
-TEST_F(CIRCoreTest, ModuleNodeBuildingRemovalAndIterators) {
+TEST_F(HIRCoreTest, ModuleNodeBuildingRemovalAndIterators) {
   {
     auto n1 = module->Nr<types::OptionalType>(module->getIntType());
     ASSERT_EQ(n1->getModule(), module.get());
@@ -33,7 +33,7 @@ TEST_F(CIRCoreTest, ModuleNodeBuildingRemovalAndIterators) {
   }
 }
 
-TEST_F(CIRCoreTest, ModuleMainFunctionAndArgVar) {
+TEST_F(HIRCoreTest, ModuleMainFunctionAndArgVar) {
   auto *main = module->getMainFunc();
   ASSERT_TRUE(main);
   auto *mainType = cast<types::FuncType>(main->getType());
@@ -49,7 +49,7 @@ TEST_F(CIRCoreTest, ModuleMainFunctionAndArgVar) {
   ASSERT_FALSE(argVar->isReplaceable());
 }
 
-TEST_F(CIRCoreTest, ModuleTypeGetAndLookup) {
+TEST_F(HIRCoreTest, ModuleTypeGetAndLookup) {
   auto TYPE_NAME = "**test_type**";
   auto *newType = module->unsafeGetMemberedType(TYPE_NAME);
   ASSERT_TRUE(isA<types::RecordType>(newType));

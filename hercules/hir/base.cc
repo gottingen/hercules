@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "base.h"
+#include "hercules/hir/base.h"
 
 #include "hercules/hir/types/types.h"
 #include "hercules/hir/util/format.h"

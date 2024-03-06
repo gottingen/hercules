@@ -4,7 +4,7 @@
 
 using namespace hercules::ir;
 
-TEST_F(CIRCoreTest, MatchingEquivalentVar) {
+TEST_F(HIRCoreTest, MatchingEquivalentVar) {
   auto *first = module->Nr<Var>(module->getIntType());
   auto *second = module->Nr<Var>(module->getIntType());
   auto *third = module->Nr<Var>(module->getFloatType());
@@ -12,13 +12,13 @@ TEST_F(CIRCoreTest, MatchingEquivalentVar) {
   ASSERT_FALSE(util::match(first, third));
 }
 
-TEST_F(CIRCoreTest, MatchingNonEquivalentVar) {
+TEST_F(HIRCoreTest, MatchingNonEquivalentVar) {
   auto *first = module->Nr<Var>(module->getIntType());
   auto *second = module->Nr<Var>(module->getFloatType());
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingEquivalentFunc) {
+TEST_F(HIRCoreTest, MatchingEquivalentFunc) {
   {
     auto *first = module->Nr<BodiedFunc>();
     first->realize(module->unsafeGetDummyFuncType(), {});
@@ -51,7 +51,7 @@ TEST_F(CIRCoreTest, MatchingEquivalentFunc) {
   }
 }
 
-TEST_F(CIRCoreTest, MatchingNonEquivalentFunc) {
+TEST_F(HIRCoreTest, MatchingNonEquivalentFunc) {
   {
     auto *first = module->Nr<BodiedFunc>();
     first->realize(module->unsafeGetDummyFuncType(), {});
@@ -85,12 +85,12 @@ TEST_F(CIRCoreTest, MatchingNonEquivalentFunc) {
   }
 }
 
-TEST_F(CIRCoreTest, MatchingAnyValue) {
+TEST_F(HIRCoreTest, MatchingAnyValue) {
   auto *first = module->Nr<VarValue>(module->Nr<Var>(module->getIntType()));
   ASSERT_TRUE(util::match(first, module->Nr<util::AnyValue>()));
 }
 
-TEST_F(CIRCoreTest, MatchingVarValue) {
+TEST_F(HIRCoreTest, MatchingVarValue) {
   auto *first = module->Nr<VarValue>(module->Nr<Var>(module->getIntType()));
   auto *second = module->Nr<VarValue>(module->Nr<Var>(module->getIntType()));
   ASSERT_TRUE(util::match(first, second));
@@ -98,7 +98,7 @@ TEST_F(CIRCoreTest, MatchingVarValue) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingPointerValue) {
+TEST_F(HIRCoreTest, MatchingPointerValue) {
   auto *first = module->Nr<PointerValue>(module->Nr<Var>(module->getIntType()));
   auto *second = module->Nr<PointerValue>(module->Nr<Var>(module->getIntType()));
   ASSERT_TRUE(util::match(first, second));
@@ -106,7 +106,7 @@ TEST_F(CIRCoreTest, MatchingPointerValue) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingSeriesFlow) {
+TEST_F(HIRCoreTest, MatchingSeriesFlow) {
   auto *first = module->Nr<SeriesFlow>();
   auto *second = module->Nr<SeriesFlow>();
 
@@ -117,7 +117,7 @@ TEST_F(CIRCoreTest, MatchingSeriesFlow) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingIfFlow) {
+TEST_F(HIRCoreTest, MatchingIfFlow) {
   auto *cond = module->Nr<BoolConst>(true, module->getBoolType());
   auto *tVal = module->Nr<SeriesFlow>();
   auto *first = module->Nr<IfFlow>(cond, tVal);
@@ -128,7 +128,7 @@ TEST_F(CIRCoreTest, MatchingIfFlow) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingForFlow) {
+TEST_F(HIRCoreTest, MatchingForFlow) {
   auto *body = module->Nr<SeriesFlow>();
   auto *var = module->Nr<Var>(module->getIntType());
   auto *iter = module->Nr<StringConst>("hello", module->getStringType());
@@ -141,7 +141,7 @@ TEST_F(CIRCoreTest, MatchingForFlow) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingIntConst) {
+TEST_F(HIRCoreTest, MatchingIntConst) {
   auto *first = module->Nr<IntConst>(0, module->getIntType());
   auto *second = module->Nr<IntConst>(0, module->getIntType());
   ASSERT_TRUE(util::match(first, second));
@@ -149,7 +149,7 @@ TEST_F(CIRCoreTest, MatchingIntConst) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingFloatConst) {
+TEST_F(HIRCoreTest, MatchingFloatConst) {
   auto *first = module->Nr<FloatConst>(0.0, module->getFloatType());
   auto *second = module->Nr<FloatConst>(0.0, module->getFloatType());
   ASSERT_TRUE(util::match(first, second));
@@ -157,7 +157,7 @@ TEST_F(CIRCoreTest, MatchingFloatConst) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingBoolConst) {
+TEST_F(HIRCoreTest, MatchingBoolConst) {
   auto *first = module->Nr<BoolConst>(false, module->getBoolType());
   auto *second = module->Nr<BoolConst>(false, module->getBoolType());
   ASSERT_TRUE(util::match(first, second));
@@ -165,7 +165,7 @@ TEST_F(CIRCoreTest, MatchingBoolConst) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingStringConst) {
+TEST_F(HIRCoreTest, MatchingStringConst) {
   auto *first = module->Nr<StringConst>("hi", module->getStringType());
   auto *second = module->Nr<StringConst>("hi", module->getStringType());
   ASSERT_TRUE(util::match(first, second));
@@ -173,7 +173,7 @@ TEST_F(CIRCoreTest, MatchingStringConst) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingAssignInstr) {
+TEST_F(HIRCoreTest, MatchingAssignInstr) {
   auto *var = module->Nr<Var>(module->getIntType());
   auto *val = module->Nr<IntConst>(1, module->getIntType());
   auto *first = module->Nr<AssignInstr>(var, val);
@@ -184,7 +184,7 @@ TEST_F(CIRCoreTest, MatchingAssignInstr) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingExtractInstr) {
+TEST_F(HIRCoreTest, MatchingExtractInstr) {
   auto FIELD = "foo";
   auto *type = cast<types::RecordType>(module->unsafeGetMemberedType("**internal**"));
   type->realize({module->getIntType()}, {FIELD});
@@ -198,7 +198,7 @@ TEST_F(CIRCoreTest, MatchingExtractInstr) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingInsertInstr) {
+TEST_F(HIRCoreTest, MatchingInsertInstr) {
   auto FIELD = "foo";
   auto *type = cast<types::RecordType>(module->unsafeGetMemberedType("**internal**"));
   type->realize({module->getIntType()}, {FIELD});
@@ -213,7 +213,7 @@ TEST_F(CIRCoreTest, MatchingInsertInstr) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingCallInstr) {
+TEST_F(HIRCoreTest, MatchingCallInstr) {
   auto *type = module->unsafeGetDummyFuncType();
   auto *func = module->Nr<BodiedFunc>();
   func->realize(type, {});
@@ -229,7 +229,7 @@ TEST_F(CIRCoreTest, MatchingCallInstr) {
   ASSERT_FALSE(util::match(first, second));
 }
 
-TEST_F(CIRCoreTest, MatchingTernaryInstr) {
+TEST_F(HIRCoreTest, MatchingTernaryInstr) {
   auto *trueValue = module->Nr<BoolConst>(true, module->getBoolType());
   auto *falseValue = module->Nr<BoolConst>(false, module->getBoolType());
   auto *cond = module->Nr<BoolConst>(true, module->getBoolType());

@@ -4,7 +4,7 @@
 
 using namespace hercules::ir;
 
-TEST_F(CIRCoreTest, RecordTypeQuery) {
+TEST_F(HIRCoreTest, RecordTypeQuery) {
   auto MEMBER_NAME = "1";
   auto *type = module->Nr<types::RecordType>(
       "foo", std::vector<types::Type *>{module->getIntType()});
@@ -24,7 +24,7 @@ TEST_F(CIRCoreTest, RecordTypeQuery) {
   ASSERT_EQ(module->getIntType(), type->getUsedTypes()[0]);
 }
 
-TEST_F(CIRCoreTest, RefTypeQuery) {
+TEST_F(HIRCoreTest, RefTypeQuery) {
   auto MEMBER_NAME = "1";
   auto *contents = module->Nr<types::RecordType>(
       "foo", std::vector<types::Type *>{module->getIntType()});
@@ -45,7 +45,7 @@ TEST_F(CIRCoreTest, RefTypeQuery) {
   ASSERT_EQ(contents, type->getUsedTypes()[0]);
 }
 
-TEST_F(CIRCoreTest, FuncTypeQuery) {
+TEST_F(HIRCoreTest, FuncTypeQuery) {
   auto *type = module->Nr<types::FuncType>(
       "foo", module->getIntType(), std::vector<types::Type *>{module->getFloatType()});
 

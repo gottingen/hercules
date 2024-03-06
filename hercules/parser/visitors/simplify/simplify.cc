@@ -186,10 +186,10 @@ namespace hercules::ast {
         return expr;
     }
 
-/// Transform a type expression node.
-/// @param allowTypeOf Set if `type()` expressions are allowed. Usually disallowed in
-///                    class/function definitions.
-/// @throw @c ParserException if a node is not a type (use @c transform instead).
+    /// Transform a type expression node.
+    /// @param allowTypeOf Set if `type()` expressions are allowed. Usually disallowed in
+    ///                    class/function definitions.
+    /// @throw @c ParserException if a node is not a type (use @c transform instead).
     ExprPtr SimplifyVisitor::transformType(ExprPtr &expr, bool allowTypeOf) {
         auto oldTypeOf = ctx->allowTypeOf;
         ctx->allowTypeOf = allowTypeOf;
@@ -202,7 +202,7 @@ namespace hercules::ast {
         return expr;
     }
 
-/// Transform a statement node.
+    /// Transform a statement node.
     StmtPtr SimplifyVisitor::transform(StmtPtr &stmt) {
         if (!stmt)
             return nullptr;
@@ -230,10 +230,10 @@ namespace hercules::ast {
         return stmt;
     }
 
-/// Transform a statement in conditional scope.
-/// Because variables and forward declarations within conditional scopes can be
-/// added later after the domination analysis, ensure that all such declarations
-/// are prepended.
+    /// Transform a statement in conditional scope.
+    /// Because variables and forward declarations within conditional scopes can be
+    /// added later after the domination analysis, ensure that all such declarations
+    /// are prepended.
     StmtPtr SimplifyVisitor::transformConditionalScope(StmtPtr &stmt) {
         if (stmt) {
             ctx->enterConditionalBlock();
@@ -249,7 +249,7 @@ namespace hercules::ast {
         return stmt = nullptr;
     }
 
-/**************************************************************************************/
+    /**************************************************************************************/
 
     void SimplifyVisitor::visit(StmtExpr *expr) {
         for (auto &s: expr->stmts)
@@ -261,12 +261,12 @@ namespace hercules::ast {
 
     void SimplifyVisitor::visit(KeywordStarExpr *expr) { transform(expr->what); }
 
-/// Only allowed in @c MatchStmt
+    /// Only allowed in @c MatchStmt
     void SimplifyVisitor::visit(RangeExpr *expr) {
         E(Error::UNEXPECTED_TYPE, expr, "range");
     }
 
-/// Handled during the type checking
+    /// Handled during the type checking
     void SimplifyVisitor::visit(SliceExpr *expr) {
         transform(expr->start);
         transform(expr->stop);

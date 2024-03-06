@@ -239,11 +239,11 @@ namespace hercules::ast {
         return result;
     }
 
-/**
- * Generate Python bindings for Cython-like access.
- *
- * TODO: this function is total mess. Needs refactoring.
- */
+    /**
+     * Generate Python bindings for Cython-like access.
+     *
+     * TODO: this function is total mess. Needs refactoring.
+     */
     void Cache::populatePythonModule() {
         if (!pythonExt)
             return;

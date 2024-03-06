@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "flow.h"
+#include "hercules/hir/flow.h"
 
 #include "hercules/hir/module.h"
 #include "hercules/hir/util/iterators.h"

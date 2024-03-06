@@ -5,7 +5,7 @@
 
 using namespace hercules::ir;
 
-TEST_F(CIRCoreTest, DominatorAnalysisSimple) {
+TEST_F(HIRCoreTest, DominatorAnalysisSimple) {
   auto *f = module->Nr<BodiedFunc>("test_f");
   auto *b = module->Nr<SeriesFlow>();
   f->setBody(b);
@@ -27,7 +27,7 @@ TEST_F(CIRCoreTest, DominatorAnalysisSimple) {
   ASSERT_FALSE(dom.isDominated(start, end));
 }
 
-TEST_F(CIRCoreTest, DominatorAnalysisTernary) {
+TEST_F(HIRCoreTest, DominatorAnalysisTernary) {
   auto *f = module->Nr<BodiedFunc>("test_f");
   auto *b = module->Nr<SeriesFlow>();
   f->setBody(b);

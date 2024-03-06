@@ -50,7 +50,7 @@ public:
 
 int DummyPass::runCounter = 0;
 
-TEST_F(CIRCoreTest, PassManagerNoInvalidations) {
+TEST_F(HIRCoreTest, PassManagerNoInvalidations) {
   int counter = 0;
 
   auto manager =
@@ -64,7 +64,7 @@ TEST_F(CIRCoreTest, PassManagerNoInvalidations) {
   ASSERT_EQ(1, DummyPass::runCounter);
 }
 
-TEST_F(CIRCoreTest, PassManagerInvalidations) {
+TEST_F(HIRCoreTest, PassManagerInvalidations) {
   int counter = 0;
 
   auto manager =

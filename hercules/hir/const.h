@@ -20,7 +20,7 @@
 
 namespace hercules::ir {
 
-/// CIR constant base. Once created, constants are immutable.
+    /// HIR constant base. Once created, constants are immutable.
     class Const : public AcceptorExtend<Const, Value> {
     private:
         /// the type

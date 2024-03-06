@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "func.h"
+#include "hercules/hir/func.h"
 
 #include <algorithm>
 

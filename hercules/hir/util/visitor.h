@@ -156,7 +156,7 @@ namespace hercules::ir {
 
 namespace hercules::ir::util {
 
-/// Base for CIR visitors
+    /// Base for HIR visitors
     class Visitor {
     protected:
         virtual void defaultVisit(hercules::ir::Node *) {

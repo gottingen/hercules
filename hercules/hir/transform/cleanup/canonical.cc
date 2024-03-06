@@ -192,7 +192,7 @@ namespace hercules::ir::transform::cleanup {
             }
         };
 
-// a*x + b*x --> (a + b) * x
+        // a*x + b*x --> (a + b) * x
         struct CanonAddMul : public RewriteRule {
             static bool varMatch(Value *a, Value *b) {
                 auto *v1 = cast<VarValue>(a);

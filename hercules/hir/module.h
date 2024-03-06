@@ -39,7 +39,7 @@ namespace hercules::ast {
 
 namespace hercules::ir {
 
-    /// CIR object representing a program.
+    /// HIR object representing a program.
     class Module : public AcceptorExtend<Module, Node> {
     public:
         static const std::string VOID_NAME;
@@ -145,7 +145,7 @@ namespace hercules::ir {
     public:
         static const char NodeId;
 
-        /// Constructs an CIR module.
+        /// Constructs an HIR module.
         /// @param name the module name
         explicit Module(const std::string &name = "");
 

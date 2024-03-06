@@ -34,7 +34,7 @@ namespace hercules::ir {
         class CloneVisitor;
     }
 
-    /// Base for CIR attributes.
+    /// Base for HIR attributes.
     struct Attribute {
         virtual ~Attribute() noexcept = default;
 

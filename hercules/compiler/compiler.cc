@@ -106,7 +106,6 @@ namespace hercules {
                 fmt::print(fo, "{}\n", transformed->toString(0));
                 fclose(fo);
             }
-
             Timer t3("typecheck");
             auto typechecked =
                     ast::TypecheckVisitor::apply(cache.get(), std::move(transformed));
@@ -120,7 +119,6 @@ namespace hercules {
                     }
                 fclose(fo);
             }
-
             Timer t4("translate");
             ast::TranslateVisitor::apply(cache.get(), std::move(typechecked));
             t4.log();

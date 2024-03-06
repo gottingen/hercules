@@ -339,8 +339,8 @@ namespace hercules::ast {
         return score;
     }
 
-/// Select the best method among the provided methods given the list of arguments.
-/// See @c reorderNamedArgs for details.
+    /// Select the best method among the provided methods given the list of arguments.
+    /// See @c reorderNamedArgs for details.
     std::vector<types::FuncTypePtr>
     TypecheckVisitor::findMatchingMethods(const types::ClassTypePtr &typ,
                                           const std::vector<types::FuncTypePtr> &methods,
@@ -359,18 +359,18 @@ namespace hercules::ast {
         return results;
     }
 
-/// Wrap an expression to coerce it to the expected type if the type of the expression
-/// does not match it. Also unify types.
-/// @example
-///   expected `Generator`                -> `expr.__iter__()`
-///   expected `float`, got `int`         -> `float(expr)`
-///   expected `Optional[T]`, got `T`     -> `Optional(expr)`
-///   expected `T`, got `Optional[T]`     -> `unwrap(expr)`
-///   expected `Function`, got a function -> partialize function
-///   expected `T`, got `Union[T...]`     -> `__internal__.get_union(expr, T)`
-///   expected `Union[T...]`, got `T`     -> `__internal__.new_union(expr, Union[T...])`
-///   expected base class, got derived    -> downcast to base class
-/// @param allowUnwrap allow optional unwrapping.
+    /// Wrap an expression to coerce it to the expected type if the type of the expression
+    /// does not match it. Also unify types.
+    /// @example
+    ///   expected `Generator`                -> `expr.__iter__()`
+    ///   expected `float`, got `int`         -> `float(expr)`
+    ///   expected `Optional[T]`, got `T`     -> `Optional(expr)`
+    ///   expected `T`, got `Optional[T]`     -> `unwrap(expr)`
+    ///   expected `Function`, got a function -> partialize function
+    ///   expected `T`, got `Union[T...]`     -> `__internal__.get_union(expr, T)`
+    ///   expected `Union[T...]`, got `T`     -> `__internal__.new_union(expr, Union[T...])`
+    ///   expected base class, got derived    -> downcast to base class
+    /// @param allowUnwrap allow optional unwrapping.
     bool TypecheckVisitor::wrapExpr(ExprPtr &expr, const TypePtr &expectedType,
                                     const FuncTypePtr &callee, bool allowUnwrap) {
         auto expectedClass = expectedType->getClass();

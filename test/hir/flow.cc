@@ -7,7 +7,7 @@
 
 using namespace hercules::ir;
 
-TEST_F(CIRCoreTest, SeriesFlowInsertionEraseAndIterators) {
+TEST_F(HIRCoreTest, SeriesFlowInsertionEraseAndIterators) {
   auto FIRST_VALUE = 2;
   auto SECOND_VALUE = 1;
 
@@ -25,7 +25,7 @@ TEST_F(CIRCoreTest, SeriesFlowInsertionEraseAndIterators) {
   ASSERT_EQ(SECOND_VALUE, cast<IntConst>(*f->begin())->getVal());
 }
 
-TEST_F(CIRCoreTest, SeriesFlowQueryAndReplace) {
+TEST_F(HIRCoreTest, SeriesFlowQueryAndReplace) {
   auto FIRST_VALUE = 2;
   auto SECOND_VALUE = 1;
 
@@ -43,7 +43,7 @@ TEST_F(CIRCoreTest, SeriesFlowQueryAndReplace) {
   ASSERT_EQ(1, f->replaceUsedValue(contents[0], contents[1]));
 }
 
-TEST_F(CIRCoreTest, SeriesFlowCloning) {
+TEST_F(HIRCoreTest, SeriesFlowCloning) {
   auto FIRST_VALUE = 2;
   auto SECOND_VALUE = 1;
 
@@ -54,7 +54,7 @@ TEST_F(CIRCoreTest, SeriesFlowCloning) {
   ASSERT_TRUE(util::match(f, cv->clone(f)));
 }
 
-TEST_F(CIRCoreTest, WhileFlowQueryAndReplace) {
+TEST_F(HIRCoreTest, WhileFlowQueryAndReplace) {
   auto *cond = module->Nr<BoolConst>(true, module->getBoolType());
   auto *body = module->Nr<SeriesFlow>();
   auto *f = module->Nr<WhileFlow>(cond, body);
@@ -80,14 +80,14 @@ TEST_F(CIRCoreTest, WhileFlowQueryAndReplace) {
       std::equal(usedValues.begin(), usedValues.end(), queried.begin(), queried.end()));
 }
 
-TEST_F(CIRCoreTest, WhileFlowCloning) {
+TEST_F(HIRCoreTest, WhileFlowCloning) {
   auto *cond = module->Nr<BoolConst>(true, module->getBoolType());
   auto *body = module->Nr<SeriesFlow>();
   auto *f = module->Nr<WhileFlow>(cond, body);
   ASSERT_TRUE(util::match(f, cv->clone(f)));
 }
 
-TEST_F(CIRCoreTest, ForFlowQueryAndReplace) {
+TEST_F(HIRCoreTest, ForFlowQueryAndReplace) {
   auto *iter = module->Nr<StringConst>("hi", module->getStringType());
   auto *body = module->Nr<SeriesFlow>();
   auto *var = module->Nr<Var>(module->getStringType(), false, "x");
@@ -119,7 +119,7 @@ TEST_F(CIRCoreTest, ForFlowQueryAndReplace) {
   ASSERT_NE(var, f->getVar());
 }
 
-TEST_F(CIRCoreTest, ForFlowCloning) {
+TEST_F(HIRCoreTest, ForFlowCloning) {
   auto *iter = module->Nr<StringConst>("hi", module->getStringType());
   auto *body = module->Nr<SeriesFlow>();
   auto *var = module->Nr<Var>(module->getStringType(), false, "x");
@@ -128,7 +128,7 @@ TEST_F(CIRCoreTest, ForFlowCloning) {
   ASSERT_TRUE(util::match(f, cv->clone(f)));
 }
 
-TEST_F(CIRCoreTest, IfFlowQueryAndReplace) {
+TEST_F(HIRCoreTest, IfFlowQueryAndReplace) {
   auto *cond = module->Nr<BoolConst>(true, module->getBoolType());
   auto *tBody = module->Nr<SeriesFlow>();
   auto *fBody = module->Nr<SeriesFlow>();
@@ -169,7 +169,7 @@ TEST_F(CIRCoreTest, IfFlowQueryAndReplace) {
       std::equal(usedValues.begin(), usedValues.end(), qVal.begin(), qVal.end()));
 }
 
-TEST_F(CIRCoreTest, IfFlowCloning) {
+TEST_F(HIRCoreTest, IfFlowCloning) {
   auto *cond = module->Nr<BoolConst>(true, module->getBoolType());
   auto *tBody = module->Nr<SeriesFlow>();
   auto *fBody = module->Nr<SeriesFlow>();
@@ -178,7 +178,7 @@ TEST_F(CIRCoreTest, IfFlowCloning) {
   ASSERT_TRUE(util::match(f, cv->clone(f)));
 }
 
-TEST_F(CIRCoreTest, TryCatchFlowSingleCatchQueryAndReplace) {
+TEST_F(HIRCoreTest, TryCatchFlowSingleCatchQueryAndReplace) {
   auto *body = module->Nr<SeriesFlow>();
   auto *finally = module->Nr<SeriesFlow>();
   auto *f = module->Nr<TryCatchFlow>(body, finally);

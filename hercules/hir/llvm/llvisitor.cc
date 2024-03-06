@@ -1440,9 +1440,9 @@ namespace hercules::ir {
         return nullptr;
     }
 
-/*
- * General values, M, functions, vars
- */
+    /*
+     * General values, M, functions, vars
+     */
 
     void LLVMVisitor::visit(const Module *x) {
         // initialize M

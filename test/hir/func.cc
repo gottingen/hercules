@@ -6,7 +6,7 @@
 
 using namespace hercules::ir;
 
-TEST_F(CIRCoreTest, FuncRealizationAndVarInsertionEraseAndIterators) {
+TEST_F(HIRCoreTest, FuncRealizationAndVarInsertionEraseAndIterators) {
   auto *fn = module->Nr<BodiedFunc>();
   fn->realize(module->unsafeGetDummyFuncType(), {});
 
@@ -29,7 +29,7 @@ TEST_F(CIRCoreTest, FuncRealizationAndVarInsertionEraseAndIterators) {
   ASSERT_EQ(module->getIntType(), fn->front()->getType());
 }
 
-TEST_F(CIRCoreTest, BodiedFuncQueryAndReplace) {
+TEST_F(HIRCoreTest, BodiedFuncQueryAndReplace) {
   auto *fn = module->Nr<BodiedFunc>();
   fn->realize(module->unsafeGetDummyFuncType(), {});
   fn->setJIT();
@@ -52,14 +52,14 @@ TEST_F(CIRCoreTest, BodiedFuncQueryAndReplace) {
   ASSERT_NE(fn->getBody(), body);
 }
 
-TEST_F(CIRCoreTest, BodiedFuncUnmangledName) {
+TEST_F(HIRCoreTest, BodiedFuncUnmangledName) {
   auto *fn = module->Nr<BodiedFunc>("Int.foo");
   fn->setUnmangledName("foo");
   fn->realize(module->unsafeGetDummyFuncType(), {});
   ASSERT_EQ("foo", fn->getUnmangledName());
 }
 
-TEST_F(CIRCoreTest, BodiedFuncCloning) {
+TEST_F(HIRCoreTest, BodiedFuncCloning) {
   auto *fn = module->Nr<BodiedFunc>("fn");
   fn->realize(module->unsafeGetDummyFuncType(), {});
 
@@ -68,7 +68,7 @@ TEST_F(CIRCoreTest, BodiedFuncCloning) {
   ASSERT_TRUE(util::match(fn, cv->clone(fn)));
 }
 
-TEST_F(CIRCoreTest, ExternalFuncUnmangledNameAndCloning) {
+TEST_F(HIRCoreTest, ExternalFuncUnmangledNameAndCloning) {
   auto *fn = module->Nr<ExternalFunc>("fn");
   fn->realize(module->unsafeGetDummyFuncType(), {});
 
@@ -77,7 +77,7 @@ TEST_F(CIRCoreTest, ExternalFuncUnmangledNameAndCloning) {
   ASSERT_TRUE(util::match(fn, cv->clone(fn)));
 }
 
-TEST_F(CIRCoreTest, InternalFuncParentTypeUnmangledNameAndCloning) {
+TEST_F(HIRCoreTest, InternalFuncParentTypeUnmangledNameAndCloning) {
   auto *fn = module->Nr<InternalFunc>("fn.1");
   fn->setUnmangledName("fn");
   fn->realize(module->unsafeGetDummyFuncType(), {});
@@ -88,7 +88,7 @@ TEST_F(CIRCoreTest, InternalFuncParentTypeUnmangledNameAndCloning) {
   ASSERT_TRUE(util::match(fn, cv->clone(fn)));
 }
 
-TEST_F(CIRCoreTest, LLVMFuncUnmangledNameQueryAndReplace) {
+TEST_F(HIRCoreTest, LLVMFuncUnmangledNameQueryAndReplace) {
   auto *fn = module->Nr<LLVMFunc>("fn");
   fn->realize(module->unsafeGetDummyFuncType(), {});
 

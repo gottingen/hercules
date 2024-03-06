@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "module.h"
+#include "hercules/hir/module.h"
 
 #include <algorithm>
 #include <memory>

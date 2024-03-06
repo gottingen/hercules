@@ -20,9 +20,9 @@
 namespace hercules::ir::util {
 
 
-    /// Base for CIR visitor contexts.
+    /// Base for HIR visitor contexts.
     template<typename Frame>
-    class CIRContext {
+    class HIRContext {
     private:
         std::vector<Frame> frames;
 

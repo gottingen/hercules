@@ -5,7 +5,7 @@
 
 using namespace hercules::ir;
 
-TEST_F(CIRCoreTest, RDAnalysisSimple) {
+TEST_F(HIRCoreTest, RDAnalysisSimple) {
   auto *f = module->Nr<BodiedFunc>("test_f");
   auto *b = module->Nr<SeriesFlow>();
   f->setBody(b);
@@ -49,7 +49,7 @@ TEST_F(CIRCoreTest, RDAnalysisSimple) {
   ASSERT_EQ(second->getId(), *endRd.begin());
 }
 
-TEST_F(CIRCoreTest, RDAnalysisIfConditional) {
+TEST_F(HIRCoreTest, RDAnalysisIfConditional) {
   auto *f = module->Nr<BodiedFunc>("test_f");
 
   auto *trueBranch = module->Nr<SeriesFlow>();
@@ -88,7 +88,7 @@ TEST_F(CIRCoreTest, RDAnalysisIfConditional) {
   ASSERT_TRUE(endRd.find(second->getId()) != endRd.end());
 }
 
-TEST_F(CIRCoreTest, RDAnalysisTryCatch) {
+TEST_F(HIRCoreTest, RDAnalysisTryCatch) {
   auto *f = module->Nr<BodiedFunc>("test_f");
 
   auto *body = module->Nr<SeriesFlow>();
@@ -140,7 +140,7 @@ TEST_F(CIRCoreTest, RDAnalysisTryCatch) {
   ASSERT_TRUE(middleRd.find(initial->getId()) != endRd.end());
 }
 
-TEST_F(CIRCoreTest, RDAnalysisWhileLoop) {
+TEST_F(HIRCoreTest, RDAnalysisWhileLoop) {
   auto *f = module->Nr<BodiedFunc>("test_f");
 
   auto *loopBody = module->Nr<SeriesFlow>();

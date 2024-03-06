@@ -2,7 +2,7 @@
 
 using namespace hercules::ir;
 
-TEST_F(CIRCoreTest, VarQueryMethodsDelegate) {
+TEST_F(HIRCoreTest, VarQueryMethodsDelegate) {
   Var *original = module->Nr<Var>(module->getIntType());
   Var *replacement = module->Nr<Var>(module->getFloatType());
   original->replaceAll(replacement);
@@ -11,7 +11,7 @@ TEST_F(CIRCoreTest, VarQueryMethodsDelegate) {
   ASSERT_EQ(module->getFloatType(), original->getUsedTypes().back());
 }
 
-TEST_F(CIRCoreTest, VarReplaceMethodsDelegate) {
+TEST_F(HIRCoreTest, VarReplaceMethodsDelegate) {
   Var *original = module->Nr<Var>(module->getIntType());
   Var *replacement = module->Nr<Var>(module->getFloatType());
 

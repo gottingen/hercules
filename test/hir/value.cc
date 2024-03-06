@@ -2,7 +2,7 @@
 
 using namespace hercules::ir;
 
-TEST_F(CIRCoreTest, ValueQueryMethodsDelegate) {
+TEST_F(HIRCoreTest, ValueQueryMethodsDelegate) {
   Value *original = module->Nr<IntConst>(1, module->getIntType(), "foo");
   auto originalRef = original->referenceString();
 
@@ -30,7 +30,7 @@ TEST_F(CIRCoreTest, ValueQueryMethodsDelegate) {
   ASSERT_EQ(1, original->getUsedTypes().size());
 }
 
-TEST_F(CIRCoreTest, ValueReplaceMethodsDelegate) {
+TEST_F(HIRCoreTest, ValueReplaceMethodsDelegate) {
   Value *original = module->Nr<IntConst>(1, module->getIntType(), "foo");
   auto originalRef = original->referenceString();
   auto originalId = original->getId();

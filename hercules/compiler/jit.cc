@@ -13,10 +13,8 @@
 // limitations under the License.
 //
 
-#include "jit.h"
-
+#include "hercules/compiler/jit.h"
 #include <sstream>
-
 #include "hercules/parser/common.h"
 #include "hercules/parser/peg/peg.h"
 #include "hercules/parser/visitors/doc/doc.h"

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "instr.h"
+#include "hercules/hir/instr.h"
 
 #include "hercules/hir/module.h"
 #include "hercules/hir/util/iterators.h"

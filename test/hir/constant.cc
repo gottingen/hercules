@@ -5,7 +5,7 @@
 
 using namespace hercules::ir;
 
-TEST_F(CIRCoreTest, ConstTypeQueryAndReplace) {
+TEST_F(HIRCoreTest, ConstTypeQueryAndReplace) {
   auto *node = module->Nr<IntConst>(1, module->getIntType());
   ASSERT_EQ(module->getIntType(), node->getType());
 
@@ -15,7 +15,7 @@ TEST_F(CIRCoreTest, ConstTypeQueryAndReplace) {
   ASSERT_EQ(1, node->replaceUsedType(module->getIntType(), module->getIntType()));
 }
 
-TEST_F(CIRCoreTest, ConstCloning) {
+TEST_F(HIRCoreTest, ConstCloning) {
   auto VALUE = 1;
   auto *node = module->Nr<IntConst>(VALUE, module->getIntType());
   auto *clone = cast<IntConst>(cv->clone(node));
