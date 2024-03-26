@@ -186,7 +186,7 @@ namespace hercules::ir {
         int doReplaceUsedValue(id_t id, Value *newValue) override;
     };
 
-/// Instr representing calling a function.
+    /// Instr representing calling a function.
     class CallInstr : public AcceptorExtend<CallInstr, Instr> {
     private:
         /// the function
@@ -270,7 +270,7 @@ namespace hercules::ir {
         int doReplaceUsedValue(id_t id, Value *newValue) override;
     };
 
-/// Instr representing allocating an array on the stack.
+    /// Instr representing allocating an array on the stack.
     class StackAllocInstr : public AcceptorExtend<StackAllocInstr, Instr> {
     private:
         /// the array type
@@ -313,7 +313,7 @@ namespace hercules::ir {
         int doReplaceUsedType(const std::string &name, types::Type *newType) override;
     };
 
-/// Instr representing getting information about a type.
+    /// Instr representing getting information about a type.
     class TypePropertyInstr : public AcceptorExtend<TypePropertyInstr, Instr> {
     public:
         enum Property {
@@ -398,7 +398,7 @@ namespace hercules::ir {
         int doReplaceUsedType(const std::string &name, types::Type *newType) override;
     };
 
-/// Instr representing a ternary operator.
+    /// Instr representing a ternary operator.
     class TernaryInstr : public AcceptorExtend<TernaryInstr, Instr> {
     private:
         /// the condition
@@ -467,7 +467,7 @@ namespace hercules::ir {
         using AcceptorExtend::AcceptorExtend;
     };
 
-/// Instr representing a break statement.
+    /// Instr representing a break statement.
     class BreakInstr : public AcceptorExtend<BreakInstr, ControlFlowInstr> {
     private:
         /// the loop being broken, nullptr if the immediate ancestor
@@ -494,7 +494,7 @@ namespace hercules::ir {
         int doReplaceUsedValue(id_t id, Value *newValue) override;
     };
 
-/// Instr representing a continue statement.
+    /// Instr representing a continue statement.
     class ContinueInstr : public AcceptorExtend<ContinueInstr, ControlFlowInstr> {
     private:
         /// the loop being continued, nullptr if the immediate ancestor
@@ -612,7 +612,7 @@ namespace hercules::ir {
         int doReplaceUsedValue(id_t id, Value *newValue) override;
     };
 
-/// Instr that contains a flow and value.
+    /// Instr that contains a flow and value.
     class FlowInstr : public AcceptorExtend<FlowInstr, Instr> {
     private:
         /// the flow

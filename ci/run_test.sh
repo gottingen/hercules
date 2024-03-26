@@ -38,6 +38,7 @@ PYTHONLIB=`find_libpython`
 export HERCULES_PYTHON=${PYTHONLIB}
 export PYTHONPATH=${ROOT_PATH}/test/python
 cd "${ROOT_PATH}"
+./build/hir_test
 ./build/hercules_test
 
 

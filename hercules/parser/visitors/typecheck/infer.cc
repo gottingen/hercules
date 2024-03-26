@@ -151,9 +151,9 @@ namespace hercules::ast {
         return result;
     }
 
-/// Realize a type and create IR type stub. If type is a function type, also realize the
-/// underlying function and generate IR function stub.
-/// @return realized type or nullptr if the type cannot be realized
+    /// Realize a type and create IR type stub. If type is a function type, also realize the
+    /// underlying function and generate IR function stub.
+    /// @return realized type or nullptr if the type cannot be realized
     types::TypePtr TypecheckVisitor::realize(types::TypePtr typ) {
         if (!typ || !typ->canRealize()) {
             return nullptr;
@@ -182,8 +182,9 @@ namespace hercules::ast {
                 }
             }
         } catch (exc::ParserException &e) {
-            if (e.errorCode == Error::MAX_REALIZATION)
+            if (e.errorCode == Error::MAX_REALIZATION) {
                 throw;
+            }
             if (auto f = typ->getFunc()) {
                 if (f->ast->attributes.has(Attr::HiddenFromUser)) {
                     e.locations.back() = getSrcInfo();

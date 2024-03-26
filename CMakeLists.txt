@@ -13,7 +13,7 @@ configure_file("${PROJECT_SOURCE_DIR}/cmake/config.py.in"
 option(HERCULES_GPU "build Hercules GPU backend" OFF)
 
 cmake_policy(SET CMP0028 NEW)
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 #set_target_properties(xz PROPERTIES EXCLUDE_FROM_ALL ON)
 #set_target_properties(xzdec PROPERTIES EXCLUDE_FROM_ALL ON)
 link_directories(${CONDA_PREFIX}/lib)
@@ -43,7 +43,7 @@ list(APPEND CMAKE_PREFIX_PATH "$ENV{CONDA_PREFIX}")
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-find_package(LLVM REQUIRED)
+find_package(LLVM 17 REQUIRED)
 
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
@@ -247,6 +247,7 @@ set(HERCULES_CPPFILES
         hercules/compiler/jit.cc
         hercules/compiler/memory_manager.cc
         hercules/dsl/plugins.cc
+        hercules/engine/vm.cc
         hercules/parser/ast/expr.cc
         hercules/parser/ast/stmt.cc
         hercules/parser/ast/types/type.cc
@@ -339,7 +340,8 @@ set(HERCULES_CPPFILES
         hercules/hir/util/visitor.cc
         hercules/hir/value.cc
         hercules/hir/var.cc
-        hercules/util/common.cc)
+        hercules/util/common.cc
+)
 add_library(herculesc SHARED ${HERCULES_HPPFILES})
 target_include_directories(herculesc PRIVATE ${peglib_SOURCE_DIR} ${toml_SOURCE_DIR}/include ${semver_SOURCE_DIR}/include)
 target_sources(herculesc PRIVATE ${HERCULES_CPPFILES} hercules_rules.cc omp_rules.cc)
@@ -456,6 +458,16 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 set(HERCULES_TEST_CPPFILES
         test/hercules_test.cc
+        test/types.cc)
+add_executable(hercules_test ${HERCULES_TEST_CPPFILES})
+target_include_directories(hercules_test PRIVATE test/hir
+        "${gc_SOURCE_DIR}/include")
+target_link_libraries(hercules_test fmt herculesc herculesrt gtest_main)
+target_compile_definitions(hercules_test
+        PRIVATE TEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test")
+
+set(HIR_TEST_CPPFILES
+        test/hir_test.cc
         test/hir/analyze/dominator.cc
         test/hir/analyze/reaching.cc
         test/hir/base.cc
@@ -470,12 +482,13 @@ set(HERCULES_TEST_CPPFILES
         test/hir/value.cc
         test/hir/var.cc
         test/types.cc)
-add_executable(hercules_test ${HERCULES_TEST_CPPFILES})
-target_include_directories(hercules_test PRIVATE test/hir
+add_executable(hir_test ${HIR_TEST_CPPFILES})
+target_include_directories(hir_test PRIVATE test/hir
         "${gc_SOURCE_DIR}/include")
-target_link_libraries(hercules_test fmt herculesc herculesrt gtest_main)
-target_compile_definitions(hercules_test
+target_link_libraries(hir_test fmt herculesc herculesrt gtest_main)
+target_compile_definitions(hir_test
         PRIVATE TEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test")
+
 
 install(TARGETS herculesrt herculesc hercules_jupyter DESTINATION lib/hercules)
 install(FILES ${CMAKE_BINARY_DIR}/libomp${CMAKE_SHARED_LIBRARY_SUFFIX} DESTINATION lib/hercules)

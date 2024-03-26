@@ -1,0 +1,15 @@
+# protobuf grammar
+# https://developers.google.com/protocol-buffers/docs/reference/proto3-spec
+
+proto <- SYNTAX /( IMPORT / PKG)
+SYNTAX <- _ 'syntax' _ '=' _ VALUE _ ';' _
+IMPORT <- _ 'import' _ VALUE _
+PKG <- _ 'package' _ VALUE _ ';' _
+VALUE <- (![\n\r# ].)*
+COMMENT <- (LongComment / LineComment)
+LongComment <- '/*' (!'*/'.)* '*/'   # 6.4.9
+LineComment <- '//' (!'\n' .)*       # 6.4.9
+
+~EOL <- <[\r][\n] / [\r\n]>
+~SPACE <- ([ \t]+ / COMMENT / NLP EOL) SPACE?
+~_ <- SPACE?

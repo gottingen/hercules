@@ -2070,9 +2070,9 @@ namespace hercules::ir {
         value = var; // note: we don't load the pointer
     }
 
-/*
- * Types
- */
+    /*
+     * Types
+     */
 
     llvm::Type *LLVMVisitor::getLLVMType(types::Type *t) {
         if (auto *x = cast<types::IntType>(t)) {

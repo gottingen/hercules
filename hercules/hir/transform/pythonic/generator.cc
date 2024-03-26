@@ -36,7 +36,7 @@ namespace hercules::ir::transform::pythonic {
             return f && f->getName().rfind("std.internal.builtin.all:", 0) == 0;
         }
 
-// Replaces yields with updates to the accumulator variable.
+        // Replaces yields with updates to the accumulator variable.
         struct GeneratorSumTransformer : public util::Operator {
             Var *accumulator;
             bool valid;
@@ -81,7 +81,7 @@ namespace hercules::ir::transform::pythonic {
             void handle(YieldInInstr *v) override { valid = false; }
         };
 
-// Replaces yields with conditional returns of the any/all answer.
+        // Replaces yields with conditional returns of the any/all answer.
         struct GeneratorAnyAllTransformer : public util::Operator {
             bool any; // true=any, false=all
             bool valid;

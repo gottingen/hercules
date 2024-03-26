@@ -30,19 +30,19 @@ namespace hercules::ir::transform::pythonic {
 
         bool isSlice(Value *v) { return v->getType()->getName() == SLICE; }
 
-// The following "handlers" account for the possible sub-expressions we might
-// see when optimizing list1 + list2 + ... listN. Currently, we optimize:
-//   - Slices: x[a:b:c] (avoid constructing the temporary sliced list)
-//   - Literals: [a, b, c] (just append elements directly)
-//   - Default: <any list expr> (append by iterating over the list)
-// It is easy to handle new sub-expression types by adding new handlers.
-// There are three stages in the optimized code:
-//   - Setup: assign all the relevant expressions to variables, making
-//            sure they're evaluated in the same order as before
-//   - Count: figure out the total length of the resulting list
-//   - Create: initialize a new list with the appropriate capacity and
-//             append all the elements
-// The handlers have virtual functions to generate IR for each of these steps.
+        // The following "handlers" account for the possible sub-expressions we might
+        // see when optimizing list1 + list2 + ... listN. Currently, we optimize:
+        //   - Slices: x[a:b:c] (avoid constructing the temporary sliced list)
+        //   - Literals: [a, b, c] (just append elements directly)
+        //   - Default: <any list expr> (append by iterating over the list)
+        // It is easy to handle new sub-expression types by adding new handlers.
+        // There are three stages in the optimized code:
+        //   - Setup: assign all the relevant expressions to variables, making
+        //            sure they're evaluated in the same order as before
+        //   - Count: figure out the total length of the resulting list
+        //   - Create: initialize a new list with the appropriate capacity and
+        //             append all the elements
+        // The handlers have virtual functions to generate IR for each of these steps.
 
         struct ElementHandler {
             std::vector<Var *> vars;

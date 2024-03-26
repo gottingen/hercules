@@ -90,7 +90,6 @@ namespace hercules {
             ast::StmtPtr codeStmt = isCode
                                     ? ast::parseCode(cache.get(), abspath, code, startLine)
                                     : ast::parseFile(cache.get(), abspath);
-
             cache->module0 = file;
 
             Timer t2("simplify");

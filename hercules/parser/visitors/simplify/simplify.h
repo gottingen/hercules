@@ -268,7 +268,7 @@ namespace hercules::ast {
         StmtPtr codegenMagic(const std::string &, const ExprPtr &, const std::vector<Param> &,
                              bool);
 
-        /* The rest (simplify.cpp) */
+        /* The rest (simplify.cc) */
         void visit(StmtExpr *) override;
 
         void visit(StarExpr *) override;
