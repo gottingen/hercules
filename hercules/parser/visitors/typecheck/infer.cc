@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@
 #include "hercules/parser/visitors/simplify/simplify.h"
 #include "hercules/parser/visitors/typecheck/typecheck.h"
 
-using fmt::format;
 using namespace hercules::error;
 
 const int MAX_TYPECHECK_ITER = 1000;
@@ -193,7 +192,7 @@ namespace hercules::ast {
                     for (size_t i = 0, ai = 0, gi = 0; i < f->ast->args.size(); i++) {
                         auto an = f->ast->args[i].name;
                         auto ns = trimStars(an);
-                        args.push_back(fmt::format("{}{}: {}", std::string(ns, '*'),
+                        args.push_back(collie::format("{}{}: {}", std::string(ns, '*'),
                                                    ctx->cache->rev(an),
                                                    f->ast->args[i].status == Param::Generic
                                                    ? f->funcGenerics[gi++].type->prettyString()
@@ -209,9 +208,9 @@ namespace hercules::ast {
                         name = "<import " + name + ">";
                     } else {
                         name = ctx->cache->rev(f->ast->name);
-                        name_args = fmt::format("({})", fmt::join(args, ", "));
+                        name_args = collie::format("({})", collie::join(args, ", "));
                     }
-                    e.trackRealize(fmt::format("{}{}", name, name_args), getSrcInfo());
+                    e.trackRealize(collie::format("{}{}", name, name_args), getSrcInfo());
                 }
             } else {
                 e.trackRealize(typ->prettyString(), getSrcInfo());
@@ -583,8 +582,8 @@ namespace hercules::ast {
                         // Print a nice error message
                         std::vector<std::string> a;
                         for (auto &t: args)
-                            a.emplace_back(fmt::format("{}", t->prettyString()));
-                        std::string argsNice = fmt::format("({})", fmt::join(a, ", "));
+                            a.emplace_back(collie::format("{}", t->prettyString()));
+                        std::string argsNice = collie::format("({})", collie::join(a, ", "));
                         E(Error::DOT_NO_ATTR_ARGS, getSrcInfo(), ct->prettyString(), fnName,
                           argsNice);
                     }
@@ -595,7 +594,7 @@ namespace hercules::ast {
 
                     // Thunk name: _thunk.<BASE>.<FN>.<ARGS>
                     auto thunkName =
-                            format("_thunk.{}.{}.{}", baseCls, m->ast->name, fmt::join(ns, "."));
+                            format("_thunk.{}.{}.{}", baseCls, m->ast->name, collie::join(ns, "."));
                     if (in(ctx->cache->functions, thunkName))
                         continue;
 
@@ -729,7 +728,7 @@ namespace hercules::ast {
             std::vector<std::string> names;
             std::map<std::string, SrcInfo> memberInfo;
             for (int ai = 0; ai < tr->args.size(); ai++) {
-                auto n = t->name == TYPE_TUPLE ? format("item{}", ai + 1)
+                auto n = t->name == TYPE_TUPLE ? collie::format("item{}", ai + 1)
                                                : ctx->cache->classes[t->name].fields[ai].name;
                 names.emplace_back(n);
                 typeArgs.emplace_back(forceFindIRType(tr->args[ai]));
@@ -841,17 +840,17 @@ namespace hercules::ast {
             auto ag = ast->args[1].name;
             trimStars(ag);
             for (int i = 0; i < as.size(); i++) {
-                ll.push_back(format("%{} = extractvalue {{}} %args, {}", i, i));
+                ll.push_back(collie::format("%{} = extractvalue {{}} %args, {}", i, i));
                 items.push_back(N<ExprStmt>(N<IdExpr>(ag)));
             }
             items.push_back(N<ExprStmt>(N<IdExpr>("TR")));
             for (int i = 0; i < as.size(); i++) {
                 items.push_back(N<ExprStmt>(N<IndexExpr>(N<IdExpr>(ag), N<IntExpr>(i))));
-                lla.push_back(format("{{}} %{}", i));
+                lla.push_back(collie::format("{{}} %{}", i));
             }
             items.push_back(N<ExprStmt>(N<IdExpr>("TR")));
-            ll.push_back(format("%{} = call {{}} %self({})", as.size(), combine2(lla)));
-            ll.push_back(format("ret {{}} %{}", as.size()));
+            ll.push_back(collie::format("%{} = call {{}} %self({})", as.size(), combine2(lla)));
+            ll.push_back(collie::format("ret {{}} %{}", as.size()));
             items[0] = N<ExprStmt>(N<StringExpr>(combine2(ll, "\n")));
             ast->suite = N<SuiteStmt>(items);
         } else if (startswith(ast->name, "Union.__new__:0")) {

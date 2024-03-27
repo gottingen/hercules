@@ -212,7 +212,7 @@ namespace hercules {
         if (failed)
             return EXIT_FAILURE;
 
-        fmt::print("{}\n", *result);
+        collie::print("{}\n", *result);
         return EXIT_SUCCESS;
     }
 
@@ -336,7 +336,7 @@ namespace hercules {
         }
 
         llvm::cantFail(jit.init());
-        fmt::print(">>> Hercules JIT v{} <<<\n", HERCULES_VERSION);
+        collie::print(">>> Hercules JIT v{} <<<\n", HERCULES_VERSION);
         if (input == "-") {
             jit_loop(&jit, std::cin);
         } else {
@@ -372,13 +372,13 @@ namespace hercules {
             if (line != "#%%") {
                 code += line + "\n";
             } else {
-                fmt::print("{}[done]\n", jit_exec(jit, code));
+                collie::print("{}[done]\n", jit_exec(jit, code));
                 code = "";
                 fflush(stdout);
             }
         }
         if (!code.empty())
-            fmt::print("{}[done]\n", jit_exec(jit, code));
+            collie::print("{}[done]\n", jit_exec(jit, code));
     }
 
 }  // namespace hercules

@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -275,5 +275,5 @@ namespace hercules::ir {
 } // namespace hercules::ir
 
 template<>
-struct fmt::formatter<hercules::ir::Func> : fmt::ostream_formatter {
+struct collie::formatter<hercules::ir::Func> : collie::ostream_formatter {
 };

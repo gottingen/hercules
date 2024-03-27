@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -130,9 +130,9 @@ namespace hercules::ast::types {
             std::vector<std::string> s;
             for (auto &g: generics)
                 s.push_back(g.type->debugString(mode));
-            return fmt::format("Static[{};{}]", join(s, ","), expr->toString());
+            return collie::format("Static[{};{}]", join(s, ","), expr->toString());
         } else {
-            return fmt::format("Static[{}]", FormatVisitor::apply(expr));
+            return collie::format("Static[{}]", FormatVisitor::apply(expr));
         }
     }
 

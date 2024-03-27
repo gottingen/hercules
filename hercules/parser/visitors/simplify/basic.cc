@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@
 #include "hercules/parser/peg/peg.h"
 #include "hercules/parser/visitors/simplify/simplify.h"
 
-using fmt::format;
 using namespace hercules::error;
 
 namespace hercules::ast {
@@ -49,7 +48,7 @@ namespace hercules::ast {
                 /// Custom prefix strings:
                 /// call `str.__prefix_[prefix]__(str, [static length of str])`
                 exprs.push_back(
-                        transform(N<CallExpr>(N<DotExpr>("str", format("__prefix_{}__", p.second)),
+                        transform(N<CallExpr>(N<DotExpr>("str", collie::format("__prefix_{}__", p.second)),
                                               N<StringExpr>(p.first), N<IntExpr>(p.first.size()))));
             } else {
                 exprs.push_back(N<StringExpr>(p.first));
@@ -112,7 +111,7 @@ namespace hercules::ast {
         } else {
             // Custom suffix: call `int.__suffix_[suffix]__(value)`
             return transform(
-                    N<CallExpr>(N<DotExpr>("int", format("__suffix_{}__", expr->suffix)),
+                    N<CallExpr>(N<DotExpr>("int", collie::format("__suffix_{}__", expr->suffix)),
                                 N<IntExpr>(*(expr->intValue))));
         }
     }
@@ -133,7 +132,7 @@ namespace hercules::ast {
         } else {
             // Custom suffix: call `float.__suffix_[suffix]__(value)`
             return transform(
-                    N<CallExpr>(N<DotExpr>("float", format("__suffix_{}__", expr->suffix)),
+                    N<CallExpr>(N<DotExpr>("float", collie::format("__suffix_{}__", expr->suffix)),
                                 N<FloatExpr>(*(expr->floatValue))));
         }
     }
@@ -162,7 +161,7 @@ namespace hercules::ast {
                     if (!code.empty() && code.back() == '=') {
                         // Special case: f"{x=}"
                         code = code.substr(0, code.size() - 1);
-                        items.push_back(N<StringExpr>(fmt::format("{}=", code)));
+                        items.push_back(N<StringExpr>(collie::format("{}=", code)));
                     }
                     auto [expr, format] = parseExpr(ctx->cache, code, offset);
                     if (!format.empty()) {

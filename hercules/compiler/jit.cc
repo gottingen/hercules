@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,15 +13,16 @@
 // limitations under the License.
 //
 
-#include "hercules/compiler/jit.h"
+#include <hercules/compiler/jit.h>
 #include <sstream>
-#include "hercules/parser/common.h"
-#include "hercules/parser/peg/peg.h"
-#include "hercules/parser/visitors/doc/doc.h"
-#include "hercules/parser/visitors/format/format.h"
-#include "hercules/parser/visitors/simplify/simplify.h"
-#include "hercules/parser/visitors/translate/translate.h"
-#include "hercules/parser/visitors/typecheck/typecheck.h"
+#include <hercules/parser/common.h>
+#include <hercules/parser/peg/peg.h>
+#include <hercules/parser/visitors/doc/doc.h>
+#include <hercules/parser/visitors/format/format.h>
+#include <hercules/parser/visitors/simplify/simplify.h>
+#include <hercules/parser/visitors/translate/translate.h>
+#include <hercules/parser/visitors/typecheck/typecheck.h>
+#include <collie/strings/format.h>
 
 namespace hercules::jit {
 
@@ -207,7 +208,7 @@ namespace hercules::jit {
     llvm::Expected<std::string>
     JIT::execute(const std::string &code, const std::string &file, int line, bool debug) {
         if (debug)
-            fmt::print(stderr, "[hercules::jit::execute] code:\n{}-----\n", code);
+            collie::print(stderr, "[hercules::jit::execute] code:\n{}-----\n", code);
         auto result = compile(code, file, line);
         if (auto err = result.takeError())
             return std::move(err);
@@ -311,7 +312,7 @@ namespace hercules::jit {
             auto wrapname = "__hercules_wrapped__" + name + "_" + std::to_string(idx++);
             auto wrapper = buildPythonWrapper(name, wrapname, types, pyModule, pyVars);
             if (debug)
-                fmt::print(stderr, "[hercules::jit::executePython] wrapper:\n{}-----\n", wrapper);
+                collie::print(stderr, "[hercules::jit::executePython] wrapper:\n{}-----\n", wrapper);
             if (auto err = compile(wrapper).takeError()) {
                 auto errorInfo = llvm::toString(std::move(err));
                 return JITResult::error(errorInfo);

@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
 #include "hercules/parser/visitors/simplify/simplify.h"
 #include "hercules/parser/visitors/typecheck/typecheck.h"
 
-using fmt::format;
 
 namespace hercules::ast {
 
@@ -146,20 +145,20 @@ namespace hercules::ast {
             // combination.
             if (!in(ctx->cache->generatedTuples, key))
                 ctx->cache->generatedTuples[key] = int(ctx->cache->generatedTuples.size());
-            suffix = format("_{}", ctx->cache->generatedTuples[key]);
+            suffix = collie::format("_{}", ctx->cache->generatedTuples[key]);
         } else {
             for (size_t i = 1; i <= len; i++)
-                names.push_back(format("item{}", i));
+                names.push_back(collie::format("item{}", i));
         }
 
-        auto typeName = format("{}{}", name, hasSuffix ? format("{}{}", len, suffix) : "");
+        auto typeName = collie::format("{}{}", name, hasSuffix ? collie::format("{}{}", len, suffix) : "");
         if (!ctx->find(typeName)) {
             // Generate the appropriate ClassStmt
             std::vector<Param> args;
             for (size_t i = 0; i < len; i++)
-                args.emplace_back(Param(names[i], N<IdExpr>(format("T{}", i + 1)), nullptr));
+                args.emplace_back(Param(names[i], N<IdExpr>(collie::format("T{}", i + 1)), nullptr));
             for (size_t i = 0; i < len; i++)
-                args.emplace_back(Param(format("T{}", i + 1), N<IdExpr>("type"), nullptr, true));
+                args.emplace_back(Param(collie::format("T{}", i + 1), N<IdExpr>("type"), nullptr, true));
             StmtPtr stmt = N<ClassStmt>(ctx->cache->generateSrcInfo(), typeName, args, nullptr,
                                         std::vector<ExprPtr>{N<IdExpr>("tuple")});
 

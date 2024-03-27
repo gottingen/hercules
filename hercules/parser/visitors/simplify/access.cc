@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@
 #include "hercules/parser/common.h"
 #include "hercules/parser/visitors/simplify/simplify.h"
 
-using fmt::format;
 using namespace hercules::error;
 
 namespace hercules::ast {
@@ -93,7 +92,7 @@ namespace hercules::ast {
                 // Prepend access with __internal__.undef([var]__used__, "[var name]")
                 auto checkStmt = N<ExprStmt>(N<CallExpr>(
                         N<IdExpr>("__internal__.undef"),
-                        N<IdExpr>(fmt::format("{}.__used__", val->canonicalName)),
+                        N<IdExpr>(collie::format("{}.__used__", val->canonicalName)),
                         N<StringExpr>(ctx->cache->reverseIdentifierLookup[val->canonicalName])));
                 if (!ctx->isConditionalExpr) {
                     // If the expression is not conditional, we can just do the check once

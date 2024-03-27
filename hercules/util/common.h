@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,13 +16,10 @@
 #pragma once
 
 #include <chrono>
-#include <fmt/format.h>
-#include <fmt/ostream.h>
-#include <fmt/ranges.h>
-#include <fmt/std.h>
 #include <iostream>
 #include <ostream>
 
+#include <collie/strings/format.h>
 #include "hercules/compiler/error.h"
 #include "hercules/config/config.h"
 #include "hercules/parser/ast/error.h"
@@ -32,7 +29,7 @@
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 #endif
 #define DBG(c, ...)                                                                    \
-  fmt::print(hercules::getLogger().log, "{}" c "\n",                                      \
+  collie::print(hercules::getLogger().log, "{}" c "\n",                                      \
              std::string(size_t(2) * size_t(hercules::getLogger().level), ' '),           \
              ##__VA_ARGS__)
 #define LOG(c, ...) DBG(c, ##__VA_ARGS__)
@@ -68,12 +65,12 @@
 #define seqassertn(expr, msg, ...)                                                     \
   ((expr) ? (void)(0)                                                                  \
           : hercules::assertionFailure(#expr, __FILE__, __LINE__,                         \
-                                    fmt::format(msg, ##__VA_ARGS__)))
+                                    collie::format(msg, ##__VA_ARGS__)))
 #define seqassert(expr, msg, ...)                                                      \
   ((expr) ? (void)(0)                                                                  \
           : hercules::assertionFailure(                                                   \
                 #expr, __FILE__, __LINE__,                                             \
-                fmt::format(msg " [{}]", ##__VA_ARGS__, getSrcInfo())))
+                collie::format(msg " [{}]", ##__VA_ARGS__, getSrcInfo())))
 #else
 #define seqassertn(expr, msg, ...) ;
 #define seqassert(expr, msg, ...) ;
@@ -191,5 +188,5 @@ namespace hercules {
 } // namespace hercules
 
 template<>
-struct fmt::formatter<hercules::SrcInfo> : fmt::ostream_formatter {
+struct collie::formatter<hercules::SrcInfo> : collie::ostream_formatter {
 };

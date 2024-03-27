@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/flow.h"
+#include <hercules/hir/flow.h>
 
-#include "hercules/hir/module.h"
-#include "hercules/hir/util/iterators.h"
-#include <fmt/ostream.h>
+#include <hercules/hir/module.h>
+#include <hercules/hir/util/iterators.h>
+#include <collie/strings/format.h>
 
 namespace hercules::ir {
     namespace {

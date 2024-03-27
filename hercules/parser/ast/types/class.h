@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "hercules/parser/ast/types/type.h"
+#include <hercules/parser/ast/types/type.h>
+#include <collie/strings/format.h>
 
 namespace hercules::ast::types {
 
@@ -147,12 +148,12 @@ namespace hercules::ast::types {
 } // namespace hercules::ast::types
 
 template<>
-struct fmt::formatter<hercules::ast::types::ClassType::Generic>
-        : fmt::formatter<std::string_view> {
+struct collie::formatter<hercules::ast::types::ClassType::Generic>
+        : collie::formatter<std::string_view> {
     template<typename FormatContext>
     auto format(const hercules::ast::types::ClassType::Generic &p, FormatContext &ctx) const
     -> decltype(ctx.out()) {
-        return fmt::format_to(ctx.out(), "({}{})",
-                              p.name.empty() ? "" : fmt::format("{} = ", p.name), p.type);
+        return collie::format_to(ctx.out(), "({}{})",
+                              p.name.empty() ? "" : collie::format("{} = ", p.name), p.type);
     }
 };

@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -95,7 +95,7 @@ namespace hercules::ast {
         exc::ParserException ex;
         if (!errors.empty()) {
             for (auto &e: errors)
-                ex.track(fmt::format("{}", std::get<2>(e)),
+                ex.track(collie::format("{}", std::get<2>(e)),
                          SrcInfo(file, std::get<0>(e), std::get<1>(e), 0));
             throw ex;
             return T();
@@ -174,7 +174,7 @@ namespace hercules::ast {
             r.error_info.output_log(log, code.c_str(), code.size());
         exc::ParserException ex;
         if (!errors.empty()) {
-            ex.track(fmt::format("openmp {}", std::get<2>(errors[0])), loc);
+            ex.track(collie::format("openmp {}", std::get<2>(errors[0])), loc);
             throw ex;
         }
         return result;

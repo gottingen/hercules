@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
 #include "hercules/parser/visitors/simplify/simplify.h"
 #include "hercules/parser/visitors/typecheck/typecheck.h"
 
-using fmt::format;
 using namespace hercules::error;
 
 namespace hercules::ast {
@@ -50,14 +49,14 @@ namespace hercules::ast {
             if (changed->second) { // has __used__ binding
                 if (stmt->rhs) {
                     // Mark the dominating binding as used: `var.__used__ = True`
-                    auto u = N<AssignStmt>(N<IdExpr>(fmt::format("{}.__used__", lhs)),
+                    auto u = N<AssignStmt>(N<IdExpr>(collie::format("{}.__used__", lhs)),
                                            N<BoolExpr>(true));
                     u->setUpdate();
                     prependStmts->push_back(transform(u));
                 } else {
                     // This assignment was a declaration only. Just mark the dominating binding as
                     // used: `var.__used__ = True`
-                    stmt->lhs = N<IdExpr>(fmt::format("{}.__used__", lhs));
+                    stmt->lhs = N<IdExpr>(collie::format("{}.__used__", lhs));
                     stmt->rhs = N<BoolExpr>(true);
                 }
             }
@@ -186,7 +185,7 @@ namespace hercules::ast {
 
             if (!member) {
                 // Case: setters
-                auto setters = ctx->findMethod(lhsClass.get(), format(".set_{}", stmt->member));
+                auto setters = ctx->findMethod(lhsClass.get(), collie::format(".set_{}", stmt->member));
                 if (!setters.empty()) {
                     resultStmt = transform(N<ExprStmt>(
                             N<CallExpr>(N<IdExpr>(setters[0]->ast->name), stmt->lhs, stmt->rhs)));
@@ -266,7 +265,7 @@ namespace hercules::ast {
             call->args[1].value = transform(call->args[1].value);
             auto rhsTyp = call->args[1].value->getType()->getClass();
             if (auto method = findBestMethod(
-                    lhsClass, format("__atomic_{}__", call->expr->getId()->value),
+                    lhsClass, collie::format("__atomic_{}__", call->expr->getId()->value),
                     {ptrTyp, rhsTyp})) {
                 return {true, transform(N<CallExpr>(N<IdExpr>(method->ast->name),
                                                     N<CallExpr>(N<IdExpr>("__ptr__"), stmt->lhs),

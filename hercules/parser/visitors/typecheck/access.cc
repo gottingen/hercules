@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
 #include "hercules/parser/visitors/simplify/simplify.h"
 #include "hercules/parser/visitors/typecheck/typecheck.h"
 
-using fmt::format;
 using namespace hercules::error;
 
 namespace hercules::ast {
@@ -464,8 +463,8 @@ namespace hercules::ast {
         if (methodArgs) {
             std::vector<std::string> a;
             for (auto &t: *methodArgs)
-                a.emplace_back(fmt::format("{}", t.value->type->prettyString()));
-            argsNice = fmt::format("({})", fmt::join(a, ", "));
+                a.emplace_back(collie::format("{}", t.value->type->prettyString()));
+            argsNice = collie::format("({})", collie::join(a, ", "));
         }
 
         if (auto dot = expr->getDot()) {

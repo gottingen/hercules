@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -606,7 +606,7 @@ namespace hercules::ir::analyze::dataflow {
 }  // namespace hercules::ir::analyze::dataflow
 
 template<>
-struct fmt::formatter<hercules::ir::analyze::dataflow::CFGraph> : fmt::ostream_formatter {
+struct collie::formatter<hercules::ir::analyze::dataflow::CFGraph> : collie::ostream_formatter {
 };
 
 #undef DEFAULT_VISIT

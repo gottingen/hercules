@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,16 +13,18 @@
 // limitations under the License.
 //
 
-#include "plugins.h"
+#include <hercules/dsl/plugins.h>
 
 #include <cstdlib>
-#include <toml++/toml.h>
-#include "hercules/dsl/semver.hpp"
-#include "hercules/parser/common.h"
-#include "hercules/util/common.h"
-#include "llvm/ADT/SmallString.h"
-#include "llvm/Support/FileSystem.h"
-#include "llvm/Support/Path.h"
+#include <collie/module/semver.h>
+#include <collie/toml/toml.h>
+#include <hercules/parser/common.h>
+#include <hercules/util/common.h>
+#include <llvm/ADT/SmallString.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Support/Path.h>
+#include <collie/strings/format.h>
+#include <collie/strings/inlined_string.h>
 
 namespace hercules {
     namespace {
@@ -56,7 +58,7 @@ namespace hercules {
             tml = toml::parse_file(tomlPath.str());
         } catch (const toml::parse_error &e) {
             return pluginError(
-                    fmt::format("[toml::parse_file(\"{}\")] {}", tomlPath.str(), e.what()));
+                    collie::format("[toml::parse_file(\"{}\")] {}", std::string_view{tomlPath.str().data(), tomlPath.str().size()}, e.what()));
         }
         auto about = tml["about"];
         auto library = tml["library"];
@@ -82,8 +84,10 @@ namespace hercules {
             if (!l.empty())
                 linkArgs.push_back(l);
         }
-        for (auto &l: linkArgs)
-            l = fmt::format(l, fmt::arg("root", llvm::sys::path::parent_path(tomlPath)));
+        for (auto &l: linkArgs) {
+            auto ref = llvm::sys::path::parent_path(tomlPath);
+            l = collie::format(l, collie::arg("root", std::string_view{ref.data(), ref.size()}));
+        }
 
         std::string herculesLib = library["hercules"].value_or("");
         std::string stdlibPath;
@@ -104,15 +108,15 @@ namespace hercules {
 
         bool versionOk = false;
         try {
-            versionOk = semver::range::satisfies(
-                    semver::version(HERCULES_VERSION_MAJOR, HERCULES_VERSION_MINOR, HERCULES_VERSION_PATCH),
+            versionOk = collie::module_range::satisfies(
+                    collie::ModuleVersion(HERCULES_VERSION_MAJOR, HERCULES_VERSION_MINOR, HERCULES_VERSION_PATCH),
                     info.supported);
         } catch (const std::invalid_argument &e) {
-            return pluginError(fmt::format("[semver::range::satisfies(..., \"{}\")] {}",
+            return pluginError(collie::format("[semver::range::satisfies(..., \"{}\")] {}",
                                            info.supported, e.what()));
         }
         if (!versionOk)
-            return pluginError(fmt::format("unsupported version {} (supported: {})",
+            return pluginError(collie::format("unsupported version {} (supported: {})",
                                            HERCULES_VERSION, info.supported));
 
         if (!dylibPath.empty()) {
@@ -120,14 +124,14 @@ namespace hercules {
             auto handle = llvm::sys::DynamicLibrary::getPermanentLibrary(dylibPath.c_str(),
                                                                          &libLoadErrorMsg);
             if (!handle.isValid())
-                return pluginError(fmt::format(
+                return pluginError(collie::format(
                         "[llvm::sys::DynamicLibrary::getPermanentLibrary(\"{}\", ...)] {}", dylibPath,
                         libLoadErrorMsg));
 
             auto *entry = (LoadFunc *) handle.getAddressOfSymbol("load");
             if (!entry)
                 return pluginError(
-                        fmt::format("could not find 'load' in plugin shared library: {}", dylibPath));
+                        collie::format("could not find 'load' in plugin shared library: {}", dylibPath));
 
             auto dsl = (*entry)();
             plugins.push_back(std::make_unique<Plugin>(std::move(dsl), info, handle));

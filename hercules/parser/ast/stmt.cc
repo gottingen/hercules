@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@
   StmtPtr T::clone() const { return std::make_shared<T>(*this); }                      \
   void T::accept(X &visitor) { visitor.visit(this); }
 
-using fmt::format;
 using namespace hercules::error;
 
 const int INDENT_SIZE = 2;
@@ -60,7 +59,7 @@ namespace hercules::ast {
                     is.insert(findStar(is), "*");
                 s += (i ? pad : "") + is;
             }
-        return format("(suite{})", s.empty() ? s : " " + pad + s);
+        return collie::format("(suite{})", s.empty() ? s : " " + pad + s);
     }
 
     ACCEPT_IMPL(SuiteStmt, ASTVisitor);
@@ -100,7 +99,7 @@ namespace hercules::ast {
     ExprStmt::ExprStmt(const ExprStmt &stmt) : Stmt(stmt), expr(ast::clone(stmt.expr)) {}
 
     std::string ExprStmt::toString(int) const {
-        return format("(expr {})", expr->toString());
+        return collie::format("(expr {})", expr->toString());
     }
 
     ACCEPT_IMPL(ExprStmt, ASTVisitor);
@@ -114,9 +113,9 @@ namespace hercules::ast {
               type(ast::clone(stmt.type)), update(stmt.update) {}
 
     std::string AssignStmt::toString(int) const {
-        return format("({} {}{}{})", update != Assign ? "update" : "assign", lhs->toString(),
+        return collie::format("({} {}{}{})", update != Assign ? "update" : "assign", lhs->toString(),
                       rhs ? " " + rhs->toString() : "",
-                      type ? format(" #:type {}", type->toString()) : "");
+                      type ? collie::format(" #:type {}", type->toString()) : "");
     }
 
     ACCEPT_IMPL(AssignStmt, ASTVisitor);
@@ -126,7 +125,7 @@ namespace hercules::ast {
     DelStmt::DelStmt(const DelStmt &stmt) : Stmt(stmt), expr(ast::clone(stmt.expr)) {}
 
     std::string DelStmt::toString(int) const {
-        return format("(del {})", expr->toString());
+        return collie::format("(del {})", expr->toString());
     }
 
     ACCEPT_IMPL(DelStmt, ASTVisitor);
@@ -138,7 +137,7 @@ namespace hercules::ast {
             : Stmt(stmt), items(ast::clone(stmt.items)), isInline(stmt.isInline) {}
 
     std::string PrintStmt::toString(int) const {
-        return format("(print {}{})", isInline ? "#:inline " : "", combine(items));
+        return collie::format("(print {}{})", isInline ? "#:inline " : "", combine(items));
     }
 
     ACCEPT_IMPL(PrintStmt, ASTVisitor);
@@ -149,7 +148,7 @@ namespace hercules::ast {
             : Stmt(stmt), expr(ast::clone(stmt.expr)) {}
 
     std::string ReturnStmt::toString(int) const {
-        return expr ? format("(return {})", expr->toString()) : "(return)";
+        return expr ? collie::format("(return {})", expr->toString()) : "(return)";
     }
 
     ACCEPT_IMPL(ReturnStmt, ASTVisitor);
@@ -159,7 +158,7 @@ namespace hercules::ast {
     YieldStmt::YieldStmt(const YieldStmt &stmt) : Stmt(stmt), expr(ast::clone(stmt.expr)) {}
 
     std::string YieldStmt::toString(int) const {
-        return expr ? format("(yield {})", expr->toString()) : "(yield)";
+        return expr ? collie::format("(yield {})", expr->toString()) : "(yield)";
     }
 
     ACCEPT_IMPL(YieldStmt, ASTVisitor);
@@ -171,7 +170,7 @@ namespace hercules::ast {
             : Stmt(stmt), expr(ast::clone(stmt.expr)), message(ast::clone(stmt.message)) {}
 
     std::string AssertStmt::toString(int) const {
-        return format("(assert {}{})", expr->toString(), message ? message->toString() : "");
+        return collie::format("(assert {}{})", expr->toString(), message ? message->toString() : "");
     }
 
     ACCEPT_IMPL(AssertStmt, ASTVisitor);
@@ -187,11 +186,11 @@ namespace hercules::ast {
     std::string WhileStmt::toString(int indent) const {
         std::string pad = indent > 0 ? ("\n" + std::string(indent + INDENT_SIZE, ' ')) : " ";
         if (elseSuite && elseSuite->firstInBlock())
-            return format("(while-else {}{}{}{}{})", cond->toString(), pad,
+            return collie::format("(while-else {}{}{}{}{})", cond->toString(), pad,
                           suite->toString(indent >= 0 ? indent + INDENT_SIZE : -1), pad,
                           elseSuite->toString(indent >= 0 ? indent + INDENT_SIZE : -1));
         else
-            return format("(while {}{}{})", cond->toString(), pad,
+            return collie::format("(while {}{}{})", cond->toString(), pad,
                           suite->toString(indent >= 0 ? indent + INDENT_SIZE : -1));
     }
 
@@ -217,11 +216,11 @@ namespace hercules::ast {
         if (!attr.empty())
             attr = " #:attr" + attr;
         if (elseSuite && elseSuite->firstInBlock())
-            return format("(for-else {} {}{}{}{}{}{})", var->toString(), iter->toString(), attr,
+            return collie::format("(for-else {} {}{}{}{}{}{})", var->toString(), iter->toString(), attr,
                           pad, suite->toString(indent >= 0 ? indent + INDENT_SIZE : -1), pad,
                           elseSuite->toString(indent >= 0 ? indent + INDENT_SIZE : -1));
         else
-            return format("(for {} {}{}{}{})", var->toString(), iter->toString(), attr, pad,
+            return collie::format("(for {} {}{}{}{})", var->toString(), iter->toString(), attr, pad,
                           suite->toString(indent >= 0 ? indent + INDENT_SIZE : -1));
     }
 
@@ -237,7 +236,7 @@ namespace hercules::ast {
 
     std::string IfStmt::toString(int indent) const {
         std::string pad = indent > 0 ? ("\n" + std::string(indent + INDENT_SIZE, ' ')) : " ";
-        return format("(if {}{}{}{})", cond->toString(), pad,
+        return collie::format("(if {}{}{}{})", cond->toString(), pad,
                       ifSuite->toString(indent >= 0 ? indent + INDENT_SIZE : -1),
                       elseSuite
                       ? pad + elseSuite->toString(indent >= 0 ? indent + INDENT_SIZE : -1)
@@ -261,10 +260,10 @@ namespace hercules::ast {
         std::string padExtra = indent > 0 ? std::string(INDENT_SIZE, ' ') : "";
         std::vector<std::string> s;
         for (auto &c: cases)
-            s.push_back(format("(case {}{}{}{})", c.pattern->toString(),
+            s.push_back(collie::format("(case {}{}{}{})", c.pattern->toString(),
                                c.guard ? " #:guard " + c.guard->toString() : "", pad + padExtra,
                                c.suite->toString(indent >= 0 ? indent + INDENT_SIZE : -1 * 2)));
-        return format("(match {}{}{})", what->toString(), pad, join(s, pad));
+        return collie::format("(match {}{}{})", what->toString(), pad, join(s, pad));
     }
 
     ACCEPT_IMPL(MatchStmt, ASTVisitor);
@@ -285,12 +284,12 @@ namespace hercules::ast {
         std::vector<std::string> va;
         for (auto &a: args)
             va.push_back(a.toString());
-        return format("(import {}{}{}{}{}{})", from->toString(),
-                      as.empty() ? "" : format(" #:as '{}", as),
-                      what ? format(" #:what {}", what->toString()) : "",
-                      dots ? format(" #:dots {}", dots) : "",
-                      va.empty() ? "" : format(" #:args ({})", join(va)),
-                      ret ? format(" #:ret {}", ret->toString()) : "");
+        return collie::format("(import {}{}{}{}{}{})", from->toString(),
+                      as.empty() ? "" : collie::format(" #:as '{}", as),
+                      what ? collie::format(" #:what {}", what->toString()) : "",
+                      dots ? collie::format(" #:dots {}", dots) : "",
+                      va.empty() ? "" : collie::format(" #:args ({})", join(va)),
+                      ret ? collie::format(" #:ret {}", ret->toString()) : "");
     }
 
     void ImportStmt::validate() const {
@@ -333,13 +332,13 @@ namespace hercules::ast {
         std::vector<std::string> s;
         for (auto &i: catches)
             s.push_back(
-                    format("(catch {}{}{}{})", !i.var.empty() ? format("#:var '{}", i.var) : "",
-                           i.exc ? format(" #:exc {}", i.exc->toString()) : "", pad + padExtra,
+                    collie::format("(catch {}{}{}{})", !i.var.empty() ? collie::format("#:var '{}", i.var) : "",
+                           i.exc ? collie::format(" #:exc {}", i.exc->toString()) : "", pad + padExtra,
                            i.suite->toString(indent >= 0 ? indent + INDENT_SIZE : -1 * 2)));
-        return format(
+        return collie::format(
                 "(try{}{}{}{}{})", pad, suite->toString(indent >= 0 ? indent + INDENT_SIZE : -1),
                 pad, join(s, pad),
-                finally ? format("{}{}", pad,
+                finally ? collie::format("{}{}", pad,
                                  finally->toString(indent >= 0 ? indent + INDENT_SIZE : -1))
                         : "");
     }
@@ -353,7 +352,7 @@ namespace hercules::ast {
             : Stmt(stmt), expr(ast::clone(stmt.expr)), transformed(stmt.transformed) {}
 
     std::string ThrowStmt::toString(int) const {
-        return format("(throw{})", expr ? " " + expr->toString() : "");
+        return collie::format("(throw{})", expr ? " " + expr->toString() : "");
     }
 
     ACCEPT_IMPL(ThrowStmt, ASTVisitor);
@@ -362,7 +361,7 @@ namespace hercules::ast {
             : Stmt(), var(std::move(var)), nonLocal(nonLocal) {}
 
     std::string GlobalStmt::toString(int) const {
-        return format("({} '{})", nonLocal ? "nonlocal" : "global", var);
+        return collie::format("({} '{})", nonLocal ? "nonlocal" : "global", var);
     }
 
     ACCEPT_IMPL(GlobalStmt, ASTVisitor);
@@ -424,13 +423,13 @@ namespace hercules::ast {
         std::vector<std::string> dec, attr;
         for (auto &a: decorators)
             if (a)
-                dec.push_back(format("(dec {})", a->toString()));
+                dec.push_back(collie::format("(dec {})", a->toString()));
         for (auto &a: attributes.customAttr)
-            attr.push_back(format("'{}'", a));
-        return format("(fn '{} ({}){}{}{}{}{})", name, join(as, " "),
+            attr.push_back(collie::format("'{}'", a));
+        return collie::format("(fn '{} ({}){}{}{}{}{})", name, join(as, " "),
                       ret ? " #:ret " + ret->toString() : "",
-                      dec.empty() ? "" : format(" (dec {})", join(dec, " ")),
-                      attr.empty() ? "" : format(" (attr {})", join(attr, " ")), pad,
+                      dec.empty() ? "" : collie::format(" (dec {})", join(dec, " ")),
+                      attr.empty() ? "" : collie::format(" (attr {})", join(attr, " ")), pad,
                       suite ? suite->toString(indent >= 0 ? indent + INDENT_SIZE : -1)
                             : "(suite)");
     }
@@ -481,7 +480,7 @@ namespace hercules::ast {
         std::vector<std::string> s;
         for (auto &a: args)
             s.push_back(a.type ? a.type->toString() : "-");
-        return format("{}", join(s, ":"));
+        return collie::format("{}", join(s, ":"));
     }
 
     bool FunctionStmt::hasAttr(const std::string &attr) const {
@@ -651,16 +650,16 @@ namespace hercules::ast {
         for (auto &b: baseClasses)
             bases.push_back(b->toString());
         for (auto &b: staticBaseClasses)
-            bases.push_back(fmt::format("(static {})", b->toString()));
+            bases.push_back(collie::format("(static {})", b->toString()));
         std::string as;
         for (int i = 0; i < args.size(); i++)
             as += (i ? pad : "") + args[i].toString();
         std::vector<std::string> attr;
         for (auto &a: decorators)
-            attr.push_back(format("(dec {})", a->toString()));
-        return format("(class '{}{}{}{}{}{})", name,
-                      bases.empty() ? "" : format(" (bases {})", join(bases, " ")),
-                      attr.empty() ? "" : format(" (attr {})", join(attr, " ")),
+            attr.push_back(collie::format("(dec {})", a->toString()));
+        return collie::format("(class '{}{}{}{}{}{})", name,
+                      bases.empty() ? "" : collie::format(" (bases {})", join(bases, " ")),
+                      attr.empty() ? "" : collie::format(" (attr {})", join(attr, " ")),
                       as.empty() ? as : pad + as, pad,
                       suite ? suite->toString(indent >= 0 ? indent + INDENT_SIZE : -1)
                             : "(suite)");
@@ -823,7 +822,7 @@ namespace hercules::ast {
             : Stmt(stmt), expr(ast::clone(stmt.expr)) {}
 
     std::string YieldFromStmt::toString(int) const {
-        return format("(yield-from {})", expr->toString());
+        return collie::format("(yield-from {})", expr->toString());
     }
 
     ACCEPT_IMPL(YieldFromStmt, ASTVisitor);
@@ -858,10 +857,10 @@ namespace hercules::ast {
         as.reserve(items.size());
         for (int i = 0; i < items.size(); i++) {
             as.push_back(!vars[i].empty()
-                         ? format("({} #:var '{})", items[i]->toString(), vars[i])
+                         ? collie::format("({} #:var '{})", items[i]->toString(), vars[i])
                          : items[i]->toString());
         }
-        return format("(with ({}){}{})", join(as, " "), pad,
+        return collie::format("(with ({}){}{})", join(as, " "), pad,
                       suite->toString(indent >= 0 ? indent + INDENT_SIZE : -1));
     }
 
@@ -877,8 +876,8 @@ namespace hercules::ast {
 
     std::string CustomStmt::toString(int indent) const {
         std::string pad = indent > 0 ? ("\n" + std::string(indent + INDENT_SIZE, ' ')) : " ";
-        return format("(custom-{} {}{}{})", keyword,
-                      expr ? format(" #:expr {}", expr->toString()) : "", pad,
+        return collie::format("(custom-{} {}{}{})", keyword,
+                      expr ? collie::format(" #:expr {}", expr->toString()) : "", pad,
                       suite ? suite->toString(indent >= 0 ? indent + INDENT_SIZE : -1) : "");
     }
 
@@ -892,7 +891,7 @@ namespace hercules::ast {
               rhs(ast::clone(stmt.rhs)) {}
 
     std::string AssignMemberStmt::toString(int) const {
-        return format("(assign-member {} {} {})", lhs->toString(), member, rhs->toString());
+        return collie::format("(assign-member {} {} {})", lhs->toString(), member, rhs->toString());
     }
 
     ACCEPT_IMPL(AssignMemberStmt, ASTVisitor);
@@ -900,7 +899,7 @@ namespace hercules::ast {
     CommentStmt::CommentStmt(std::string comment) : Stmt(), comment(std::move(comment)) {}
 
     std::string CommentStmt::toString(int) const {
-        return format("(comment \"{}\")", comment);
+        return collie::format("(comment \"{}\")", comment);
     }
 
     ACCEPT_IMPL(CommentStmt, ASTVisitor);

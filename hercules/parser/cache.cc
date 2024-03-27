@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,20 +13,20 @@
 // limitations under the License.
 //
 
-#include "cache.h"
+#include <hercules/parser/cache.h>
 
 #include <chrono>
 #include <string>
 #include <vector>
 
-#include "hercules/hir/pyextension.h"
-#include "hercules/hir/util/irtools.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/peg/peg.h"
-#include "hercules/parser/visitors/simplify/simplify.h"
-#include "hercules/parser/visitors/translate/translate.h"
-#include "hercules/parser/visitors/typecheck/ctx.h"
-#include "hercules/parser/visitors/typecheck/typecheck.h"
+#include <hercules/hir/pyextension.h>
+#include <hercules/hir/util/irtools.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/peg/peg.h>
+#include <hercules/parser/visitors/simplify/simplify.h>
+#include <hercules/parser/visitors/translate/translate.h>
+#include <hercules/parser/visitors/typecheck/ctx.h>
+#include <hercules/parser/visitors/typecheck/typecheck.h>
 
 namespace hercules::ast {
 
@@ -36,8 +36,8 @@ namespace hercules::ast {
               jitCell(0), pythonExt(false), pyModule(nullptr) {}
 
     std::string Cache::getTemporaryVar(const std::string &prefix, char sigil) {
-        return fmt::format("{}{}_{}", sigil ? fmt::format("{}_", sigil) : "", prefix,
-                           ++varCount);
+        return collie::format("{}{}_{}", sigil ? collie::format("{}_", sigil) : "", prefix,
+                              ++varCount);
     }
 
     std::string Cache::rev(const std::string &s) {
@@ -287,7 +287,7 @@ namespace hercules::ast {
 
                 auto tc = typeCtx->forceFind(cn)->type;
                 if (!tc->canRealize())
-                    compilationError(fmt::format("cannot realize '{}' for Python export", rev(cn)));
+                    compilationError(collie::format("cannot realize '{}' for Python export", rev(cn)));
                 tc = TypecheckVisitor(typeCtx).realize(tc);
                 seqassertn(tc, "cannot realize '{}'", cn);
 
@@ -485,7 +485,7 @@ namespace hercules::ast {
                 }
 
                 if (c.realizations.size() != 1)
-                    compilationError(fmt::format("cannot pythonize generic class '{}'", cn));
+                    compilationError(collie::format("cannot pythonize generic class '{}'", cn));
                 auto &r = c.realizations.begin()->second;
                 py.type = realizeType(r->type);
                 for (auto &[mn, mt]: r->fields) {

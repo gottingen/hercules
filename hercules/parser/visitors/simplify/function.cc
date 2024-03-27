@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@
 #include "hercules/parser/peg/peg.h"
 #include "hercules/parser/visitors/simplify/simplify.h"
 
-using fmt::format;
 using namespace hercules::error;
 
 namespace hercules::ast {
@@ -162,7 +161,7 @@ namespace hercules::ast {
             rootName = ctx->generateCanonicalName(stmt->name, true);
         // Append overload number to the name
         auto canonicalName =
-                format("{}:{}", rootName, ctx->cache->overloads[rootName].size());
+                collie::format("{}:{}", rootName, ctx->cache->overloads[rootName].size());
         ctx->cache->reverseIdentifierLookup[canonicalName] = stmt->name;
 
         // Ensure that function binding does not shadow anything.
@@ -265,7 +264,7 @@ namespace hercules::ast {
             }
         }
         stmt->attributes.module =
-                format("{}{}", ctx->moduleName.status == ImportFile::STDLIB ? "std::" : "::",
+                collie::format("{}{}", ctx->moduleName.status == ImportFile::STDLIB ? "std::" : "::",
                        ctx->moduleName.module);
         ctx->cache->overloads[rootName].push_back({canonicalName, ctx->cache->age});
 
@@ -399,7 +398,7 @@ namespace hercules::ast {
         pyargs.reserve(args.size());
         for (const auto &a: args)
             pyargs.emplace_back(a.name);
-        code = format("def {}({}):\n{}\n", name, join(pyargs, ", "), code);
+        code = collie::format("def {}({}):\n{}\n", name, join(pyargs, ", "), code);
         return transform(N<SuiteStmt>(
                 N<ExprStmt>(N<CallExpr>(N<DotExpr>("pyobj", "_exec"), N<StringExpr>(code))),
                 N<ImportStmt>(N<IdExpr>("python"), N<DotExpr>("__main__", name), clone_nop(args),
@@ -419,9 +418,9 @@ namespace hercules::ast {
     /// As LLVM code can reference types and static expressions in `{=expr}` blocks,
     /// all block expression will be stored in the `referenced_types` suite.
     /// "[code]" is transformed accordingly: each `{=expr}` block will
-    /// be replaced with `{}` so that @c fmt::format can fill the gaps.
+    /// be replaced with `{}` so that @c collie::format can fill the gaps.
     /// Note that any brace (`{` or `}`) that is not part of a block is
-    /// escaped (e.g. `{` -> `{{` and `}` -> `}}`) so that @c fmt::format can process them.
+    /// escaped (e.g. `{` -> `{{` and `}` -> `}}`) so that @c collie::format can process them.
     StmtPtr SimplifyVisitor::transformLLVMDefinition(Stmt *codeStmt) {
         seqassert(codeStmt && codeStmt->getExpr() && codeStmt->getExpr()->expr->getString(),
                   "invalid LLVM definition");

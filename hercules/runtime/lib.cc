@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-#include <fmt/format.h>
+#include <collie/strings/format.h>
 #include <fstream>
 #include <iostream>
 #include <mutex>
@@ -277,12 +277,12 @@ static hs_str_t string_conv(const std::string &s) {
 
 template<typename T>
 std::string default_format(T n) {
-    return fmt::format(FMT_STRING("{}"), n);
+    return collie::format(FMT_STRING("{}"), n);
 }
 
 template<>
 std::string default_format(double n) {
-    return fmt::format(FMT_STRING("{:g}"), n);
+    return collie::format(FMT_STRING("{:g}"), n);
 }
 
 template<typename T>
@@ -294,7 +294,7 @@ hs_str_t fmt_conv(T n, hs_str_t format, bool *error) {
         } else {
             std::string fstr(format.str, format.len);
             return string_conv(
-                    fmt::format(fmt::runtime(fmt::format(FMT_STRING("{{:{}}}"), fstr)), n));
+                    collie::format(collie::runtime(collie::format(FMT_STRING("{{:{}}}"), fstr)), n));
         }
     } catch (const std::runtime_error &f) {
         *error = true;
@@ -315,7 +315,7 @@ HS_FUNC hs_str_t hs_str_float(double f, hs_str_t format, bool *error) {
 }
 
 HS_FUNC hs_str_t hs_str_ptr(void *p, hs_str_t format, bool *error) {
-    return fmt_conv(fmt::ptr(p), format, error);
+    return fmt_conv(collie::ptr(p), format, error);
 }
 
 HS_FUNC hs_str_t hs_str_str(hs_str_t s, hs_str_t format, bool *error) {

@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,10 +19,11 @@
 #include <string>
 #include <vector>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/cache.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/visitors/visitor.h"
+#include <hercules/parser/ast.h>
+#include <hercules/parser/cache.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/visitors/visitor.h>
+#include <collie/strings/format.h>
 
 namespace hercules::ast {
 
@@ -45,13 +46,13 @@ namespace hercules::ast {
         template<typename T, typename... Ts>
         std::string renderExpr(T &&t, Ts &&...args) {
             std::string s;
-            return fmt::format("{}{}{}{}{}{}", exprStart, s, nodeStart, fmt::format(args...),
+            return collie::format("{}{}{}{}{}{}", exprStart, s, nodeStart, collie::format(args...),
                                nodeEnd, exprEnd);
         }
 
         template<typename... Ts>
         std::string renderComment(Ts &&...args) {
-            return fmt::format("{}{}{}", commentStart, fmt::format(args...), commentEnd);
+            return collie::format("{}{}{}", commentStart, collie::format(args...), commentEnd);
         }
 
         std::string pad(int indent = 0) const;
@@ -75,7 +76,7 @@ namespace hercules::ast {
         static std::string apply(const T &stmt, Cache *cache = nullptr, bool html = false,
                                  bool init = false) {
             auto t = FormatVisitor(html, cache);
-            return fmt::format("{}{}{}", t.header, t.transform(stmt), t.footer);
+            return collie::format("{}{}{}", t.header, t.transform(stmt), t.footer);
         }
 
         void defaultVisit(Expr *e) override { error("cannot format {}", *e); }
@@ -197,12 +198,12 @@ namespace hercules::ast {
             std::vector<std::string> r;
             for (auto &e: ts)
                 r.push_back(transform(e));
-            return fmt::format("{}", fmt::join(r, ", "));
+            return collie::format("{}", collie::join(r, ", "));
         }
     };
 
 } // namespace hercules::ast
 
 template<>
-struct fmt::formatter<hercules::ast::FormatVisitor> : fmt::ostream_formatter {
+struct collie::formatter<hercules::ast::FormatVisitor> : collie::ostream_formatter {
 };

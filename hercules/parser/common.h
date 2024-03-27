@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -96,11 +96,11 @@ namespace hercules::ast {
         if (end == -1)
             end = items.size();
         for (int i = start; i < end; i++)
-            s += (i ? delim : "") + fmt::format("{}", items[i]);
+            s += (i ? delim : "") + collie::format("{}", items[i]);
         return s;
     }
 
-/// @return True if an item is found in a vector vec.
+    /// @return True if an item is found in a vector vec.
     template<typename T, typename U>
     const T *in(const std::vector<T> &vec, const U &item, size_t start = 0) {
         auto f = std::find(vec.begin() + start, vec.end(), item);

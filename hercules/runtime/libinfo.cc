@@ -15,7 +15,7 @@
 
 #include <hercules/runtime/hs_str.h>
 #include <hercules/runtime/lib.h>
-#include <ghc/filesystem.hpp>
+#include <collie/filesystem/fs.h>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -45,9 +45,9 @@ HS_FUNC hs_str_t find_library(hs_str_t name) {
 
     auto lib_name = "lib" + std::string(name.str, name.len);
     lib_name += lib_ext;
-    for (auto &prefix : path_prefixes) {
-        auto path = ghc::filesystem::path(prefix) / lib_name;
-        if (ghc::filesystem::exists(path)) {
+    for (auto &prefix: path_prefixes) {
+        auto path = collie::filesystem::path(prefix) / lib_name;
+        if (collie::filesystem::exists(path)) {
             return hs_string_conv(path.string());
         }
     }
@@ -62,9 +62,9 @@ HS_FUNC hs_str_t find_include(hs_str_t name) {
     };
 
     auto inc_name = std::string(name.str, name.len);
-    for (auto &prefix : path_prefixes) {
-        auto path = ghc::filesystem::path(prefix) / inc_name;
-        if (ghc::filesystem::exists(path)) {
+    for (auto &prefix: path_prefixes) {
+        auto path = collie::filesystem::path(prefix) / inc_name;
+        if (collie::filesystem::exists(path)) {
             return hs_string_conv(path.string());
         }
     }

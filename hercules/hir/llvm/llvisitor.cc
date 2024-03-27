@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
-#include <fmt/args.h>
+#include <collie/strings/format.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <utility>
@@ -416,7 +416,7 @@ namespace hercules::ir {
             for (auto &arg: args) {
                 cArgs.push_back(arg.c_str());
             }
-            LOG_USER("Executing '{}'", fmt::join(cArgs, " "));
+            LOG_USER("Executing '{}'", collie::join(cArgs, " "));
             cArgs.push_back(nullptr);
 
             if (fork() == 0) {
@@ -1274,13 +1274,13 @@ namespace hercules::ir {
 
         if (db.debug) {
             runtime::setJITErrorCallback([dbp](const runtime::JITError &e) {
-                fmt::print(stderr, "{}\n{}", e.getOutput(),
+                collie::print(stderr, "{}\n{}", e.getOutput(),
                            dbp->getPrettyBacktrace(e.getBacktrace()));
                 std::abort();
             });
         } else {
             runtime::setJITErrorCallback([](const runtime::JITError &e) {
-                fmt::print(stderr, "{}", e.getOutput());
+                collie::print(stderr, "{}", e.getOutput());
                 std::abort();
             });
         }
@@ -1289,7 +1289,7 @@ namespace hercules::ir {
         try {
             llvm::cantFail(epc->runAsMain(mainAddr, args));
         } catch (const runtime::JITError &e) {
-            fmt::print(stderr, "{}\n", e.getOutput());
+            collie::print(stderr, "{}\n", e.getOutput());
             std::abort();
         }
     }
@@ -1810,7 +1810,7 @@ namespace hercules::ir {
         std::string code = buildLLVMCodeString(x);
 
         // format code
-        fmt::dynamic_format_arg_store<fmt::format_context> store;
+        collie::dynamic_format_arg_store<collie::format_context> store;
         for (auto it = x->literal_begin(); it != x->literal_end(); ++it) {
             if (it->isStatic()) {
                 store.push_back(it->getStaticValue());
@@ -1826,7 +1826,7 @@ namespace hercules::ir {
                 seqassertn(0, "formatting failed");
             }
         }
-        code = fmt::vformat(code, store);
+        code = collie::vformat(code, store);
 
         llvm::SMDiagnostic err;
         std::unique_ptr<llvm::MemoryBuffer> buf = llvm::MemoryBuffer::getMemBuffer(code);
@@ -1840,7 +1840,7 @@ namespace hercules::ir {
             err.print("LLVM", buf);
             // LOG("-> ERR {}", x->referenceString());
             // LOG("       {}", code);
-            compilationError(fmt::format("{} ({})", buf.str(), x->getName()));
+            compilationError(collie::format("{} ({})", buf.str(), x->getName()));
         }
         sub->setDataLayout(M->getDataLayout());
 

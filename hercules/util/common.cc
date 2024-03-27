@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,29 +39,29 @@ namespace hercules {
                 case MessageGroupPos::HEAD:
                     break;
                 case MessageGroupPos::MID:
-                    fmt::print("├─ ");
+                    collie::print("├─ ");
                     break;
                 case MessageGroupPos::LAST:
-                    fmt::print("╰─ ");
+                    collie::print("╰─ ");
                     break;
             }
 
-            fmt::print(out, "\033[1m");
+            collie::print(out, "\033[1m");
             if (!file.empty()) {
                 auto f = file.substr(file.rfind('/') + 1);
-                fmt::print(out, "{}", f == "-" ? "<stdin>" : f);
+                collie::print(out, "{}", f == "-" ? "<stdin>" : f);
             }
             if (line > 0)
-                fmt::print(out, ":{}", line);
+                collie::print(out, ":{}", line);
             if (col > 0)
-                fmt::print(out, ":{}", col);
+                collie::print(out, ":{}", col);
             if (len > 0)
-                fmt::print(out, "-{}", col + len);
+                collie::print(out, "-{}", col + len);
             if (!file.empty())
-                fmt::print(out, ": ");
-            fmt::print(out, "{}\033[1m {}\033[0m{}\n", header, msg,
+                collie::print(out, ": ");
+            collie::print(out, "{}\033[1m {}\033[0m{}\n", header, msg,
                        errorCode != -1
-                       ? fmt::format(" (see https://github.com/gottingen/hercules/error/{:04d})", errorCode)
+                       ? collie::format(" (see https://github.com/gottingen/hercules/error/{:04d})", errorCode)
                        : "");
         }
 

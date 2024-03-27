@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@
 #include "hercules/hir/util/visitor.h"
 #include "hercules/hir/value.h"
 #include "hercules/parser/cache.h"
-#include <fmt/format.h>
+#include <collie/strings/format.h>
 
 namespace hercules::ir::types {
     namespace {
@@ -195,31 +195,31 @@ namespace hercules::ir::types {
     const char PointerType::NodeId = 0;
 
     std::string PointerType::getInstanceName(Type *base) {
-        return fmt::format(FMT_STRING("Pointer[{}]"), base->referenceString());
+        return collie::format(FMT_STRING("Pointer[{}]"), base->referenceString());
     }
 
     const char OptionalType::NodeId = 0;
 
     std::string OptionalType::getInstanceName(Type *base) {
-        return fmt::format(FMT_STRING("Optional[{}]"), base->referenceString());
+        return collie::format(FMT_STRING("Optional[{}]"), base->referenceString());
     }
 
     const char GeneratorType::NodeId = 0;
 
     std::string GeneratorType::getInstanceName(Type *base) {
-        return fmt::format(FMT_STRING("Generator[{}]"), base->referenceString());
+        return collie::format(FMT_STRING("Generator[{}]"), base->referenceString());
     }
 
     const char IntNType::NodeId = 0;
 
     std::string IntNType::getInstanceName(unsigned int len, bool sign) {
-        return fmt::format(FMT_STRING("{}Int{}"), sign ? "" : "U", len);
+        return collie::format(FMT_STRING("{}Int{}"), sign ? "" : "U", len);
     }
 
     const char VectorType::NodeId = 0;
 
     std::string VectorType::getInstanceName(unsigned int count, PrimitiveType *base) {
-        return fmt::format(FMT_STRING("Vector[{}, {}]"), count, base->referenceString());
+        return collie::format(FMT_STRING("Vector[{}, {}]"), count, base->referenceString());
     }
 
     const char UnionType::NodeId = 0;
@@ -229,8 +229,8 @@ namespace hercules::ir::types {
         for (auto *type: types) {
             names.push_back(type->referenceString());
         }
-        return fmt::format(FMT_STRING("Union[{}]"),
-                           fmt::join(names.begin(), names.end(), ", "));
+        return collie::format(FMT_STRING("Union[{}]"),
+                           collie::join(names.begin(), names.end(), ", "));
     }
 
 } // namespace hercules::ir::types

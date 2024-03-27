@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/attribute.h"
+#include <hercules/hir/attribute.h>
 
-#include "hercules/hir/func.h"
-#include "hercules/hir/util/cloning.h"
-#include "hercules/hir/value.h"
-#include <fmt/ostream.h>
+#include <hercules/hir/func.h>
+#include <hercules/hir/util/cloning.h>
+#include <hercules/hir/value.h>
+#include <collie/strings/format.h>
 
 namespace hercules::ir {
 
@@ -37,7 +37,7 @@ namespace hercules::ir {
         std::vector<std::string> keys;
         for (auto &val: attributes)
             keys.push_back(val.second);
-        fmt::print(os, FMT_STRING("{}"), fmt::join(keys.begin(), keys.end(), ","));
+        collie::print(os, FMT_STRING("{}"), collie::join(keys.begin(), keys.end(), ","));
         return os;
     }
 
@@ -46,8 +46,8 @@ namespace hercules::ir {
     std::ostream &MemberAttribute::doFormat(std::ostream &os) const {
         std::vector<std::string> strings;
         for (auto &val: memberSrcInfo)
-            strings.push_back(fmt::format(FMT_STRING("{}={}"), val.first, val.second));
-        fmt::print(os, FMT_STRING("({})"), fmt::join(strings.begin(), strings.end(), ","));
+            strings.push_back(collie::format(FMT_STRING("{}={}"), val.first, val.second));
+        collie::print(os, FMT_STRING("({})"), collie::join(strings.begin(), strings.end(), ","));
         return os;
     }
 
@@ -75,8 +75,8 @@ namespace hercules::ir {
     std::ostream &TupleLiteralAttribute::doFormat(std::ostream &os) const {
         std::vector<std::string> strings;
         for (auto *val: elements)
-            strings.push_back(fmt::format(FMT_STRING("{}"), *val));
-        fmt::print(os, FMT_STRING("({})"), fmt::join(strings.begin(), strings.end(), ","));
+            strings.push_back(collie::format(FMT_STRING("{}"), *val));
+        collie::print(os, FMT_STRING("({})"), collie::join(strings.begin(), strings.end(), ","));
         return os;
     }
 
@@ -100,8 +100,8 @@ namespace hercules::ir {
     std::ostream &ListLiteralAttribute::doFormat(std::ostream &os) const {
         std::vector<std::string> strings;
         for (auto &e: elements)
-            strings.push_back(fmt::format(FMT_STRING("{}{}"), e.star ? "*" : "", *e.value));
-        fmt::print(os, FMT_STRING("[{}]"), fmt::join(strings.begin(), strings.end(), ","));
+            strings.push_back(collie::format(FMT_STRING("{}{}"), e.star ? "*" : "", *e.value));
+        collie::print(os, FMT_STRING("[{}]"), collie::join(strings.begin(), strings.end(), ","));
         return os;
     }
 
@@ -125,9 +125,9 @@ namespace hercules::ir {
     std::ostream &SetLiteralAttribute::doFormat(std::ostream &os) const {
         std::vector<std::string> strings;
         for (auto &e: elements)
-            strings.push_back(fmt::format(FMT_STRING("{}{}"), e.star ? "*" : "", *e.value));
-        fmt::print(os, FMT_STRING("set([{}])"),
-                   fmt::join(strings.begin(), strings.end(), ","));
+            strings.push_back(collie::format(FMT_STRING("{}{}"), e.star ? "*" : "", *e.value));
+        collie::print(os, FMT_STRING("set([{}])"),
+                   collie::join(strings.begin(), strings.end(), ","));
         return os;
     }
 
@@ -154,13 +154,13 @@ namespace hercules::ir {
         std::vector<std::string> strings;
         for (auto &val: elements) {
             if (val.value) {
-                strings.push_back(fmt::format(FMT_STRING("{}:{}"), *val.key, *val.value));
+                strings.push_back(collie::format(FMT_STRING("{}:{}"), *val.key, *val.value));
             } else {
-                strings.push_back(fmt::format(FMT_STRING("**{}"), *val.key));
+                strings.push_back(collie::format(FMT_STRING("**{}"), *val.key));
             }
         }
-        fmt::print(os, FMT_STRING("dict([{}])"),
-                   fmt::join(strings.begin(), strings.end(), ","));
+        collie::print(os, FMT_STRING("dict([{}])"),
+                   collie::join(strings.begin(), strings.end(), ","));
         return os;
     }
 
@@ -185,9 +185,9 @@ namespace hercules::ir {
     std::ostream &PartialFunctionAttribute::doFormat(std::ostream &os) const {
         std::vector<std::string> strings;
         for (auto *val: args)
-            strings.push_back(val ? fmt::format(FMT_STRING("{}"), *val) : "...");
-        fmt::print(os, FMT_STRING("{}({})"), name,
-                   fmt::join(strings.begin(), strings.end(), ","));
+            strings.push_back(val ? collie::format(FMT_STRING("{}"), *val) : "...");
+        collie::print(os, FMT_STRING("{}({})"), name,
+                   collie::join(strings.begin(), strings.end(), ","));
         return os;
     }
 

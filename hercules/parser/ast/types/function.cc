@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -151,9 +151,9 @@ namespace hercules::ast::types {
         if (mode == 0) {
             fnname = cache->rev(ast->name);
             // if (funcParent)
-            // fnname = fmt::format("{}.{}", funcParent->debugString(mode), fnname);
+            // fnname = collie::format("{}.{}", funcParent->debugString(mode), fnname);
         }
-        return fmt::format("{}{}", fnname, s.empty() ? "" : fmt::format("[{}]", s));
+        return collie::format("{}{}", fnname, s.empty() ? "" : collie::format("[{}]", s));
     }
 
     std::string FuncType::realizedName() const {
@@ -168,8 +168,8 @@ namespace hercules::ast::types {
             as.push_back(a->getFunc() ? a->getFunc()->realizedName() : a->realizedName());
         std::string a = join(as, ",");
         s = s.empty() ? a : join(std::vector<std::string>{a, s}, ",");
-        return fmt::format("{}{}{}", funcParent ? funcParent->realizedName() + ":" : "",
-                           ast->name, s.empty() ? "" : fmt::format("[{}]", s));
+        return collie::format("{}{}{}", funcParent ? funcParent->realizedName() + ":" : "",
+                           ast->name, s.empty() ? "" : collie::format("[{}]", s));
     }
 
     PartialType::PartialType(const std::shared_ptr<RecordType> &baseType,
@@ -211,12 +211,12 @@ namespace hercules::ast::types {
         if (mode == 0) {
             fnname = cache->rev(func->ast->name);
             // if (func->funcParent)
-            // fnname = fmt::format("{}.{}", func->funcParent->debugString(mode), fnname);
+            // fnname = collie::format("{}.{}", func->funcParent->debugString(mode), fnname);
         } else if (mode == 2) {
             fnname = func->debugString(mode);
         }
-        return fmt::format("{}[{}{}]", fnname, join(as, ","),
-                           mode == 2 ? fmt::format(";{}", join(gs, ",")) : "");
+        return collie::format("{}[{}{}]", fnname, join(as, ","),
+                           mode == 2 ? collie::format(";{}", join(gs, ",")) : "");
     }
 
     std::string PartialType::realizedName() const {
@@ -226,7 +226,7 @@ namespace hercules::ast::types {
             if (!a.name.empty())
                 gs.push_back(a.type->realizedName());
         std::string s = join(gs, ",");
-        return fmt::format("{}{}", name, s.empty() ? "" : fmt::format("[{}]", s));
+        return collie::format("{}{}", name, s.empty() ? "" : collie::format("[{}]", s));
     }
 
 } // namespace hercules::ast::types

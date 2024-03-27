@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@
   ExprPtr T::clone() const { return std::make_shared<T>(*this); }                      \
   void T::accept(X &visitor) { visitor.visit(this); }
 
-using fmt::format;
 using namespace hercules::error;
 
 namespace hercules::ast {
@@ -50,7 +49,7 @@ namespace hercules::ast {
         auto is = sexpr;
         if (done)
             is.insert(findStar(is), "*");
-        auto s = format("({}{})", is, type ? format(" #:type \"{}\"", type->toString()) : "");
+        auto s = collie::format("({}{})", is, type ? collie::format(" #:type \"{}\"", type->toString()) : "");
         // if (hasAttr(ExprAttr::SequenceItem)) s += "%";
         return s;
     }
@@ -122,7 +121,7 @@ namespace hercules::ast {
     }
 
     std::string Param::toString() const {
-        return format("({}{}{}{})", name, type ? " #:type " + type->toString() : "",
+        return collie::format("({}{}{}{})", name, type ? " #:type " + type->toString() : "",
                       defaultValue ? " #:default " + defaultValue->toString() : "",
                       status != Param::Normal ? " #:generic" : "");
     }
@@ -142,7 +141,7 @@ namespace hercules::ast {
     }
 
     std::string BoolExpr::toString() const {
-        return wrapType(format("bool {}", int(value)));
+        return wrapType(collie::format("bool {}", int(value)));
     }
 
     ACCEPT_IMPL(BoolExpr, ASTVisitor);
@@ -174,14 +173,14 @@ namespace hercules::ast {
     }
 
     std::string IntExpr::toString() const {
-        return wrapType(format("int {}{}", value,
-                               suffix.empty() ? "" : format(" #:suffix \"{}\"", suffix)));
+        return wrapType(collie::format("int {}{}", value,
+                               suffix.empty() ? "" : collie::format(" #:suffix \"{}\"", suffix)));
     }
 
     ACCEPT_IMPL(IntExpr, ASTVisitor);
 
     FloatExpr::FloatExpr(double floatValue)
-            : Expr(), value(fmt::format("{:g}", floatValue)) {
+            : Expr(), value(collie::format("{:g}", floatValue)) {
         this->floatValue = std::make_unique<double>(floatValue);
     }
 
@@ -200,8 +199,8 @@ namespace hercules::ast {
     }
 
     std::string FloatExpr::toString() const {
-        return wrapType(format("float {}{}", value,
-                               suffix.empty() ? "" : format(" #:suffix \"{}\"", suffix)));
+        return wrapType(collie::format("float {}{}", value,
+                               suffix.empty() ? "" : collie::format(" #:suffix \"{}\"", suffix)));
     }
 
     ACCEPT_IMPL(FloatExpr, ASTVisitor);
@@ -218,9 +217,9 @@ namespace hercules::ast {
     std::string StringExpr::toString() const {
         std::vector<std::string> s;
         for (auto &vp: strings)
-            s.push_back(format("\"{}\"{}", escape(vp.first),
-                               vp.second.empty() ? "" : format(" #:prefix \"{}\"", vp.second)));
-        return wrapType(format("string ({})", join(s)));
+            s.push_back(collie::format("\"{}\"{}", escape(vp.first),
+                               vp.second.empty() ? "" : collie::format(" #:prefix \"{}\"", vp.second)));
+        return wrapType(collie::format("string ({})", join(s)));
     }
 
     std::string StringExpr::getValue() const {
@@ -233,7 +232,7 @@ namespace hercules::ast {
     IdExpr::IdExpr(std::string value) : Expr(), value(std::move(value)) {}
 
     std::string IdExpr::toString() const {
-        return !type ? format("'{}", value) : wrapType(format("'{}", value));
+        return !type ? collie::format("'{}", value) : wrapType(collie::format("'{}", value));
     }
 
     ACCEPT_IMPL(IdExpr, ASTVisitor);
@@ -243,7 +242,7 @@ namespace hercules::ast {
     StarExpr::StarExpr(const StarExpr &expr) : Expr(expr), what(ast::clone(expr.what)) {}
 
     std::string StarExpr::toString() const {
-        return wrapType(format("star {}", what->toString()));
+        return wrapType(collie::format("star {}", what->toString()));
     }
 
     ACCEPT_IMPL(StarExpr, ASTVisitor);
@@ -254,7 +253,7 @@ namespace hercules::ast {
             : Expr(expr), what(ast::clone(expr.what)) {}
 
     std::string KeywordStarExpr::toString() const {
-        return wrapType(format("kwstar {}", what->toString()));
+        return wrapType(collie::format("kwstar {}", what->toString()));
     }
 
     ACCEPT_IMPL(KeywordStarExpr, ASTVisitor);
@@ -265,7 +264,7 @@ namespace hercules::ast {
             : Expr(expr), items(ast::clone(expr.items)) {}
 
     std::string TupleExpr::toString() const {
-        return wrapType(format("tuple {}", combine(items)));
+        return wrapType(collie::format("tuple {}", combine(items)));
     }
 
     ACCEPT_IMPL(TupleExpr, ASTVisitor);
@@ -275,7 +274,7 @@ namespace hercules::ast {
     ListExpr::ListExpr(const ListExpr &expr) : Expr(expr), items(ast::clone(expr.items)) {}
 
     std::string ListExpr::toString() const {
-        return wrapType(!items.empty() ? format("list {}", combine(items)) : "list");
+        return wrapType(!items.empty() ? collie::format("list {}", combine(items)) : "list");
     }
 
     ACCEPT_IMPL(ListExpr, ASTVisitor);
@@ -285,7 +284,7 @@ namespace hercules::ast {
     SetExpr::SetExpr(const SetExpr &expr) : Expr(expr), items(ast::clone(expr.items)) {}
 
     std::string SetExpr::toString() const {
-        return wrapType(!items.empty() ? format("set {}", combine(items)) : "set");
+        return wrapType(!items.empty() ? collie::format("set {}", combine(items)) : "set");
     }
 
     ACCEPT_IMPL(SetExpr, ASTVisitor);
@@ -300,7 +299,7 @@ namespace hercules::ast {
     DictExpr::DictExpr(const DictExpr &expr) : Expr(expr), items(ast::clone(expr.items)) {}
 
     std::string DictExpr::toString() const {
-        return wrapType(!items.empty() ? format("dict {}", combine(items)) : "set");
+        return wrapType(!items.empty() ? collie::format("dict {}", combine(items)) : "set");
     }
 
     ACCEPT_IMPL(DictExpr, ASTVisitor);
@@ -327,10 +326,10 @@ namespace hercules::ast {
         for (auto &i: loops) {
             std::string q;
             for (auto &k: i.conds)
-                q += format(" (if {})", k->toString());
-            s += format(" (for {} {}{})", i.vars->toString(), i.gen->toString(), q);
+                q += collie::format(" (if {})", k->toString());
+            s += collie::format(" (for {} {}{})", i.vars->toString(), i.gen->toString(), q);
         }
-        return wrapType(format("{}gen {}{}", prefix, expr->toString(), s));
+        return wrapType(collie::format("{}gen {}{}", prefix, expr->toString(), s));
     }
 
     ACCEPT_IMPL(GeneratorExpr, ASTVisitor);
@@ -348,10 +347,10 @@ namespace hercules::ast {
         for (auto &i: loops) {
             std::string q;
             for (auto &k: i.conds)
-                q += format("( if {})", k->toString());
-            s += format(" (for {} {}{})", i.vars->toString(), i.gen->toString(), q);
+                q += collie::format("( if {})", k->toString());
+            s += collie::format(" (for {} {}{})", i.vars->toString(), i.gen->toString(), q);
         }
-        return wrapType(format("dict-gen {} {}{}", key->toString(), expr->toString(), s));
+        return wrapType(collie::format("dict-gen {} {}{}", key->toString(), expr->toString(), s));
     }
 
     ACCEPT_IMPL(DictGeneratorExpr, ASTVisitor);
@@ -365,7 +364,7 @@ namespace hercules::ast {
               elsexpr(ast::clone(expr.elsexpr)) {}
 
     std::string IfExpr::toString() const {
-        return wrapType(format("if-expr {} {} {}", cond->toString(), ifexpr->toString(),
+        return wrapType(collie::format("if-expr {} {} {}", cond->toString(), ifexpr->toString(),
                                elsexpr->toString()));
     }
 
@@ -378,7 +377,7 @@ namespace hercules::ast {
             : Expr(expr), op(expr.op), expr(ast::clone(expr.expr)) {}
 
     std::string UnaryExpr::toString() const {
-        return wrapType(format("unary \"{}\" {}", op, expr->toString()));
+        return wrapType(collie::format("unary \"{}\" {}", op, expr->toString()));
     }
 
     ACCEPT_IMPL(UnaryExpr, ASTVisitor);
@@ -392,7 +391,7 @@ namespace hercules::ast {
               rexpr(ast::clone(expr.rexpr)), inPlace(expr.inPlace) {}
 
     std::string BinaryExpr::toString() const {
-        return wrapType(format("binary \"{}\" {} {}{}", op, lexpr->toString(),
+        return wrapType(collie::format("binary \"{}\" {} {}{}", op, lexpr->toString(),
                                rexpr->toString(), inPlace ? " #:in-place" : ""));
     }
 
@@ -409,8 +408,8 @@ namespace hercules::ast {
     std::string ChainBinaryExpr::toString() const {
         std::vector<std::string> s;
         for (auto &i: exprs)
-            s.push_back(format("({} \"{}\")", i.first, i.second->toString()));
-        return wrapType(format("chain {}", join(s, " ")));
+            s.push_back(collie::format("({} \"{}\")", i.first, i.second->toString()));
+        return wrapType(collie::format("chain {}", join(s, " ")));
     }
 
     ACCEPT_IMPL(ChainBinaryExpr, ASTVisitor);
@@ -436,8 +435,8 @@ namespace hercules::ast {
     std::string PipeExpr::toString() const {
         std::vector<std::string> s;
         for (auto &i: items)
-            s.push_back(format("({} \"{}\")", i.expr->toString(), i.op));
-        return wrapType(format("pipe {}", join(s, " ")));
+            s.push_back(collie::format("({} \"{}\")", i.expr->toString(), i.op));
+        return wrapType(collie::format("pipe {}", join(s, " ")));
     }
 
     ACCEPT_IMPL(PipeExpr, ASTVisitor);
@@ -449,7 +448,7 @@ namespace hercules::ast {
             : Expr(expr), expr(ast::clone(expr.expr)), index(ast::clone(expr.index)) {}
 
     std::string IndexExpr::toString() const {
-        return wrapType(format("index {} {}", expr->toString(), index->toString()));
+        return wrapType(collie::format("index {} {}", expr->toString(), index->toString()));
     }
 
     ACCEPT_IMPL(IndexExpr, ASTVisitor);
@@ -506,9 +505,9 @@ namespace hercules::ast {
             if (i.name.empty())
                 s += " " + i.value->toString();
             else
-                s += format("({}{})", i.value->toString(),
-                            i.name.empty() ? "" : format(" #:name '{}", i.name));
-        return wrapType(format("call {} {}", expr->toString(), s));
+                s += collie::format("({}{})", i.value->toString(),
+                            i.name.empty() ? "" : collie::format(" #:name '{}", i.name));
+        return wrapType(collie::format("call {} {}", expr->toString(), s));
     }
 
     ACCEPT_IMPL(CallExpr, ASTVisitor);
@@ -523,7 +522,7 @@ namespace hercules::ast {
             : Expr(expr), expr(ast::clone(expr.expr)), member(expr.member) {}
 
     std::string DotExpr::toString() const {
-        return wrapType(format("dot {} '{}", expr->toString(), member));
+        return wrapType(collie::format("dot {} '{}", expr->toString(), member));
     }
 
     ACCEPT_IMPL(DotExpr, ASTVisitor);
@@ -536,10 +535,10 @@ namespace hercules::ast {
               step(ast::clone(expr.step)) {}
 
     std::string SliceExpr::toString() const {
-        return wrapType(format("slice{}{}{}",
-                               start ? format(" #:start {}", start->toString()) : "",
-                               stop ? format(" #:end {}", stop->toString()) : "",
-                               step ? format(" #:step {}", step->toString()) : ""));
+        return wrapType(collie::format("slice{}{}{}",
+                               start ? collie::format(" #:start {}", start->toString()) : "",
+                               stop ? collie::format(" #:end {}", stop->toString()) : "",
+                               step ? collie::format(" #:step {}", step->toString()) : ""));
     }
 
     ACCEPT_IMPL(SliceExpr, ASTVisitor);
@@ -547,7 +546,7 @@ namespace hercules::ast {
     EllipsisExpr::EllipsisExpr(EllipsisType mode) : Expr(), mode(mode) {}
 
     std::string EllipsisExpr::toString() const {
-        return wrapType(format(
+        return wrapType(collie::format(
                 "ellipsis{}", mode == PIPE ? " #:pipe" : (mode == PARTIAL ? "#:partial" : "")));
     }
 
@@ -560,7 +559,7 @@ namespace hercules::ast {
             : Expr(expr), vars(expr.vars), expr(ast::clone(expr.expr)) {}
 
     std::string LambdaExpr::toString() const {
-        return wrapType(format("lambda ({}) {}", join(vars, " "), expr->toString()));
+        return wrapType(collie::format("lambda ({}) {}", join(vars, " "), expr->toString()));
     }
 
     ACCEPT_IMPL(LambdaExpr, ASTVisitor);
@@ -578,7 +577,7 @@ namespace hercules::ast {
             : Expr(expr), var(ast::clone(expr.var)), expr(ast::clone(expr.expr)) {}
 
     std::string AssignExpr::toString() const {
-        return wrapType(format("assign-expr '{} {}", var->toString(), expr->toString()));
+        return wrapType(collie::format("assign-expr '{} {}", var->toString(), expr->toString()));
     }
 
     ACCEPT_IMPL(AssignExpr, ASTVisitor);
@@ -590,7 +589,7 @@ namespace hercules::ast {
             : Expr(expr), start(ast::clone(expr.start)), stop(ast::clone(expr.stop)) {}
 
     std::string RangeExpr::toString() const {
-        return wrapType(format("range {} {}", start->toString(), stop->toString()));
+        return wrapType(collie::format("range {} {}", start->toString(), stop->toString()));
     }
 
     ACCEPT_IMPL(RangeExpr, ASTVisitor);
@@ -614,7 +613,7 @@ namespace hercules::ast {
             : Expr(expr), stmts(ast::clone(expr.stmts)), expr(ast::clone(expr.expr)) {}
 
     std::string StmtExpr::toString() const {
-        return wrapType(format("stmt-expr ({}) {}", combine(stmts, " "), expr->toString()));
+        return wrapType(collie::format("stmt-expr ({}) {}", combine(stmts, " "), expr->toString()));
     }
 
     ACCEPT_IMPL(StmtExpr, ASTVisitor);
@@ -633,7 +632,7 @@ namespace hercules::ast {
 
     std::string InstantiateExpr::toString() const {
         return wrapType(
-                format("instantiate {} {}", typeExpr->toString(), combine(typeParams)));
+                collie::format("instantiate {} {}", typeExpr->toString(), combine(typeParams)));
     }
 
     ACCEPT_IMPL(InstantiateExpr, ASTVisitor);

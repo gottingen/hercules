@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@
 #include "hercules/parser/common.h"
 #include "hercules/parser/visitors/simplify/simplify.h"
 
-using fmt::format;
 using namespace hercules::error;
 
 namespace hercules::ast {
@@ -150,7 +149,7 @@ namespace hercules::ast {
                         }
                     } else if (!stmt->attributes.has(Attr::Extend)) {
                         // Handle class variables. Transform them later to allow self-references
-                        auto name = format("{}.{}", canonicalName, a.name);
+                        auto name = collie::format("{}.{}", canonicalName, a.name);
                         preamble->push_back(N<AssignStmt>(N<IdExpr>(name), nullptr, nullptr));
                         ctx->cache->addGlobal(name);
                         auto assign = N<AssignStmt>(N<IdExpr>(name), a.defaultValue,
@@ -183,7 +182,7 @@ namespace hercules::ast {
                 }
                 // Create a cached AST.
                 stmt->attributes.module =
-                        format("{}{}", ctx->moduleName.status == ImportFile::STDLIB ? "std::" : "::",
+                        collie::format("{}{}", ctx->moduleName.status == ImportFile::STDLIB ? "std::" : "::",
                                ctx->moduleName.module);
                 ctx->cache->classes[canonicalName].ast =
                         N<ClassStmt>(canonicalName, args, N<SuiteStmt>(), stmt->attributes);
@@ -212,7 +211,7 @@ namespace hercules::ast {
                                 else
                                     rootName = ctx->generateCanonicalName(ctx->cache->rev(f->name), true);
                                 auto newCanonicalName =
-                                        format("{}:{}", rootName, ctx->cache->overloads[rootName].size());
+                                        collie::format("{}:{}", rootName, ctx->cache->overloads[rootName].size());
                                 ctx->cache->overloads[rootName].push_back(
                                         {newCanonicalName, ctx->cache->age});
                                 ctx->cache->reverseIdentifierLookup[newCanonicalName] =
@@ -240,7 +239,7 @@ namespace hercules::ast {
                             if (auto d = dc->getDot()) {
                                 if (d->member == "setter" and d->expr->isId(sp->getFunction()->name) &&
                                     sp->getFunction()->args.size() == 2) {
-                                    sp->getFunction()->name = format(".set_{}", sp->getFunction()->name);
+                                    sp->getFunction()->name = collie::format(".set_{}", sp->getFunction()->name);
                                     dc = nullptr;
                                     break;
                                 }
@@ -394,7 +393,7 @@ namespace hercules::ast {
                     for (auto &aa: args)
                         i += aa.name == a.name || startswith(aa.name, a.name + "#");
                     if (i)
-                        name = format("{}#{}", name, i);
+                        name = collie::format("{}#{}", name, i);
                     seqassert(ctx->cache->classes[ast->name].fields[ai].name == a.name,
                               "bad class fields: {} vs {}",
                               ctx->cache->classes[ast->name].fields[ai].name, a.name);
@@ -448,7 +447,7 @@ namespace hercules::ast {
                     int i = 0;
                     // Once done, add arguments
                     for (auto &m: *(ctx->getBase()->deducedMembers)) {
-                        auto varName = ctx->generateCanonicalName(format("T{}", ++i));
+                        auto varName = ctx->generateCanonicalName(collie::format("T{}", ++i));
                         auto memberName = ctx->cache->rev(varName);
                         ctx->addType(memberName, varName, stmt->getSrcInfo())->generic = true;
                         args.emplace_back(varName, N<IdExpr>("type"), nullptr, Param::Generic);
@@ -495,7 +494,7 @@ namespace hercules::ast {
                 // If class B is nested within A, it's name is always A.B, never B itself.
                 // Ensure that parent class name is appended
                 auto parentName = stmt->name;
-                sp->getClass()->name = fmt::format("{}.{}", parentName, origName);
+                sp->getClass()->name = collie::format("{}.{}", parentName, origName);
                 auto tsp = transform(sp);
                 std::string name;
                 if (tsp->getSuite()) {
@@ -680,7 +679,7 @@ namespace hercules::ast {
         }
 #undef I
 #undef NS
-        auto t = std::make_shared<FunctionStmt>(format("__{}__", op), ret, fargs,
+        auto t = std::make_shared<FunctionStmt>(collie::format("__{}__", op), ret, fargs,
                                                 N<SuiteStmt>(stmts), attr);
         t->setSrcInfo(ctx->cache->generateSrcInfo());
         return t;

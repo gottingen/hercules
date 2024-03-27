@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
 #include "hercules/parser/visitors/simplify/simplify.h"
 #include "hercules/parser/visitors/typecheck/typecheck.h"
 
-using fmt::format;
 using namespace hercules::error;
 namespace hercules::ast {
 
@@ -1002,7 +1001,7 @@ namespace hercules::ast {
         auto &args = expr->args[0].value->getCall()->args;
         for (size_t i = 0; i < args.size(); i++) {
             realize(args[i].value->type);
-            fmt::print(stderr, "[static_print] {}: {} := {}{} (iter: {})\n", getSrcInfo(),
+            collie::print(stderr, "[static_print] {}: {} := {}{} (iter: {})\n", getSrcInfo(),
                        FormatVisitor::apply(args[i].value),
                        args[i].value->type ? args[i].value->type->debugString(1) : "-",
                        args[i].value->isStatic() ? " [static]" : "",
@@ -1278,7 +1277,7 @@ namespace hercules::ast {
             else
                 genericSize++;
         }
-        auto typeName = format(TYPE_PARTIAL "{}.{}", strMask, fn->toString());
+        auto typeName = collie::format(TYPE_PARTIAL "{}.{}", strMask, fn->toString());
         if (!ctx->find(typeName)) {
             ctx->cache->partials[typeName] = {fn->generalize(0)->getFunc(), mask};
             generateTuple(tupleSize + 2, typeName, {}, false);

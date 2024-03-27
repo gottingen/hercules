@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -804,37 +804,37 @@ namespace hercules::ast {
 } // namespace hercules::ast
 
 template<typename T>
-struct fmt::formatter<
+struct collie::formatter<
         T, std::enable_if_t<std::is_base_of<hercules::ast::Expr, T>::value, char>>
-        : fmt::ostream_formatter {
+        : collie::ostream_formatter {
 };
 
 template<>
-struct fmt::formatter<hercules::ast::CallExpr::Arg> : fmt::formatter<std::string_view> {
+struct collie::formatter<hercules::ast::CallExpr::Arg> : collie::formatter<std::string_view> {
     template<typename FormatContext>
     auto format(const hercules::ast::CallExpr::Arg &p, FormatContext &ctx) const
     -> decltype(ctx.out()) {
-        return fmt::format_to(ctx.out(), "({}{})",
-                              p.name.empty() ? "" : fmt::format("{} = ", p.name), p.value);
+        return collie::format_to(ctx.out(), "({}{})",
+                              p.name.empty() ? "" : collie::format("{} = ", p.name), p.value);
     }
 };
 
 template<>
-struct fmt::formatter<hercules::ast::Param> : fmt::formatter<std::string_view> {
+struct collie::formatter<hercules::ast::Param> : collie::formatter<std::string_view> {
     template<typename FormatContext>
     auto format(const hercules::ast::Param &p, FormatContext &ctx) const
     -> decltype(ctx.out()) {
-        return fmt::format_to(ctx.out(), "{}", p.toString());
+        return collie::format_to(ctx.out(), "{}", p.toString());
     }
 };
 
 template<typename T>
-struct fmt::formatter<
+struct collie::formatter<
         T, std::enable_if_t<
                 std::is_convertible<T, std::shared_ptr<hercules::ast::Expr>>::value, char>>
-        : fmt::formatter<std::string_view> {
+        : collie::formatter<std::string_view> {
     template<typename FormatContext>
     auto format(const T &p, FormatContext &ctx) const -> decltype(ctx.out()) {
-        return fmt::format_to(ctx.out(), "{}", p ? p->toString() : "<nullptr>");
+        return collie::format_to(ctx.out(), "{}", p ? p->toString() : "<nullptr>");
     }
 };

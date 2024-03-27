@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,19 +13,17 @@
 // limitations under the License.
 //
 
-#include "doc.h"
+#include <hercules/parser/visitors/doc/doc.h>
 
 #include <memory>
 #include <string>
 #include <tuple>
 #include <vector>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/peg/peg.h"
-#include "hercules/parser/visitors/format/format.h"
-
-using fmt::format;
+#include <hercules/parser/ast.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/peg/peg.h>
+#include <hercules/parser/visitors/format/format.h>
 
 namespace hercules::ast {
 
@@ -92,16 +90,16 @@ namespace hercules::ast {
         if (values.empty()) {
             return "{}";
         } else if (values.size() == 1 && !values.begin()->second) {
-            return fmt::format("\"{}\"", json_escape(values.begin()->first));
+            return collie::format("\"{}\"", json_escape(values.begin()->first));
         } else if (list) {
             for (int i = 0; i < values.size(); i++)
                 s.push_back(values[std::to_string(i)]->toString());
-            return fmt::format("[ {} ]", join(s, ", "));
+            return collie::format("[ {} ]", join(s, ", "));
         } else {
             for (auto &v: values)
                 s.push_back(
-                        fmt::format("\"{}\": {}", json_escape(v.first), v.second->toString()));
-            return fmt::format("{{ {} }}", join(s, ", "));
+                        collie::format("\"{}\": {}", json_escape(v.first), v.second->toString()));
+            return collie::format("{{ {} }}", join(s, ", "));
         }
     }
 

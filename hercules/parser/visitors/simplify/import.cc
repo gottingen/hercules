@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@
 #include "hercules/parser/peg/peg.h"
 #include "hercules/parser/visitors/simplify/simplify.h"
 
-using fmt::format;
 using namespace hercules::error;
 
 namespace hercules::ast {
@@ -193,7 +192,7 @@ namespace hercules::ast {
                 fnArgs.emplace_back(Param{"*args", nullptr, nullptr});
             } else {
                 fnArgs.emplace_back(
-                        Param{args[ai].name.empty() ? format("a{}", ai) : args[ai].name,
+                        Param{args[ai].name.empty() ? collie::format("a{}", ai) : args[ai].name,
                               args[ai].type->clone(), nullptr});
             }
         }
@@ -298,8 +297,8 @@ namespace hercules::ast {
         std::vector<Param> params;
         std::vector<ExprPtr> callArgs;
         for (int i = 0; i < args.size(); i++) {
-            params.emplace_back(Param{format("a{}", i), clone(args[i].type), nullptr});
-            callArgs.emplace_back(N<IdExpr>(format("a{}", i)));
+            params.emplace_back(Param{collie::format("a{}", i), clone(args[i].type), nullptr});
+            callArgs.emplace_back(N<IdExpr>(collie::format("a{}", i)));
         }
         // `return ret.__from_py__(f(a1, ...))`
         auto retType = (ret && !ret->getNone()) ? ret->clone() : N<IdExpr>("NoneType");
@@ -341,7 +340,7 @@ namespace hercules::ast {
         if (!ctx->cache->errors.empty())
             throw exc::ParserException();
         // Add comment to the top of import for easier dump inspection
-        auto comment = N<CommentStmt>(format("import: {} at {}", file.module, file.path));
+        auto comment = N<CommentStmt>(collie::format("import: {} at {}", file.module, file.path));
         if (ctx->isStdlibLoading) {
             // When loading the standard library, imports are not wrapped.
             // We assume that the standard library has no recursive imports and that all
@@ -350,7 +349,7 @@ namespace hercules::ast {
         } else {
             // Generate import identifier
             std::string importVar = import->second.importVar =
-                                            ctx->cache->getTemporaryVar(format("import_{}", file.module));
+                                            ctx->cache->getTemporaryVar(collie::format("import_{}", file.module));
             std::string importDoneVar;
 
             // `import_[I]_done = False` (set to True upon successful import)

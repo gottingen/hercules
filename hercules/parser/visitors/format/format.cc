@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 #include <string>
 #include <vector>
 
-#include "hercules/parser/visitors/format/format.h"
-
-using fmt::format;
+#include <hercules/parser/visitors/format/format.h>
 
 namespace hercules::ast {
 
@@ -79,7 +77,7 @@ namespace hercules::ast {
     std::string FormatVisitor::newline() const { return nl + "\n"; }
 
     std::string FormatVisitor::keyword(const std::string &s) const {
-        return fmt::format("{}{}{}", keywordStart, s, keywordEnd);
+        return collie::format("{}{}{}", keywordStart, s, keywordEnd);
     }
 
 /*************************************************************************************/
@@ -134,7 +132,7 @@ namespace hercules::ast {
     void FormatVisitor::visit(DictExpr *expr) {
         std::vector<std::string> s;
         for (auto &i: expr->items)
-            s.push_back(fmt::format("{}: {}", transform(i->getTuple()->items[0]),
+            s.push_back(collie::format("{}: {}", transform(i->getTuple()->items[0]),
                                     transform(i->getTuple()->items[1])));
         result = renderExpr(expr, "{{{}}}", join(s, ", "));
     }
@@ -144,8 +142,8 @@ namespace hercules::ast {
         for (auto &i: expr->loops) {
             std::string cond;
             for (auto &k: i.conds)
-                cond += fmt::format(" if {}", transform(k));
-            s += fmt::format("for {} in {}{}", i.vars->toString(), i.gen->toString(), cond);
+                cond += collie::format(" if {}", transform(k));
+            s += collie::format("for {} in {}{}", i.vars->toString(), i.gen->toString(), cond);
         }
         if (expr->kind == GeneratorExpr::ListGenerator)
             result = renderExpr(expr, "[{} {}]", transform(expr->expr), s);
@@ -160,9 +158,9 @@ namespace hercules::ast {
         for (auto &i: expr->loops) {
             std::string cond;
             for (auto &k: i.conds)
-                cond += fmt::format(" if {}", transform(k));
+                cond += collie::format(" if {}", transform(k));
 
-            s += fmt::format("for {} in {}{}", i.vars->toString(), i.gen->toString(), cond);
+            s += collie::format("for {} in {}{}", i.vars->toString(), i.gen->toString(), cond);
         }
         result =
                 renderExpr(expr, "{{{}: {} {}}}", transform(expr->key), transform(expr->expr), s);
@@ -203,7 +201,7 @@ namespace hercules::ast {
             if (i.name == "")
                 args.push_back(transform(i.value));
             else
-                args.push_back(fmt::format("{}: {}", i.name, transform(i.value)));
+                args.push_back(collie::format("{}: {}", i.name, transform(i.value)));
         }
         result = renderExpr(expr, "{}({})", transform(expr->expr), join(args, ", "));
     }
@@ -237,7 +235,7 @@ namespace hercules::ast {
     void FormatVisitor::visit(StmtExpr *expr) {
         std::string s;
         for (int i = 0; i < expr->stmts.size(); i++)
-            s += format("{}{}", pad(2), transform(expr->stmts[i].get(), 2));
+            s += collie::format("{}{}", pad(2), transform(expr->stmts[i].get(), 2));
         result = renderExpr(expr, "({}{}{}{}{})", newline(), s, newline(), pad(2),
                             transform(expr->expr));
     }
@@ -259,55 +257,55 @@ namespace hercules::ast {
 
     void FormatVisitor::visit(AssignStmt *stmt) {
         if (stmt->type) {
-            result = fmt::format("{}: {} = {}", transform(stmt->lhs), transform(stmt->type),
+            result = collie::format("{}: {} = {}", transform(stmt->lhs), transform(stmt->type),
                                  transform(stmt->rhs));
         } else {
-            result = fmt::format("{} = {}", transform(stmt->lhs), transform(stmt->rhs));
+            result = collie::format("{} = {}", transform(stmt->lhs), transform(stmt->rhs));
         }
     }
 
     void FormatVisitor::visit(AssignMemberStmt *stmt) {
-        result = fmt::format("{}.{} = {}", transform(stmt->lhs), stmt->member,
+        result = collie::format("{}.{} = {}", transform(stmt->lhs), stmt->member,
                              transform(stmt->rhs));
     }
 
     void FormatVisitor::visit(DelStmt *stmt) {
-        result = fmt::format("{} {}", keyword("del"), transform(stmt->expr));
+        result = collie::format("{} {}", keyword("del"), transform(stmt->expr));
     }
 
     void FormatVisitor::visit(PrintStmt *stmt) {
-        result = fmt::format("{} {}", keyword("print"), transform(stmt->items));
+        result = collie::format("{} {}", keyword("print"), transform(stmt->items));
     }
 
     void FormatVisitor::visit(ReturnStmt *stmt) {
-        result = fmt::format("{}{}", keyword("return"),
+        result = collie::format("{}{}", keyword("return"),
                              stmt->expr ? " " + transform(stmt->expr) : "");
     }
 
     void FormatVisitor::visit(YieldStmt *stmt) {
-        result = fmt::format("{}{}", keyword("yield"),
+        result = collie::format("{}{}", keyword("yield"),
                              stmt->expr ? " " + transform(stmt->expr) : "");
     }
 
     void FormatVisitor::visit(AssertStmt *stmt) {
-        result = fmt::format("{} {}", keyword("assert"), transform(stmt->expr));
+        result = collie::format("{} {}", keyword("assert"), transform(stmt->expr));
     }
 
     void FormatVisitor::visit(WhileStmt *stmt) {
-        result = fmt::format("{} {}:{}{}", keyword("while"), transform(stmt->cond), newline(),
+        result = collie::format("{} {}:{}{}", keyword("while"), transform(stmt->cond), newline(),
                              transform(stmt->suite.get(), 1));
     }
 
     void FormatVisitor::visit(ForStmt *stmt) {
-        result = fmt::format("{} {} {} {}:{}{}", keyword("for"), transform(stmt->var),
+        result = collie::format("{} {} {} {}:{}{}", keyword("for"), transform(stmt->var),
                              keyword("in"), transform(stmt->iter), newline(),
                              transform(stmt->suite.get(), 1));
     }
 
     void FormatVisitor::visit(IfStmt *stmt) {
-        result = fmt::format("{} {}:{}{}{}", keyword("if"), transform(stmt->cond), newline(),
+        result = collie::format("{} {}:{}{}{}", keyword("if"), transform(stmt->cond), newline(),
                              transform(stmt->ifSuite.get(), 1),
-                             stmt->elseSuite ? format("{}:{}{}", keyword("else"), newline(),
+                             stmt->elseSuite ? collie::format("{}:{}{}", keyword("else"), newline(),
                                                       transform(stmt->elseSuite.get(), 1))
                                              : "");
     }
@@ -315,19 +313,19 @@ namespace hercules::ast {
     void FormatVisitor::visit(MatchStmt *stmt) {
         std::string s;
         for (auto &c: stmt->cases)
-            s += fmt::format("{}{}{}{}:{}{}", pad(1), keyword("case"), transform(c.pattern),
+            s += collie::format("{}{}{}{}:{}{}", pad(1), keyword("case"), transform(c.pattern),
                              c.guard ? " " + (keyword("case") + " " + transform(c.guard)) : "",
                              newline(), transform(c.suite.get(), 2));
         result =
-                fmt::format("{} {}:{}{}", keyword("match"), transform(stmt->what), newline(), s);
+                collie::format("{} {}:{}{}", keyword("match"), transform(stmt->what), newline(), s);
     }
 
     void FormatVisitor::visit(ImportStmt *stmt) {
-        auto as = stmt->as.empty() ? "" : fmt::format(" {} {} ", keyword("as"), stmt->as);
+        auto as = stmt->as.empty() ? "" : collie::format(" {} {} ", keyword("as"), stmt->as);
         if (!stmt->what)
-            result += fmt::format("{} {}{}", keyword("import"), transform(stmt->from), as);
+            result += collie::format("{} {}{}", keyword("import"), transform(stmt->from), as);
         else
-            result += fmt::format("{} {} {} {}{}", keyword("from"), transform(stmt->from),
+            result += collie::format("{} {} {} {}{}", keyword("from"), transform(stmt->from),
                                   keyword("import"), transform(stmt->what), as);
     }
 
@@ -335,24 +333,24 @@ namespace hercules::ast {
         std::vector<std::string> catches;
         for (auto &c: stmt->catches) {
             catches.push_back(
-                    fmt::format("{} {}{}:{}{}", keyword("catch"), transform(c.exc),
-                                c.var == "" ? "" : fmt::format("{} {}", keyword("as"), c.var),
+                    collie::format("{} {}{}:{}{}", keyword("catch"), transform(c.exc),
+                                c.var == "" ? "" : collie::format("{} {}", keyword("as"), c.var),
                                 newline(), transform(c.suite.get(), 1)));
         }
         result =
-                fmt::format("{}:{}{}{}{}", keyword("try"), newline(),
-                            transform(stmt->suite.get(), 1), fmt::join(catches, ""),
-                            stmt->finally ? fmt::format("{}:{}{}", keyword("finally"), newline(),
+                collie::format("{}:{}{}{}{}", keyword("try"), newline(),
+                            transform(stmt->suite.get(), 1), collie::join(catches, ""),
+                            stmt->finally ? collie::format("{}:{}{}", keyword("finally"), newline(),
                                                         transform(stmt->finally.get(), 1))
                                           : "");
     }
 
     void FormatVisitor::visit(GlobalStmt *stmt) {
-        result = fmt::format("{} {}", keyword("global"), stmt->var);
+        result = collie::format("{} {}", keyword("global"), stmt->var);
     }
 
     void FormatVisitor::visit(ThrowStmt *stmt) {
-        result = fmt::format("{} {}", keyword("raise"), transform(stmt->expr));
+        result = collie::format("{} {}", keyword("raise"), transform(stmt->expr));
     }
 
     void FormatVisitor::visit(FunctionStmt *fstmt) {
@@ -382,25 +380,25 @@ namespace hercules::ast {
 
         std::vector<std::string> attrs;
         for (auto &a: fstmt->decorators)
-            attrs.push_back(fmt::format("@{}", transform(a)));
+            attrs.push_back(collie::format("@{}", transform(a)));
         if (!fstmt->attributes.module.empty())
-            attrs.push_back(fmt::format("@module:{}", fstmt->attributes.parentClass));
+            attrs.push_back(collie::format("@module:{}", fstmt->attributes.parentClass));
         if (!fstmt->attributes.parentClass.empty())
-            attrs.push_back(fmt::format("@parent:{}", fstmt->attributes.parentClass));
+            attrs.push_back(collie::format("@parent:{}", fstmt->attributes.parentClass));
         std::vector<std::string> args;
         for (auto &a: fstmt->args)
-            args.push_back(fmt::format(
-                    "{}{}{}", a.name, a.type ? fmt::format(": {}", transform(a.type)) : "",
-                    a.defaultValue ? fmt::format(" = {}", transform(a.defaultValue)) : ""));
+            args.push_back(collie::format(
+                    "{}{}{}", a.name, a.type ? collie::format(": {}", transform(a.type)) : "",
+                    a.defaultValue ? collie::format(" = {}", transform(a.defaultValue)) : ""));
         auto body = transform(fstmt->suite.get(), 1);
-        auto name = fmt::format("{}{}{}", typeStart, fstmt->name, typeEnd);
-        name = fmt::format("{}{}{}", exprStart, name, exprEnd);
-        result += fmt::format(
+        auto name = collie::format("{}{}{}", typeStart, fstmt->name, typeEnd);
+        name = collie::format("{}{}{}", exprStart, name, exprEnd);
+        result += collie::format(
                 "{}{} {}({}){}:{}{}",
                 attrs.size() ? join(attrs, newline() + pad()) + newline() + pad() : "",
-                keyword("def"), name, fmt::join(args, ", "),
-                fstmt->ret ? fmt::format(" -> {}", transform(fstmt->ret)) : "", newline(),
-                body.empty() ? fmt::format("{}", keyword("pass")) : body);
+                keyword("def"), name, collie::join(args, ", "),
+                fstmt->ret ? collie::format(" -> {}", transform(fstmt->ret)) : "", newline(),
+                body.empty() ? collie::format("{}", keyword("pass")) : body);
     }
 
     void FormatVisitor::visit(ClassStmt *stmt) {
@@ -413,17 +411,17 @@ namespace hercules::ast {
         std::vector<std::string> args;
         std::string key = stmt->isRecord() ? "type" : "class";
         for (auto &a: stmt->args)
-            args.push_back(fmt::format("{}: {}", a.name, transform(a.type)));
-        result = fmt::format("{}{} {}({})",
+            args.push_back(collie::format("{}: {}", a.name, transform(a.type)));
+        result = collie::format("{}{} {}({})",
                              attrs.size() ? join(attrs, newline() + pad()) + newline() + pad()
                                           : "",
-                             keyword(key), stmt->name, fmt::join(args, ", "));
+                             keyword(key), stmt->name, collie::join(args, ", "));
         if (stmt->suite)
-            result += fmt::format(":{}{}", newline(), transform(stmt->suite.get(), 1));
+            result += collie::format(":{}{}", newline(), transform(stmt->suite.get(), 1));
     }
 
     void FormatVisitor::visit(YieldFromStmt *stmt) {
-        result = fmt::format("{} {}", keyword("yield from"), transform(stmt->expr));
+        result = collie::format("{} {}", keyword("yield from"), transform(stmt->expr));
     }
 
     void FormatVisitor::visit(WithStmt *stmt) {}

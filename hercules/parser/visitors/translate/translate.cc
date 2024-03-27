@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,22 +13,21 @@
 // limitations under the License.
 //
 
-#include "translate.h"
-
+#include <hercules/parser/visitors/translate/translate.h>
 #include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-#include "hercules/hir/transform/parallel/schedule.h"
-#include "hercules/hir/util/cloning.h"
-#include "hercules/parser/ast.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/visitors/translate/translate_ctx.h"
+#include <hercules/hir/transform/parallel/schedule.h>
+#include <hercules/hir/util/cloning.h>
+#include <hercules/parser/ast.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/visitors/translate/translate_ctx.h>
+#include <collie/strings/format.h>
 
 using hercules::ir::cast;
 using hercules::ir::transform::parallel::OMPSched;
-using fmt::format;
 
 namespace hercules::ast {
 
@@ -38,7 +37,7 @@ namespace hercules::ast {
     ir::Func *TranslateVisitor::apply(Cache *cache, const StmtPtr &stmts) {
         ir::BodiedFunc *main = nullptr;
         if (cache->isJit) {
-            auto fnName = format("_jit_{}", cache->jitCell);
+            auto fnName = collie::format("_jit_{}", cache->jitCell);
             main = cache->module->Nr<ir::BodiedFunc>(fnName);
             main->setSrcInfo({"<jit>", 0, 0, 0});
             main->setGlobal();

@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,8 +23,7 @@
 #include "hercules/hir/types/types.h"
 #include "hercules/hir/value.h"
 #include "hercules/util/common.h"
-#include <fmt/format.h>
-#include <fmt/ostream.h>
+#include <collie/strings/format.h>
 
 namespace hercules::ir {
 
@@ -115,7 +114,7 @@ namespace hercules::ir {
         void setExternal(bool v = true) { getActual()->external = v; }
 
         std::string referenceString() const final {
-            return fmt::format(FMT_STRING("{}.{}"), getName(), getId());
+            return collie::format(FMT_STRING("{}.{}"), getName(), getId());
         }
 
         id_t getId() const override { return getActual()->id; }
@@ -203,7 +202,7 @@ namespace hercules::ir {
 } // namespace hercules::ir
 
 template<typename T>
-struct fmt::formatter<T,
+struct collie::formatter<T,
         std::enable_if_t<std::is_base_of<hercules::ir::Var, T>::value, char>>
-        : fmt::ostream_formatter {
+        : collie::ostream_formatter {
 };

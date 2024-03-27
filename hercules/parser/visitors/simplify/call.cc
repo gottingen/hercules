@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
 #include "hercules/parser/common.h"
 #include "hercules/parser/visitors/simplify/simplify.h"
 
-using fmt::format;
 using namespace hercules::error;
 
 namespace hercules::ast {
@@ -131,9 +130,9 @@ namespace hercules::ast {
         int ti = 1;
         for (auto &i: args[1].value->getList()->items) {
             if (auto s = i->getString()) {
-                generics.emplace_back(Param{format("T{}", ti), N<IdExpr>("type"), nullptr, true});
+                generics.emplace_back(Param{collie::format("T{}", ti), N<IdExpr>("type"), nullptr, true});
                 params.emplace_back(
-                        Param{s->getValue(), N<IdExpr>(format("T{}", ti++)), nullptr});
+                        Param{s->getValue(), N<IdExpr>(collie::format("T{}", ti++)), nullptr});
             } else if (i->getTuple() && i->getTuple()->items.size() == 2 &&
                        i->getTuple()->items[0]->getString()) {
                 params.emplace_back(Param{i->getTuple()->items[0]->getString()->getValue(),

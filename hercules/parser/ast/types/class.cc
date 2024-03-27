@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ namespace hercules::ast::types {
         }
         // Special formatting for Functions and Tuples
         auto n = mode == 0 ? niceName : name;
-        return fmt::format("{}{}", n, gs.empty() ? "" : fmt::format("[{}]", join(gs, ",")));
+        return collie::format("{}{}", n, gs.empty() ? "" : collie::format("[{}]", join(gs, ",")));
     }
 
     std::string ClassType::realizedName() const {
@@ -132,7 +132,7 @@ namespace hercules::ast::types {
         std::string s = join(gs, ",");
         if (canRealize())
             const_cast<ClassType *>(this)->_rn =
-                    fmt::format("{}{}", name, s.empty() ? "" : fmt::format("[{}]", s));
+                    collie::format("{}{}", name, s.empty() ? "" : collie::format("[{}]", s));
         return _rn;
     }
 
@@ -269,7 +269,7 @@ namespace hercules::ast::types {
             std::string s = join(gs, ",");
             if (canRealize())
                 const_cast<RecordType *>(this)->_rn =
-                        fmt::format("{}{}", name, s.empty() ? "" : fmt::format("[{}]", s));
+                        collie::format("{}{}", name, s.empty() ? "" : collie::format("[{}]", s));
             return _rn;
         }
         return ClassType::realizedName();
@@ -284,10 +284,10 @@ namespace hercules::ast::types {
             for (int i = 0; i < std::max(n, int64_t(0)); i++)
                 for (auto &a: args)
                     gs.push_back(a->debugString(mode));
-            return fmt::format("{}{}", name,
-                               gs.empty() ? "" : fmt::format("[{}]", join(gs, ",")));
+            return collie::format("{}{}", name,
+                               gs.empty() ? "" : collie::format("[{}]", join(gs, ",")));
         } else {
-            return fmt::format("{}{}", repeats ? repeats->debugString(mode) + "," : "",
+            return collie::format("{}{}", repeats ? repeats->debugString(mode) + "," : "",
                                this->ClassType::debugString(mode));
         }
     }

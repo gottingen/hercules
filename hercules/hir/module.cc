@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -186,7 +186,7 @@ namespace hercules::ir {
                                    std::vector<types::Generic> generics,
                                    const std::string &module) {
         auto fqName =
-                module.empty() ? funcName : fmt::format(FMT_STRING("{}.{}"), module, funcName);
+                module.empty() ? funcName : collie::format(FMT_STRING("{}.{}"), module, funcName);
         auto func = cache->findFunction(fqName);
         if (!func)
             return nullptr;
@@ -205,7 +205,7 @@ namespace hercules::ir {
                                           std::vector<types::Generic> generics,
                                           const std::string &module) {
         auto fqName =
-                module.empty() ? typeName : fmt::format(FMT_STRING("{}.{}"), module, typeName);
+                module.empty() ? typeName : collie::format(FMT_STRING("{}.{}"), module, typeName);
         auto type = cache->findClass(fqName);
         if (!type)
             return nullptr;
@@ -364,7 +364,7 @@ namespace hercules::ir {
     }
 
     types::Type *Module::unsafeGetArrayType(types::Type *base) {
-        auto name = fmt::format(FMT_STRING(".Array[{}]"), base->referenceString());
+        auto name = collie::format(FMT_STRING(".Array[{}]"), base->referenceString());
         if (auto *rVal = getType(name))
             return rVal;
         std::vector<types::Type *> members = {getIntType(), unsafeGetPointerType(base)};

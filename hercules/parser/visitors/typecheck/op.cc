@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
 #include "hercules/parser/visitors/simplify/simplify.h"
 #include "hercules/parser/visitors/typecheck/typecheck.h"
 
-using fmt::format;
 using namespace hercules::error;
 
 namespace hercules::ast {
@@ -58,7 +57,7 @@ namespace hercules::ast {
             else
                 seqassert(false, "invalid unary operator '{}'", expr->op);
             resultExpr =
-                    transform(N<CallExpr>(N<DotExpr>(clone(expr->expr), format("__{}__", magic))));
+                    transform(N<CallExpr>(N<DotExpr>(clone(expr->expr), collie::format("__{}__", magic))));
         }
     }
 
@@ -695,14 +694,14 @@ namespace hercules::ast {
         // Atomic operations: check if `lhs.__atomic_op__(Ptr[lhs], rhs)` exists
         if (isAtomic) {
             auto ptr = ctx->instantiateGeneric(ctx->getType("Ptr"), {lt});
-            if ((method = findBestMethod(lt, format("__atomic_{}__", magic), {ptr, rt}))) {
+            if ((method = findBestMethod(lt, collie::format("__atomic_{}__", magic), {ptr, rt}))) {
                 expr->lexpr = N<CallExpr>(N<IdExpr>("__ptr__"), expr->lexpr);
             }
         }
 
         // In-place operations: check if `lhs.__iop__(lhs, rhs)` exists
         if (!method && expr->inPlace) {
-            method = findBestMethod(lt, format("__i{}__", magic), {expr->lexpr, expr->rexpr});
+            method = findBestMethod(lt, collie::format("__i{}__", magic), {expr->lexpr, expr->rexpr});
         }
 
         if (method)
@@ -727,25 +726,25 @@ namespace hercules::ast {
             return transform(
                     N<StmtExpr>(N<AssignStmt>(N<IdExpr>(l), expr->lexpr),
                                 N<AssignStmt>(N<IdExpr>(r), expr->rexpr),
-                                N<CallExpr>(N<DotExpr>(N<IdExpr>(r), format("__{}__", rightMagic)),
+                                N<CallExpr>(N<DotExpr>(N<IdExpr>(r), collie::format("__{}__", rightMagic)),
                                             N<IdExpr>(l))));
         }
         if (lt->getUnion()) {
             // Special case: `union op obj` -> `union.__magic__(rhs)`
             return transform(
-                    N<CallExpr>(N<DotExpr>(expr->lexpr, format("__{}__", magic)), expr->rexpr));
+                    N<CallExpr>(N<DotExpr>(expr->lexpr, collie::format("__{}__", magic)), expr->rexpr));
         }
 
         // Normal operations: check if `lhs.__magic__(lhs, rhs)` exists
         if (auto method =
-                findBestMethod(lt, format("__{}__", magic), {expr->lexpr, expr->rexpr})) {
+                findBestMethod(lt, collie::format("__{}__", magic), {expr->lexpr, expr->rexpr})) {
             // Normal case: `__magic__(lhs, rhs)`
             return transform(
                     N<CallExpr>(N<IdExpr>(method->ast->name), expr->lexpr, expr->rexpr));
         }
 
         // Right-side magics: check if `rhs.__rmagic__(rhs, lhs)` exists
-        if (auto method = findBestMethod(rt, format("__{}__", rightMagic),
+        if (auto method = findBestMethod(rt, collie::format("__{}__", rightMagic),
                                          {expr->rexpr, expr->lexpr})) {
             auto l = ctx->cache->getTemporaryVar("l"), r = ctx->cache->getTemporaryVar("r");
             return transform(N<StmtExpr>(

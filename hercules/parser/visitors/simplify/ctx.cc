@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@
 #include "hercules/parser/common.h"
 #include "hercules/parser/visitors/simplify/simplify.h"
 
-using fmt::format;
 using namespace hercules::error;
 
 namespace hercules::ast {
@@ -177,12 +176,12 @@ namespace hercules::ast {
             scope.stmts[scope.blocks[prefix - 1]].push_back(std::make_unique<AssignStmt>(
                     std::make_unique<IdExpr>(canonicalName), nullptr, nullptr));
             scope.stmts[scope.blocks[prefix - 1]].push_back(std::make_unique<AssignStmt>(
-                    std::make_unique<IdExpr>(fmt::format("{}.__used__", canonicalName)),
+                    std::make_unique<IdExpr>(collie::format("{}.__used__", canonicalName)),
                     std::make_unique<BoolExpr>(false), nullptr));
             // Reached the toplevel? Register the binding as global.
             if (prefix == 1) {
                 cache->addGlobal(canonicalName);
-                cache->addGlobal(fmt::format("{}.__used__", canonicalName));
+                cache->addGlobal(collie::format("{}.__used__", canonicalName));
             }
             hasUsed = true;
         }
@@ -195,8 +194,8 @@ namespace hercules::ast {
             // These bindings (and their canonical identifiers) will be replaced by the
             // dominating binding during the type checking pass.
             cache->replacements[(*i)->canonicalName] = {canonicalName, hasUsed};
-            cache->replacements[format("{}.__used__", (*i)->canonicalName)] = {
-                    format("{}.__used__", canonicalName), false};
+            cache->replacements[collie::format("{}.__used__", (*i)->canonicalName)] = {
+                    collie::format("{}.__used__", canonicalName), false};
             seqassert((*i)->canonicalName != canonicalName, "invalid replacement at {}: {}",
                       getSrcInfo(), canonicalName);
             auto it = std::find(stack.front().begin(), stack.front().end(), name);
@@ -234,7 +233,7 @@ namespace hercules::ast {
         }
         auto num = cache->identifierCount[newName]++;
         if (num)
-            newName = format("{}.{}", newName, num);
+            newName = collie::format("{}.{}", newName, num);
         if (name != newName && !zeroId)
             cache->identifierCount[newName]++;
         cache->reverseIdentifierLookup[newName] = name;
@@ -282,7 +281,7 @@ namespace hercules::ast {
         LOG("location: {}", getSrcInfo());
         LOG("module:   {}", getModule());
         LOG("base:     {}", getBaseName());
-        LOG("scope:    {}", fmt::join(scope.blocks, ","));
+        LOG("scope:    {}", collie::join(scope.blocks, ","));
         for (auto &s: stack.front())
             LOG("-> {}", s);
         for (auto &i: ordered) {
@@ -290,7 +289,7 @@ namespace hercules::ast {
             bool f = true;
             for (auto &t: i.second) {
                 LOG("{}{} {} {:40} {:30} {}", std::string(pad * 2, ' '),
-                    !f ? std::string(40, ' ') : format("{:.<40}", i.first),
+                    !f ? std::string(40, ' ') : collie::format("{:.<40}", i.first),
                     (t->isFunc() ? "F" : (t->isType() ? "T" : (t->isImport() ? "I" : "V"))),
                     t->canonicalName, t->getBaseName(), combine2(t->scope, ","));
                 f = false;

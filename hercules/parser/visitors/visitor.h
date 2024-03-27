@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,10 @@
 #include <memory>
 #include <vector>
 
-#include "hercules/compiler/error.h"
-#include "hercules/parser/ast.h"
-#include "hercules/parser/common.h"
+#include <hercules/compiler/error.h>
+#include <hercules/parser/ast.h>
+#include <hercules/parser/common.h>
+#include <collie/strings/format.h>
 
 namespace hercules::ast {
 
@@ -210,20 +211,20 @@ namespace hercules::ast {
         /// Convenience method that raises an error at the current source location.
         template<typename... TArgs>
         void error(const char *format, TArgs &&...args) {
-            error::raise_error(-1, getSrcInfo(), fmt::format(format, args...).c_str());
+            error::raise_error(-1, getSrcInfo(), collie::format(format, args...).c_str());
         }
 
         /// Convenience method that raises an error at the source location of p.
         template<typename T, typename... TArgs>
         void error(const T &p, const char *format, TArgs &&...args) {
-            error::raise_error(-1, p->getSrcInfo(), fmt::format(format, args...).c_str());
+            error::raise_error(-1, p->getSrcInfo(), collie::format(format, args...).c_str());
         }
 
         /// Convenience method that raises an internal error.
         template<typename T, typename... TArgs>
         void internalError(const char *format, TArgs &&...args) {
             throw exc::ParserException(
-                    fmt::format("INTERNAL: {}", fmt::format(format, args...), getSrcInfo()));
+                    collie::format("INTERNAL: {}", collie::format(format, args...), getSrcInfo()));
         }
 
     public:

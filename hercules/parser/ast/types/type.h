@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -165,17 +165,17 @@ namespace hercules::ast::types {
 } // namespace hercules::ast::types
 
 template<typename T>
-struct fmt::formatter<
+struct collie::formatter<
         T, std::enable_if_t<std::is_base_of<hercules::ast::types::Type, T>::value, char>>
-        : fmt::ostream_formatter {
+        : collie::ostream_formatter {
 };
 
 template<typename T>
-struct fmt::formatter<
+struct collie::formatter<
         T,
         std::enable_if_t<
                 std::is_convertible<T, std::shared_ptr<hercules::ast::types::Type>>::value, char>>
-        : fmt::formatter<std::string_view> {
+        : collie::formatter<std::string_view> {
     char presentation = 'd';
 
     constexpr auto parse(format_parse_context &ctx) -> decltype(ctx.begin()) {
@@ -188,10 +188,10 @@ struct fmt::formatter<
     template<typename FormatContext>
     auto format(const T &p, FormatContext &ctx) const -> decltype(ctx.out()) {
         if (presentation == 'p')
-            return fmt::format_to(ctx.out(), "{}", p ? p->debugString(0) : "<nullptr>");
+            return collie::format_to(ctx.out(), "{}", p ? p->debugString(0) : "<nullptr>");
         else if (presentation == 'd')
-            return fmt::format_to(ctx.out(), "{}", p ? p->debugString(1) : "<nullptr>");
+            return collie::format_to(ctx.out(), "{}", p ? p->debugString(1) : "<nullptr>");
         else
-            return fmt::format_to(ctx.out(), "{}", p ? p->debugString(2) : "<nullptr>");
+            return collie::format_to(ctx.out(), "{}", p ? p->debugString(2) : "<nullptr>");
     }
 };

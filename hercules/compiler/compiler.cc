@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@ namespace hercules {
 
             if (hercules::getLogger().flags & hercules::Logger::FLAG_USER) {
                 auto fo = fopen("_dump_simplify.sexp", "w");
-                fmt::print(fo, "{}\n", transformed->toString(0));
+                collie::print(fo, "{}\n", transformed->toString(0));
                 fclose(fo);
             }
             Timer t3("typecheck");
@@ -111,10 +111,10 @@ namespace hercules {
             t3.log();
             if (hercules::getLogger().flags & hercules::Logger::FLAG_USER) {
                 auto fo = fopen("_dump_typecheck.sexp", "w");
-                fmt::print(fo, "{}\n", typechecked->toString(0));
+                collie::print(fo, "{}\n", typechecked->toString(0));
                 for (auto &f: cache->functions)
                     for (auto &r: f.second.realizations) {
-                        fmt::print(fo, "{}\n", r.second->ast->toString(0));
+                        collie::print(fo, "{}\n", r.second->ast->toString(0));
                     }
                 fclose(fo);
             }
@@ -144,7 +144,7 @@ namespace hercules {
         module->setSrcInfo({abspath, 0, 0, 0});
         if (hercules::getLogger().flags & hercules::Logger::FLAG_USER) {
             auto fo = fopen("_dump_ir.sexp", "w");
-            fmt::print(fo, "{}\n", *module);
+            collie::print(fo, "{}\n", *module);
             fclose(fo);
         }
         return llvm::Error::success();
@@ -168,7 +168,7 @@ namespace hercules {
         pm->run(module.get());
         if (hercules::getLogger().flags & hercules::Logger::FLAG_USER) {
             auto fo = fopen("_dump_ir_opt.sexp", "w");
-            fmt::print(fo, "{}\n", *module);
+            collie::print(fo, "{}\n", *module);
             fclose(fo);
         }
         llvisitor->visit(module.get());
@@ -178,7 +178,7 @@ namespace hercules {
             llvm::raw_string_ostream os(str);
             os << *(llvisitor->getModule());
             os.flush();
-            fmt::print(fo, "{}\n", str);
+            collie::print(fo, "{}\n", str);
             fclose(fo);
         }
         return llvm::Error::success();
