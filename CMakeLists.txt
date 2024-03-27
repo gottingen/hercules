@@ -350,7 +350,6 @@ set(HERCULES_CPPFILES
         hercules/util/process.cc
         hercules/util/process_unix.cc
         hercules/util/process_win.cc
-        ${HERCULES_CCAST_FILES}
 )
 add_library(herculesc SHARED ${HERCULES_HPPFILES})
 target_include_directories(herculesc PRIVATE ${peglib_SOURCE_DIR} ${toml_SOURCE_DIR}/include ${semver_SOURCE_DIR}/include)
