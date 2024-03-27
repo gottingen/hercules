@@ -2,8 +2,8 @@
 // This file is subject to the license terms in the LICENSE file
 // found in the top-level directory of this distribution.
 
-#include <type_safe/optional.hpp>
-#include <type_safe/visitor.hpp>
+#include <collie/type_safe/optional.hpp>
+#include <collie/type_safe/visitor.hpp>
 
 #include <catch.hpp>
 

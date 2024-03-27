@@ -2,11 +2,11 @@
 // This file is subject to the license terms in the LICENSE file
 // found in the top-level directory of this distribution.
 
-#include <type_safe/bounded_type.hpp>
+#include <collie/type_safe/bounded_type.hpp>
 
 #include <catch.hpp>
 
-#include <type_safe/integer.hpp>
+#include <collie/type_safe/integer.hpp>
 
 using namespace collie::ts;
 

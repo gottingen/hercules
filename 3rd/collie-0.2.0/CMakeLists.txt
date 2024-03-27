@@ -54,15 +54,15 @@ add_subdirectory(collie)
 # belows are auto, edit it be cation
 ####################################################################
 if (CARBIN_BUILD_TEST)
-    add_subdirectory(tests)
+    #add_subdirectory(tests)
 endif ()
 
 if (CARBIN_BUILD_BENCHMARK)
-    add_subdirectory(benchmark)
+    #add_subdirectory(benchmark)
 endif ()
 
 if (CARBIN_BUILD_EXAMPLES)
-    add_subdirectory(examples)
+    #add_subdirectory(examples)
 endif ()
 
 ##############################################

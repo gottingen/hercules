@@ -2,7 +2,7 @@
 // This file is subject to the license terms in the LICENSE file
 // found in the top-level directory of this distribution.
 
-#include <type_safe/flag_set.hpp>
+#include <collie/type_safe/flag_set.hpp>
 
 #include <catch.hpp>
 

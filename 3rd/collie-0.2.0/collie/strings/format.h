@@ -23,6 +23,7 @@
 #include <collie/strings/fmt/color.h>
 #include <collie/strings/fmt/compile.h>
 #include <collie/strings/fmt/os.h>
+#include <collie/strings/fmt/args.h>
 
 namespace collie {
     using namespace fmt;

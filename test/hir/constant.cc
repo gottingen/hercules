@@ -1,6 +1,6 @@
 #include "test.h"
 
-#include <fmt/format.h>
+#include <collie/strings/format.h>
 #include <sstream>
 
 using namespace hercules::ir;

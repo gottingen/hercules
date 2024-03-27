@@ -3,19 +3,10 @@ set(CPM_DOWNLOAD_LOCATION "${PROJECT_SOURCE_DIR}/cmake/CPM_${CPM_DOWNLOAD_VERSIO
 include(${CPM_DOWNLOAD_LOCATION})
 
 CPMAddPackage(
-        NAME fmt
-        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/fmt-9.1.0"
-        OPTIONS "CMAKE_POSITION_INDEPENDENT_CODE ON"
-        "FMT_INSTALL ON")
-CPMAddPackage(
-        NAME filesystem
-        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/filesystem-1.5.14"
+        NAME collie
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/collie-0.2.0"
         )
-include_directories(${filesystem_SOURCE_DIR}/include)
-
-CPMAddPackage(
-        NAME toml
-        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/toml-v3.2.0")
+include_directories(${collie_SOURCE_DIR})
 
 CPMAddPackage(
         NAME zlibng

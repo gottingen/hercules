@@ -44,6 +44,10 @@ list(APPEND CMAKE_PREFIX_PATH "$ENV{CONDA_PREFIX}")
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 find_package(LLVM 17 REQUIRED)
+find_package(Clang 17 REQUIRED)
+get_property(CLANG_LOCATION TARGET clang PROPERTY LOCATION)
+message(STATUS "Using clang ${CLANG_LOCATION}")
+include_directories(${CLANG_INCLUDE_DIRS})
 
 if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
@@ -239,6 +243,8 @@ set(HERCULES_HPPFILES
         hercules/hir/var.h
         hercules/util/common.h
         hercules/compiler/jit_extern.h)
+file(GLOB_RECURSE HERCULES_CCAST_FILES hercules/ast/cc/*.cc)
+
 set(HERCULES_CPPFILES
         hercules/compiler/compiler.cc
         hercules/compiler/debug_listener.cc
@@ -341,6 +347,10 @@ set(HERCULES_CPPFILES
         hercules/hir/value.cc
         hercules/hir/var.cc
         hercules/util/common.cc
+        hercules/util/process.cc
+        hercules/util/process_unix.cc
+        hercules/util/process_win.cc
+        ${HERCULES_CCAST_FILES}
 )
 add_library(herculesc SHARED ${HERCULES_HPPFILES})
 target_include_directories(herculesc PRIVATE ${peglib_SOURCE_DIR} ${toml_SOURCE_DIR}/include ${semver_SOURCE_DIR}/include)
@@ -387,9 +397,9 @@ llvm_map_components_to_libnames(
         Vectorize
         Passes)
 if (APPLE)
-    target_link_libraries(herculesc PRIVATE ${LLVM_LIBS} fmt dl herculesrt)
+    target_link_libraries(herculesc PRIVATE ${LLVM_LIBS} dl herculesrt)
 else ()
-    target_link_libraries(herculesc PRIVATE ${STATIC_LIBCPP} ${LLVM_LIBS} fmt dl herculesrt)
+    target_link_libraries(herculesc PRIVATE ${STATIC_LIBCPP} ${LLVM_LIBS} dl herculesrt)
 endif ()
 
 # Gather headers
@@ -493,7 +503,12 @@ target_compile_definitions(hir_test
 install(TARGETS herculesrt herculesc hercules_jupyter DESTINATION lib/hercules)
 install(FILES ${CMAKE_BINARY_DIR}/libomp${CMAKE_SHARED_LIBRARY_SUFFIX} DESTINATION lib/hercules)
 install(TARGETS hercules DESTINATION bin)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include/hercules DESTINATION include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/hercules
+        DESTINATION include
+        FILES_MATCHING
+        PATTERN "*.h"
+        PATTERN "*.hpp")
+
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/stdlib DESTINATION lib/hercules)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/jit/ DESTINATION python)
 install(DIRECTORY DESTINATION lib/hercules/plugins)

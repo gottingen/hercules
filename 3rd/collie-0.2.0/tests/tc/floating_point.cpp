@@ -2,7 +2,7 @@
 // This file is subject to the license terms in the LICENSE file
 // found in the top-level directory of this distribution.
 
-#include <type_safe/floating_point.hpp>
+#include <collie/type_safe/floating_point.hpp>
 
 #include <catch.hpp>
 
