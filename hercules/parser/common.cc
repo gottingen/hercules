@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "common.h"
+#include <hercules/parser/common.h>
 
 #include <cinttypes>
 #include <climits>

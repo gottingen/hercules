@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "hercules/runtime/lib.h"
+#include <hercules/runtime/lib.h>
 #include "llvm/BinaryFormat/Dwarf.h"
 #include <backtrace.h>
 #include <cassert>

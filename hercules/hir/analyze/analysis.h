@@ -17,8 +17,8 @@
 
 #include <memory>
 
-#include "hercules/hir/module.h"
-#include "hercules/hir/transform/pass.h"
+#include <hercules/hir/module.h>
+#include <hercules/hir/transform/pass.h>
 
 namespace hercules::ir::analyze {
 

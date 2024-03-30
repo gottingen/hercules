@@ -16,10 +16,10 @@
 #include <string>
 #include <tuple>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/visitors/simplify/simplify.h"
-#include "hercules/parser/visitors/typecheck/typecheck.h"
+#include <hercules/parser/ast.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/visitors/simplify/simplify.h>
+#include <hercules/parser/visitors/typecheck/typecheck.h>
 
 using namespace hercules::error;
 

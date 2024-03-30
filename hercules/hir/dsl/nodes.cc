@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/dsl/nodes.h"
+#include <hercules/hir/dsl/nodes.h>
 
 namespace hercules::ir::dsl::types {
     const char CustomType::NodeId = 0;

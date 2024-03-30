@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/llvm/llvisitor.h"
+#include <hercules/hir/llvm/llvisitor.h>
 
 #include <algorithm>
 #include <cctype>
@@ -23,14 +23,14 @@
 #include <unistd.h>
 #include <utility>
 
-#include "hercules/hir/dsl/codegen.h"
-#include "hercules/hir/llvm/optimize.h"
-#include "hercules/hir/util/irtools.h"
-#include "hercules/compiler/debug_listener.h"
-#include "hercules/compiler/memory_manager.h"
-#include "hercules/parser/common.h"
-#include "hercules/runtime/lib.h"
-#include "hercules/util/common.h"
+#include <hercules/hir/dsl/codegen.h>
+#include <hercules/hir/llvm/optimize.h>
+#include <hercules/hir/util/irtools.h>
+#include <hercules/compiler/debug_listener.h>
+#include <hercules/compiler/memory_manager.h>
+#include <hercules/parser/common.h>
+#include <hercules/runtime/lib.h>
+#include <hercules/util/common.h>
 
 namespace hercules::ir {
     namespace {

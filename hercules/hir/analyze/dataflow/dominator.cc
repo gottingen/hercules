@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/analyze/dataflow/dominator.h"
+#include <hercules/hir/analyze/dataflow/dominator.h>
 
 namespace hercules::ir::analyze::dataflow {
 

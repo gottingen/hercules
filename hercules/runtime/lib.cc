@@ -36,7 +36,7 @@
 
 #define GC_THREADS
 
-#include "hercules/runtime/lib.h"
+#include <hercules/runtime/lib.h>
 #include <gc.h>
 
 /*

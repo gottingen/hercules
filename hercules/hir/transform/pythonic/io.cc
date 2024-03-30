@@ -13,12 +13,12 @@
 // limitations under the License.
 //
 
-#include "io.h"
+#include <hercules/hir/transform/pythonic/io.h>
 
 #include <algorithm>
 
-#include "hercules/hir/util/cloning.h"
-#include "hercules/hir/util/irtools.h"
+#include <hercules/hir/util/cloning.h>
+#include <hercules/hir/util/irtools.h>
 
 namespace hercules::ir::transform::pythonic {
     namespace {

@@ -27,8 +27,8 @@
 #include <unistd.h>
 #include <vector>
 
-#include "hercules/parser/common.h"
-#include "hercules/util/common.h"
+#include <hercules/parser/common.h>
+#include <hercules/util/common.h>
 #include "gtest/gtest.h"
 
 TEST(TypeCoreTest, TestName) { ; }

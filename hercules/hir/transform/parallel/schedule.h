@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "hercules/hir/value.h"
+#include <hercules/hir/value.h>
 
 namespace hercules {
 namespace ir {

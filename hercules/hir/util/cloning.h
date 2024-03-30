@@ -17,8 +17,8 @@
 
 #include <unordered_map>
 
-#include "hercules/hir/cir.h"
-#include "hercules/hir/util/visitor.h"
+#include <hercules/hir/ir.h>
+#include <hercules/hir/util/visitor.h>
 
 namespace hercules::ir::util {
 

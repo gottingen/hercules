@@ -13,29 +13,29 @@
 // limitations under the License.
 //
 
-#include "manager.h"
+#include <hercules/hir/transform/manager.h>
 
 #include <unordered_set>
 
-#include "hercules/hir/analyze/analysis.h"
-#include "hercules/hir/analyze/dataflow/capture.h"
-#include "hercules/hir/analyze/dataflow/cfg.h"
-#include "hercules/hir/analyze/dataflow/dominator.h"
-#include "hercules/hir/analyze/dataflow/reaching.h"
-#include "hercules/hir/analyze/module/global_vars.h"
-#include "hercules/hir/analyze/module/side_effect.h"
-#include "hercules/hir/transform/folding/folding.h"
-#include "hercules/hir/transform/lowering/imperative.h"
-#include "hercules/hir/transform/lowering/pipeline.h"
-#include "hercules/hir/transform/manager.h"
-#include "hercules/hir/transform/parallel/openmp.h"
-#include "hercules/hir/transform/pass.h"
-#include "hercules/hir/transform/pythonic/dict.h"
-#include "hercules/hir/transform/pythonic/generator.h"
-#include "hercules/hir/transform/pythonic/io.h"
-#include "hercules/hir/transform/pythonic/list.h"
-#include "hercules/hir/transform/pythonic/str.h"
-#include "hercules/util/common.h"
+#include <hercules/hir/analyze/analysis.h>
+#include <hercules/hir/analyze/dataflow/capture.h>
+#include <hercules/hir/analyze/dataflow/cfg.h>
+#include <hercules/hir/analyze/dataflow/dominator.h>
+#include <hercules/hir/analyze/dataflow/reaching.h>
+#include <hercules/hir/analyze/module/global_vars.h>
+#include <hercules/hir/analyze/module/side_effect.h>
+#include <hercules/hir/transform/folding/folding.h>
+#include <hercules/hir/transform/lowering/imperative.h>
+#include <hercules/hir/transform/lowering/pipeline.h>
+#include <hercules/hir/transform/manager.h>
+#include <hercules/hir/transform/parallel/openmp.h>
+#include <hercules/hir/transform/pass.h>
+#include <hercules/hir/transform/pythonic/dict.h>
+#include <hercules/hir/transform/pythonic/generator.h>
+#include <hercules/hir/transform/pythonic/io.h>
+#include <hercules/hir/transform/pythonic/list.h>
+#include <hercules/hir/transform/pythonic/str.h>
+#include <hercules/util/common.h>
 
 namespace hercules::ir::transform {
 

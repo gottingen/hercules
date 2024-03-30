@@ -20,82 +20,75 @@
 
 #include <hercules/ast/cc/cpp_entity.h>
 
-using namespace hercules::ccast;
+namespace hercules::ccast {
 
-namespace
-{
-const char* get_attribute_name(cpp_attribute_kind kind) noexcept
-{
-    switch (kind)
-    {
-    case cpp_attribute_kind::alignas_:
-        return "alignas";
-    case cpp_attribute_kind::carries_dependency:
-        return "carries_dependency";
-    case cpp_attribute_kind::deprecated:
-        return "deprecated";
-    case cpp_attribute_kind::fallthrough:
-        return "fallthrough";
-    case cpp_attribute_kind::maybe_unused:
-        return "maybe_unused";
-    case cpp_attribute_kind::nodiscard:
-        return "nodiscard";
-    case cpp_attribute_kind::noreturn:
-        return "noreturn";
+    namespace {
+        const char *get_attribute_name(cpp_attribute_kind kind) noexcept {
+            switch (kind) {
+                case cpp_attribute_kind::alignas_:
+                    return "alignas";
+                case cpp_attribute_kind::carries_dependency:
+                    return "carries_dependency";
+                case cpp_attribute_kind::deprecated:
+                    return "deprecated";
+                case cpp_attribute_kind::fallthrough:
+                    return "fallthrough";
+                case cpp_attribute_kind::maybe_unused:
+                    return "maybe_unused";
+                case cpp_attribute_kind::nodiscard:
+                    return "nodiscard";
+                case cpp_attribute_kind::noreturn:
+                    return "noreturn";
 
-    case cpp_attribute_kind::unknown:
-        return "unknown";
+                case cpp_attribute_kind::unknown:
+                    return "unknown";
+            }
+
+            return "<error>";
+        }
+    } // namespace
+
+    cpp_attribute::cpp_attribute(cpp_attribute_kind kind,
+                                 collie::ts::optional<cpp_token_string> arguments)
+            : cpp_attribute(collie::ts::nullopt, get_attribute_name(kind), std::move(arguments), false) {
+        kind_ = kind;
     }
 
-    return "<error>";
-}
-} // namespace
+    collie::ts::optional_ref<const cpp_attribute> has_attribute(
+            const cpp_attribute_list &attributes, const std::string &name) {
+        auto iter
+                = std::find_if(attributes.begin(), attributes.end(), [&](const cpp_attribute &attribute) {
+                    if (attribute.scope())
+                        return attribute.scope().value() + "::" + attribute.name() == name;
+                    else
+                        return attribute.name() == name;
+                });
 
-cpp_attribute::cpp_attribute(cpp_attribute_kind                    kind,
-                             collie::ts::optional<cpp_token_string> arguments)
-: cpp_attribute(collie::ts::nullopt, get_attribute_name(kind), std::move(arguments), false)
-{
-    kind_ = kind;
-}
+        if (iter == attributes.end())
+            return nullptr;
+        else
+            return collie::ts::ref(*iter);
+    }
 
-collie::ts::optional_ref<const cpp_attribute> hercules::ccast::has_attribute(
-    const cpp_attribute_list& attributes, const std::string& name)
-{
-    auto iter
-        = std::find_if(attributes.begin(), attributes.end(), [&](const cpp_attribute& attribute) {
-              if (attribute.scope())
-                  return attribute.scope().value() + "::" + attribute.name() == name;
-              else
-                  return attribute.name() == name;
-          });
+    collie::ts::optional_ref<const cpp_attribute> has_attribute(
+            const cpp_attribute_list &attributes, cpp_attribute_kind kind) {
+        auto iter
+                = std::find_if(attributes.begin(), attributes.end(),
+                               [&](const cpp_attribute &attribute) { return attribute.kind() == kind; });
 
-    if (iter == attributes.end())
-        return nullptr;
-    else
-        return collie::ts::ref(*iter);
-}
+        if (iter == attributes.end())
+            return nullptr;
+        else
+            return collie::ts::ref(*iter);
+    }
 
-collie::ts::optional_ref<const cpp_attribute> hercules::ccast::has_attribute(
-    const cpp_attribute_list& attributes, cpp_attribute_kind kind)
-{
-    auto iter
-        = std::find_if(attributes.begin(), attributes.end(),
-                       [&](const cpp_attribute& attribute) { return attribute.kind() == kind; });
+    collie::ts::optional_ref<const cpp_attribute> has_attribute(const cpp_entity &e,
+                                                                                 const std::string &name) {
+        return has_attribute(e.attributes(), name);
+    }
 
-    if (iter == attributes.end())
-        return nullptr;
-    else
-        return collie::ts::ref(*iter);
-}
-
-collie::ts::optional_ref<const cpp_attribute> hercules::ccast::has_attribute(const cpp_entity&  e,
-                                                                   const std::string& name)
-{
-    return has_attribute(e.attributes(), name);
-}
-
-collie::ts::optional_ref<const cpp_attribute> hercules::ccast::has_attribute(const cpp_entity&  e,
-                                                                   cpp_attribute_kind kind)
-{
-    return has_attribute(e.attributes(), kind);
-}
+    collie::ts::optional_ref<const cpp_attribute> has_attribute(const cpp_entity &e,
+                                                                                 cpp_attribute_kind kind) {
+        return has_attribute(e.attributes(), kind);
+    }
+}  // namespace hercules::ccast

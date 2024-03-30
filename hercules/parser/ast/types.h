@@ -15,10 +15,10 @@
 
 #pragma once
 
-#include "hercules/parser/ast/types/class.h"
-#include "hercules/parser/ast/types/function.h"
-#include "hercules/parser/ast/types/link.h"
-#include "hercules/parser/ast/types/static.h"
-#include "hercules/parser/ast/types/traits.h"
-#include "hercules/parser/ast/types/type.h"
-#include "hercules/parser/ast/types/union.h"
+#include <hercules/parser/ast/types/class.h>
+#include <hercules/parser/ast/types/function.h>
+#include <hercules/parser/ast/types/link.h>
+#include <hercules/parser/ast/types/static.h>
+#include <hercules/parser/ast/types/traits.h>
+#include <hercules/parser/ast/types/type.h>
+#include <hercules/parser/ast/types/union.h>

@@ -13,9 +13,9 @@
 // limitations under the License.
 //
 
-#include "visitor.h"
+#include <hercules/parser/visitors/visitor.h>
 
-#include "hercules/parser/ast.h"
+#include <hercules/parser/ast.h>
 
 namespace hercules::ast {
 

@@ -26,12 +26,12 @@
 #include <xeus/xkernel.hpp>
 #include <xeus/xkernel_configuration.hpp>
 
-#include "hercules/compiler/compiler.h"
+#include <hercules/compiler/compiler.h>
 #include "hercules/compiler/error.h"
-#include "hercules/compiler/jit.h"
+#include <hercules/compiler/jit.h>
 #include "hercules/config/config.h"
-#include "hercules/parser/common.h"
-#include "hercules/util/common.h"
+#include <hercules/parser/common.h>
+#include <hercules/util/common.h>
 
 using std::move;
 using std::string;

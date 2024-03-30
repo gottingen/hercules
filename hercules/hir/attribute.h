@@ -22,7 +22,7 @@
 #include <unordered_map>
 #include <utility>
 
-#include "hercules/util/common.h"
+#include <hercules/util/common.h>
 
 namespace hercules::ir {
 

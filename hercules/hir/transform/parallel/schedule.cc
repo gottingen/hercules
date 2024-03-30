@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-#include "schedule.h"
+#include <hercules/hir/transform/parallel/schedule.h>
 
-#include "hercules/hir/cir.h"
-#include "hercules/hir/util/irtools.h"
+#include <hercules/hir/ir.h>
+#include <hercules/hir/util/irtools.h>
 
 #include <cctype>
 #include <sstream>

@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/analyze/dataflow/reaching.h"
+#include <hercules/hir/analyze/dataflow/reaching.h>
 #include <deque>
 #include <tuple>
 

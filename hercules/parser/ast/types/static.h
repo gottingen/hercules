@@ -20,7 +20,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "hercules/parser/ast/types/class.h"
+#include <hercules/parser/ast/types/class.h>
 
 namespace hercules::ast {
     struct StaticValue;

@@ -13,17 +13,17 @@
 // limitations under the License.
 //
 
-#include "simplify.h"
+#include <hercules/parser/visitors/simplify/simplify.h>
 
 #include <memory>
 #include <string>
 #include <tuple>
 #include <vector>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/peg/peg.h"
-#include "hercules/parser/visitors/simplify/ctx.h"
+#include <hercules/parser/ast.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/peg/peg.h>
+#include <hercules/parser/visitors/simplify/ctx.h>
 
 using namespace hercules::error;
 namespace hercules::ast {

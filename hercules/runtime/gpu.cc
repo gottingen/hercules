@@ -18,11 +18,11 @@
 #include <cstring>
 #include <vector>
 
-#include "lib.h"
+#include <hercules/runtime/lib.h>
 
 #ifdef HERCULES_GPU
 
-#include "cuda.h"
+#include <cuda.h>
 
 #define fail(err)                                                                      \
   do {                                                                                 \

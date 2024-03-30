@@ -17,9 +17,9 @@
 #include <string>
 #include <vector>
 
-#include "hercules/parser/ast/types/link.h"
-#include "hercules/parser/visitors/format/format.h"
-#include "hercules/parser/visitors/typecheck/typecheck.h"
+#include <hercules/parser/ast/types/link.h>
+#include <hercules/parser/visitors/format/format.h>
+#include <hercules/parser/visitors/typecheck/typecheck.h>
 
 namespace hercules::ast::types {
 

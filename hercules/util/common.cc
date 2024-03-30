@@ -13,9 +13,8 @@
 // limitations under the License.
 //
 
-#include "common.h"
-
-#include "llvm/Support/Path.h"
+#include <hercules/util/common.h>
+#include <llvm/Support/Path.h>
 #include <cstdlib>
 #include <iostream>
 #include <string>

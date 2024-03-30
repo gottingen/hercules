@@ -18,11 +18,11 @@
 #include <memory>
 #include <string>
 
-#include "hercules/hir/flow.h"
-#include "hercules/hir/types/types.h"
-#include "hercules/hir/util/iterators.h"
-#include "hercules/hir/value.h"
-#include "hercules/hir/var.h"
+#include <hercules/hir/flow.h>
+#include <hercules/hir/types/types.h>
+#include <hercules/hir/util/iterators.h>
+#include <hercules/hir/value.h>
+#include <hercules/hir/var.h>
 
 namespace hercules::ir {
 

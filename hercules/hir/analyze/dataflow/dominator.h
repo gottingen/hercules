@@ -19,8 +19,8 @@
 #include <unordered_map>
 #include <utility>
 
-#include "hercules/hir/analyze/analysis.h"
-#include "hercules/hir/analyze/dataflow/cfg.h"
+#include <hercules/hir/analyze/analysis.h>
+#include <hercules/hir/analyze/dataflow/cfg.h>
 
 namespace hercules::ir::analyze::dataflow {
 

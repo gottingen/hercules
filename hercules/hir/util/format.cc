@@ -18,8 +18,8 @@
 #include <sstream>
 #include <unordered_set>
 
-#include "hercules/hir/util/format.h"
-#include "hercules/hir/util/visitor.h"
+#include <hercules/hir/util/format.h>
+#include <hercules/hir/util/visitor.h>
 
 namespace hercules::ir::util {
 

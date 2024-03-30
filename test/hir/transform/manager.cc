@@ -1,7 +1,7 @@
 #include "test.h"
 
 #include "hercules/hir/transform/manager.h"
-#include "hercules/hir/transform/pass.h"
+#include <hercules/hir/transform/pass.h>
 
 using namespace hercules::ir;
 

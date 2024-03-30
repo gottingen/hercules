@@ -21,9 +21,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "hercules/hir/analyze/analysis.h"
-#include "hercules/hir/cir.h"
-#include "hercules/hir/util/iterators.h"
+#include <hercules/hir/analyze/analysis.h>
+#include <hercules/hir/ir.h>
+#include <hercules/hir/util/iterators.h>
 
 #define DEFAULT_VISIT(x)                                                               \
   void visit(const x *v) override { defaultInsert(v); }

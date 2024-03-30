@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include "hercules/hir/transform/pass.h"
-#include "hercules/hir/util/visitor.h"
+#include <hercules/hir/transform/pass.h>
+#include <hercules/hir/util/visitor.h>
 
 namespace hercules::ir::transform {
 

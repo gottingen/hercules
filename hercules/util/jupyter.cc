@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "hercules/util/jupyter.h"
+#include <hercules/util/jupyter.h>
 #include <cstdio>
 
 namespace hercules {

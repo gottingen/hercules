@@ -13,15 +13,15 @@
 // limitations under the License.
 //
 
-#include "ctx.h"
+#include <hercules/parser/visitors/simplify/ctx.h>
 
 #include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
 
-#include "hercules/parser/common.h"
-#include "hercules/parser/visitors/simplify/simplify.h"
+#include <hercules/parser/common.h>
+#include <hercules/parser/visitors/simplify/simplify.h>
 
 using namespace hercules::error;
 

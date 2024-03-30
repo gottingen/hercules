@@ -24,9 +24,9 @@
 #include <unordered_set>
 #include <vector>
 
-#include "hercules/parser/cache.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/ctx.h"
+#include <hercules/parser/cache.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/ctx.h>
 
 namespace hercules::ast {
 

@@ -18,21 +18,19 @@
 
 #include <hercules/ast/cc/cpp_entity_kind.h>
 
-using namespace hercules::ccast;
+namespace hercules::ccast {
 
-cpp_entity_kind cpp_friend::kind() noexcept
-{
-    return cpp_entity_kind::friend_t;
-}
+    cpp_entity_kind cpp_friend::kind() noexcept {
+        return cpp_entity_kind::friend_t;
+    }
 
-cpp_entity_kind cpp_friend::do_get_entity_kind() const noexcept
-{
-    return kind();
-}
+    cpp_entity_kind cpp_friend::do_get_entity_kind() const noexcept {
+        return kind();
+    }
 
-bool hercules::ccast::is_friended(const cpp_entity& e) noexcept
-{
-    if (is_templated(e))
-        return is_friended(e.parent().value());
-    return e.parent() && e.parent().value().kind() == cpp_entity_kind::friend_t;
-}
+    bool is_friended(const cpp_entity &e) noexcept {
+        if (is_templated(e))
+            return is_friended(e.parent().value());
+        return e.parent() && e.parent().value().kind() == cpp_entity_kind::friend_t;
+    }
+}  // namespace hercules::ccast

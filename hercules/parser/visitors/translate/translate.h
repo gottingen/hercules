@@ -21,12 +21,12 @@
 #include <unordered_set>
 #include <vector>
 
-#include "hercules/hir/cir.h"
-#include "hercules/parser/ast.h"
-#include "hercules/parser/cache.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/visitors/translate/translate_ctx.h"
-#include "hercules/parser/visitors/visitor.h"
+#include <hercules/hir/ir.h>
+#include <hercules/parser/ast.h>
+#include <hercules/parser/cache.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/visitors/translate/translate_ctx.h>
+#include <hercules/parser/visitors/visitor.h>
 
 namespace hercules::ast {
 

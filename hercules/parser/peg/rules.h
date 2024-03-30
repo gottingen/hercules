@@ -22,10 +22,10 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "hercules/parser/peglib.h"
-#include "hercules/parser/ast.h"
-#include "hercules/parser/cache.h"
-#include "hercules/parser/common.h"
+#include <hercules/parser/peg/peglib.h>
+#include <hercules/parser/ast.h>
+#include <hercules/parser/cache.h>
+#include <hercules/parser/common.h>
 
 namespace hercules::ast {
 

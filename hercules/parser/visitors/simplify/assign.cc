@@ -16,9 +16,9 @@
 #include <memory>
 #include <vector>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/visitors/simplify/simplify.h"
+#include <hercules/parser/ast.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/visitors/simplify/simplify.h>
 
 using namespace hercules::error;
 

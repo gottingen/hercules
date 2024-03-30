@@ -18,8 +18,8 @@
 #include <memory>
 #include <unordered_map>
 
-#include "hercules/hir/transform/folding/rule.h"
-#include "hercules/hir/transform/pass.h"
+#include <hercules/hir/transform/folding/rule.h>
+#include <hercules/hir/transform/pass.h>
 
 namespace hercules::ir::transform::folding {
 

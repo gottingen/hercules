@@ -18,14 +18,14 @@
 
 #include <hercules/ast/cc/cpp_entity_kind.h>
 
-using namespace hercules::ccast;
+namespace hercules::ccast {
 
-hercules::ccast::cpp_entity_kind cpp_static_assert::kind() noexcept
-{
-    return cpp_entity_kind::static_assert_t;
-}
+    hercules::ccast::cpp_entity_kind cpp_static_assert::kind() noexcept {
+        return cpp_entity_kind::static_assert_t;
+    }
 
-hercules::ccast::cpp_entity_kind cpp_static_assert::do_get_entity_kind() const noexcept
-{
-    return kind();
-}
+    hercules::ccast::cpp_entity_kind cpp_static_assert::do_get_entity_kind() const noexcept {
+        return kind();
+    }
+}  // namespace hercules::ccast
+

@@ -16,23 +16,19 @@
 
 #include <clang-c/Index.h>
 
-#include "raii_wrapper.h"
+#include <hercules/ast/cc/libclang/raii_wrapper.h>
 
-namespace hercules::ccast
-{
-namespace detail
-{
+namespace hercules::ccast::detail {
     // visits direct children of an entity
-    template <typename Func>
-    void visit_children(CXCursor parent, Func f, bool recurse = false)
-    {
+    template<typename Func>
+    void visit_children(CXCursor parent, Func f, bool recurse = false) {
         auto continue_lambda = [](CXCursor cur, CXCursor, CXClientData data) {
-            auto& actual_cb = *static_cast<Func*>(data);
+            auto &actual_cb = *static_cast<Func *>(data);
             actual_cb(cur);
             return CXChildVisit_Continue;
         };
         auto recurse_lambda = [](CXCursor cur, CXCursor, CXClientData data) {
-            auto& actual_cb = *static_cast<Func*>(data);
+            auto &actual_cb = *static_cast<Func *>(data);
             actual_cb(cur);
             return CXChildVisit_Recurse;
         };
@@ -45,10 +41,9 @@ namespace detail
 
     // visits a translation unit
     // notes: only visits if directly defined in file, not included
-    template <typename Func>
-    void visit_tu(const cxtranslation_unit& tu, const char* path, Func f)
-    {
-        auto in_tu = [&](const CXCursor& cur) {
+    template<typename Func>
+    void visit_tu(const cxtranslation_unit &tu, const char *path, Func f) {
+        auto in_tu = [&](const CXCursor &cur) {
             auto location = clang_getCursorLocation(cur);
 
             CXString cx_file_name;
@@ -58,10 +53,9 @@ namespace detail
             return file_name == path;
         };
 
-        visit_children(clang_getTranslationUnitCursor(tu.get()), [&](const CXCursor& cur) {
+        visit_children(clang_getTranslationUnitCursor(tu.get()), [&](const CXCursor &cur) {
             if (in_tu(cur))
                 f(cur);
         });
     }
-} // namespace detail
-} // namespace hercules::ccast
+} // namespace hercules::ccast::detail

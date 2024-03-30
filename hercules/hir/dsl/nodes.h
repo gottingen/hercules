@@ -17,10 +17,10 @@
 
 #include <memory>
 
-#include "hercules/hir/base.h"
-#include "hercules/hir/const.h"
-#include "hercules/hir/instr.h"
-#include "hercules/hir/util/side_effect.h"
+#include <hercules/hir/base.h>
+#include <hercules/hir/const.h>
+#include <hercules/hir/instr.h>
+#include <hercules/hir/util/side_effect.h>
 
 namespace hercules::ir::util {
 

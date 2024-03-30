@@ -13,9 +13,9 @@
 // limitations under the License.
 //
 
-#include "visitor.h"
+#include <hercules/hir/util/visitor.h>
 
-#include "hercules/hir/cir.h"
+#include <hercules/hir/ir.h>
 
 namespace hercules::ir::util {
 

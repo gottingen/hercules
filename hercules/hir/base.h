@@ -21,10 +21,10 @@
 #include <unordered_map>
 #include <utility>
 
-#include "hercules/hir/attribute.h"
-#include "hercules/hir/util/iterators.h"
-#include "hercules/hir/util/visitor.h"
-#include "hercules/util/common.h"
+#include <hercules/hir/attribute.h>
+#include <hercules/hir/util/iterators.h>
+#include <hercules/hir/util/visitor.h>
+#include <hercules/util/common.h>
 #include <collie/strings/format.h>
 
 namespace hercules::ir {

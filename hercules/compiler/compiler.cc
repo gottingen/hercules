@@ -13,16 +13,16 @@
 // limitations under the License.
 //
 
-#include "compiler.h"
+#include <hercules/compiler/compiler.h>
 
-#include "hercules/compiler/error.h"
-#include "hercules/parser/cache.h"
-#include "hercules/parser/peg/peg.h"
-#include "hercules/parser/visitors/doc/doc.h"
-#include "hercules/parser/visitors/format/format.h"
-#include "hercules/parser/visitors/simplify/simplify.h"
-#include "hercules/parser/visitors/translate/translate.h"
-#include "hercules/parser/visitors/typecheck/typecheck.h"
+#include <hercules/compiler/error.h>
+#include <hercules/parser/cache.h>
+#include <hercules/parser/peg/peg.h>
+#include <hercules/parser/visitors/doc/doc.h>
+#include <hercules/parser/visitors/format/format.h>
+#include <hercules/parser/visitors/simplify/simplify.h>
+#include <hercules/parser/visitors/translate/translate.h>
+#include <hercules/parser/visitors/typecheck/typecheck.h>
 
 extern double totalPeg;
 

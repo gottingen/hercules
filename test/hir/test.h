@@ -1,7 +1,7 @@
 #include <algorithm>
 
-#include "hercules/hir/cir.h"
-#include "hercules/hir/util/cloning.h"
+#include <hercules/hir/ir.h>
+#include <hercules/hir/util/cloning.h>
 #include "gtest/gtest.h"
 
 class HIRCoreTest : public testing::Test {

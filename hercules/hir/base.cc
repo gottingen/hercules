@@ -13,12 +13,12 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/base.h"
+#include <hercules/hir/base.h>
 
-#include "hercules/hir/types/types.h"
-#include "hercules/hir/util/format.h"
-#include "hercules/hir/value.h"
-#include "hercules/hir/var.h"
+#include <hercules/hir/types/types.h>
+#include <hercules/hir/util/format.h>
+#include <hercules/hir/value.h>
+#include <hercules/hir/var.h>
 
 namespace hercules::ir {
 

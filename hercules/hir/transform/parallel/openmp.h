@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "hercules/hir/transform/pass.h"
+#include <hercules/hir/transform/pass.h>
 
 namespace hercules {
 namespace ir {

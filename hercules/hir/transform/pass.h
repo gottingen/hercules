@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include "hercules/hir/module.h"
-#include "hercules/hir/util/operator.h"
+#include <hercules/hir/module.h>
+#include <hercules/hir/util/operator.h>
 
 namespace hercules::ir::analyze {
     struct Result;

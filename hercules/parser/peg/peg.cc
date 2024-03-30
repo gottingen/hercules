@@ -13,19 +13,19 @@
 // limitations under the License.
 //
 
-#include "peg.h"
+#include <hercules/parser/peg/peg.h>
 
 #include <any>
 #include <iostream>
 #include <memory>
-#include "hercules/parser/peglib.h"
+#include <hercules/parser/peg/peglib.h>
 #include <string>
 #include <vector>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/peg/rules.h"
-#include "hercules/parser/visitors/format/format.h"
+#include <hercules/parser/ast.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/peg/rules.h>
+#include <hercules/parser/visitors/format/format.h>
 
 double totalPeg = 0.0;
 

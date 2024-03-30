@@ -13,12 +13,12 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/analyze/dataflow/cfg.h"
+#include <hercules/hir/analyze/dataflow/cfg.h>
 
 #include <vector>
 
-#include "hercules/hir/dsl/codegen.h"
-#include "hercules/hir/dsl/nodes.h"
+#include <hercules/hir/dsl/codegen.h>
+#include <hercules/hir/dsl/nodes.h>
 
 namespace hercules::ir::analyze::dataflow {
     namespace {

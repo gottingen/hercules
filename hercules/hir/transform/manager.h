@@ -22,9 +22,9 @@
 #include <utility>
 #include <vector>
 
-#include "hercules/hir/analyze/analysis.h"
-#include "hercules/hir/module.h"
-#include "hercules/hir/transform/pass.h"
+#include <hercules/hir/analyze/analysis.h>
+#include <hercules/hir/module.h>
+#include <hercules/hir/transform/pass.h>
 
 namespace hercules::ir::transform {
 

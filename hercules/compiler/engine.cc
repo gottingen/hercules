@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-#include "engine.h"
+#include <hercules/compiler/engine.h>
 
-#include "hercules/hir/llvm/optimize.h"
-#include "hercules/compiler/memory_manager.h"
+#include <hercules/hir/llvm/optimize.h>
+#include <hercules/compiler/memory_manager.h>
 
 namespace hercules::jit {
 

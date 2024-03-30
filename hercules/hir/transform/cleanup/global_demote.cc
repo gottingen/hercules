@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "global_demote.h"
+#include <hercules/hir/transform/cleanup/global_demote.h>
 
 namespace hercules::ir::transform::cleanup {
 

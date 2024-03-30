@@ -13,12 +13,12 @@
 // limitations under the License.
 //
 
-#include "matching.h"
+#include <hercules/hir/util/matching.h>
 
 #include <algorithm>
 
-#include "hercules/hir/cir.h"
-#include "hercules/hir/util/visitor.h"
+#include <hercules/hir/ir.h>
+#include <hercules/hir/util/visitor.h>
 
 #define VISIT(x)                                                                       \
   void visit(const x *v) override {                                                    \

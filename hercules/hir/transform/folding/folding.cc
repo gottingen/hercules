@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-#include "folding.h"
+#include <hercules/hir/transform/folding/folding.h>
 
-#include "hercules/hir/transform/folding/const_fold.h"
-#include "hercules/hir/transform/folding/const_prop.h"
+#include <hercules/hir/transform/folding/const_fold.h>
+#include <hercules/hir/transform/folding/const_prop.h>
 
 namespace hercules::ir::transform::folding {
 

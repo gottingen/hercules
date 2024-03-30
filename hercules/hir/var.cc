@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/var.h"
-#include "hercules/hir/module.h"
+#include <hercules/hir/var.h>
+#include <hercules/hir/module.h>
 
 namespace hercules::ir {
 

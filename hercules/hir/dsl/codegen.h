@@ -17,8 +17,8 @@
 
 #include <unordered_map>
 
-#include "hercules/hir/llvm/llvm.h"
-#include "hercules/hir/types/types.h"
+#include <hercules/hir/llvm/llvm.h>
+#include <hercules/hir/types/types.h>
 
 namespace hercules::ir::analyze::dataflow {
     class CFVisitor;

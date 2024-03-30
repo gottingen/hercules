@@ -20,16 +20,16 @@
 #include <unordered_map>
 #include <vector>
 
-#include "hercules/hir/llvm/llvisitor.h"
-#include "hercules/hir/transform/manager.h"
-#include "hercules/hir/var.h"
-#include "hercules/compiler/compiler.h"
-#include "hercules/compiler/engine.h"
-#include "hercules/compiler/error.h"
-#include "hercules/parser/cache.h"
-#include "hercules/runtime/lib.h"
+#include <hercules/hir/llvm/llvisitor.h>
+#include <hercules/hir/transform/manager.h>
+#include <hercules/hir/var.h>
+#include <hercules/compiler/compiler.h>
+#include <hercules/compiler/engine.h>
+#include <hercules/compiler/error.h>
+#include <hercules/parser/cache.h>
+#include <hercules/runtime/lib.h>
 
-#include "hercules/compiler/jit_extern.h"
+#include <hercules/compiler/jit_extern.h>
 
 namespace hercules::jit {
 

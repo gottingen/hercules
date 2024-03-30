@@ -20,11 +20,11 @@
 #include <unordered_set>
 #include <vector>
 
-#include "hercules/hir/cir.h"
-#include "hercules/hir/types/types.h"
-#include "hercules/parser/cache.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/ctx.h"
+#include <hercules/hir/ir.h>
+#include <hercules/hir/types/types.h>
+#include <hercules/parser/cache.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/ctx.h>
 
 namespace hercules::ast {
 

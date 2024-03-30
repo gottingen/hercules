@@ -17,8 +17,8 @@
 
 #include <unordered_map>
 
-#include "hercules/hir/analyze/analysis.h"
-#include "hercules/hir/util/side_effect.h"
+#include <hercules/hir/analyze/analysis.h>
+#include <hercules/hir/util/side_effect.h>
 
 namespace hercules::ir::analyze::module {
 

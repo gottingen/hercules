@@ -13,13 +13,13 @@
 // limitations under the License.
 //
 
-#include "debug_listener.h"
+#include <hercules/compiler/debug_listener.h>
 
 #include <algorithm>
 #include <functional>
 #include <sstream>
 
-#include "hercules/runtime/lib.h"
+#include <hercules/runtime/lib.h>
 
 namespace hercules {
     namespace {

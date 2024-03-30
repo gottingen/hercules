@@ -13,13 +13,11 @@
 // limitations under the License.
 //
 
-#include "replacer.h"
-
+#include <hercules/hir/transform/cleanup/replacer.h>
 #include <unordered_set>
-
-#include "hercules/hir/types/types.h"
-#include "hercules/hir/value.h"
-#include "hercules/hir/var.h"
+#include <hercules/hir/types/types.h>
+#include <hercules/hir/value.h>
+#include <hercules/hir/var.h>
 
 namespace hercules::ir::transform::cleanup {
 

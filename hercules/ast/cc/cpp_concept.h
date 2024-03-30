@@ -19,60 +19,53 @@
 #include <hercules/ast/cc/cpp_expression.h>
 #include <hercules/ast/cc/cpp_template_parameter.h>
 
-namespace hercules::ccast
-{
-/// A [[hercules::ccast::cpp_entity]() modelling a c++ concept declaration
-/// \notes while concepts are technically templates,
-/// this is not a [hercules::ccast::cpp_template](),
-/// as concepts act very differently from other templates
-class cpp_concept final : public cpp_entity
-{
-public:
-    static cpp_entity_kind kind() noexcept;
-
-    /// \returns the template parameters as a string
-    const cpp_token_string& parameters() const noexcept
-    {
-        return parameters_;
-    }
-
-    /// \returns the [hercules::ccast::cpp_expression]() defining the concept constraint
-    const cpp_expression& constraint_expression() const noexcept
-    {
-        return *expression_;
-    }
-
-    class builder
-    {
+namespace hercules::ccast {
+    /// A [[hercules::ccast::cpp_entity]() modelling a c++ concept declaration
+    /// \notes while concepts are technically templates,
+    /// this is not a [hercules::ccast::cpp_template](),
+    /// as concepts act very differently from other templates
+    class cpp_concept final : public cpp_entity {
     public:
-        builder(std::string name) : concept_(new cpp_concept(std::move(name))) {}
+        static cpp_entity_kind kind() noexcept;
 
-        cpp_token_string& set_parameters(cpp_token_string string) noexcept
-        {
-            concept_->parameters_ = std::move(string);
-            return concept_->parameters_;
+        /// \returns the template parameters as a string
+        const cpp_token_string &parameters() const noexcept {
+            return parameters_;
         }
 
-        cpp_expression& set_expression(std::unique_ptr<cpp_expression> expression) noexcept
-        {
-            concept_->expression_ = std::move(expression);
-            return *concept_->expression_;
+        /// \returns the [hercules::ccast::cpp_expression]() defining the concept constraint
+        const cpp_expression &constraint_expression() const noexcept {
+            return *expression_;
         }
 
-        std::unique_ptr<cpp_concept> finish(const cpp_entity_index& idx, cpp_entity_id id);
+        class builder {
+        public:
+            builder(std::string name) : concept_(new cpp_concept(std::move(name))) {}
+
+            cpp_token_string &set_parameters(cpp_token_string string) noexcept {
+                concept_->parameters_ = std::move(string);
+                return concept_->parameters_;
+            }
+
+            cpp_expression &set_expression(std::unique_ptr<cpp_expression> expression) noexcept {
+                concept_->expression_ = std::move(expression);
+                return *concept_->expression_;
+            }
+
+            std::unique_ptr<cpp_concept> finish(const cpp_entity_index &idx, cpp_entity_id id);
+
+        private:
+            std::unique_ptr<cpp_concept> concept_;
+        };
 
     private:
-        std::unique_ptr<cpp_concept> concept_;
+        cpp_concept(std::string name) : cpp_entity(std::move(name)), parameters_({}) {}
+
+        cpp_entity_kind do_get_entity_kind() const noexcept override;
+
+        cpp_token_string parameters_;
+
+        std::unique_ptr<cpp_expression> expression_;
     };
-
-private:
-    cpp_concept(std::string name) : cpp_entity(std::move(name)), parameters_({}) {}
-
-    cpp_entity_kind do_get_entity_kind() const noexcept override;
-
-    cpp_token_string parameters_;
-
-    std::unique_ptr<cpp_expression> expression_;
-};
 
 } // namespace hercules::ccast

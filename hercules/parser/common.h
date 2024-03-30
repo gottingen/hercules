@@ -27,7 +27,7 @@
 #include <utility>
 #include <vector>
 
-#include "hercules/util/common.h"
+#include <hercules/util/common.h>
 
 #define CAST(s, T) dynamic_cast<T *>(s.get())
 

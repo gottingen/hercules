@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include "hercules/hir/module.h"
-#include "hercules/hir/value.h"
+#include <hercules/hir/module.h>
+#include <hercules/hir/value.h>
 
 namespace hercules::ir {
 

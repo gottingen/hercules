@@ -18,57 +18,51 @@
 
 #include <hercules/ast/cc/cpp_entity_kind.h>
 
-using namespace hercules::ccast;
+namespace hercules::ccast {
 
-cpp_entity_kind cpp_function_parameter::kind() noexcept
-{
-    return cpp_entity_kind::function_parameter_t;
-}
+    cpp_entity_kind cpp_function_parameter::kind() noexcept {
+        return cpp_entity_kind::function_parameter_t;
+    }
 
-std::unique_ptr<cpp_function_parameter> cpp_function_parameter::build(
-    const cpp_entity_index& idx, cpp_entity_id id, std::string name, std::unique_ptr<cpp_type> type,
-    std::unique_ptr<cpp_expression> def)
-{
-    auto result = std::unique_ptr<cpp_function_parameter>(
-        new cpp_function_parameter(std::move(name), std::move(type), std::move(def)));
-    idx.register_definition(std::move(id), collie::ts::cref(*result));
-    return result;
-}
+    std::unique_ptr<cpp_function_parameter> cpp_function_parameter::build(
+            const cpp_entity_index &idx, cpp_entity_id id, std::string name, std::unique_ptr<cpp_type> type,
+            std::unique_ptr<cpp_expression> def) {
+        auto result = std::unique_ptr<cpp_function_parameter>(
+                new cpp_function_parameter(std::move(name), std::move(type), std::move(def)));
+        idx.register_definition(std::move(id), collie::ts::cref(*result));
+        return result;
+    }
 
-std::unique_ptr<cpp_function_parameter> cpp_function_parameter::build(
-    std::unique_ptr<cpp_type> type, std::unique_ptr<cpp_expression> def)
-{
-    return std::unique_ptr<cpp_function_parameter>(
-        new cpp_function_parameter("", std::move(type), std::move(def)));
-}
+    std::unique_ptr<cpp_function_parameter> cpp_function_parameter::build(
+            std::unique_ptr<cpp_type> type, std::unique_ptr<cpp_expression> def) {
+        return std::unique_ptr<cpp_function_parameter>(
+                new cpp_function_parameter("", std::move(type), std::move(def)));
+    }
 
-cpp_entity_kind cpp_function_parameter::do_get_entity_kind() const noexcept
-{
-    return kind();
-}
+    cpp_entity_kind cpp_function_parameter::do_get_entity_kind() const noexcept {
+        return kind();
+    }
 
-std::string cpp_function_base::do_get_signature() const
-{
-    std::string result = "(";
-    for (auto& param : parameters())
-        result += to_string(param.type()) + ',';
-    if (is_variadic())
-        result += "...";
+    std::string cpp_function_base::do_get_signature() const {
+        std::string result = "(";
+        for (auto &param: parameters())
+            result += to_string(param.type()) + ',';
+        if (is_variadic())
+            result += "...";
 
-    if (result.back() == ',')
-        result.back() = ')';
-    else
-        result.push_back(')');
+        if (result.back() == ',')
+            result.back() = ')';
+        else
+            result.push_back(')');
 
-    return result;
-}
+        return result;
+    }
 
-cpp_entity_kind cpp_function::kind() noexcept
-{
-    return cpp_entity_kind::function_t;
-}
+    cpp_entity_kind cpp_function::kind() noexcept {
+        return cpp_entity_kind::function_t;
+    }
 
-cpp_entity_kind cpp_function::do_get_entity_kind() const noexcept
-{
-    return kind();
-}
+    cpp_entity_kind cpp_function::do_get_entity_kind() const noexcept {
+        return kind();
+    }
+}  // namespace hercules::ccast

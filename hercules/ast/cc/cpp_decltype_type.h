@@ -18,52 +18,44 @@
 #include <hercules/ast/cc/cpp_expression.h>
 #include <hercules/ast/cc/cpp_type.h>
 
-namespace hercules::ccast
-{
-/// A [hercules::ccast::cpp_type]() that isn't given but taken from an expression.
-class cpp_decltype_type final : public cpp_type
-{
-public:
-    /// \returns A newly created `decltype` type.
-    static std::unique_ptr<cpp_decltype_type> build(std::unique_ptr<cpp_expression> expr)
-    {
-        return std::unique_ptr<cpp_decltype_type>(new cpp_decltype_type(std::move(expr)));
-    }
+namespace hercules::ccast {
+    /// A [hercules::ccast::cpp_type]() that isn't given but taken from an expression.
+    class cpp_decltype_type final : public cpp_type {
+    public:
+        /// \returns A newly created `decltype` type.
+        static std::unique_ptr<cpp_decltype_type> build(std::unique_ptr<cpp_expression> expr) {
+            return std::unique_ptr<cpp_decltype_type>(new cpp_decltype_type(std::move(expr)));
+        }
 
-    /// \returns A reference to the expression given.
-    const cpp_expression& expression() const noexcept
-    {
-        return *expr_;
-    }
+        /// \returns A reference to the expression given.
+        const cpp_expression &expression() const noexcept {
+            return *expr_;
+        }
 
-private:
-    cpp_decltype_type(std::unique_ptr<cpp_expression> expr) : expr_(std::move(expr)) {}
+    private:
+        cpp_decltype_type(std::unique_ptr<cpp_expression> expr) : expr_(std::move(expr)) {}
 
-    cpp_type_kind do_get_kind() const noexcept override
-    {
-        return cpp_type_kind::decltype_t;
-    }
+        cpp_type_kind do_get_kind() const noexcept override {
+            return cpp_type_kind::decltype_t;
+        }
 
-    std::unique_ptr<cpp_expression> expr_;
-};
+        std::unique_ptr<cpp_expression> expr_;
+    };
 
-/// A [hercules::ccast::cpp_type]() that isn't given but deduced using the `decltype` rules.
-class cpp_decltype_auto_type final : public cpp_type
-{
-public:
-    /// \returns A newly created `auto` type.
-    static std::unique_ptr<cpp_decltype_auto_type> build()
-    {
-        return std::unique_ptr<cpp_decltype_auto_type>(new cpp_decltype_auto_type);
-    }
+    /// A [hercules::ccast::cpp_type]() that isn't given but deduced using the `decltype` rules.
+    class cpp_decltype_auto_type final : public cpp_type {
+    public:
+        /// \returns A newly created `auto` type.
+        static std::unique_ptr<cpp_decltype_auto_type> build() {
+            return std::unique_ptr<cpp_decltype_auto_type>(new cpp_decltype_auto_type);
+        }
 
-private:
-    cpp_decltype_auto_type() = default;
+    private:
+        cpp_decltype_auto_type() = default;
 
-    cpp_type_kind do_get_kind() const noexcept override
-    {
-        return cpp_type_kind::decltype_auto_t;
-    }
-};
+        cpp_type_kind do_get_kind() const noexcept override {
+            return cpp_type_kind::decltype_auto_t;
+        }
+    };
 } // namespace hercules::ccast
 

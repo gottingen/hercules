@@ -15,9 +15,9 @@
 
 #pragma once
 
-#include "hercules/hir/base.h"
-#include "hercules/hir/types/types.h"
-#include "hercules/hir/util/packs.h"
+#include <hercules/hir/base.h>
+#include <hercules/hir/types/types.h>
+#include <hercules/hir/util/packs.h>
 
 namespace hercules::ir {
 

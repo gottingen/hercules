@@ -19,10 +19,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "hercules/hir/analyze/analysis.h"
-#include "hercules/hir/analyze/dataflow/dominator.h"
-#include "hercules/hir/analyze/dataflow/reaching.h"
-#include "hercules/hir/cir.h"
+#include <hercules/hir/analyze/analysis.h>
+#include <hercules/hir/analyze/dataflow/dominator.h>
+#include <hercules/hir/analyze/dataflow/reaching.h>
+#include <hercules/hir/ir.h>
 
 namespace hercules::ir::analyze::dataflow {
 

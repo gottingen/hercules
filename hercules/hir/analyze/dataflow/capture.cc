@@ -13,14 +13,14 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/analyze/dataflow/capture.h"
+#include <hercules/hir/analyze/dataflow/capture.h>
 #include <algorithm>
 #include <iterator>
 #include <utility>
 
-#include "hercules/hir/analyze/dataflow/reaching.h"
-#include "hercules/hir/util/irtools.h"
-#include "hercules/hir/util/side_effect.h"
+#include <hercules/hir/analyze/dataflow/reaching.h>
+#include <hercules/hir/util/irtools.h>
+#include <hercules/hir/util/side_effect.h>
 
 namespace hercules::ir::analyze::dataflow {
     namespace {

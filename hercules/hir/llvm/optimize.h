@@ -17,8 +17,8 @@
 
 #include <memory>
 
-#include "hercules/hir/llvm/llvm.h"
-#include "hercules/dsl/plugins.h"
+#include <hercules/hir/llvm/llvm.h>
+#include <hercules/dsl/plugins.h>
 
 namespace hercules::ir {
     std::unique_ptr<llvm::TargetMachine>

@@ -21,7 +21,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "hercules/parser/ast/types/type.h"
+#include <hercules/parser/ast/types/type.h>
 
 namespace hercules::ast::types {
 

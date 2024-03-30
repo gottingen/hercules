@@ -19,60 +19,57 @@
 
 #include <hercules/ast/cc/diagnostic.h>
 
-namespace hercules::ccast
-{
-/// Base class for a [hercules::ccast::diagnostic]() logger.
-///
-/// Its task is controlling how diagnostic are being displayed.
-class diagnostic_logger
-{
-public:
-    /// \effects Creates it either as verbose or not.
-    explicit diagnostic_logger(bool is_verbose = false) noexcept : verbose_(is_verbose) {}
+namespace hercules::ccast {
+    /// Base class for a [hercules::ccast::diagnostic]() logger.
+    ///
+    /// Its task is controlling how diagnostic are being displayed.
+    class diagnostic_logger {
+    public:
+        /// \effects Creates it either as verbose or not.
+        explicit diagnostic_logger(bool is_verbose = false) noexcept: verbose_(is_verbose) {}
 
-    diagnostic_logger(const diagnostic_logger&)            = delete;
-    diagnostic_logger& operator=(const diagnostic_logger&) = delete;
-    virtual ~diagnostic_logger() noexcept                  = default;
+        diagnostic_logger(const diagnostic_logger &) = delete;
 
-    /// \effects Logs the diagnostic by invoking the `do_log()` member function.
-    /// \returns Whether or not the diagnostic was logged.
-    /// \notes `source` points to a string literal that gives additional context to what generates
-    /// the message.
-    bool log(const char* source, const diagnostic& d) const;
+        diagnostic_logger &operator=(const diagnostic_logger &) = delete;
 
-    /// \effects Sets whether or not the logger prints debugging diagnostics.
-    void set_verbose(bool value) noexcept
-    {
-        verbose_ = value;
-    }
+        virtual ~diagnostic_logger() noexcept = default;
 
-    /// \returns Whether or not the logger prints debugging diagnostics.
-    bool is_verbose() const noexcept
-    {
-        return verbose_;
-    }
+        /// \effects Logs the diagnostic by invoking the `do_log()` member function.
+        /// \returns Whether or not the diagnostic was logged.
+        /// \notes `source` points to a string literal that gives additional context to what generates
+        /// the message.
+        bool log(const char *source, const diagnostic &d) const;
 
-private:
-    virtual bool do_log(const char* source, const diagnostic& d) const = 0;
+        /// \effects Sets whether or not the logger prints debugging diagnostics.
+        void set_verbose(bool value) noexcept {
+            verbose_ = value;
+        }
 
-    bool verbose_;
-};
+        /// \returns Whether or not the logger prints debugging diagnostics.
+        bool is_verbose() const noexcept {
+            return verbose_;
+        }
 
-/// \returns The default logger object.
-collie::ts::object_ref<const diagnostic_logger> default_logger() noexcept;
+    private:
+        virtual bool do_log(const char *source, const diagnostic &d) const = 0;
 
-/// \returns The default verbose logger object.
-collie::ts::object_ref<const diagnostic_logger> default_verbose_logger() noexcept;
+        bool verbose_;
+    };
 
-/// A [hercules::ccast::diagnostic_logger]() that logs to `stderr`.
-///
-/// It prints all diagnostics in an implementation-defined format.
-class stderr_diagnostic_logger final : public diagnostic_logger
-{
-public:
-    using diagnostic_logger::diagnostic_logger;
+    /// \returns The default logger object.
+    collie::ts::object_ref<const diagnostic_logger> default_logger() noexcept;
 
-private:
-    bool do_log(const char* source, const diagnostic& d) const override;
-};
+    /// \returns The default verbose logger object.
+    collie::ts::object_ref<const diagnostic_logger> default_verbose_logger() noexcept;
+
+    /// A [hercules::ccast::diagnostic_logger]() that logs to `stderr`.
+    ///
+    /// It prints all diagnostics in an implementation-defined format.
+    class stderr_diagnostic_logger final : public diagnostic_logger {
+    public:
+        using diagnostic_logger::diagnostic_logger;
+
+    private:
+        bool do_log(const char *source, const diagnostic &d) const override;
+    };
 } // namespace hercules::ccast

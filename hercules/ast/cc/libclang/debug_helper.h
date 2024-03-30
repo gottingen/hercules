@@ -18,21 +18,19 @@
 
 #include <hercules/ast/cc/libclang/raii_wrapper.h>
 
-namespace hercules::ccast
-{
-namespace detail
-{
-    cxstring get_display_name(const CXCursor& cur) noexcept;
+namespace hercules::ccast {
+    namespace detail {
+        cxstring get_display_name(const CXCursor &cur) noexcept;
 
-    cxstring get_cursor_kind_spelling(const CXCursor& cur) noexcept;
+        cxstring get_cursor_kind_spelling(const CXCursor &cur) noexcept;
 
-    cxstring get_type_kind_spelling(const CXType& type) noexcept;
+        cxstring get_type_kind_spelling(const CXType &type) noexcept;
 
-    void print_cursor_info(const CXCursor& cur) noexcept;
+        void print_cursor_info(const CXCursor &cur) noexcept;
 
-    void print_type_info(const CXType& type) noexcept;
+        void print_type_info(const CXType &type) noexcept;
 
-    void print_tokens(const CXTranslationUnit& tu, const CXFile& file,
-                      const CXCursor& cur) noexcept;
-} // namespace detail
+        void print_tokens(const CXTranslationUnit &tu, const CXFile &file,
+                          const CXCursor &cur) noexcept;
+    } // namespace detail
 } // namespace hercules::ccast

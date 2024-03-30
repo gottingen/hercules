@@ -18,8 +18,8 @@
 #include <string>
 #include <vector>
 
-#include "hercules/hir/func.h"
-#include "hercules/hir/types/types.h"
+#include <hercules/hir/func.h>
+#include <hercules/hir/types/types.h>
 
 namespace hercules::ir {
 

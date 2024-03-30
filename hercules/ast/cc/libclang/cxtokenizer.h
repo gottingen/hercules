@@ -20,190 +20,163 @@
 
 #include <hercules/ast/cc/cpp_attribute.h>
 #include <hercules/ast/cc/cpp_token.h>
-
 #include <hercules/ast/cc/libclang/raii_wrapper.h>
 
-namespace hercules::ccast
-{
-namespace detail
-{
-    class cxtoken
-    {
-    public:
-        explicit cxtoken(const CXTranslationUnit& tu_unit, const CXToken& token);
+namespace hercules::ccast {
+    namespace detail {
+        class cxtoken {
+        public:
+            explicit cxtoken(const CXTranslationUnit &tu_unit, const CXToken &token);
 
-        const cxstring& value() const noexcept
-        {
-            return value_;
+            const cxstring &value() const noexcept {
+                return value_;
+            }
+
+            const char *c_str() const noexcept {
+                return value_.c_str();
+            }
+
+            CXTokenKind kind() const noexcept {
+                return kind_;
+            }
+
+        private:
+            cxstring value_;
+            CXTokenKind kind_;
+        };
+
+        inline bool operator==(const cxtoken &tok, const char *str) noexcept {
+            return tok.value() == str;
         }
 
-        const char* c_str() const noexcept
-        {
-            return value_.c_str();
+        inline bool operator==(const char *str, const cxtoken &tok) noexcept {
+            return str == tok.value();
         }
 
-        CXTokenKind kind() const noexcept
-        {
-            return kind_;
+        inline bool operator!=(const cxtoken &tok, const char *str) noexcept {
+            return !(tok == str);
         }
 
-    private:
-        cxstring    value_;
-        CXTokenKind kind_;
-    };
-
-    inline bool operator==(const cxtoken& tok, const char* str) noexcept
-    {
-        return tok.value() == str;
-    }
-
-    inline bool operator==(const char* str, const cxtoken& tok) noexcept
-    {
-        return str == tok.value();
-    }
-
-    inline bool operator!=(const cxtoken& tok, const char* str) noexcept
-    {
-        return !(tok == str);
-    }
-
-    inline bool operator!=(const char* str, const cxtoken& tok) noexcept
-    {
-        return !(str == tok);
-    }
-
-    using cxtoken_iterator = std::vector<cxtoken>::const_iterator;
-
-    class cxtokenizer
-    {
-    public:
-        explicit cxtokenizer(const CXTranslationUnit& tu, const CXFile& file, const CXCursor& cur);
-
-        cxtoken_iterator begin() const noexcept
-        {
-            return tokens_.begin();
+        inline bool operator!=(const char *str, const cxtoken &tok) noexcept {
+            return !(str == tok);
         }
 
-        cxtoken_iterator end() const noexcept
-        {
-            return tokens_.end();
-        }
+        using cxtoken_iterator = std::vector<cxtoken>::const_iterator;
 
-    private:
-        std::vector<cxtoken> tokens_;
-    };
+        class cxtokenizer {
+        public:
+            explicit cxtokenizer(const CXTranslationUnit &tu, const CXFile &file, const CXCursor &cur);
 
-    class cxtoken_stream
-    {
-    public:
-        explicit cxtoken_stream(const cxtokenizer& tokenizer, const CXCursor& cur)
-        : cursor_(cur), begin_(tokenizer.begin()), cur_(begin_), end_(tokenizer.end())
-        {}
+            cxtoken_iterator begin() const noexcept {
+                return tokens_.begin();
+            }
 
-        const cxtoken& peek() const noexcept
-        {
-            if (done())
-                return *std::prev(end_);
-            return *cur_;
-        }
+            cxtoken_iterator end() const noexcept {
+                return tokens_.end();
+            }
 
-        void bump() noexcept
-        {
-            if (cur_ != end_)
-                ++cur_;
-        }
+        private:
+            std::vector<cxtoken> tokens_;
+        };
 
-        void bump_back() noexcept
-        {
-            if (cur_ != begin_)
-                --cur_;
-        }
+        class cxtoken_stream {
+        public:
+            explicit cxtoken_stream(const cxtokenizer &tokenizer, const CXCursor &cur)
+                    : cursor_(cur), begin_(tokenizer.begin()), cur_(begin_), end_(tokenizer.end()) {}
 
-        const cxtoken& get() noexcept
-        {
-            auto& result = peek();
-            bump();
-            return result;
-        }
+            const cxtoken &peek() const noexcept {
+                if (done())
+                    return *std::prev(end_);
+                return *cur_;
+            }
 
-        bool done() const noexcept
-        {
-            return cur_ == end_;
-        }
+            void bump() noexcept {
+                if (cur_ != end_)
+                    ++cur_;
+            }
 
-        const CXCursor& cursor() const noexcept
-        {
-            return cursor_;
-        }
+            void bump_back() noexcept {
+                if (cur_ != begin_)
+                    --cur_;
+            }
 
-        cxtoken_iterator begin() const noexcept
-        {
-            return begin_;
-        }
+            const cxtoken &get() noexcept {
+                auto &result = peek();
+                bump();
+                return result;
+            }
 
-        cxtoken_iterator cur() const noexcept
-        {
-            return cur_;
-        }
+            bool done() const noexcept {
+                return cur_ == end_;
+            }
 
-        cxtoken_iterator end() const noexcept
-        {
-            return end_;
-        }
+            const CXCursor &cursor() const noexcept {
+                return cursor_;
+            }
 
-        void set_cur(cxtoken_iterator iter) noexcept
-        {
-            cur_ = iter;
-        }
+            cxtoken_iterator begin() const noexcept {
+                return begin_;
+            }
 
-    private:
-        CXCursor         cursor_;
-        cxtoken_iterator begin_, cur_, end_;
-    };
+            cxtoken_iterator cur() const noexcept {
+                return cur_;
+            }
 
-    // skips the next token
-    // asserts that it has the given string
-    void skip(cxtoken_stream& stream, const char* str);
+            cxtoken_iterator end() const noexcept {
+                return end_;
+            }
 
-    // skips the next token if it has the given string
-    // if multi_token == true, str can consist of multiple tokens optionally separated by whitespace
-    bool skip_if(cxtoken_stream& stream, const char* str, bool multi_token = false);
+            void set_cur(cxtoken_iterator iter) noexcept {
+                cur_ = iter;
+            }
 
-    struct closing_bracket_pos
-    {
-        // If unmunch == false: bracket points to the closing bracket, after is the iterator after
-        // that. If unmunch == true: bracket points to >>, after points to the same >>; only one
-        // bracket is part of the matching closing one.
-        cxtoken_iterator bracket, after;
-        bool             unmunch;
-    };
+        private:
+            CXCursor cursor_;
+            cxtoken_iterator begin_, cur_, end_;
+        };
 
-    // returns the location of the closing bracket
-    // the current token must be (,[,{ or <
-    // note: < might not work in the arguments of a template specialization
-    closing_bracket_pos find_closing_bracket(cxtoken_stream stream);
+        // skips the next token
+        // asserts that it has the given string
+        void skip(cxtoken_stream &stream, const char *str);
 
-    // skips brackets
-    // the current token must be (,[,{ or <
-    // note: < might not work in the arguments of a template specialization
-    void skip_brackets(cxtoken_stream& stream);
+        // skips the next token if it has the given string
+        // if multi_token == true, str can consist of multiple tokens optionally separated by whitespace
+        bool skip_if(cxtoken_stream &stream, const char *str, bool multi_token = false);
 
-    // finds the location of the given sequence in a stream
-    // returns an iterator to the first token of the found sequence, or stream.end() if not found
-    cxtoken_iterator find_sequence(cxtoken_stream stream, cxtoken_iterator start,
-                                   cxtoken_iterator end);
+        struct closing_bracket_pos {
+            // If unmunch == false: bracket points to the closing bracket, after is the iterator after
+            // that. If unmunch == true: bracket points to >>, after points to the same >>; only one
+            // bracket is part of the matching closing one.
+            cxtoken_iterator bracket, after;
+            bool unmunch;
+        };
 
-    // parses attributes
-    // if skip_anyway is true it will bump even if no attributes have been parsed
-    cpp_attribute_list parse_attributes(cxtoken_stream& stream, bool skip_anyway = false);
+        // returns the location of the closing bracket
+        // the current token must be (,[,{ or <
+        // note: < might not work in the arguments of a template specialization
+        closing_bracket_pos find_closing_bracket(cxtoken_stream stream);
 
-    // converts a token range to a string
-    cpp_token_string to_string(cxtoken_stream& stream, cxtoken_iterator end, bool unmunch);
+        // skips brackets
+        // the current token must be (,[,{ or <
+        // note: < might not work in the arguments of a template specialization
+        void skip_brackets(cxtoken_stream &stream);
 
-    // appends token to scope, if it is still valid
-    // else clears it
-    // note: does not consume the token if it is not valid,
-    // returns false in that case
-    bool append_scope(cxtoken_stream& stream, std::string& scope);
-} // namespace detail
+        // finds the location of the given sequence in a stream
+        // returns an iterator to the first token of the found sequence, or stream.end() if not found
+        cxtoken_iterator find_sequence(cxtoken_stream stream, cxtoken_iterator start,
+                                       cxtoken_iterator end);
+
+        // parses attributes
+        // if skip_anyway is true it will bump even if no attributes have been parsed
+        cpp_attribute_list parse_attributes(cxtoken_stream &stream, bool skip_anyway = false);
+
+        // converts a token range to a string
+        cpp_token_string to_string(cxtoken_stream &stream, cxtoken_iterator end, bool unmunch);
+
+        // appends token to scope, if it is still valid
+        // else clears it
+        // note: does not consume the token if it is not valid,
+        // returns false in that case
+        bool append_scope(cxtoken_stream &stream, std::string &scope);
+    } // namespace detail
 } // namespace hercules::ccast

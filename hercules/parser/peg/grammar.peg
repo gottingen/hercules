@@ -19,7 +19,7 @@
 # TODO: nice docstrs
 
 PREAMBLE {
-  #include "hercules/parser/peg/rules.h"
+  #include <hercules/parser/peg/rules.h>
   #include <any>
   using namespace std;
   using namespace hercules::ast;

@@ -20,9 +20,9 @@
 #include <string>
 #include <vector>
 
-#include "hercules/parser/ast/expr.h"
-#include "hercules/parser/ast/types.h"
-#include "hercules/parser/common.h"
+#include <hercules/parser/ast/expr.h>
+#include <hercules/parser/ast/types.h>
+#include <hercules/parser/common.h>
 
 namespace hercules::ast {
 

@@ -14,22 +14,19 @@
 //
 
 #include <hercules/ast/cc/cpp_file.h>
-
 #include <hercules/ast/cc/cpp_entity_kind.h>
 
-using namespace hercules::ccast;
+namespace hercules::ccast {
 
-cpp_entity_kind cpp_file::kind() noexcept
-{
-    return cpp_entity_kind::file_t;
-}
+    cpp_entity_kind cpp_file::kind() noexcept {
+        return cpp_entity_kind::file_t;
+    }
 
-cpp_entity_kind cpp_file::do_get_entity_kind() const noexcept
-{
-    return kind();
-}
+    cpp_entity_kind cpp_file::do_get_entity_kind() const noexcept {
+        return kind();
+    }
 
-bool detail::cpp_file_ref_predicate::operator()(const cpp_entity& e)
-{
-    return e.kind() == cpp_entity_kind::file_t;
+    bool detail::cpp_file_ref_predicate::operator()(const cpp_entity &e) {
+        return e.kind() == cpp_entity_kind::file_t;
+    }
 }

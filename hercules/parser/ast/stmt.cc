@@ -13,15 +13,15 @@
 // limitations under the License.
 //
 
-#include "stmt.h"
+#include <hercules/parser/ast/stmt.h>
 
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "hercules/parser/cache.h"
-#include "hercules/parser/visitors/visitor.h"
+#include <hercules/parser/cache.h>
+#include <hercules/parser/visitors/visitor.h>
 
 #define ACCEPT_IMPL(T, X)                                                              \
   StmtPtr T::clone() const { return std::make_shared<T>(*this); }                      \

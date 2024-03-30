@@ -20,9 +20,9 @@
 #include <utility>
 #include <vector>
 
-#include "hercules/hir/types/types.h"
-#include "hercules/hir/value.h"
-#include "hercules/util/common.h"
+#include <hercules/hir/types/types.h>
+#include <hercules/hir/value.h>
+#include <hercules/util/common.h>
 #include <collie/strings/format.h>
 
 namespace hercules::ir {

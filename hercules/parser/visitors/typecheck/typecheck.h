@@ -22,11 +22,11 @@
 #include <utility>
 #include <vector>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/visitors/format/format.h"
-#include "hercules/parser/visitors/typecheck/ctx.h"
-#include "hercules/parser/visitors/visitor.h"
+#include <hercules/parser/ast.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/visitors/format/format.h>
+#include <hercules/parser/visitors/typecheck/ctx.h>
+#include <hercules/parser/visitors/visitor.h>
 
 namespace hercules::ast {
 

@@ -13,18 +13,18 @@
 // limitations under the License.
 //
 
-#include "ctx.h"
+#include <hercules/parser/visitors/typecheck/ctx.h>
 
 #include <map>
 #include <memory>
 #include <unordered_map>
 #include <vector>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/visitors/format/format.h"
-#include "hercules/parser/visitors/simplify/ctx.h"
-#include "hercules/parser/visitors/typecheck/typecheck.h"
+#include <hercules/parser/ast.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/visitors/format/format.h>
+#include <hercules/parser/visitors/simplify/ctx.h>
+#include <hercules/parser/visitors/typecheck/typecheck.h>
 
 using namespace hercules::error;
 

@@ -1,7 +1,7 @@
 #include "test.h"
 
-#include "hercules/hir/analyze/dataflow/cfg.h"
-#include "hercules/hir/analyze/dataflow/reaching.h"
+#include <hercules/hir/analyze/dataflow/cfg.h>
+#include <hercules/hir/analyze/dataflow/reaching.h>
 
 using namespace hercules::ir;
 

@@ -13,13 +13,13 @@
 // limitations under the License.
 //
 
-#include "imperative.h"
+#include <hercules/hir/transform/lowering/imperative.h>
 
 #include <algorithm>
 
-#include "hercules/hir/util/cloning.h"
-#include "hercules/hir/util/irtools.h"
-#include "hercules/hir/util/matching.h"
+#include <hercules/hir/util/cloning.h>
+#include <hercules/hir/util/irtools.h>
+#include <hercules/hir/util/matching.h>
 
 namespace hercules::ir::transform::lowering {
     namespace {

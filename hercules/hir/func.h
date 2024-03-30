@@ -15,9 +15,9 @@
 
 #pragma once
 
-#include "hercules/hir/flow.h"
-#include "hercules/hir/util/iterators.h"
-#include "hercules/hir/var.h"
+#include <hercules/hir/flow.h>
+#include <hercules/hir/util/iterators.h>
+#include <hercules/hir/var.h>
 
 namespace hercules::ir {
 

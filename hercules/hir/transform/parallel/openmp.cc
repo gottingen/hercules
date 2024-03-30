@@ -13,17 +13,17 @@
 // limitations under the License.
 //
 
-#include "openmp.h"
+#include <hercules/hir/transform/parallel/openmp.h>
 
 #include <algorithm>
 #include <iterator>
 #include <limits>
 #include <unordered_set>
 
-#include "hercules/hir/transform/parallel/schedule.h"
-#include "hercules/hir/util/cloning.h"
-#include "hercules/hir/util/irtools.h"
-#include "hercules/hir/util/outlining.h"
+#include <hercules/hir/transform/parallel/schedule.h>
+#include <hercules/hir/util/cloning.h>
+#include <hercules/hir/util/irtools.h>
+#include <hercules/hir/util/outlining.h>
 
 namespace hercules {
 namespace ir {

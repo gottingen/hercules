@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "side_effect.h"
+#include <hercules/hir/util/side_effect.h>
 
 namespace hercules::ir::util {
 

@@ -18,36 +18,31 @@
 #include <hercules/ast/cc/cpp_expression.h>
 #include <hercules/ast/cc/cpp_type.h>
 
-namespace hercules::ccast
-{
-/// Additional base class for all [hercules::ccast::cpp_entity]() modelling some kind of variable.
-///
-/// Examples are [hercules::ccast::cpp_variable]() or [hercules::ccast::cpp_function_parameter](),
-/// or anything that is name/type/default-value triple.
-class cpp_variable_base
-{
-public:
-    /// \returns A reference to the [hercules::ccast::cpp_type]() of the variable.
-    const cpp_type& type() const noexcept
-    {
-        return *type_;
-    }
+namespace hercules::ccast {
+    /// Additional base class for all [hercules::ccast::cpp_entity]() modelling some kind of variable.
+    ///
+    /// Examples are [hercules::ccast::cpp_variable]() or [hercules::ccast::cpp_function_parameter](),
+    /// or anything that is name/type/default-value triple.
+    class cpp_variable_base {
+    public:
+        /// \returns A reference to the [hercules::ccast::cpp_type]() of the variable.
+        const cpp_type &type() const noexcept {
+            return *type_;
+        }
 
-    /// \returns A [ts::optional_ref]() to the [hercules::ccast::cpp_expression]() that is the default value.
-    collie::ts::optional_ref<const cpp_expression> default_value() const noexcept
-    {
-        return collie::ts::opt_ref(default_.get());
-    }
+        /// \returns A [ts::optional_ref]() to the [hercules::ccast::cpp_expression]() that is the default value.
+        collie::ts::optional_ref<const cpp_expression> default_value() const noexcept {
+            return collie::ts::opt_ref(default_.get());
+        }
 
-protected:
-    cpp_variable_base(std::unique_ptr<cpp_type> type, std::unique_ptr<cpp_expression> def)
-    : type_(std::move(type)), default_(std::move(def))
-    {}
+    protected:
+        cpp_variable_base(std::unique_ptr<cpp_type> type, std::unique_ptr<cpp_expression> def)
+                : type_(std::move(type)), default_(std::move(def)) {}
 
-    ~cpp_variable_base() noexcept = default;
+        ~cpp_variable_base() noexcept = default;
 
-private:
-    std::unique_ptr<cpp_type>       type_;
-    std::unique_ptr<cpp_expression> default_;
-};
+    private:
+        std::unique_ptr<cpp_type> type_;
+        std::unique_ptr<cpp_expression> default_;
+    };
 } // namespace hercules::ccast

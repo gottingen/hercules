@@ -13,11 +13,10 @@
 // limitations under the License.
 //
 
-#include "const_prop.h"
-
-#include "hercules/hir/analyze/dataflow/reaching.h"
-#include "hercules/hir/analyze/module/global_vars.h"
-#include "hercules/hir/util/cloning.h"
+#include <hercules/hir/transform/folding/const_prop.h>
+#include <hercules/hir/analyze/dataflow/reaching.h>
+#include <hercules/hir/analyze/module/global_vars.h>
+#include <hercules/hir/util/cloning.h>
 
 namespace hercules::ir::transform::folding {
 

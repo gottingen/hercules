@@ -24,8 +24,8 @@
 #include <string>
 #include <vector>
 #include <unwind.h>
-#include "hercules/runtime/port.h"
-#include "hercules/runtime/hs_str.h"
+#include <hercules/runtime/port.h>
+#include <hercules/runtime/hs_str.h>
 
 struct hs_time_t {
     int16_t year;

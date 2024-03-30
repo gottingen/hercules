@@ -66,19 +66,19 @@ else ()
     set(STATIC_LIBCPP "-static-libstdc++")
 endif ()
 
-add_executable(peg2cpp hercules/util/peg2cpp.cc)
-target_include_directories(peg2cpp PRIVATE ${peglib_SOURCE_DIR})
-target_link_libraries(peg2cpp PRIVATE Threads::Threads fmt)
+add_executable(peg2cc hercules/app/peg2cc.cc)
+target_include_directories(peg2cc PRIVATE ${peglib_SOURCE_DIR})
+target_link_libraries(peg2cc PRIVATE Threads::Threads)
 add_custom_command(
         OUTPUT hercules_rules.cc
-        COMMAND peg2cpp ${CMAKE_SOURCE_DIR}/hercules/parser/peg/grammar.peg
-        hercules_rules.cc hercules
-        DEPENDS peg2cpp hercules/parser/peg/grammar.peg)
+        COMMAND peg2cc generate -g ${CMAKE_SOURCE_DIR}/hercules/parser/peg/grammar.peg
+        -o hercules_rules.cc -n hercules
+        DEPENDS peg2cc hercules/parser/peg/grammar.peg)
 add_custom_command(
         OUTPUT omp_rules.cc
-        COMMAND peg2cpp ${CMAKE_SOURCE_DIR}/hercules/parser/peg/openmp.peg omp_rules.cc
-        omp
-        DEPENDS peg2cpp hercules/parser/peg/openmp.peg)
+        COMMAND peg2cc generate -g ${CMAKE_SOURCE_DIR}/hercules/parser/peg/openmp.peg -o omp_rules.cc
+        -n omp
+        DEPENDS peg2cc hercules/parser/peg/openmp.peg)
 
 # Hercules Jupyter library
 set(HERCULES_JUPYTER_FILES hercules/util/jupyter.h hercules/util/jupyter.cc)
@@ -104,7 +104,7 @@ endif ()
 target_include_directories(herculesrt PRIVATE ${backtrace_SOURCE_DIR}
         ${re2_SOURCE_DIR}
         "${gc_SOURCE_DIR}/include" runtime)
-target_link_libraries(herculesrt PRIVATE fmt omp backtrace ${STATIC_LIBCPP}
+target_link_libraries(herculesrt PRIVATE omp backtrace ${STATIC_LIBCPP}
         LLVMSupport)
 if (APPLE)
     target_link_libraries(
@@ -205,7 +205,7 @@ set(HERCULES_HPPFILES
         hercules/hir/llvm/optimize.h
         hercules/hir/module.h
         hercules/hir/pyextension.h
-        hercules/hir/cir.h
+        hercules/hir/ir.h
         hercules/hir/transform/cleanup/canonical.h
         hercules/hir/transform/cleanup/dead_code.h
         hercules/hir/transform/cleanup/global_demote.h
@@ -244,6 +244,14 @@ set(HERCULES_HPPFILES
         hercules/util/common.h
         hercules/compiler/jit_extern.h)
 file(GLOB_RECURSE HERCULES_CCAST_FILES hercules/ast/cc/*.cc)
+
+add_library(ccast OBJECT ${HERCULES_CCAST_FILES})
+set_target_properties(ccast PROPERTIES COMPILE_FLAGS "-fno-rtti")
+target_include_directories(ccast PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(ccast PUBLIC libclang_static)
+add_library(hprocess OBJECT hercules/util/process.cc hercules/util/process_unix.cc hercules/util/process_win.cc)
+add_executable(cctool hercules/app/cctool.cc)
+target_link_libraries(cctool PUBLIC ccast hprocess libclang_static)
 
 set(HERCULES_CPPFILES
         hercules/compiler/compiler.cc
@@ -450,8 +458,8 @@ if (APPLE AND APPLE_ARM)
 endif ()
 
 # Hercules command-line tool
-add_executable(hercules hercules/app/main.cc)
-target_link_libraries(hercules PUBLIC ${STATIC_LIBCPP} fmt herculesc hercules_jupyter Threads::Threads)
+add_executable(hercules hercules/app/hercules.cc)
+target_link_libraries(hercules PUBLIC ${STATIC_LIBCPP} herculesc hercules_jupyter Threads::Threads)
 
 # Hercules test Download and unpack googletest at configure time
 include(FetchContent)
@@ -471,9 +479,11 @@ set(HERCULES_TEST_CPPFILES
 add_executable(hercules_test ${HERCULES_TEST_CPPFILES})
 target_include_directories(hercules_test PRIVATE test/hir
         "${gc_SOURCE_DIR}/include")
-target_link_libraries(hercules_test fmt herculesc herculesrt gtest_main)
+target_link_libraries(hercules_test herculesc herculesrt gtest_main)
 target_compile_definitions(hercules_test
         PRIVATE TEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test")
+
+add_subdirectory(test/ast)
 
 set(HIR_TEST_CPPFILES
         test/hir_test.cc
@@ -494,7 +504,7 @@ set(HIR_TEST_CPPFILES
 add_executable(hir_test ${HIR_TEST_CPPFILES})
 target_include_directories(hir_test PRIVATE test/hir
         "${gc_SOURCE_DIR}/include")
-target_link_libraries(hir_test fmt herculesc herculesrt gtest_main)
+target_link_libraries(hir_test herculesc herculesrt gtest_main)
 target_compile_definitions(hir_test
         PRIVATE TEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test")
 

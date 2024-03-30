@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "hercules/hir/cir.h"
+#include <hercules/hir/ir.h>
 
 namespace hercules::ir::util {
 

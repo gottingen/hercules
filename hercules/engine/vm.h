@@ -18,9 +18,9 @@
 
 #include <vector>
 #include <string>
-#include "llvm/Support/CommandLine.h"
-#include "hercules/compiler/compiler.h"
-#include "hercules/compiler/jit.h"
+#include <llvm/Support/CommandLine.h>
+#include <hercules/compiler/compiler.h>
+#include <hercules/compiler/jit.h>
 
 namespace hercules {
 

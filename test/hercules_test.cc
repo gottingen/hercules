@@ -28,16 +28,16 @@
 #include <unistd.h>
 #include <vector>
 
-#include "hercules/hir/analyze/dataflow/capture.h"
-#include "hercules/hir/analyze/dataflow/reaching.h"
+#include <hercules/hir/analyze/dataflow/capture.h>
+#include <hercules/hir/analyze/dataflow/reaching.h>
 #include "hercules/hir/util/inlining.h"
-#include "hercules/hir/util/irtools.h"
-#include "hercules/hir/util/operator.h"
-#include "hercules/hir/util/outlining.h"
-#include "hercules/compiler/compiler.h"
+#include <hercules/hir/util/irtools.h>
+#include <hercules/hir/util/operator.h>
+#include <hercules/hir/util/outlining.h>
+#include <hercules/compiler/compiler.h>
 #include "hercules/compiler/error.h"
-#include "hercules/parser/common.h"
-#include "hercules/util/common.h"
+#include <hercules/parser/common.h>
+#include <hercules/util/common.h>
 
 #include "gtest/gtest.h"
 

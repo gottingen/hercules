@@ -17,7 +17,7 @@
 
 #include <unordered_map>
 
-#include "hercules/hir/analyze/analysis.h"
+#include <hercules/hir/analyze/analysis.h>
 
 namespace hercules::ir::analyze::module {
 

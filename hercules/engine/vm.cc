@@ -13,8 +13,8 @@
 // limitations under the License.
 //
 
-#include "hercules/engine/vm.h"
-#include "hercules/util/common.h"
+#include <hercules/engine/vm.h>
+#include <hercules/util/common.h>
 
 namespace hercules {
 

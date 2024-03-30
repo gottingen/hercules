@@ -13,9 +13,9 @@
 // limitations under the License.
 //
 
-#include "cloning.h"
+#include <hercules/hir/util/cloning.h>
 
-#include "hercules/hir/util/operator.h"
+#include <hercules/hir/util/operator.h>
 
 namespace hercules::ir::util {
 

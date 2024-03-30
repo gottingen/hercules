@@ -13,13 +13,13 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/module.h"
+#include <hercules/hir/module.h>
 
 #include <algorithm>
 #include <memory>
 
-#include "hercules/hir/func.h"
-#include "hercules/parser/cache.h"
+#include <hercules/hir/func.h>
+#include <hercules/parser/cache.h>
 
 namespace hercules::ir {
     namespace {

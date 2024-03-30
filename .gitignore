@@ -45,3 +45,4 @@ bazel-*
 carbin
 docs/xml
 .vscode
+external

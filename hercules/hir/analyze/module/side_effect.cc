@@ -13,13 +13,13 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/analyze/module/side_effect.h"
+#include <hercules/hir/analyze/module/side_effect.h>
 #include <type_traits>
 #include <utility>
 
-#include "hercules/hir/analyze/dataflow/capture.h"
-#include "hercules/hir/util/irtools.h"
-#include "hercules/hir/util/operator.h"
+#include <hercules/hir/analyze/dataflow/capture.h>
+#include <hercules/hir/util/irtools.h>
+#include <hercules/hir/util/operator.h>
 
 namespace hercules::ir::analyze::module {
     namespace {

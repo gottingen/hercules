@@ -18,9 +18,9 @@
 #include <algorithm>
 #include <utility>
 
-#include "hercules/hir/transform/pass.h"
-#include "hercules/hir/transform/rewrite.h"
-#include "hercules/hir/util/irtools.h"
+#include <hercules/hir/transform/pass.h>
+#include <hercules/hir/transform/rewrite.h>
+#include <hercules/hir/util/irtools.h>
 
 namespace hercules {
 namespace ir {

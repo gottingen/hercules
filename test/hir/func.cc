@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "hercules/hir/util/matching.h"
+#include <hercules/hir/util/matching.h>
 
 using namespace hercules::ir;
 

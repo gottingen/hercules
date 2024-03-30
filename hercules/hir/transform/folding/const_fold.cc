@@ -13,13 +13,13 @@
 // limitations under the License.
 //
 
-#include "const_fold.h"
+#include <hercules/hir/transform/folding/const_fold.h>
 
 #include <cmath>
 #include <utility>
 
-#include "hercules/hir/util/cloning.h"
-#include "hercules/hir/util/irtools.h"
+#include <hercules/hir/util/cloning.h>
+#include <hercules/hir/util/irtools.h>
 
 #define BINOP(o) [](auto x, auto y) -> auto { return x o y; }
 #define UNOP(o) [](auto x) -> auto { return o x; }

@@ -17,8 +17,8 @@
 
 #include <unordered_set>
 
-#include "hercules/hir/cir.h"
-#include "hercules/hir/util/visitor.h"
+#include <hercules/hir/ir.h>
+#include <hercules/hir/util/visitor.h>
 
 #define LAMBDA_VISIT(x)                                                                \
   virtual void handle(hercules::ir::x *v) {}                                              \

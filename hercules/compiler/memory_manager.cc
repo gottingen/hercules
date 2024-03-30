@@ -13,9 +13,9 @@
 // limitations under the License.
 //
 
-#include "memory_manager.h"
+#include <hercules/compiler/memory_manager.h>
 
-#include "hercules/runtime/lib.h"
+#include <hercules/runtime/lib.h>
 
 namespace hercules {
 

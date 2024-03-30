@@ -1,7 +1,7 @@
 #include "test.h"
 
-#include "hercules/hir/analyze/dataflow/cfg.h"
-#include "hercules/hir/analyze/dataflow/dominator.h"
+#include <hercules/hir/analyze/dataflow/cfg.h>
+#include <hercules/hir/analyze/dataflow/dominator.h>
 
 using namespace hercules::ir;
 

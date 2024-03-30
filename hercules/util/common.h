@@ -20,9 +20,9 @@
 #include <ostream>
 
 #include <collie/strings/format.h>
-#include "hercules/compiler/error.h"
-#include "hercules/config/config.h"
-#include "hercules/parser/ast/error.h"
+#include <hercules/compiler/error.h>
+#include <hercules/config/config.h>
+#include <hercules/parser/ast/error.h>
 
 #ifdef __clang__
 #pragma clang diagnostic push

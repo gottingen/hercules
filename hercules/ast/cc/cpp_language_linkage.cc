@@ -18,24 +18,21 @@
 
 #include <hercules/ast/cc/cpp_entity_kind.h>
 
-using namespace hercules::ccast;
+namespace hercules::ccast {
 
-cpp_entity_kind cpp_language_linkage::kind() noexcept
-{
-    return cpp_entity_kind::language_linkage_t;
-}
-
-bool cpp_language_linkage::is_block() const noexcept
-{
-    if (begin() == end())
-    {
-        // An empty container must be a "block" of the form: extern "C" {}
-        return true;
+    cpp_entity_kind cpp_language_linkage::kind() noexcept {
+        return cpp_entity_kind::language_linkage_t;
     }
-    return std::next(begin()) != end(); // more than one entity, so block
-}
 
-cpp_entity_kind cpp_language_linkage::do_get_entity_kind() const noexcept
-{
-    return kind();
+    bool cpp_language_linkage::is_block() const noexcept {
+        if (begin() == end()) {
+            // An empty container must be a "block" of the form: extern "C" {}
+            return true;
+        }
+        return std::next(begin()) != end(); // more than one entity, so block
+    }
+
+    cpp_entity_kind cpp_language_linkage::do_get_entity_kind() const noexcept {
+        return kind();
+    }
 }

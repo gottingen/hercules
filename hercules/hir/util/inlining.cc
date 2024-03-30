@@ -13,13 +13,13 @@
 // limitations under the License.
 //
 
-#include "inlining.h"
+#include <hercules/hir/util/inlining.h>
 
 #include <algorithm>
 
-#include "hercules/hir/util/cloning.h"
-#include "hercules/hir/util/irtools.h"
-#include "hercules/hir/util/operator.h"
+#include <hercules/hir/util/cloning.h>
+#include <hercules/hir/util/irtools.h>
+#include <hercules/hir/util/operator.h>
 
 namespace hercules::ir::util {
 

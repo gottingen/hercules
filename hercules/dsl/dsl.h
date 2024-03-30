@@ -15,11 +15,11 @@
 
 #pragma once
 
-#include "hercules/hir/cir.h"
-#include "hercules/hir/transform/manager.h"
-#include "hercules/hir/transform/pass.h"
-#include "hercules/parser/cache.h"
-#include "llvm/Passes/PassBuilder.h"
+#include <hercules/hir/ir.h>
+#include <hercules/hir/transform/manager.h>
+#include <hercules/hir/transform/pass.h>
+#include <hercules/parser/cache.h>
+#include <llvm/Passes/PassBuilder.h>
 #include <functional>
 #include <string>
 #include <vector>

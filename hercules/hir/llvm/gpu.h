@@ -17,7 +17,7 @@
 
 #include <string>
 
-#include "hercules/hir/llvm/llvm.h"
+#include <hercules/hir/llvm/llvm.h>
 
 namespace hercules::ir {
 

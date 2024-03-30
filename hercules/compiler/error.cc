@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "error.h"
+#include <hercules/compiler/error.h>
 
 namespace hercules::error {
 

@@ -19,9 +19,9 @@
 #include <string>
 #include <vector>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/cache.h"
-#include "hercules/util/common.h"
+#include <hercules/parser/ast.h>
+#include <hercules/parser/cache.h>
+#include <hercules/util/common.h>
 
 namespace hercules::ast {
 

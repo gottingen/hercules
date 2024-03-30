@@ -18,10 +18,10 @@
 #include <list>
 #include <vector>
 
-#include "hercules/hir/base.h"
-#include "hercules/hir/transform/parallel/schedule.h"
-#include "hercules/hir/value.h"
-#include "hercules/hir/var.h"
+#include <hercules/hir/base.h>
+#include <hercules/hir/transform/parallel/schedule.h>
+#include <hercules/hir/value.h>
+#include <hercules/hir/var.h>
 
 namespace hercules::ir {
 

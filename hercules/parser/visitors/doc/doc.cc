@@ -21,7 +21,6 @@
 #include <vector>
 
 #include <hercules/parser/ast.h>
-#include <hercules/parser/common.h>
 #include <hercules/parser/peg/peg.h>
 #include <hercules/parser/visitors/format/format.h>
 

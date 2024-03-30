@@ -19,7 +19,7 @@
 #include <utility>
 #include <vector>
 
-#include "hercules/hir/llvm/llvm.h"
+#include <hercules/hir/llvm/llvm.h>
 
 namespace hercules {
 

@@ -13,18 +13,18 @@
 // limitations under the License.
 //
 
-#include "types.h"
+#include <hercules/hir/types/types.h>
 
 #include <algorithm>
 #include <memory>
 #include <utility>
 
-#include "hercules/hir/module.h"
-#include "hercules/hir/util/irtools.h"
-#include "hercules/hir/util/iterators.h"
-#include "hercules/hir/util/visitor.h"
-#include "hercules/hir/value.h"
-#include "hercules/parser/cache.h"
+#include <hercules/hir/module.h>
+#include <hercules/hir/util/irtools.h>
+#include <hercules/hir/util/iterators.h>
+#include <hercules/hir/util/visitor.h>
+#include <hercules/hir/value.h>
+#include <hercules/parser/cache.h>
 #include <collie/strings/format.h>
 
 namespace hercules::ir::types {

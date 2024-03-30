@@ -21,11 +21,11 @@
 #include <string>
 #include <vector>
 
-#include "hercules/hir/cir.h"
-#include "hercules/hir/pyextension.h"
-#include "hercules/parser/ast.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/ctx.h"
+#include <hercules/hir/ir.h>
+#include <hercules/hir/pyextension.h>
+#include <hercules/parser/ast.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/ctx.h>
 
 #define FILE_GENERATED "<generated>"
 #define MODULE_MAIN "__main__"

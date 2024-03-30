@@ -17,14 +17,13 @@
 
 #include <hercules/ast/cc/cpp_entity_kind.h>
 
-using namespace hercules::ccast;
+namespace hercules::ccast {
 
-cpp_entity_kind cpp_variable_template::kind() noexcept
-{
-    return cpp_entity_kind::variable_template_t;
-}
+    cpp_entity_kind cpp_variable_template::kind() noexcept {
+        return cpp_entity_kind::variable_template_t;
+    }
 
-cpp_entity_kind cpp_variable_template::do_get_entity_kind() const noexcept
-{
-    return kind();
-}
+    cpp_entity_kind cpp_variable_template::do_get_entity_kind() const noexcept {
+        return kind();
+    }
+}  // namespace hercules::ccast

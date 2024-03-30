@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/instr.h"
+#include <hercules/hir/instr.h>
 
-#include "hercules/hir/module.h"
-#include "hercules/hir/util/iterators.h"
+#include <hercules/hir/module.h>
+#include <hercules/hir/util/iterators.h>
 
 namespace hercules::ir {
     namespace {

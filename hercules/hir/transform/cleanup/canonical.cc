@@ -13,18 +13,17 @@
 // limitations under the License.
 //
 
-#include "canonical.h"
-
+#include <hercules/hir/transform/cleanup/canonical.h>
 #include <algorithm>
 #include <functional>
 #include <tuple>
 #include <unordered_set>
 #include <utility>
 
-#include "hercules/hir/analyze/module/side_effect.h"
-#include "hercules/hir/transform/rewrite.h"
-#include "hercules/hir/util/irtools.h"
-#include "hercules/hir/util/matching.h"
+#include <hercules/hir/analyze/module/side_effect.h>
+#include <hercules/hir/transform/rewrite.h>
+#include <hercules/hir/util/irtools.h>
+#include <hercules/hir/util/matching.h>
 
 namespace hercules::ir::transform::cleanup {
     namespace {

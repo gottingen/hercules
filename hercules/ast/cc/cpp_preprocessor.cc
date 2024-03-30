@@ -18,34 +18,29 @@
 
 #include <hercules/ast/cc/cpp_entity_kind.h>
 
-using namespace hercules::ccast;
+namespace hercules::ccast {
 
-cpp_entity_kind cpp_macro_parameter::kind() noexcept
-{
-    return cpp_entity_kind::macro_parameter_t;
-}
+    cpp_entity_kind cpp_macro_parameter::kind() noexcept {
+        return cpp_entity_kind::macro_parameter_t;
+    }
 
-cpp_entity_kind cpp_macro_parameter::do_get_entity_kind() const noexcept
-{
-    return kind();
-}
+    cpp_entity_kind cpp_macro_parameter::do_get_entity_kind() const noexcept {
+        return kind();
+    }
 
-cpp_entity_kind cpp_macro_definition::kind() noexcept
-{
-    return cpp_entity_kind::macro_definition_t;
-}
+    cpp_entity_kind cpp_macro_definition::kind() noexcept {
+        return cpp_entity_kind::macro_definition_t;
+    }
 
-cpp_entity_kind cpp_macro_definition::do_get_entity_kind() const noexcept
-{
-    return kind();
-}
+    cpp_entity_kind cpp_macro_definition::do_get_entity_kind() const noexcept {
+        return kind();
+    }
 
-cpp_entity_kind cpp_include_directive::kind() noexcept
-{
-    return cpp_entity_kind::include_directive_t;
-}
+    cpp_entity_kind cpp_include_directive::kind() noexcept {
+        return cpp_entity_kind::include_directive_t;
+    }
 
-cpp_entity_kind cpp_include_directive::do_get_entity_kind() const noexcept
-{
-    return kind();
-}
+    cpp_entity_kind cpp_include_directive::do_get_entity_kind() const noexcept {
+        return kind();
+    }
+}  // namespace hercules::ccast

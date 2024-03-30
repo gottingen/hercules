@@ -18,24 +18,21 @@
 
 #include <hercules/ast/cc/cpp_entity_kind.h>
 
-using namespace hercules::ccast;
+namespace hercules::ccast {
 
-cpp_entity_kind cpp_function_template::kind() noexcept
-{
-    return cpp_entity_kind::function_template_t;
-}
+    cpp_entity_kind cpp_function_template::kind() noexcept {
+        return cpp_entity_kind::function_template_t;
+    }
 
-cpp_entity_kind cpp_function_template::do_get_entity_kind() const noexcept
-{
-    return kind();
-}
+    cpp_entity_kind cpp_function_template::do_get_entity_kind() const noexcept {
+        return kind();
+    }
 
-cpp_entity_kind cpp_function_template_specialization::kind() noexcept
-{
-    return cpp_entity_kind::function_template_specialization_t;
-}
+    cpp_entity_kind cpp_function_template_specialization::kind() noexcept {
+        return cpp_entity_kind::function_template_specialization_t;
+    }
 
-cpp_entity_kind cpp_function_template_specialization::do_get_entity_kind() const noexcept
-{
-    return kind();
-}
+    cpp_entity_kind cpp_function_template_specialization::do_get_entity_kind() const noexcept {
+        return kind();
+    }
+}  // namespace hercules::ccast

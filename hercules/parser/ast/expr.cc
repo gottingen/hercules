@@ -13,15 +13,15 @@
 // limitations under the License.
 //
 
-#include "expr.h"
+#include <hercules/parser/ast/expr.h>
 
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/cache.h"
-#include "hercules/parser/visitors/visitor.h"
+#include <hercules/parser/ast.h>
+#include <hercules/parser/cache.h>
+#include <hercules/parser/visitors/visitor.h>
 
 #define ACCEPT_IMPL(T, X)                                                              \
   ExprPtr T::clone() const { return std::make_shared<T>(*this); }                      \

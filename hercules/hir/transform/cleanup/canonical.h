@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include "hercules/hir/transform/pass.h"
-#include "hercules/hir/transform/rewrite.h"
+#include <hercules/hir/transform/pass.h>
+#include <hercules/hir/transform/rewrite.h>
 
 namespace hercules::ir::transform::cleanup {
 

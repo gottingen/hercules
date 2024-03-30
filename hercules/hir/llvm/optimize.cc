@@ -13,12 +13,12 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/llvm/optimize.h"
+#include <hercules/hir/llvm/optimize.h>
 
 #include <algorithm>
 
-#include "hercules/hir/llvm/gpu.h"
-#include "hercules/util/common.h"
+#include <hercules/hir/llvm/gpu.h>
+#include <hercules/util/common.h>
 
 static llvm::codegen::RegisterCodeGenFlags CFG;
 

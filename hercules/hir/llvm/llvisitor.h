@@ -15,11 +15,11 @@
 
 #pragma once
 
-#include "hercules/hir/cir.h"
-#include "hercules/hir/llvm/llvm.h"
-#include "hercules/hir/pyextension.h"
-#include "hercules/dsl/plugins.h"
-#include "hercules/util/common.h"
+#include <hercules/hir/ir.h>
+#include <hercules/hir/llvm/llvm.h>
+#include <hercules/hir/pyextension.h>
+#include <hercules/dsl/plugins.h>
+#include <hercules/util/common.h>
 
 #include <string>
 #include <unordered_map>

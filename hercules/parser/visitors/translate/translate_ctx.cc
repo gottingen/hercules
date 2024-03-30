@@ -13,15 +13,14 @@
 // limitations under the License.
 //
 
-#include "translate_ctx.h"
-
+#include <hercules/parser/visitors/translate/translate_ctx.h>
 #include <memory>
 #include <vector>
 
-#include "hercules/parser/common.h"
-#include "hercules/parser/ctx.h"
-#include "hercules/parser/visitors/translate/translate.h"
-#include "hercules/parser/visitors/typecheck/ctx.h"
+#include <hercules/parser/common.h>
+#include <hercules/parser/ctx.h>
+#include <hercules/parser/visitors/translate/translate.h>
+#include <hercules/parser/visitors/typecheck/ctx.h>
 
 namespace hercules::ast {
 

@@ -21,7 +21,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "hercules/parser/common.h"
+#include <hercules/parser/common.h>
 
 namespace hercules::ast {
     struct Cache;

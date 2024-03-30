@@ -13,13 +13,13 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/llvm/gpu.h"
+#include <hercules/hir/llvm/gpu.h>
 
 #include <algorithm>
 #include <memory>
 #include <string>
 
-#include "hercules/util/common.h"
+#include <hercules/util/common.h>
 
 namespace hercules::ir {
     namespace {

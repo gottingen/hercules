@@ -13,16 +13,16 @@
 // limitations under the License.
 //
 
-#include "typecheck.h"
+#include <hercules/parser/visitors/typecheck/typecheck.h>
 
 #include <memory>
 #include <utility>
 #include <vector>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/common.h"
-#include "hercules/parser/visitors/simplify/ctx.h"
-#include "hercules/parser/visitors/typecheck/ctx.h"
+#include <hercules/parser/ast.h>
+#include <hercules/parser/common.h>
+#include <hercules/parser/visitors/simplify/ctx.h>
+#include <hercules/parser/visitors/typecheck/ctx.h>
 #include <collie/strings/format.h>
 
 using namespace hercules::error;

@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "hercules/parser/ast/error.h"
-#include "hercules/parser/ast/expr.h"
-#include "hercules/parser/ast/stmt.h"
-#include "hercules/parser/ast/types.h"
+#include <hercules/parser/ast/error.h>
+#include <hercules/parser/ast/expr.h>
+#include <hercules/parser/ast/stmt.h>
+#include <hercules/parser/ast/types.h>

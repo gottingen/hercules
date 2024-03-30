@@ -13,9 +13,8 @@
 // limitations under the License.
 //
 
-#include "pass.h"
-
-#include "hercules/hir/transform/manager.h"
+#include <hercules/hir/transform/pass.h>
+#include <hercules/hir/transform/manager.h>
 
 namespace hercules::ir::transform {
 

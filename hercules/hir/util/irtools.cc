@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "irtools.h"
+#include <hercules/hir/util/irtools.h>
 
 #include <iterator>
 

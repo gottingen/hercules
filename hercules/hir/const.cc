@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "hercules/hir/const.h"
+#include <hercules/hir/const.h>
 
 namespace hercules::ir {
 

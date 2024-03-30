@@ -18,34 +18,31 @@
 #include <cstdio>
 #include <mutex>
 
-using namespace hercules::ccast;
+namespace hercules::ccast {
 
-bool diagnostic_logger::log(const char* source, const diagnostic& d) const
-{
-    if (!verbose_ && d.severity == severity::debug)
-        return false;
-    return do_log(source, d);
-}
+    bool diagnostic_logger::log(const char *source, const diagnostic &d) const {
+        if (!verbose_ && d.severity == severity::debug)
+            return false;
+        return do_log(source, d);
+    }
 
-collie::ts::object_ref<const diagnostic_logger> hercules::ccast::default_logger() noexcept
-{
-    static const stderr_diagnostic_logger logger(false);
-    return collie::ts::ref(logger);
-}
+    collie::ts::object_ref<const diagnostic_logger> default_logger() noexcept {
+        static const stderr_diagnostic_logger logger(false);
+        return collie::ts::ref(logger);
+    }
 
-collie::ts::object_ref<const diagnostic_logger> hercules::ccast::default_verbose_logger() noexcept
-{
-    static const stderr_diagnostic_logger logger(true);
-    return collie::ts::ref(logger);
-}
+    collie::ts::object_ref<const diagnostic_logger> default_verbose_logger() noexcept {
+        static const stderr_diagnostic_logger logger(true);
+        return collie::ts::ref(logger);
+    }
 
-bool stderr_diagnostic_logger::do_log(const char* source, const diagnostic& d) const
-{
-    auto loc = d.location.to_string();
-    if (loc.empty())
-        std::fprintf(stderr, "[%s] [%s] %s\n", source, to_string(d.severity), d.message.c_str());
-    else
-        std::fprintf(stderr, "[%s] [%s] %s %s\n", source, to_string(d.severity),
-                     d.location.to_string().c_str(), d.message.c_str());
-    return true;
-}
+    bool stderr_diagnostic_logger::do_log(const char *source, const diagnostic &d) const {
+        auto loc = d.location.to_string();
+        if (loc.empty())
+            std::fprintf(stderr, "[%s] [%s] %s\n", source, to_string(d.severity), d.message.c_str());
+        else
+            std::fprintf(stderr, "[%s] [%s] %s %s\n", source, to_string(d.severity),
+                         d.location.to_string().c_str(), d.message.c_str());
+        return true;
+    }
+}  // namespace hercules::ccast

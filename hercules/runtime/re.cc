@@ -13,7 +13,7 @@
 // limitations under the License.
 //
 
-#include "hercules/runtime/lib.h"
+#include <hercules/runtime/lib.h>
 #include <cstring>
 #include <re2/re2.h>
 #include <string>

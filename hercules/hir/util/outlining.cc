@@ -13,15 +13,15 @@
 // limitations under the License.
 //
 
-#include "outlining.h"
+#include <hercules/hir/util/outlining.h>
 
 #include <iterator>
 #include <unordered_set>
 #include <utility>
 
-#include "hercules/hir/util/cloning.h"
-#include "hercules/hir/util/irtools.h"
-#include "hercules/hir/util/operator.h"
+#include <hercules/hir/util/cloning.h>
+#include <hercules/hir/util/irtools.h>
+#include <hercules/hir/util/operator.h>
 
 namespace hercules::ir::util {
     namespace {

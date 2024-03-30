@@ -15,10 +15,10 @@
 
 #pragma once
 
-#include "hercules/hir/transform/cleanup/canonical.h"
-#include "hercules/hir/transform/cleanup/dead_code.h"
-#include "hercules/hir/transform/cleanup/global_demote.h"
-#include "hercules/hir/transform/pass.h"
+#include <hercules/hir/transform/cleanup/canonical.h>
+#include <hercules/hir/transform/cleanup/dead_code.h>
+#include <hercules/hir/transform/cleanup/global_demote.h>
+#include <hercules/hir/transform/pass.h>
 
 namespace hercules::ir::transform::folding {
 

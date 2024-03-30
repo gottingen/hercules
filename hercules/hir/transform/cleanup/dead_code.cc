@@ -13,10 +13,10 @@
 // limitations under the License.
 //
 
-#include "dead_code.h"
+#include <hercules/hir/transform/cleanup/dead_code.h>
 
-#include "hercules/hir/analyze/module/side_effect.h"
-#include "hercules/hir/util/cloning.h"
+#include <hercules/hir/analyze/module/side_effect.h>
+#include <hercules/hir/util/cloning.h>
 
 namespace hercules::ir::transform::cleanup {
 
