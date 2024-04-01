@@ -18,9 +18,11 @@
 
 #include <vector>
 #include <string>
-#include <llvm/Support/CommandLine.h>
+#include <iostream>
 #include <hercules/compiler/compiler.h>
 #include <hercules/compiler/jit.h>
+#include <llvm/Support/CodeGen.h>
+#include <collie/cli/cli.h>
 
 namespace hercules {
 
@@ -50,7 +52,7 @@ namespace hercules {
 #endif
     }
 
-    void version_dump(llvm::raw_ostream &out);
+    void version_dump(std::ostream &out);
 
     inline std::string get_os_lib_extension() {
         if (is_mac_os()) {
@@ -60,6 +62,33 @@ namespace hercules {
         }
     }
 
+    struct VmContext{
+        static VmContext & instance(){
+            static VmContext ctx;
+            return ctx;
+        }
+        std::vector<const char *> args;
+        std::vector<const char *> llvm_args;
+        std::string orig_argv0;
+        std::string mode;
+        std::string argv0;
+        OptMode opt_mode{OptMode::Debug};
+        std::vector<std::string> defines;
+        std::vector<std::string> disabled_opts;
+        std::vector<std::string> plugins;
+        std::string log;
+        Numerics numeric{Numerics::C};
+        std::vector<std::string> libs;
+        std::string flags;
+        std::vector<std::string> prog_args;
+        std::string output;
+        BuildKind build_kind{BuildKind::Detect};
+        std::string py_module;
+        llvm::Reloc::Model reloc_model{llvm::Reloc::Model::Static};
+        std::vector<std::string> llvm_flags;
+        std::string input = "-";
+    };
+
     const std::vector<std::string> &supported_extensions();
 
     bool has_extension(const std::string &filename, const std::string &extension);
@@ -68,27 +97,33 @@ namespace hercules {
 
     std::string make_output_filename(const std::string &filename, const std::string &extension);
 
-    void init_log_flags(const llvm::cl::opt<std::string> &log);
+    void init_log_flags(const std::string &log);
+
+    void set_up_run_command(collie::App* app);
+
+    void set_up_build_command(collie::App* app);
+
+    void set_up_doc_command(collie::App* app);
+    void set_up_jit_command(collie::App* app);
+    bool tidy_program_args();
 
     class EngineVM {
     public:
         EngineVM() = default;
         ~EngineVM() = default;
 
-        int prepare_run(std::vector<const char *> &args);
+        int prepare_run();
 
         int run();
 
-        int document(const std::vector<const char *> &args, const std::string &argv0);
+        int document();
 
-        int build(const std::vector<const char *> &args, const std::string &argv0);
+        int build(const std::string &argv0);
 
-        int jit(const std::vector<const char *> &args);
+        int jit();
 
     private:
-        bool process_source(
-                const std::vector<const char *> &args, bool standalone,
-                std::function<bool()> pyExtension = [] { return false; });
+        bool process_source(bool standalone, std::function<bool()> pyExtension = [] { return false; });
 
         std::string jit_exec(hercules::jit::JIT *jit, const std::string &code);
 

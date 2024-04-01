@@ -28,9 +28,8 @@
 #include <hercules/compiler/error.h>
 #include <hercules/util/common.h>
 #include <hercules/util/jupyter.h>
-#include <llvm/Support/CommandLine.h>
-#include <llvm/Support/FileSystem.h>
 #include <hercules/engine/vm.h>
+#include <collie/cli/cli.h>
 
 
 int jupyterMode(const std::vector<const char *> &args) {
@@ -65,38 +64,48 @@ int main(int argc, const char **argv) {
     if (argc < 2)
         showCommandsAndExit();
 
-    llvm::cl::SetVersionPrinter(hercules::version_dump);
-    std::vector<const char *> args{argv[0]};
-    for (int i = 2; i < argc; i++)
-        args.push_back(argv[i]);
+    auto& ins = hercules::VmContext::instance();
+    for (int i = 0; i < argc; i++)
+        ins.args.push_back(argv[i]);
+    ins.orig_argv0 = argv[0];
+    collie::App app("hercules", "Hercules Programming Language");
+    app.add_subcommand("version", "Print the version of Hercules")->callback([]() {
+        hercules::version_dump(std::cout);
+    });
+    /// set up run command
+    auto *run = app.add_subcommand("run", "Run a program interactively");
+    hercules::set_up_run_command(run);
+    /// set up build command
+    auto *build = app.add_subcommand("build", "Build a program");
+    hercules::set_up_build_command(build);
+    /// set up doc command
+    auto *doc = app.add_subcommand("doc", "Generate program documentation");
+    hercules::set_up_doc_command(doc);
+    /// set up jit command
+    auto *jit = app.add_subcommand("jit", "Run a program using JIT");
+    hercules::set_up_jit_command(jit);
 
-    std::string mode(argv[1]);
-    std::string argv0 = std::string(args[0]) + " " + mode;
+    COLLIE_CLI_PARSE(app, argc, argv);
+    hercules::tidy_program_args();
+
     hercules::EngineVM vm;
-    if (mode == "run") {
-        args[0] = argv0.data();
-        auto r = vm.prepare_run(args);
+    if (ins.mode == "run") {
+        auto r = vm.prepare_run();
         if (r != EXIT_SUCCESS)
             return r;
         return vm.run();
     }
-    if (mode == "build") {
-        const char *oldArgv0 = args[0];
-        args[0] = argv0.data();
-        return vm.build(args, oldArgv0);
+    if (ins.mode == "build") {
+        return vm.build(ins.orig_argv0);
     }
-    if (mode == "doc") {
-        const char *oldArgv0 = args[0];
-        args[0] = argv0.data();
-        return vm.document(args, oldArgv0);
+    if (ins.mode == "doc") {
+        return vm.document();
     }
-    if (mode == "jit") {
-        args[0] = argv0.data();
-        return vm.jit(args);
+    if (ins.mode == "jit") {
+        return vm.jit();
     }
-    if (mode == "jupyter") {
-        args[0] = argv0.data();
-        return jupyterMode(args);
+    if (ins.mode == "jupyter") {
+        return jupyterMode(ins.args);
     }
     return otherMode({argv, argv + argc});
 }

@@ -576,7 +576,6 @@ namespace hercules::ir {
         // object" complaints by gcc when it is built with --enable-default-pie
         if (!library)
             command.push_back("-no-pie");
-
         executeCommand(command);
 
 #if __APPLE__
