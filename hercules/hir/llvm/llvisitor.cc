@@ -587,7 +587,7 @@ namespace hercules::ir {
     }
 
     namespace {
-// https://github.com/python/cpython/blob/main/Include/methodobject.h
+        // https://github.com/python/cpython/blob/main/Include/methodobject.h
         constexpr int PYEXT_METH_VARARGS = 0x0001;
         constexpr int PYEXT_METH_KEYWORDS = 0x0002;
         constexpr int PYEXT_METH_NOARGS = 0x0004;
@@ -597,9 +597,9 @@ namespace hercules::ir {
         constexpr int PYEXT_METH_COEXIST = 0x0040;
         constexpr int PYEXT_METH_FASTCALL = 0x0080;
         constexpr int PYEXT_METH_METHOD = 0x0200;
-// https://github.com/python/cpython/blob/main/Include/modsupport.h
+        // https://github.com/python/cpython/blob/main/Include/modsupport.h
         constexpr int PYEXT_PYTHON_ABI_VERSION = 1013;
-// https://github.com/python/cpython/blob/main/Include/descrobject.h
+        // https://github.com/python/cpython/blob/main/Include/descrobject.h
         constexpr int PYEXT_READONLY = 1;
     } // namespace
 
