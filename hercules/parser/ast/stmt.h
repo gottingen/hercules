@@ -502,6 +502,7 @@ namespace hercules::ast {
         // Class attributes
         const static std::string Extend;
         const static std::string Tuple;
+        const static std::string CppExport;
         // Standard library attributes
         const static std::string Test;
         const static std::string Overload;

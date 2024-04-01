@@ -31,12 +31,12 @@ namespace hercules::ccast {
             auto default_value = detail::parse_default_value(attributes, context, cur, name.c_str());
 
             std::unique_ptr<cpp_function_parameter> result;
-            if (name.empty())
+            if (name.empty()) {
                 result = cpp_function_parameter::build(std::move(type), std::move(default_value));
-            else
-                result
-                        = cpp_function_parameter::build(*context.idx, detail::get_entity_id(cur), name.c_str(),
-                                                        std::move(type), std::move(default_value));
+            } else {
+                result = cpp_function_parameter::build(*context.idx, detail::get_entity_id(cur), name.c_str(),
+                                                       std::move(type), std::move(default_value));
+            }
             result->add_attribute(attributes);
             return result;
         }
@@ -53,8 +53,7 @@ namespace hercules::ccast {
                     try {
                         auto parameter = parse_parameter(context, child);
                         builder.add_parameter(std::move(parameter));
-                    }
-                    catch (detail::parse_error &ex) {
+                    } catch (detail::parse_error &ex) {
                         context.error = true;
                         context.logger->log("libclang parser", ex.get_diagnostic(context.file));
                     }

@@ -35,7 +35,7 @@ set(TESTS_SRC
 get_target_property(files ccast SOURCES)
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/ccast_files.h "// list of cppast source file includes\n")
 foreach(file ${files})
-    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/ccast_files.h "\"${CMAKE_CURRENT_SOURCE_DIR}/../${file}\",\n")
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/ccast_files.h "\"${file}\",\n")
 endforeach()
 
 add_executable(ccast_test test.cc test_parser.h ${TESTS_SRC})
@@ -43,6 +43,7 @@ target_include_directories(ccast_test PRIVATE ${PROJECT_SOURCE_DIR} ${CMAKE_CURR
 target_link_libraries(ccast_test PUBLIC ccast hprocess)
 target_compile_definitions(ccast_test PUBLIC CPPAST_INTEGRATION_FILE="${CMAKE_CURRENT_SOURCE_DIR}/integration.cc"
                                               CPPAST_COMPILE_COMMANDS="${CMAKE_BINARY_DIR}")
+target_compile_options(ccast_test PRIVATE "-g" "-O0")
 
 add_test(NAME unit_test COMMAND ccast_test "~[integration]")
 add_test(NAME integration_test COMMAND ccast_test "[integration]")

@@ -618,6 +618,7 @@ namespace hercules::ccast {
         auto &config = static_cast<const libclang_compile_config &>(c);
 
         // preprocess
+
         auto preprocessed = detail::preprocess(config, path.c_str(), logger());
         if (detail::libclang_compile_config_access::write_preprocessed(config)) {
             std::ofstream file(path + ".pp");

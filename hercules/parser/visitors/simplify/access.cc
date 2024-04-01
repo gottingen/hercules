@@ -234,7 +234,7 @@ namespace hercules::ast {
         return false;
     }
 
-/// Check if a access chain (a.b.c.d...) contains an import or class prefix.
+    /// Check if a access chain (a.b.c.d...) contains an import or class prefix.
     std::pair<size_t, SimplifyContext::Item>
     SimplifyVisitor::getImport(const std::vector<std::string> &chain) {
         size_t importEnd = 0;

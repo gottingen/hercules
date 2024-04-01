@@ -525,6 +525,7 @@ namespace hercules::ccast {
                 }
                 if(*ptr_ != '\0')
                     ++ptr_;
+                CLOG_INFO("bump ptr_: {}", fmt::ptr(ptr_));
             }
 
             void bump(std::size_t offset) noexcept {
@@ -534,6 +535,7 @@ namespace hercules::ccast {
                 } else {
                     skip(offset);
                 }
+                CLOG_INFO("bump ptr_: {}", fmt::ptr(ptr_));
             }
 
             // no write, no newline detection
@@ -543,6 +545,7 @@ namespace hercules::ccast {
                 }
                 auto end = std::min(ptr_ + offset, ptr_ + std::strlen(ptr_));
                 ptr_ = end;
+                CLOG_INFO("skip ptr_: {}", fmt::ptr(ptr_));
             }
 
             void skip_with_linecount() noexcept {
@@ -597,7 +600,8 @@ namespace hercules::ccast {
 
             template<std::size_t N>
             bool starts_with(const char (&str)[N]) {
-                return collie::starts_with(std::string_view(ptr()), std::string_view{str, N - 1});
+                auto r = collie::starts_with(std::string_view(ptr()), std::string_view{str, N - 1});
+                return r;
             }
 
             void skip(const char *str) {
@@ -890,7 +894,7 @@ namespace hercules::ccast {
             DEBUG_ASSERT(p.starts_with(end_str.data(), end_str.size()), detail::assert_handler{},
                          "bad termination");
             p.bump();
-            p.skip(" /* clang -E -dI */");
+            //p.skip(" /* clang -E -dI */");
             DEBUG_ASSERT(p.starts_with("\n"), detail::assert_handler{});
             // don't skip newline
 
@@ -1012,7 +1016,6 @@ namespace hercules::ccast {
             auto next = std::strpbrk(p.ptr(), R"(\"'#/)"); // look for \, ", ', # or /
             if (next && next > p.ptr())
                 p.bump(std::size_t(next - p.ptr() - 1)); // subtract one to get before that character
-
             if (p.starts_with(R"(\\)")) // starts with two backslashes
                 p.bump(2u);
             else if (p.starts_with("\\\"")) // starts with \"
