@@ -74,10 +74,10 @@ namespace hercules::ir::analyze::dataflow {
             return false;
         }
 
-// Check if one value must always be encountered before another, if
-// it is to be encountered at all. This is NOT the same as domination
-// since we can have "(if _: B) ; A", where B does not dominate A yet
-// must always occur before A is it does occur.
+        // Check if one value must always be encountered before another, if
+        // it is to be encountered at all. This is NOT the same as domination
+        // since we can have "(if _: B) ; A", where B does not dominate A yet
+        // must always occur before A is it does occur.
         bool happensBefore(const Value *before, const Value *after, CFGraph *cfg,
                            DominatorInspector *dom) {
             auto *beforeBlock = cfg->getBlock(before);
@@ -313,11 +313,11 @@ namespace hercules::ir::analyze::dataflow {
             }
         };
 
-// This visitor answers the questions of what vars are
-// relevant to track in a capturing expression. For
-// example, in "a[i] = x", the expression "a[i]" captures
-// "x"; in this case we need to track "a" but the variable
-// "i" (typically) we would not care about.
+        // This visitor answers the questions of what vars are
+        // relevant to track in a capturing expression. For
+        // example, in "a[i] = x", the expression "a[i]" captures
+        // "x"; in this case we need to track "a" but the variable
+        // "i" (typically) we would not care about.
         struct ExtractVars : public util::ConstVisitor {
             CaptureContext &cc;
             std::unordered_set<id_t> vars;

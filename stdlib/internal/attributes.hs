@@ -85,3 +85,7 @@ def no_argument_wrap():
 @__attribute__
 def no_type_wrap():
     pass
+
+@__attribute__
+def trace_debug():
+    pass

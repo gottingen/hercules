@@ -23,6 +23,7 @@
 #include <hercules/parser/visitors/simplify/simplify.h>
 #include <hercules/parser/visitors/translate/translate.h>
 #include <hercules/parser/visitors/typecheck/typecheck.h>
+#include <hercules/builtin/builtin.h>
 
 extern double totalPeg;
 
@@ -60,7 +61,9 @@ namespace hercules {
         llvisitor->setDebug(debug);
         llvisitor->setPluginManager(plm.get());
     }
-
+    llvm::Error Compiler::load_builtin() {
+        return hercules::load_builtin(pm.get(), debug);
+    }
     llvm::Error Compiler::load(const std::string &plugin) {
         auto result = plm->load(plugin);
         if (auto err = result.takeError())

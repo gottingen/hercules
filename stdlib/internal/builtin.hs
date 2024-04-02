@@ -570,3 +570,6 @@ def _jit_display(x, s: Static[str], bundle: Set[str] = Set[str]()):
         print(x.__repr__(), end='')
     elif hasattr(x, "__str__"):
         print(x.__str__(), end='')
+
+def builtin_trace_debug(info):
+    print("trace debug: ", info)

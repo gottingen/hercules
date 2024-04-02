@@ -77,6 +77,8 @@ namespace hercules {
 
         ir::LLVMVisitor *getLLVMVisitor() const { return llvisitor.get(); }
 
+        llvm::Error load_builtin();
+
         llvm::Error load(const std::string &plugin);
 
         llvm::Error

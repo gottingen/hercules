@@ -230,8 +230,19 @@ namespace hercules {
         _compiler->getLLVMVisitor()->setStandalone(standalone);
 
         // load plugins
+        bool failed = false;
+        llvm::handleAllErrors(
+                _compiler->load_builtin(), [&failed](const hercules::error::PluginErrorInfo &e) {
+                    hercules::compilationError(e.getMessage(), /*file=*/"",
+                            /*line=*/0, /*col=*/0, /*len*/ 0, /*errorCode*/ -1,
+                            /*terminate=*/false);
+                    failed = true;
+                });
+        if (failed) {
+            return false;
+        }
         for (const auto &plugin: ins.plugins) {
-            bool failed = false;
+            failed = false;
             llvm::handleAllErrors(
                     _compiler->load(plugin), [&failed](const hercules::error::PluginErrorInfo &e) {
                         hercules::compilationError(e.getMessage(), /*file=*/"",
@@ -244,7 +255,7 @@ namespace hercules {
             }
         }
 
-        bool failed = false;
+        failed = false;
         int testFlags = 0;
         if (auto *tf = getenv("HERCULES_TEST_FLAGS"))
             testFlags = std::atoi(tf);
@@ -362,8 +373,19 @@ namespace hercules {
         hercules::jit::JIT jit(ins.argv0);
 
         // load plugins
+        bool failed = false;
+        llvm::handleAllErrors(jit.getCompiler()->load_builtin(),
+                              [&failed](const hercules::error::PluginErrorInfo &e) {
+                                  hercules::compilationError(e.getMessage(), /*file=*/"",
+                                          /*line=*/0, /*col=*/0, /*len=*/0,
+                                          /*errorCode*/ -1,
+                                          /*terminate=*/false);
+                                  failed = true;
+                              });
+        if (failed)
+            return EXIT_FAILURE;
         for (const auto &plugin: ins.plugins) {
-            bool failed = false;
+            failed = false;
             llvm::handleAllErrors(jit.getCompiler()->load(plugin),
                                   [&failed](const hercules::error::PluginErrorInfo &e) {
                                       hercules::compilationError(e.getMessage(), /*file=*/"",
