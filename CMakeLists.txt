@@ -95,6 +95,7 @@ set(HERCULESRT_FILES
         hercules/runtime/gpu.cc
         hercules/runtime/libinfo.cc
         hercules/builtin/builtin.cc
+        hercules/builtin/debug/trace.cc
 )
 
 add_library(herculesrt SHARED ${HERCULESRT_FILES})

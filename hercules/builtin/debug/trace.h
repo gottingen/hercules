@@ -12,16 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+//
+#pragma once
 
 #include <hercules/builtin/builtin.h>
-#include <hercules/builtin/debug/trace.h>
+#include <hercules/hir/util/irtools.h>
+#include <collie/filesystem/fs.h>
 
-namespace hercules {
+namespace hercules::builtin{
 
-    llvm::Error load_builtin(hercules::ir::transform::PassManager *pm, bool debug) {
-        if(debug) {
-            pm->registerPass(std::make_unique<hercules::builtin::BuiltinTrace>());
-        }
-        return llvm::Error::success();
-    }
-}  // namespace hercules
+    class BuiltinTrace : public hercules::ir::transform::OperatorPass {
+    public:
+        static const std::string KEY;
+
+        std::string getKey() const override { return KEY; }
+
+        void handle(hercules::ir::AssignInstr *v) override;
+    };
+
+}
+
