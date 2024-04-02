@@ -14,12 +14,12 @@
 # limitations under the License.
 #
 
-class Error(Static[Exception]):
-    def __init__(self, message: str = ""):
-        super().__init__("copy.Error", message)
+from time import time
 
-def copy(x):
-	return x.__copy__()
+def fib(n):
+    return n if n < 2 else fib(n - 1) + fib(n - 2)
 
-def deepcopy(x):
-	return x.__deepcopy__()
+t0 = time()
+ans = fib(40)
+t1 = time()
+print(f'Computed fib(40) = {ans} in {t1 - t0} seconds.')
