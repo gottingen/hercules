@@ -135,7 +135,7 @@ namespace hercules {
         readme[4].format()
         .font_align(FontAlign::center)
         .font_color(Color::green)
-        .font_style({FontStyle::underline});
+        .font_style({FontStyle::bold});
 
         readme.add_row(Row_t{"Hercules runtime information"});
         readme[5].format().font_align(FontAlign::center);
