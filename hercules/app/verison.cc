@@ -67,7 +67,7 @@ namespace hercules {
         tb.add_row({"Build Type", HERCULES_BUILD_TYPE});
         tb.add_row({"Compiler", HERCULES_COMPILER_ID});
         tb.add_row({"Compiler Version",
-                    collie::format("{} {}", HERCULES_COMPILER_VERSION_MAJOR, HERCULES_COMPILER_VERSION_MINOR)});
+                    collie::format("{}.{}", HERCULES_COMPILER_VERSION_MAJOR, HERCULES_COMPILER_VERSION_MINOR)});
         tb.add_row({"c++ Standard", HERCULES_CXX_STANDARD});
         tb.add_row({"cxx abi", HERCULES_CXX11_ABI});
         dump_reference(tb);
