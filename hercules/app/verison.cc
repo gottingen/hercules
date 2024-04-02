@@ -171,10 +171,14 @@ namespace hercules {
                 .padding_top(0)
                 .padding_bottom(0);
         readme[6].format().hide_border_top().padding_top(0);
-
-        readme.add_row(Row_t{empty_row});
-        readme[7].format().hide_border_left().hide_border_right();
+        Table hello;
+        // Welcome to Hercules
+        hello.add_row(Row_t{"Καλώς ήρθατε στον Ηρακλή!"});
+        hello.format().multi_byte_characters(true).font_align(FontAlign::center).font_color(Color::green);
+        hello.format().hide_border();
+        readme.add_row(Row_t{hello});
         readme.add_row(Row_t{"Acknowledgements Third party libraries"});
+        readme[7].format().font_align(FontAlign::center).font_style({FontStyle::bold}).font_color(Color::yellow).multi_byte_characters(true);
         readme[8].format().font_align(FontAlign::center).font_style({FontStyle::underline}).font_color(Color::cyan);
         Table third_party;
         dump_reference(third_party);
