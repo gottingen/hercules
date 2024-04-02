@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.14)
 project(
         Hercules
-        VERSION "0.2.1"
+        VERSION "0.2.6"
         HOMEPAGE_URL "https://github.com/gottingen/hercules"
         DESCRIPTION "high-performance, extensible Python compiler")
 set(HERCULES_JIT_PYTHON_VERSION "0.1.7")
+set(CMAKE_CXX_STANDARD 17)
 configure_file("${PROJECT_SOURCE_DIR}/cmake/config.h.in"
         "${PROJECT_SOURCE_DIR}/hercules/config/config.h")
 configure_file("${PROJECT_SOURCE_DIR}/cmake/config.py.in"
@@ -18,7 +19,7 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 #set_target_properties(xzdec PROPERTIES EXCLUDE_FROM_ALL ON)
 link_directories(${CONDA_PREFIX}/lib)
 include_directories(${CONDA_PREFIX}/include)
-set(CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS
@@ -460,7 +461,7 @@ if (APPLE AND APPLE_ARM)
 endif ()
 
 # Hercules command-line tool
-add_executable(hercules hercules/app/hercules.cc)
+add_executable(hercules hercules/app/hercules.cc hercules/app/jupyter/jupyter.cc)
 target_link_libraries(hercules PUBLIC ${STATIC_LIBCPP} herculesc hercules_jupyter Threads::Threads)
 
 # Hercules test Download and unpack googletest at configure time

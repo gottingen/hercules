@@ -16,13 +16,27 @@
 #include <hercules/engine/vm.h>
 #include <hercules/util/common.h>
 #include <llvm/Support/CommandLine.h>
+#include <collie/table/table.h>
+#include <hercules/config/config.h>
 #include <iostream>
 
 namespace hercules {
 
     void version_dump(std::ostream &out) {
-        out << HERCULES_VERSION_MAJOR << "." << HERCULES_VERSION_MINOR << "." << HERCULES_VERSION_PATCH
-            << "\n";
+        collie::table::Table tb;
+        tb.add_row({"Build", HERCULES_VERSION});
+        tb.add_row({"Build Type", HERCULES_BUILD_TYPE});
+        tb.add_row({"Compiler", HERCULES_COMPILER_ID});
+        tb.add_row({"Compiler Version", collie::format("{} {}", HERCULES_COMPILER_VERSION_MAJOR, HERCULES_COMPILER_VERSION_MINOR)});
+        tb.add_row({"c++ Standard", HERCULES_CXX_STANDARD});
+        tb.add_row({"cxx abi", HERCULES_CXX11_ABI});
+        tb.column(0).format().width(20);
+        tb.column(0).format().font_style({collie::table::FontStyle::bold});
+        tb.column(0).format().font_color(collie::table::Color::yellow);
+        tb.column(1).format().width(20);
+        tb.column(1).format().font_style({collie::table::FontStyle::bold});
+        tb.column(1).format().font_color(collie::table::Color::green);
+        out << tb << "\n";
     }
 
     const std::vector<std::string> &supported_extensions() {
@@ -127,13 +141,28 @@ namespace hercules {
         app->add_option("-l, --lib", ins.libs, "Link the specified library");
     }
 
+    static void run_run_command() {
+        auto &ins = hercules::VmContext::instance();
+        hercules::EngineVM vm;
+        ins.ret_code = vm.prepare_run();
+        if (ins.ret_code != EXIT_SUCCESS)
+            return ;
+        ins.ret_code =  vm.run();
+    }
+
     void set_up_run_command(collie::App *app) {
         set_up_process_command(app);
         app->add_option("prog_args", hercules::VmContext::instance().prog_args, "program arguments");
         app->callback([]() {
             hercules::VmContext::instance().mode = "run";
             hercules::VmContext::instance().argv0 = hercules::VmContext::instance().orig_argv0 + " run";
+            run_run_command();
         });
+    }
+    static void run_build_command() {
+        auto &ins = hercules::VmContext::instance();
+        hercules::EngineVM vm;
+        ins.ret_code = vm.build(ins.orig_argv0);
     }
 
     void set_up_build_command(collie::App *app) {
@@ -165,11 +194,18 @@ namespace hercules {
         app->callback([]() {
             hercules::VmContext::instance().mode = "build";
             hercules::VmContext::instance().argv0 = hercules::VmContext::instance().orig_argv0 + " build";
+            run_build_command();
         });
     }
 
     void set_up_doc_command(collie::App *app) {
 
+    }
+
+    static void run_jit_command() {
+        auto &ins = hercules::VmContext::instance();
+        hercules::EngineVM vm;
+        ins.ret_code = vm.jit();
     }
 
     void set_up_jit_command(collie::App *app) {
@@ -178,6 +214,7 @@ namespace hercules {
         app->callback([](){
             hercules::VmContext::instance().mode = "jit";
             hercules::VmContext::instance().argv0 = hercules::VmContext::instance().orig_argv0 + " jit";
+            run_jit_command();
         });
     }
 

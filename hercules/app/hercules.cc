@@ -27,42 +27,12 @@
 #include <hercules/compiler/compiler.h>
 #include <hercules/compiler/error.h>
 #include <hercules/util/common.h>
-#include <hercules/util/jupyter.h>
 #include <hercules/engine/vm.h>
+#include <hercules/app/jupyter/jupyter.h>
 #include <collie/cli/cli.h>
 
 
-int jupyterMode(const std::vector<const char *> &args) {
-    llvm::cl::list<std::string> plugins("plugin",
-                                        llvm::cl::desc("Load specified plugin"));
-    llvm::cl::opt<std::string> input(llvm::cl::Positional,
-                                     llvm::cl::desc("<connection file>"),
-                                     llvm::cl::init("connection.json"));
-    llvm::cl::ParseCommandLineOptions(args.size(), args.data());
-    int code = hercules::startJupyterKernel(args[0], plugins, input);
-    return code;
-}
-
-void showCommandsAndExit() {
-    hercules::compilationError("Available commands: hercules <run|build|doc>");
-}
-
-int otherMode(const std::vector<const char *> &args) {
-    llvm::cl::opt<std::string> input(llvm::cl::Positional, llvm::cl::desc("<mode>"));
-    llvm::cl::extrahelp("\nMODES:\n\n"
-                        "  run   - run a program interactively\n"
-                        "  build - build a program\n"
-                        "  doc   - generate program documentation\n");
-    llvm::cl::ParseCommandLineOptions(args.size(), args.data());
-
-    if (!input.empty())
-        showCommandsAndExit();
-    return EXIT_SUCCESS;
-}
-
 int main(int argc, const char **argv) {
-    if (argc < 2)
-        showCommandsAndExit();
 
     auto& ins = hercules::VmContext::instance();
     for (int i = 0; i < argc; i++)
@@ -84,28 +54,14 @@ int main(int argc, const char **argv) {
     /// set up jit command
     auto *jit = app.add_subcommand("jit", "Run a program using JIT");
     hercules::set_up_jit_command(jit);
+    /// set up jupyter command
+    auto *jupyter = app.add_subcommand("jupyter", "Start a Jupyter kernel");
+    hercules::set_up_jupyter_command(jupyter);
+    app.parse_complete_callback([]() {
+        hercules::tidy_program_args();
+    });
+    app.require_subcommand();
 
     COLLIE_CLI_PARSE(app, argc, argv);
-    hercules::tidy_program_args();
-
-    hercules::EngineVM vm;
-    if (ins.mode == "run") {
-        auto r = vm.prepare_run();
-        if (r != EXIT_SUCCESS)
-            return r;
-        return vm.run();
-    }
-    if (ins.mode == "build") {
-        return vm.build(ins.orig_argv0);
-    }
-    if (ins.mode == "doc") {
-        return vm.document();
-    }
-    if (ins.mode == "jit") {
-        return vm.jit();
-    }
-    if (ins.mode == "jupyter") {
-        return jupyterMode(ins.args);
-    }
-    return otherMode({argv, argv + argc});
+    return ins.ret_code;
 }

@@ -67,6 +67,7 @@ namespace hercules {
             static VmContext ctx;
             return ctx;
         }
+        int ret_code{0};
         std::vector<const char *> args;
         std::vector<const char *> llvm_args;
         std::string orig_argv0;
@@ -87,6 +88,7 @@ namespace hercules {
         llvm::Reloc::Model reloc_model{llvm::Reloc::Model::Static};
         std::vector<std::string> llvm_flags;
         std::string input = "-";
+        std::string connection_file = "connection.json";
     };
 
     const std::vector<std::string> &supported_extensions();
