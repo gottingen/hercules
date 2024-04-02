@@ -214,6 +214,11 @@ namespace collie::table {
             return *this;
         }
 
+        Format &hide_column_separator() {
+            show_column_separator_ = false;
+            return *this;
+        }
+
         Format &show_row_separator() {
             show_border_top_ = true;
             show_row_separator_ = true;
@@ -734,7 +739,7 @@ namespace collie::table {
             corner_top_right_background_color_ = corner_bottom_left_color_ =
             corner_bottom_left_background_color_ = corner_bottom_right_color_ =
             corner_bottom_right_background_color_ = Color::none;
-            show_column_separator_ = true;
+            show_column_separator_ = false;
             column_separator_ = "|";
             column_separator_color_ = column_separator_background_color_ = Color::none;
             multi_byte_characters_ = false;

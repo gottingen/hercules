@@ -23,10 +23,10 @@ int main() {
     Table readme;
     readme.format().border_color(Color::yellow);
 
-    readme.add_row(Row_t{"tabulate for Modern C++"});
+    readme.add_row(Row_t{"collie for Modern C++"});
     readme[0].format().font_align(FontAlign::center).font_color(Color::yellow);
 
-    readme.add_row(Row_t{"https://github.com/p-ranav/tabulate"});
+    readme.add_row(Row_t{"https://github.com/gottingen/collie"});
     readme[1]
             .format()
             .font_align(FontAlign::center)
@@ -34,12 +34,12 @@ int main() {
             .font_color(Color::white)
             .hide_border_top();
 
-    readme.add_row(Row_t{"Tabulate is a header-only library for printing aligned, formatted, and "
-                         "colorized tables in Modern C++"});
+    readme.add_row(Row_t{"collie is a header-only library for formatting, strings, pickles, and"
+                         "logs elastic infra in Modern C++"});
     readme[2].format().font_style({FontStyle::italic}).font_color(Color::magenta);
 
     Table highlights;
-    highlights.add_row(Row_t{"Header-only Library", "Requires C++17", "MIT License"});
+    highlights.add_row(Row_t{"Header-only Library", "Requires C++17", "Apache 2 License"});
     readme.add_row(Row_t{highlights});
     readme[3].format().font_align(FontAlign::center).hide_border_top();
 

@@ -7,7 +7,6 @@
 #pragma once
 
 // This include is only needed for IDEs to discover symbols
-#include <collie/cli/option.h>
 #include <algorithm>
 #include <string>
 #include <utility>
