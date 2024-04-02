@@ -30,6 +30,7 @@
 #include <hercules/engine/vm.h>
 #include <hercules/app/jupyter/jupyter.h>
 #include <collie/cli/cli.h>
+#include <hercules/app/version.h>
 
 
 int main(int argc, const char **argv) {
@@ -39,9 +40,9 @@ int main(int argc, const char **argv) {
         ins.args.push_back(argv[i]);
     ins.orig_argv0 = argv[0];
     collie::App app("hercules", "Hercules Programming Language");
-    app.add_subcommand("version", "Print the version of Hercules")->callback([]() {
-        hercules::version_dump(std::cout);
-    });
+    /// set up version command
+    auto *version = app.add_subcommand("version", "Print the version of Hercules");
+    hercules::set_up_version_cmd(version);
     /// set up run command
     auto *run = app.add_subcommand("run", "Run a program interactively");
     hercules::set_up_run_command(run);

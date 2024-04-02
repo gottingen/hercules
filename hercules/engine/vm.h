@@ -52,8 +52,6 @@ namespace hercules {
 #endif
     }
 
-    void version_dump(std::ostream &out);
-
     inline std::string get_os_lib_extension() {
         if (is_mac_os()) {
             return ".dylib";

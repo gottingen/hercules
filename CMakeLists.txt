@@ -461,7 +461,12 @@ if (APPLE AND APPLE_ARM)
 endif ()
 
 # Hercules command-line tool
-add_executable(hercules hercules/app/hercules.cc hercules/app/jupyter/jupyter.cc)
+set(HBIN_SRC
+        hercules/app/hercules.cc
+        hercules/app/jupyter/jupyter.cc
+        hercules/app/verison.cc
+)
+add_executable(hercules ${HBIN_SRC})
 target_link_libraries(hercules PUBLIC ${STATIC_LIBCPP} herculesc hercules_jupyter Threads::Threads)
 
 # Hercules test Download and unpack googletest at configure time

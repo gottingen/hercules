@@ -16,28 +16,9 @@
 #include <hercules/engine/vm.h>
 #include <hercules/util/common.h>
 #include <llvm/Support/CommandLine.h>
-#include <collie/table/table.h>
-#include <hercules/config/config.h>
 #include <iostream>
 
 namespace hercules {
-
-    void version_dump(std::ostream &out) {
-        collie::table::Table tb;
-        tb.add_row({"Build", HERCULES_VERSION});
-        tb.add_row({"Build Type", HERCULES_BUILD_TYPE});
-        tb.add_row({"Compiler", HERCULES_COMPILER_ID});
-        tb.add_row({"Compiler Version", collie::format("{} {}", HERCULES_COMPILER_VERSION_MAJOR, HERCULES_COMPILER_VERSION_MINOR)});
-        tb.add_row({"c++ Standard", HERCULES_CXX_STANDARD});
-        tb.add_row({"cxx abi", HERCULES_CXX11_ABI});
-        tb.column(0).format().width(20);
-        tb.column(0).format().font_style({collie::table::FontStyle::bold});
-        tb.column(0).format().font_color(collie::table::Color::yellow);
-        tb.column(1).format().width(20);
-        tb.column(1).format().font_style({collie::table::FontStyle::bold});
-        tb.column(1).format().font_color(collie::table::Color::green);
-        out << tb << "\n";
-    }
 
     const std::vector<std::string> &supported_extensions() {
         static const std::vector<std::string> extensions = {".hs", ".py", ".seq"};
