@@ -29,6 +29,8 @@ Contents
     :caption: QUICK STARTED
 
     en/install
+    en/command_line
+    en/sneak_peek
 
 .. toctree::
     :caption: TUTORIALS

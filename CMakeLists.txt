@@ -95,8 +95,6 @@ set(HERCULESRT_FILES
         hercules/runtime/exc.cc
         hercules/runtime/gpu.cc
         hercules/runtime/libinfo.cc
-        hercules/builtin/builtin.cc
-        hercules/builtin/debug/trace.cc
 )
 
 add_library(herculesrt SHARED ${HERCULESRT_FILES})
@@ -361,6 +359,8 @@ set(HERCULES_CPPFILES
         hercules/util/process.cc
         hercules/util/process_unix.cc
         hercules/util/process_win.cc
+        hercules/builtin/builtin.cc
+        hercules/builtin/debug/trace.cc
 )
 add_library(herculesc SHARED ${HERCULES_HPPFILES})
 target_include_directories(herculesc PRIVATE ${peglib_SOURCE_DIR} ${toml_SOURCE_DIR}/include ${semver_SOURCE_DIR}/include)
