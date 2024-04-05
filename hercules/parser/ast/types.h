@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 
 #pragma once
 
-#include "hercules/parser/ast/types/class.h"
-#include "hercules/parser/ast/types/function.h"
-#include "hercules/parser/ast/types/link.h"
-#include "hercules/parser/ast/types/static.h"
-#include "hercules/parser/ast/types/traits.h"
-#include "hercules/parser/ast/types/type.h"
-#include "hercules/parser/ast/types/union.h"
+#include <hercules/parser/ast/types/class.h>
+#include <hercules/parser/ast/types/function.h>
+#include <hercules/parser/ast/types/link.h>
+#include <hercules/parser/ast/types/static.h>
+#include <hercules/parser/ast/types/traits.h>
+#include <hercules/parser/ast/types/type.h>
+#include <hercules/parser/ast/types/union.h>

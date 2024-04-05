@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,65 +29,69 @@
  */
 
 namespace hercules {
-struct SrcInfo {
-  std::string file;
-  int line;
-  int col;
-  int len;
-  int id; /// used to differentiate different instances
+    struct SrcInfo {
+        std::string file;
+        int line;
+        int col;
+        int len;
+        int id; /// used to differentiate different instances
 
-  SrcInfo(std::string file, int line, int col, int len)
-      : file(std::move(file)), line(line), col(col), len(len), id(0) {
-    static int nextId = 0;
-    id = nextId++;
-  };
+        SrcInfo(std::string file, int line, int col, int len)
+                : file(std::move(file)), line(line), col(col), len(len), id(0) {
+            static int nextId = 0;
+            id = nextId++;
+        };
 
-  SrcInfo() : SrcInfo("", 0, 0, 0) {}
+        SrcInfo() : SrcInfo("", 0, 0, 0) {}
 
-  bool operator==(const SrcInfo &src) const { return id == src.id; }
-};
+        bool operator==(const SrcInfo &src) const { return id == src.id; }
+    };
 
 } // namespace hercules
 
 namespace hercules::exc {
 
-/**
- * Parser error exception.
- * Used for parsing, transformation and type-checking errors.
- */
-class ParserException : public std::runtime_error {
-public:
-  /// These vectors (stacks) store an error stack-trace.
-  std::vector<SrcInfo> locations;
-  std::vector<std::string> messages;
-  int errorCode = -1;
+    /**
+     * Parser error exception.
+     * Used for parsing, transformation and type-checking errors.
+     */
+    class ParserException : public std::runtime_error {
+    public:
+        /// These vectors (stacks) store an error stack-trace.
+        std::vector<SrcInfo> locations;
+        std::vector<std::string> messages;
+        int errorCode = -1;
 
-public:
-  ParserException(int errorCode, const std::string &msg, const SrcInfo &info) noexcept
-      : std::runtime_error(msg), errorCode(errorCode) {
-    messages.push_back(msg);
-    locations.push_back(info);
-  }
-  ParserException() noexcept : std::runtime_error("") {}
-  ParserException(int errorCode, const std::string &msg) noexcept
-      : ParserException(errorCode, msg, {}) {}
-  explicit ParserException(const std::string &msg) noexcept
-      : ParserException(-1, msg, {}) {}
-  ParserException(const ParserException &e) noexcept
-      : std::runtime_error(e), locations(e.locations), messages(e.messages),
-        errorCode(e.errorCode){};
+    public:
+        ParserException(int errorCode, const std::string &msg, const SrcInfo &info) noexcept
+                : std::runtime_error(msg), errorCode(errorCode) {
+            messages.push_back(msg);
+            locations.push_back(info);
+        }
 
-  /// Add an error message to the current stack trace
-  void trackRealize(const std::string &msg, const SrcInfo &info) {
-    locations.push_back(info);
-    messages.push_back("during the realization of " + msg);
-  }
+        ParserException() noexcept: std::runtime_error("") {}
 
-  /// Add an error message to the current stack trace
-  void track(const std::string &msg, const SrcInfo &info) {
-    locations.push_back(info);
-    messages.push_back(msg);
-  }
-};
+        ParserException(int errorCode, const std::string &msg) noexcept
+                : ParserException(errorCode, msg, {}) {}
+
+        explicit ParserException(const std::string &msg) noexcept
+                : ParserException(-1, msg, {}) {}
+
+        ParserException(const ParserException &e) noexcept
+                : std::runtime_error(e), locations(e.locations), messages(e.messages),
+                  errorCode(e.errorCode) {};
+
+        /// Add an error message to the current stack trace
+        void trackRealize(const std::string &msg, const SrcInfo &info) {
+            locations.push_back(info);
+            messages.push_back("during the realization of " + msg);
+        }
+
+        /// Add an error message to the current stack trace
+        void track(const std::string &msg, const SrcInfo &info) {
+            locations.push_back(info);
+            messages.push_back(msg);
+        }
+    };
 
 } // namespace hercules::exc

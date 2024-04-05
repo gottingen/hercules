@@ -16,7 +16,7 @@
 
 @pure
 @C
-def seq_is_macos() -> bool:
+def hs_is_macos() -> bool:
     pass
 
 # <dlfcn.h>
@@ -26,11 +26,11 @@ from C import dlsym(cobj, cobj) -> cobj as c_dlsym
 from C import dlclose(cobj) -> i32 as c_dlclose
 
 RTLD_NOW = 2
-RTLD_GLOBAL = 8 if seq_is_macos() else 256
-RTLD_LOCAL = 0 if seq_is_macos() else 256
+RTLD_GLOBAL = 8 if hs_is_macos() else 256
+RTLD_LOCAL = 0 if hs_is_macos() else 256
 
 def dlext() -> str:
-    if seq_is_macos():
+    if hs_is_macos():
         return "dylib"
     else:
         return "so"

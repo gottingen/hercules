@@ -46,7 +46,7 @@ def next(g: Generator[T], default: Optional[T] = None, T: type) -> T:
             raise StopIteration()
     return g.next()
 
-from C import seq_print_full(str, cobj)
+from C import hs_print_full(str, cobj)
 
 class Set:
     items: List[T]

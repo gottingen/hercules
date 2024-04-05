@@ -19,15 +19,15 @@ class Lock:
     p: cobj
 
     def __new__() -> Lock:
-        return (_C.seq_lock_new(),)
+        return (_C.hs_lock_new(),)
 
     def acquire(self, block: bool = True, timeout: float = -1.0) -> bool:
         if timeout >= 0.0 and not block:
             raise ValueError("can't specify a timeout for a non-blocking call")
-        return _C.seq_lock_acquire(self.p, block, timeout)
+        return _C.hs_lock_acquire(self.p, block, timeout)
 
     def release(self):
-        _C.seq_lock_release(self.p)
+        _C.hs_lock_release(self.p)
 
     def __enter__(self):
         self.acquire()
@@ -40,15 +40,15 @@ class RLock:
     p: cobj
 
     def __new__() -> RLock:
-        return (_C.seq_rlock_new(),)
+        return (_C.hs_rlock_new(),)
 
     def acquire(self, block: bool = True, timeout: float = -1.0) -> bool:
         if timeout >= 0.0 and not block:
             raise ValueError("can't specify a timeout for a non-blocking call")
-        return _C.seq_rlock_acquire(self.p, block, timeout)
+        return _C.hs_rlock_acquire(self.p, block, timeout)
 
     def release(self):
-        _C.seq_rlock_release(self.p)
+        _C.hs_rlock_release(self.p)
 
     def __enter__(self):
         self.acquire()

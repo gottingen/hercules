@@ -412,7 +412,7 @@ def log(x: float) -> float:
     pass
 print log(5.5)  #: 1.70475
 
-from C import seq_flags: Int[32] as e
+from C import hs_flags: Int[32] as e
 # debug | standalone == 5
 print e  #: 5
 
@@ -427,12 +427,12 @@ from internal.dlopen import dlext
 RT = "./libherculesrt." + dlext()
 if RT[-3:] == ".so":
     RT = "build/" + RT[2:]
-from C import RT.seq_str_int(int, str, Ptr[bool]) -> str as sp
+from C import RT.hs_str_int(int, str, Ptr[bool]) -> str as sp
 p = False
 print sp(65, "", __ptr__(p))  #: 65
 
 #%% import_c_dylib_error,barebones
-from C import "".seq_print(str) as sp
+from C import "".hs_print(str) as sp
 sp("hi!") #! syntax error, unexpected '"'
 
 #%% import,barebones

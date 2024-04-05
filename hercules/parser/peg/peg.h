@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,25 +19,27 @@
 #include <string>
 #include <vector>
 
-#include "hercules/parser/ast.h"
-#include "hercules/parser/cache.h"
-#include "hercules/util/common.h"
+#include <hercules/parser/ast.h>
+#include <hercules/parser/cache.h>
+#include <hercules/util/common.h>
 
 namespace hercules::ast {
 
-/// Parse a Seq code block with the appropriate file and position offsets.
-StmtPtr parseCode(Cache *cache, const std::string &file, const std::string &code,
-                  int line_offset = 0);
-/// Parse a Seq code expression.
-/// @return pair of ExprPtr and a string indicating format specification
-/// (empty if not available).
-std::pair<ExprPtr, std::string> parseExpr(Cache *cache, const std::string &code,
-                                          const hercules::SrcInfo &offset);
-/// Parse a Seq file.
-StmtPtr parseFile(Cache *cache, const std::string &file);
+    /// Parse a hs code block with the appropriate file and position offsets.
+    StmtPtr parseCode(Cache *cache, const std::string &file, const std::string &code,
+                      int line_offset = 0);
 
-/// Parse a OpenMP clause.
-std::vector<CallExpr::Arg> parseOpenMP(Cache *cache, const std::string &code,
-                                       const hercules::SrcInfo &loc);
+    /// Parse a hs code expression.
+    /// @return pair of ExprPtr and a string indicating format specification
+    /// (empty if not available).
+    std::pair<ExprPtr, std::string> parseExpr(Cache *cache, const std::string &code,
+                                              const hercules::SrcInfo &offset);
+
+    /// Parse a hs file.
+    StmtPtr parseFile(Cache *cache, const std::string &file);
+
+    /// Parse a OpenMP clause.
+    std::vector<CallExpr::Arg> parseOpenMP(Cache *cache, const std::string &code,
+                                           const hercules::SrcInfo &loc);
 
 } // namespace hercules::ast

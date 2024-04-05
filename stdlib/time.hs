@@ -17,27 +17,27 @@
 from sys import stderr
 
 def time() -> float:
-    return _C.seq_time() / 1e9
+    return _C.hs_time() / 1e9
 
 def time_ns() -> int:
-    return _C.seq_time()
+    return _C.hs_time()
 
 def monotonic() -> float:
-    return _C.seq_time_monotonic() / 1e9
+    return _C.hs_time_monotonic() / 1e9
 
 def monotonic_ns() -> int:
-    return _C.seq_time_monotonic()
+    return _C.hs_time_monotonic()
 
 def perf_counter() -> float:
-    return _C.seq_time_highres() / 1e9
+    return _C.hs_time_highres() / 1e9
 
 def perf_counter_ns() -> int:
-    return _C.seq_time_highres()
+    return _C.hs_time_highres()
 
 def sleep(secs: float):
     if secs < 0:
         raise ValueError("sleep length must be non-negative")
-    _C.seq_sleep(secs)
+    _C.hs_sleep(secs)
 
 class TimeInterval:
     """
@@ -48,11 +48,11 @@ class TimeInterval:
     msg: str
 
     def __init__(self):
-        self.start = _C.seq_time()
+        self.start = _C.hs_time()
         self.msg = ""
 
     def __enter__(self):
-        self.start = _C.seq_time()
+        self.start = _C.hs_time()
 
     def __exit__(self):
         print(self.report(self.msg), file=stderr)
@@ -64,11 +64,11 @@ class TimeInterval:
         return msg
 
     def elapsed(self) -> float:
-        return float(_C.seq_time() - self.start) / 1e9
+        return float(_C.hs_time() - self.start) / 1e9
 
     def tick(self, msg, memory=False):
         ret = self.report(msg)
-        self.start = _C.seq_time()
+        self.start = _C.hs_time()
 
 def timing(msg: str = "") -> TimeInterval:
     """
@@ -170,7 +170,7 @@ class struct_time:
 
 def localtime(secs: int = -1) -> struct_time:
     tm = struct_time()
-    worked = _C.seq_localtime(secs, __ptr__(tm).as_byte())
+    worked = _C.hs_localtime(secs, __ptr__(tm).as_byte())
     if not worked:
         raise OSError("localtime failed")
     return tm
@@ -178,7 +178,7 @@ def localtime(secs: int = -1) -> struct_time:
 
 def gmtime(secs: int = -1) -> struct_time:
     tm = struct_time()
-    worked = _C.seq_gmtime(secs, __ptr__(tm).as_byte())
+    worked = _C.hs_gmtime(secs, __ptr__(tm).as_byte())
     if not worked:
         raise OSError("localtime failed")
     return tm
@@ -186,10 +186,10 @@ def gmtime(secs: int = -1) -> struct_time:
 
 def mktime(t) -> int:
     if isinstance(t, struct_time):
-        return _C.seq_mktime(__ptr__(t).as_byte())
+        return _C.hs_mktime(__ptr__(t).as_byte())
     else:
         tm = struct_time(*t)
-        return _C.seq_mktime(__ptr__(tm).as_byte())
+        return _C.hs_mktime(__ptr__(tm).as_byte())
 
 # pytime.h funcs
 

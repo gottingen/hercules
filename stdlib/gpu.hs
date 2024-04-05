@@ -21,17 +21,17 @@ class Device:
     _device: i32
 
     def __new__(device: int):
-        from C import seq_nvptx_device(int) -> i32
-        return Device(seq_nvptx_device(device))
+        from C import hs_nvptx_device(int) -> i32
+        return Device(hs_nvptx_device(device))
 
     @staticmethod
     def count():
-        from C import seq_nvptx_device_count() -> int
-        return seq_nvptx_device_count()
+        from C import hs_nvptx_device_count() -> int
+        return hs_nvptx_device_count()
 
     def __str__(self):
-        from C import seq_nvptx_device_name(i32) -> str
-        return seq_nvptx_device_name(self._device)
+        from C import hs_nvptx_device_name(i32) -> str
+        return hs_nvptx_device_name(self._device)
 
     def __index__(self):
         return int(self._device)
@@ -41,8 +41,8 @@ class Device:
 
     @property
     def compute_capability(self):
-        from C import seq_nvptx_device_capability(i32) -> int
-        c = seq_nvptx_device_capability(self._device)
+        from C import hs_nvptx_device_capability(i32) -> int
+        c = hs_nvptx_device_capability(self._device)
         return (c >> 32, c & 0xffffffff)
 
 @tuple
@@ -50,20 +50,20 @@ class Memory[T]:
     _ptr: Ptr[byte]
 
     def _alloc(n: int, T: type):
-        from C import seq_nvptx_device_alloc(int) -> Ptr[byte]
-        return Memory[T](seq_nvptx_device_alloc(n * _sizeof(T)))
+        from C import hs_nvptx_device_alloc(int) -> Ptr[byte]
+        return Memory[T](hs_nvptx_device_alloc(n * _sizeof(T)))
 
     def _read(self, p: Ptr[T], n: int):
-        from C import seq_nvptx_memcpy_d2h(Ptr[byte], Ptr[byte], int)
-        seq_nvptx_memcpy_d2h(p.as_byte(), self._ptr, n * _sizeof(T))
+        from C import hs_nvptx_memcpy_d2h(Ptr[byte], Ptr[byte], int)
+        hs_nvptx_memcpy_d2h(p.as_byte(), self._ptr, n * _sizeof(T))
 
     def _write(self, p: Ptr[T], n: int):
-        from C import seq_nvptx_memcpy_h2d(Ptr[byte], Ptr[byte], int)
-        seq_nvptx_memcpy_h2d(self._ptr, p.as_byte(), n * _sizeof(T))
+        from C import hs_nvptx_memcpy_h2d(Ptr[byte], Ptr[byte], int)
+        hs_nvptx_memcpy_h2d(self._ptr, p.as_byte(), n * _sizeof(T))
 
     def _free(self):
-        from C import seq_nvptx_device_free(Ptr[byte])
-        seq_nvptx_device_free(self._ptr)
+        from C import hs_nvptx_device_free(Ptr[byte])
+        hs_nvptx_device_free(self._ptr)
 
 @llvm
 def syncthreads() -> None:

@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,12 +26,12 @@
 #include <xeus/xkernel.hpp>
 #include <xeus/xkernel_configuration.hpp>
 
-#include "hercules/compiler/compiler.h"
+#include <hercules/compiler/compiler.h>
 #include "hercules/compiler/error.h"
-#include "hercules/compiler/jit.h"
+#include <hercules/compiler/jit.h>
 #include "hercules/config/config.h"
-#include "hercules/parser/common.h"
-#include "hercules/util/common.h"
+#include <hercules/parser/common.h>
+#include <hercules/util/common.h>
 
 using std::move;
 using std::string;

@@ -1,4 +1,4 @@
-// Copyright 2023 The titan-search Authors.
+// Copyright 2024 The EA Authors.
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,36 +22,41 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "hercules/parser/peglib.h"
-#include "hercules/parser/ast.h"
-#include "hercules/parser/cache.h"
-#include "hercules/parser/common.h"
+#include <hercules/parser/peg/peglib.h>
+#include <hercules/parser/ast.h>
+#include <hercules/parser/cache.h>
+#include <hercules/parser/common.h>
 
 namespace hercules::ast {
 
-struct ParseContext {
-  Cache *cache;
-  std::stack<int> indent;
-  int parens;
-  int line_offset, col_offset;
-  ParseContext(Cache *cache, int parens = 0, int line_offset = 0, int col_offset = 0)
-      : cache(cache), parens(parens), line_offset(line_offset), col_offset(col_offset) {
-  }
+    struct ParseContext {
+        Cache *cache;
+        std::stack<int> indent;
+        int parens;
+        int line_offset, col_offset;
 
-  bool hasCustomStmtKeyword(const std::string &kwd, bool hasExpr) const {
-    auto i = cache->customBlockStmts.find(kwd);
-    if (i != cache->customBlockStmts.end())
-      return i->second.first == hasExpr;
-    return false;
-  }
-  bool hasCustomExprStmt(const std::string &kwd) const {
-    return in(cache->customExprStmts, kwd);
-  }
-};
+        ParseContext(Cache *cache, int parens = 0, int line_offset = 0, int col_offset = 0)
+                : cache(cache), parens(parens), line_offset(line_offset), col_offset(col_offset) {
+        }
+
+        bool hasCustomStmtKeyword(const std::string &kwd, bool hasExpr) const {
+            auto i = cache->customBlockStmts.find(kwd);
+            if (i != cache->customBlockStmts.end())
+                return i->second.first == hasExpr;
+            return false;
+        }
+
+        bool hasCustomExprStmt(const std::string &kwd) const {
+            return in(cache->customExprStmts, kwd);
+        }
+    };
 
 } // namespace hercules::ast
 
 void init_hercules_rules(peg::Grammar &);
+
 void init_hercules_actions(peg::Grammar &);
+
 void init_omp_rules(peg::Grammar &);
+
 void init_omp_actions(peg::Grammar &);

@@ -15,124 +15,124 @@
 #
 
 # runtime functions
-from C import seq_print(str)
-from C import seq_print_full(str, cobj)
+from C import hs_print(str)
+from C import hs_print_full(str, cobj)
 
 @nocapture
 @C
-def seq_str_int(a: int, fmt: str, error: Ptr[bool]) -> str:
+def hs_str_int(a: int, fmt: str, error: Ptr[bool]) -> str:
     pass
 
 @nocapture
 @C
-def seq_str_uint(a: int, fmt: str, error: Ptr[bool]) -> str:
+def hs_str_uint(a: int, fmt: str, error: Ptr[bool]) -> str:
     pass
 
 @nocapture
 @C
-def seq_str_float(a: float, fmt: str, error: Ptr[bool]) -> str:
+def hs_str_float(a: float, fmt: str, error: Ptr[bool]) -> str:
     pass
 
 @nocapture
 @C
-def seq_str_str(a: str, fmt: str, error: Ptr[bool]) -> str:
+def hs_str_str(a: str, fmt: str, error: Ptr[bool]) -> str:
     pass
 
 @nocapture
 @C
-def seq_str_ptr(a: cobj, fmt: str, error: Ptr[bool]) -> str:
+def hs_str_ptr(a: cobj, fmt: str, error: Ptr[bool]) -> str:
     pass
 
 @pure
 @C
-def seq_strdup(a: cobj) -> str:
+def hs_strdup(a: cobj) -> str:
     pass
 
 @pure
 @C
-def seq_stdin() -> cobj:
+def hs_stdin() -> cobj:
     pass
 
 @pure
 @C
-def seq_stdout() -> cobj:
+def hs_stdout() -> cobj:
     pass
 
 @pure
 @C
-def seq_stderr() -> cobj:
+def hs_stderr() -> cobj:
     pass
 
 @no_side_effect
 @C
-def seq_env() -> Ptr[cobj]:
+def hs_env() -> Ptr[cobj]:
     pass
 
 @no_side_effect
 @C
-def seq_time() -> int:
+def hs_time() -> int:
     pass
 
 @no_side_effect
 @C
-def seq_time_monotonic() -> int:
+def hs_time_monotonic() -> int:
     pass
 
 @no_side_effect
 @C
-def seq_time_highres() -> int:
+def hs_time_highres() -> int:
     pass
 
 @no_side_effect
 @C
-def seq_localtime(a: int, b: cobj) -> bool:
+def hs_localtime(a: int, b: cobj) -> bool:
     pass
 
 @no_side_effect
 @C
-def seq_gmtime(a: int, b: cobj) -> bool:
+def hs_gmtime(a: int, b: cobj) -> bool:
     pass
 
 @pure
 @C
-def seq_mktime(a: cobj) -> int:
+def hs_mktime(a: cobj) -> int:
     pass
 
-from C import seq_sleep(float)
+from C import hs_sleep(float)
 
 @pure
 @C
-def seq_pid() -> int:
-    pass
-
-@pure
-@C
-def seq_lock_new() -> cobj:
-    pass
-
-@nocapture
-@C
-def seq_lock_acquire(a: cobj, b: bool, c: float) -> bool:
-    pass
-
-@nocapture
-@C
-def seq_lock_release(a: cobj) -> None:
+def hs_pid() -> int:
     pass
 
 @pure
 @C
-def seq_rlock_new() -> cobj:
+def hs_lock_new() -> cobj:
     pass
 
 @nocapture
 @C
-def seq_rlock_acquire(a: cobj, b: bool, c: float) -> bool:
+def hs_lock_acquire(a: cobj, b: bool, c: float) -> bool:
     pass
 
 @nocapture
 @C
-def seq_rlock_release(a: cobj) -> None:
+def hs_lock_release(a: cobj) -> None:
+    pass
+
+@pure
+@C
+def hs_rlock_new() -> cobj:
+    pass
+
+@nocapture
+@C
+def hs_rlock_acquire(a: cobj, b: bool, c: float) -> bool:
+    pass
+
+@nocapture
+@C
+def hs_rlock_release(a: cobj) -> None:
     pass
 
 @pure

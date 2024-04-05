@@ -1276,8 +1276,8 @@ def foo(x, y):
 foo('hooooooooy!', 1, 2) #! no function 'foo' with arguments (str, int, int)
 
 #%% c_void_return,barebones
-from C import seq_print(str)
-x = seq_print("not ")
+from C import hs_print(str)
+x = hs_print("not ")
 print x  #: not None
 
 

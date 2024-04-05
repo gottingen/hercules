@@ -105,6 +105,7 @@ def test_error_handling():
     else:
         assert False
 
+
 test_convertible()
 test_many()
 test_roundtrip()

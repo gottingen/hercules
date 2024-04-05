@@ -21,7 +21,7 @@ def _format_error(ret: str):
 class int:
     def __format__(self, format_spec: str) -> str:
         err = False
-        ret = _C.seq_str_int(self, format_spec, __ptr__(err))
+        ret = _C.hs_str_int(self, format_spec, __ptr__(err))
         if format_spec and err:
             _format_error(ret)
         return ret
@@ -30,7 +30,7 @@ class int:
 class Int:
     def __format__(self, format_spec: str) -> str:
         err = False
-        ret = _C.seq_str_int(self.__int__(), format_spec, __ptr__(err))
+        ret = _C.hs_str_int(self.__int__(), format_spec, __ptr__(err))
         if format_spec and err:
             _format_error(ret)
         return ret
@@ -39,7 +39,7 @@ class Int:
 class UInt:
     def __format__(self, format_spec: str) -> str:
         err = False
-        ret = _C.seq_str_uint(self.__int__(), format_spec, __ptr__(err))
+        ret = _C.hs_str_uint(self.__int__(), format_spec, __ptr__(err))
         if format_spec and err:
             _format_error(ret)
         return ret
@@ -48,7 +48,7 @@ class UInt:
 class float:
     def __format__(self, format_spec: str) -> str:
         err = False
-        ret = _C.seq_str_float(self, format_spec, __ptr__(err))
+        ret = _C.hs_str_float(self, format_spec, __ptr__(err))
         if format_spec and err:
             _format_error(ret)
         return ret if ret != "-nan" else "nan"
@@ -57,7 +57,7 @@ class float:
 class str:
     def __format__(self, format_spec: str) -> str:
         err = False
-        ret = _C.seq_str_str(self, format_spec, __ptr__(err))
+        ret = _C.hs_str_str(self, format_spec, __ptr__(err))
         if format_spec and err:
             _format_error(ret)
         return ret
@@ -66,7 +66,7 @@ class str:
 class Ptr:
     def __format__(self, format_spec: str) -> str:
         err = False
-        ret = _C.seq_str_ptr(self.as_byte(), format_spec, __ptr__(err))
+        ret = _C.hs_str_ptr(self.as_byte(), format_spec, __ptr__(err))
         if format_spec and err:
             _format_error(ret)
         return ret
