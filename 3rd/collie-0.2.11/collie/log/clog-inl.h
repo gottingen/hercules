@@ -55,6 +55,10 @@ namespace clog {
         details::registry::instance().set_level(log_level);
     }
 
+    inline void set_vlog_level(int vlevel) {
+        details::registry::instance().set_vlog_level(vlevel);
+    }
+
     inline void flush_on(level::level_enum log_level) {
         details::registry::instance().flush_on(log_level);
     }

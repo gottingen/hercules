@@ -88,9 +88,9 @@ namespace clog {
     template<typename Char>
     using fmt_runtime_string = fmt::runtime_format_string<Char>;
 
-// clang doesn't like SFINAE disabled constructor in std::is_convertible<> so have to repeat the
-// condition from basic_format_string here, in addition, fmt::basic_runtime<Char> is only
-// convertible to basic_format_string<Char> but not basic_string_view<Char>
+    // clang doesn't like SFINAE disabled constructor in std::is_convertible<> so have to repeat the
+    // condition from basic_format_string here, in addition, fmt::basic_runtime<Char> is only
+    // convertible to basic_format_string<Char> but not basic_string_view<Char>
     template<class T, class Char = char>
     struct is_convertible_to_basic_format_string
             : std::integral_constant<bool,
@@ -130,22 +130,22 @@ namespace clog {
 #define CLOG_LEVEL_INFO 2
 #define CLOG_LEVEL_WARN 3
 #define CLOG_LEVEL_ERROR 4
-#define CLOG_LEVEL_CRITICAL 5
+#define CLOG_LEVEL_FATAL 5
 #define CLOG_LEVEL_OFF 6
 
 #if !defined(CLOG_ACTIVE_LEVEL)
 #define CLOG_ACTIVE_LEVEL CLOG_LEVEL_INFO
 #endif
 
-// Log level enum
+    // Log level enum
     namespace level {
         enum level_enum : int {
             trace = CLOG_LEVEL_TRACE,
             debug = CLOG_LEVEL_DEBUG,
             info = CLOG_LEVEL_INFO,
             warn = CLOG_LEVEL_WARN,
-            err = CLOG_LEVEL_ERROR,
-            critical = CLOG_LEVEL_CRITICAL,
+            error = CLOG_LEVEL_ERROR,
+            fatal = CLOG_LEVEL_FATAL,
             off = CLOG_LEVEL_OFF,
             n_levels
         };
@@ -153,16 +153,16 @@ namespace clog {
 #define CLOG_LEVEL_NAME_TRACE clog::string_view_t("trace", 5)
 #define CLOG_LEVEL_NAME_DEBUG clog::string_view_t("debug", 5)
 #define CLOG_LEVEL_NAME_INFO clog::string_view_t("info", 4)
-#define CLOG_LEVEL_NAME_WARNING clog::string_view_t("warning", 7)
+#define CLOG_LEVEL_NAME_WARN clog::string_view_t("warn", 4)
 #define CLOG_LEVEL_NAME_ERROR clog::string_view_t("error", 5)
-#define CLOG_LEVEL_NAME_CRITICAL clog::string_view_t("critical", 8)
+#define CLOG_LEVEL_NAME_FATAL clog::string_view_t("fatal", 5)
 #define CLOG_LEVEL_NAME_OFF clog::string_view_t("off", 3)
 
 #if !defined(CLOG_LEVEL_NAMES)
 #define CLOG_LEVEL_NAMES                                                                  \
         {                                                                                       \
             CLOG_LEVEL_NAME_TRACE, CLOG_LEVEL_NAME_DEBUG, CLOG_LEVEL_NAME_INFO,           \
-                CLOG_LEVEL_NAME_WARNING, CLOG_LEVEL_NAME_ERROR, CLOG_LEVEL_NAME_CRITICAL, \
+                CLOG_LEVEL_NAME_WARN, CLOG_LEVEL_NAME_ERROR, CLOG_LEVEL_NAME_FATAL, \
                 CLOG_LEVEL_NAME_OFF                                                           \
         }
 #endif
@@ -246,10 +246,9 @@ namespace clog {
 
     namespace details {
 
-// to_string_view
+        // to_string_view
 
-        constexpr clog::string_view_t to_string_view(const memory_buf_t &buf)
-        noexcept {
+        constexpr clog::string_view_t to_string_view(const memory_buf_t &buf) noexcept {
             return clog::string_view_t{buf.data(), buf.size()};
         }
 
@@ -275,7 +274,7 @@ namespace clog {
             return fmt;
         }
 
-// make_unique support for pre c++14
+    // make_unique support for pre c++14
 #if __cplusplus >= 201402L  // C++14 and beyond
         using std::enable_if_t;
         using std::make_unique;
@@ -290,7 +289,7 @@ namespace clog {
         }
 #endif
 
-// to avoid useless casts (see https://github.com/nlohmann/json/issues/2893#issuecomment-889152324)
+        // to avoid useless casts (see https://github.com/nlohmann/json/issues/2893#issuecomment-889152324)
         template<typename T, typename U, enable_if_t<!std::is_same<T, U>::value, int> = 0>
         constexpr T conditional_static_cast(U value) {
             return static_cast<T>(value);

@@ -4,7 +4,7 @@ include(${CPM_DOWNLOAD_LOCATION})
 
 CPMAddPackage(
         NAME collie
-        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/collie-0.2.8"
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/collie-0.2.11"
         OPTIONS "CARBIN_ENABLE_INSTALL OFF"
         "CARBIN_BUILD_TEST OFF"
         "CARBIN_BUILD_EXAMPLES OFF"

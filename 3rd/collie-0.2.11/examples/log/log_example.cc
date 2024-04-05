@@ -59,7 +59,7 @@ int main(int, char *[]) {
                  CLOG_VER_PATCH);
 
     clog::warn("Easy padding in numbers like {:08d}", 12);
-    clog::critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
+    clog::fatal("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
     clog::info("Support for floats {:03.2f}", 1.23456);
     clog::info("Positional args are {1} {0}..", "too", "supported");
     clog::info("{:>8} aligned, {:<8} aligned", "right", "left");

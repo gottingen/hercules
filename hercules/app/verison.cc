@@ -19,6 +19,7 @@
 #include <collie/table/asciidoc_exporter.h>
 #include <collie/table/latex_exporter.h>
 #include <hercules/config/config.h>
+#include <collie/version.h>
 #include <llvm/Config/llvm-config.h>
 #include <collie/strings/format.h>
 #include <map>
@@ -35,7 +36,7 @@ namespace hercules {
             {"bz2",       "1.0.8", "https://www.sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz"},
             {"llvm",      LLVM_VERSION_STRING, "https://github.com/llvm/llvm-project"},
             {"clang",     LLVM_VERSION_STRING, "https://github.com/llvm/llvm-project"},
-            {"collie",    "0.2.7", "https://github.com/gottingen/collie"},
+            {"collie",    collie::collie_version.to_string(), "https://github.com/gottingen/collie"},
             {"googletest","release-1.12.1", "https://github.com/google/googletest"},
             {"re2",       "2022-06-01","https://github.com/google/re2"},
             {"xz",      "5.2.5", "https://github.com/xz-mirror/xz"},

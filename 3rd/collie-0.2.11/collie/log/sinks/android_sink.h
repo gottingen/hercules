@@ -108,9 +108,9 @@ private:
                 return ANDROID_LOG_INFO;
             case clog::level::warn:
                 return ANDROID_LOG_WARN;
-            case clog::level::err:
+            case clog::level::error:
                 return ANDROID_LOG_ERROR;
-            case clog::level::critical:
+            case clog::level::fatal:
                 return ANDROID_LOG_FATAL;
             default:
                 return ANDROID_LOG_DEFAULT;

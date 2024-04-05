@@ -34,8 +34,8 @@ inline wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color_mode m
     colors_[level::info] = FOREGROUND_GREEN;                                      // green
     colors_[level::warn] =
         FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;  // intense yellow
-    colors_[level::err] = FOREGROUND_RED | FOREGROUND_INTENSITY;   // intense red
-    colors_[level::critical] = BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN |
+    colors_[level::error] = FOREGROUND_RED | FOREGROUND_INTENSITY;   // intense red
+    colors_[level::fatal] = BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN |
                                FOREGROUND_BLUE |
                                FOREGROUND_INTENSITY;  // intense white on red background
     colors_[level::off] = 0;

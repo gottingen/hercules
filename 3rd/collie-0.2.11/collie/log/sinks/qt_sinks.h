@@ -106,11 +106,11 @@ public:
         colors_.at(level::warn) = format;
         // err
         format.setForeground(Qt::red);
-        colors_.at(level::err) = format;
-        // critical
+        colors_.at(level::error) = format;
+        // fatal
         format.setForeground(Qt::white);
         format.setBackground(Qt::red);
-        colors_.at(level::critical) = format;
+        colors_.at(level::fatal) = format;
     }
 
     ~qt_color_sink() { flush_(); }

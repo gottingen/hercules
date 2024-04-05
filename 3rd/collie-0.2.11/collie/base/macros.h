@@ -70,5 +70,37 @@
 #define COLLIE_ATTRIBUTE_RETURNS_NONNULL
 #endif
 
+// ------------------------------------------------------------------------
+// COLLIE_CONCAT
+//
+// This macro joins the two arguments together, even when one of
+// the arguments is itself a macro (see 16.3.1 in C++98 standard).
+// This is often used to create a unique name with __LINE__.
+//
+// For example, this declaration:
+//    char COLLIE_CONCAT(unique_, __LINE__);
+// expands to this:
+//    char unique_73;
+//
+// Note that all versions of MSVC++ up to at least version 7.1
+// fail to properly compile macros that use __LINE__ in them
+// when the "program database for edit and continue" option
+// is enabled. The result is that __LINE__ gets converted to
+// something like __LINE__(Var+37).
+//
+#ifndef COLLIE_CONCAT
+#define COLLIE_CONCAT(a, b)  TURBO_CONCAT1(a, b)
+#define TURBO_CONCAT1(a, b) TURBO_CONCAT2(a, b)
+#define TURBO_CONCAT2(a, b) a##b
+#endif
+
+#if defined(_MSC_VER)
+#  define COLLIE_MSVC_PUSH_DISABLE_WARNING(n) \
+    __pragma(warning(push)) __pragma(warning(disable : n))
+#  define COLLIE_MSVC_POP_WARNING() __pragma(warning(pop))
+#else
+#  define COLLIE_MSVC_PUSH_DISABLE_WARNING(n)
+#  define COLLIE_MSVC_POP_WARNING()
+#endif
 
 #endif  // COLLIE_BASE_MACROS_H_

@@ -83,6 +83,8 @@ namespace clog {
     // Set global logging level
     void set_level(level::level_enum log_level);
 
+    void set_vlog_level(int vlevel);
+
     // Determine whether the default logger should log messages with a certain level
     bool should_log(level::level_enum lvl);
 
@@ -188,8 +190,8 @@ namespace clog {
     }
 
     template<typename... Args>
-    inline void critical(format_string_t<Args...> fmt, Args &&...args) {
-        default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
+    inline void fatal(format_string_t<Args...> fmt, Args &&...args) {
+        default_logger_raw()->fatal(fmt, std::forward<Args>(args)...);
     }
 
     template<typename T>
@@ -242,8 +244,8 @@ namespace clog {
     }
 
     template <typename... Args>
-    inline void critical(wformat_string_t<Args...> fmt, Args &&...args) {
-        default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
+    inline void fatal(wformat_string_t<Args...> fmt, Args &&...args) {
+        default_logger_raw()->fatal(fmt, std::forward<Args>(args)...);
     }
 #endif
 
@@ -273,8 +275,8 @@ namespace clog {
     }
 
     template<typename T>
-    inline void critical(const T &msg) {
-        default_logger_raw()->critical(msg);
+    inline void fatal(const T &msg) {
+        default_logger_raw()->fatal(msg);
     }
 
 }  // namespace clog
@@ -288,7 +290,7 @@ namespace clog {
 // CLOG_LEVEL_INFO,
 // CLOG_LEVEL_WARN,
 // CLOG_LEVEL_ERROR,
-// CLOG_LEVEL_CRITICAL,
+// CLOG_LEVEL_FATAL,
 // CLOG_LEVEL_OFF
 //
 
@@ -338,20 +340,20 @@ namespace clog {
 
 #if CLOG_ACTIVE_LEVEL <= CLOG_LEVEL_ERROR
 #define CLOG_LOGGER_ERROR(logger, ...) \
-        CLOG_LOGGER_CALL(logger, clog::level::err, __VA_ARGS__)
+        CLOG_LOGGER_CALL(logger, clog::level::error, __VA_ARGS__)
 #define CLOG_ERROR(...) CLOG_LOGGER_ERROR(clog::default_logger_raw(), __VA_ARGS__)
 #else
 #define CLOG_LOGGER_ERROR(logger, ...) (void)0
 #define CLOG_ERROR(...) (void)0
 #endif
 
-#if CLOG_ACTIVE_LEVEL <= CLOG_LEVEL_CRITICAL
-#define CLOG_LOGGER_CRITICAL(logger, ...) \
-        CLOG_LOGGER_CALL(logger, clog::level::critical, __VA_ARGS__)
-#define CLOG_CRITICAL(...) CLOG_LOGGER_CRITICAL(clog::default_logger_raw(), __VA_ARGS__)
+#if CLOG_ACTIVE_LEVEL <= CLOG_LEVEL_FATAL
+#define CLOG_LOGGER_FATAL(logger, ...) \
+        CLOG_LOGGER_CALL(logger, clog::level::fatal, __VA_ARGS__)
+#define CLOG_FATAL(...) CLOG_LOGGER_FATAL(clog::default_logger_raw(), __VA_ARGS__)
 #else
-#define CLOG_LOGGER_CRITICAL(logger, ...) (void)0
-#define CLOG_CRITICAL(...) (void)0
+#define CLOG_LOGGER_FATAL(logger, ...) (void)0
+#define CLOG_FATAL(...) (void)0
 #endif
 
 #include <collie/log/clog-inl.h>

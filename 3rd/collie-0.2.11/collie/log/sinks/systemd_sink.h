@@ -41,8 +41,8 @@ public:
                           /* clog::level::debug      */ LOG_DEBUG,
                           /* clog::level::info       */ LOG_INFO,
                           /* clog::level::warn       */ LOG_WARNING,
-                          /* clog::level::err        */ LOG_ERR,
-                          /* clog::level::critical   */ LOG_CRIT,
+                          /* clog::level::error        */ LOG_ERR,
+                          /* clog::level::fatal     */ LOG_CRIT,
                           /* clog::level::off        */ LOG_INFO}} {}
 
     ~systemd_sink() override {}

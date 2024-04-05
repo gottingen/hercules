@@ -21,3 +21,11 @@ carbin_cc_binary(
         DEPS Threads::Threads
         COPTS ${USER_CXX_FLAGS}
 )
+
+carbin_cc_binary(
+        NAME stream_log
+        SOURCES stream_log.cc
+        DEPS Threads::Threads
+        COPTS ${USER_CXX_FLAGS}
+)
+

@@ -116,7 +116,8 @@ namespace hercules {
         app->add_option("-D, --define", ins.defines, "Add static variable definitions. The syntax is <name>=<value>");
         app->add_option("-d, --disable-opt", ins.disabled_opts, "Disable the specified IR optimization");
         app->add_option("-p, --plugin", ins.plugins, "Load specified plugin");
-        app->add_option("--log", ins.log, "Enable given log streams");
+        app->add_option("--log", ins.log, "enable log \'t\' for time, \'r\' for realize, \'T\' for typecheck, \'i\' for IR, \'l\' for user log\n"
+                                          "for example --log Ti will enable typecheck and IR log");
         app->add_option("-n, --numeric", ins.numeric, "numerical semantics")->transform(
                 collie::CheckedTransformer(numeric_map, collie::ignore_case));
         app->add_option("-l, --lib", ins.libs, "Link the specified library");

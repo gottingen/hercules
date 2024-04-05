@@ -161,12 +161,12 @@ namespace clog {
 
         template<typename... Args>
         void error(format_string_t<Args...> fmt, Args &&...args) {
-            log(level::err, fmt, std::forward<Args>(args)...);
+            log(level::error, fmt, std::forward<Args>(args)...);
         }
 
         template<typename... Args>
-        void critical(format_string_t<Args...> fmt, Args &&...args) {
-            log(level::critical, fmt, std::forward<Args>(args)...);
+        void fatal(format_string_t<Args...> fmt, Args &&...args) {
+            log(level::fatal, fmt, std::forward<Args>(args)...);
         }
 
 #ifdef CLOG_WCHAR_TO_UTF8_SUPPORT
@@ -233,12 +233,12 @@ namespace clog {
 
         template <typename... Args>
         void error(wformat_string_t<Args...> fmt, Args &&...args) {
-            log(level::err, fmt, std::forward<Args>(args)...);
+            log(level::error, fmt, std::forward<Args>(args)...);
         }
 
         template <typename... Args>
-        void critical(wformat_string_t<Args...> fmt, Args &&...args) {
-            log(level::critical, fmt, std::forward<Args>(args)...);
+        void fatal(wformat_string_t<Args...> fmt, Args &&...args) {
+            log(level::fatal, fmt, std::forward<Args>(args)...);
         }
 #endif
 
@@ -264,12 +264,12 @@ namespace clog {
 
         template<typename T>
         void error(const T &msg) {
-            log(level::err, msg);
+            log(level::error, msg);
         }
 
         template<typename T>
-        void critical(const T &msg) {
-            log(level::critical, msg);
+        void fatal(const T &msg) {
+            log(level::fatal, msg);
         }
 
         // return true logging is enabled for the given level.
@@ -281,6 +281,10 @@ namespace clog {
         bool should_backtrace() const { return tracer_.enabled(); }
 
         void set_level(level::level_enum log_level);
+
+        void set_vlog_level(int v);
+
+        int vlog_level() const;
 
         level::level_enum level() const;
 
@@ -327,6 +331,7 @@ namespace clog {
         std::vector<sink_ptr> sinks_;
         clog::level_t level_{level::info};
         clog::level_t flush_level_{level::off};
+        clog::level_t vlog_level_{0};
         err_handler custom_err_handler_{nullptr};
         details::backtracer tracer_;
 

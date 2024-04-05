@@ -34,8 +34,8 @@ inline ansicolor_sink<ConsoleMutex>::ansicolor_sink(FILE *target_file, color_mod
     colors_.at(level::debug) = to_string_(cyan);
     colors_.at(level::info) = to_string_(green);
     colors_.at(level::warn) = to_string_(yellow_bold);
-    colors_.at(level::err) = to_string_(red_bold);
-    colors_.at(level::critical) = to_string_(bold_on_red);
+    colors_.at(level::error) = to_string_(red_bold);
+    colors_.at(level::fatal) = to_string_(bold_on_red);
     colors_.at(level::off) = to_string_(reset);
 }
 

@@ -177,8 +177,8 @@ struct eventlog {
             case level::warn:
                 return EVENTLOG_WARNING_TYPE;
 
-            case level::err:
-            case level::critical:
+            case level::error:
+            case level::fatal:
             case level::off:
                 return EVENTLOG_ERROR_TYPE;
 
