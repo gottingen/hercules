@@ -55,14 +55,3 @@ class RLock:
 
     def __exit__(self):
         self.release()
-
-def active_count() -> int:
-    from openmp import get_num_threads
-    return get_num_threads()
-
-def get_native_id() -> int:
-    from openmp import get_thread_num
-    return get_thread_num()
-
-def get_ident() -> int:
-    return get_native_id() + 1

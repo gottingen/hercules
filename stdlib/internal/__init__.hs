@@ -52,7 +52,6 @@ from internal.str import *
 
 from internal.sort import sorted
 
-from openmp import Ident as __OMPIdent, for_par
 from gpu import _gpu_loop_outline_template
 from internal.file import File, gzFile, open, gzopen
 from pickle import pickle, unpickle

@@ -163,5 +163,4 @@ class str:
 
 from internal.builtin import *
 
-from openmp import Ident as __OMPIdent, for_par
 from internal.dlopen import dlsym as _dlsym

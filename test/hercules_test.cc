@@ -524,7 +524,6 @@ INSTANTIATE_TEST_SUITE_P(
                         "transform/io_opt.hs",
                         "transform/inlining.hs",
                         "transform/list_opt.hs",
-                        "transform/omp.hs",
                         "transform/outlining.hs",
                         "transform/str_opt.hs"
                 ),
