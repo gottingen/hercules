@@ -12,6 +12,7 @@ configure_file("${PROJECT_SOURCE_DIR}/cmake/config.py.in"
         "${PROJECT_SOURCE_DIR}/jit/hercules/version.py")
 
 option(HERCULES_GPU "build Hercules GPU backend" OFF)
+option(BUILD_TEST "build Hercules tests" ON)
 
 cmake_policy(SET CMP0028 NEW)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
@@ -469,54 +470,9 @@ set(HBIN_SRC
 add_executable(hercules ${HBIN_SRC})
 target_link_libraries(hercules PUBLIC ${STATIC_LIBCPP} herculesc hercules_jupyter Threads::Threads)
 
-# Hercules test Download and unpack googletest at configure time
-include(FetchContent)
-FetchContent_Declare(
-        googletest
-        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/googletest-release-1.12.1/googletest-release-1.12.1"
-        #URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-option(INSTALL_GTEST "Enable installation of googletest." OFF)
-FetchContent_MakeAvailable(googletest)
-enable_testing()
-set(HERCULES_TEST_CPPFILES
-        test/hercules_test.cc
-        test/types.cc)
-add_executable(hercules_test ${HERCULES_TEST_CPPFILES})
-target_include_directories(hercules_test PRIVATE test/hir
-        "${gc_SOURCE_DIR}/include")
-target_link_libraries(hercules_test herculesc herculesrt gtest_main)
-target_compile_definitions(hercules_test
-        PRIVATE TEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test")
-
-add_subdirectory(test/ast)
-
-set(HIR_TEST_CPPFILES
-        test/hir_test.cc
-        test/hir/analyze/dominator.cc
-        test/hir/analyze/reaching.cc
-        test/hir/base.cc
-        test/hir/constant.cc
-        test/hir/flow.cc
-        test/hir/func.cc
-        test/hir/instr.cc
-        test/hir/module.cc
-        test/hir/transform/manager.cc
-        test/hir/types/types.cc
-        test/hir/util/matching.cc
-        test/hir/value.cc
-        test/hir/var.cc
-        test/types.cc)
-add_executable(hir_test ${HIR_TEST_CPPFILES})
-target_include_directories(hir_test PRIVATE test/hir
-        "${gc_SOURCE_DIR}/include")
-target_link_libraries(hir_test herculesc herculesrt gtest_main)
-target_compile_definitions(hir_test
-        PRIVATE TEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test")
-
-
+if (BUILD_TEST)
+    add_subdirectory(test)
+endif ()
 install(TARGETS herculesrt herculesc hercules_jupyter DESTINATION lib/hercules)
 install(FILES ${CMAKE_BINARY_DIR}/libomp${CMAKE_SHARED_LIBRARY_SUFFIX} DESTINATION lib/hercules)
 install(TARGETS hercules DESTINATION bin)

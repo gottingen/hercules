@@ -32,14 +32,21 @@ mkdir -p "${BUILD_PATH}"
 cd "${BUILD_PATH}"
 cmake ../
 make -j8
-
+# copy test
+cp test/hir_test .
+cp test/hercules_test .
+cd "${ROOT_PATH}"
 # export env
 PYTHONLIB=`find_libpython`
 export HERCULES_PYTHON=${PYTHONLIB}
 export PYTHONPATH=${ROOT_PATH}/test/python
-cd "${ROOT_PATH}"
+
+# run test
+
 ./build/hir_test
 ./build/hercules_test
+echo "run test done"
+
 
 
 
