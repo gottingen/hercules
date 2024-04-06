@@ -63,3 +63,8 @@ like the following `kernel.json` example:
         ],
         "language": "python"
     }
+
+.. note::
+
+    The `--plugin` option is used to specify the plugins that you have install to hercules, especially the plugins that
+    int the dirs $HERCULES_HOME/lib/hercules/plugins. more about the plugins, please refer to the `plugins` section.
