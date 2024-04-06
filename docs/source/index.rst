@@ -13,6 +13,8 @@ native machine code or c++ code without any runtime overhead. Typical speedups o
 Python are on the order of 100x or more.
 
 ..  image:: image/flow.jpg
+    :height: 550px
+    :width: 800 px
     :scale: 80 %
     :align: center
     :alt: hercules
