@@ -38,6 +38,7 @@ Contents
     en/install
     en/command_line
     en/sneak_peek
+    en/jupyter
 
 .. toctree::
     :caption: TUTORIALS

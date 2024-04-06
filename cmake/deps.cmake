@@ -5,7 +5,7 @@ include(${CPM_DOWNLOAD_LOCATION})
 CPMAddPackage(
         NAME collie
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/collie-0.2.11"
-        OPTIONS "CARBIN_ENABLE_INSTALL OFF"
+        OPTIONS "CARBIN_ENABLE_INSTALL ON"
         "CARBIN_BUILD_TEST OFF"
         "CARBIN_BUILD_EXAMPLES OFF"
         "CARBIN_BUILD_BENCHMARKS OFF"
@@ -135,3 +135,67 @@ if (APPLE AND APPLE_ARM)
             "LIBUNWIND_ENABLE_SHARED ON"
             "LIBUNWIND_INCLUDE_DOCS OFF")
 endif ()
+
+CPMAddPackage(
+        NAME xtl
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/xtl-0.7.5"
+        VERSION 0.7.5
+        EXCLUDE_FROM_ALL YES
+        OPTIONS "BUILD_TESTS OFF")
+include_directories(${xtl_SOURCE_DIR}/include)
+
+CPMAddPackage(
+        NAME json
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/json-3.11.3"
+        VERSION 3.11.3)
+include_directories(${json_SOURCE_DIR}/include)
+
+CPMAddPackage(
+        NAME xeus
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/xeus-3.0.5"
+        VERSION 3.0.5
+        EXCLUDE_FROM_ALL YES
+        #PATCH_COMMAND git apply --reject --whitespace=fix  ${PROJECT_SOURCE_DIR}/patch/xeus.patch
+        OPTIONS "BUILD_EXAMPLES OFF"
+        "XEUS_BUILD_SHARED_LIBS OFF"
+        "XEUS_STATIC_DEPENDENCIES ON"
+        "CMAKE_POSITION_INDEPENDENT_CODE ON"
+        "XEUS_DISABLE_ARCH_NATIVE ON"
+        "XEUS_USE_DYNAMIC_UUID ON")
+if (xeus_ADDED)
+    install(TARGETS nlohmann_json EXPORT xeus-targets)
+endif()
+include_directories(${xeus_SOURCE_DIR}/include)
+
+CPMAddPackage(
+        NAME libzmq
+        VERSION 4.3.4
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/zeromq-4.3.4"
+        EXCLUDE_FROM_ALL YES
+        OPTIONS "WITH_PERF_TOOL OFF"
+        "ZMQ_BUILD_TESTS OFF"
+        "ENABLE_CPACK OFF"
+        "BUILD_SHARED ON"
+        "ENABLE_CLANG OFF"
+        "WITH_LIBSODIUM OFF"
+        "WITH_TLS OFF"
+        "WITH_DOC OFF")
+
+CPMAddPackage(
+        NAME cppzmq
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/cppzmq-4.8.1"
+        VERSION 4.9.0
+        EXCLUDE_FROM_ALL YES
+        OPTIONS "CPPZMQ_BUILD_TESTS OFF")
+
+CPMAddPackage(
+        NAME xeus-zmq
+        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/xeus-zmq-1.0.3"
+        VERSION 1.0.3
+        EXCLUDE_FROM_ALL YES
+        #PATCH_COMMAND patch -N -u CMakeLists.txt --ignore-whitespace -b ${PROJECT_SOURCE_DIR}/patch/xeus.patch || true
+        OPTIONS "XEUS_ZMQ_BUILD_TESTS OFF"
+        "XEUS_ZMQ_BUILD_SHARED_LIBS OFF"
+        "XEUS_ZMQ_STATIC_DEPENDENCIES ON"
+        "XEUS_USE_DYNAMIC_UUID ON"
+        "CMAKE_POSITION_INDEPENDENT_CODE ON")

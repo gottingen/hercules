@@ -1,0 +1,58 @@
+############################################################################
+# Copyright (c) 2016, Johan Mabille, Sylvain Corlay, Martin Renou          #
+# Copyright (c) 2016, QuantStack                                           #
+#                                                                          #
+# Distributed under the terms of the BSD 3-Clause License.                 #
+#                                                                          #
+# The full license is in the file LICENSE, distributed with this software. #
+############################################################################
+
+# xeus cmake module
+# This module sets the following variables in your project::
+#
+#   xeus_FOUND - true if xeus found on the system
+#   xeus_INCLUDE_DIRS - the directory containing xeus headers
+#   xeus_LIBRARY - the library for dynamic linking
+#   xeus_STATIC_LIBRARY - the library for static linking
+
+@PACKAGE_INIT@
+
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR};${CMAKE_MODULE_PATH}")
+
+@XEUS_ZMQ_CONFIG_CODE@
+
+include(CMakeFindDependencyMacro)
+find_dependency(nlohmann_json @nlohmann_json_REQUIRED_VERSION@)
+find_dependency(xeus @xeus_REQUIRED_VERSION@)
+
+# On Unix platforms, ZeroMQ is built with autotools and pkg-config is
+# required to locate it.
+if (WIN32)
+    find_dependency(ZeroMQ @zeromq_REQUIRED_VERSION@)
+else()
+    # In order to not propagate the build-time requirement for pkg-config, we
+    # do not propagate the dependency on ZeroMQ.
+
+    #find_package(PkgConfig)
+    #pkg_check_modules(ZeroMQ libzmq>=@zeromq_REQUIRED_VERSION@ REQUIRED)
+endif()
+
+find_dependency(cppzmq @cppzmq_REQUIRED_VERSION@)
+find_dependency(OpenSSL)
+
+if(NOT TARGET xeus-zmq AND NOT TARGET xeus-zmq-static)
+    include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake")
+
+    if (TARGET xeus-zmq AND TARGET xeus-zmq-static)
+        get_target_property(@PROJECT_NAME@_INCLUDE_DIR xeus-zmq INTERFACE_INCLUDE_DIRECTORIES)
+        get_target_property(@PROJECT_NAME@_LIBRARY xeus-zmq LOCATION)
+        get_target_property(@PROJECT_NAME@_STATIC_LIBRARY xeus-zmq-static LOCATION)
+    elseif (TARGET xeus-zmq)
+        get_target_property(@PROJECT_NAME@_INCLUDE_DIR xeus-zmq INTERFACE_INCLUDE_DIRECTORIES)
+        get_target_property(@PROJECT_NAME@_LIBRARY xeus-zmq LOCATION)
+    elseif (TARGET xeus-zmq-static)
+        get_target_property(@PROJECT_NAME@_INCLUDE_DIR xeus-zmq-static INTERFACE_INCLUDE_DIRECTORIES)
+        get_target_property(@PROJECT_NAME@_STATIC_LIBRARY xeus-zmq-static LOCATION)
+        set(@PROJECT_NAME@_LIBRARY ${@PROJECT_NAME@_STATIC_LIBRARY})
+    endif ()
+endif()

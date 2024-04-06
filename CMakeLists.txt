@@ -17,7 +17,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(
         Hercules
-        VERSION "0.2.6"
+        VERSION "0.2.7"
         HOMEPAGE_URL "https://github.com/gottingen/hercules"
         DESCRIPTION "high-performance, extensible Python compiler")
 set(HERCULES_JIT_PYTHON_VERSION "0.1.7")
@@ -113,10 +113,6 @@ add_custom_command(
         COMMAND peg2cc generate -g ${CMAKE_SOURCE_DIR}/hercules/parser/peg/parallel.peg -o parallel_rules.cc
         -n parallel
         DEPENDS peg2cc hercules/parser/peg/parallel.peg)
-
-# Hercules Jupyter library
-set(HERCULES_JUPYTER_FILES hercules/util/jupyter.h hercules/util/jupyter.cc)
-add_library(hercules_jupyter SHARED ${HERCULES_JUPYTER_FILES})
 
 # Hercules runtime library
 set(HERCULESRT_FILES
@@ -466,12 +462,19 @@ if (APPLE AND APPLE_ARM)
     # add_dependencies(libs_apple_arm herculesrt)
 endif ()
 
+# Hercules Jupyter library
+set(HERCULES_JUPYTER_FILES hercules/engine/jupyter.h hercules/engine/jupyter.cc)
+add_library(hercules_jupyter SHARED ${HERCULES_JUPYTER_FILES})
+add_dependencies(hercules_jupyter xeus-static xeus-zmq-static nlohmann_json)
+target_link_libraries(hercules_jupyter PRIVATE xeus-static xeus-zmq-static herculesc)
+
 # Hercules command-line tool
 set(HBIN_SRC
         hercules/app/hercules.cc
         hercules/app/jupyter/jupyter.cc
         hercules/app/verison.cc
 )
+
 add_executable(hercules ${HBIN_SRC})
 target_link_libraries(hercules PUBLIC ${STATIC_LIBCPP} herculesc hercules_jupyter Threads::Threads)
 
@@ -485,6 +488,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/hercules
         FILES_MATCHING
         PATTERN "*.h"
         PATTERN "*.hpp")
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/jupyter DESTINATION share)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/stdlib DESTINATION lib/hercules)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/jit/ DESTINATION python)
