@@ -39,8 +39,7 @@ include_directories(${Hercules_SOURCE_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS
-            "${CMAKE_CXX_FLAGS} -pedantic -fvisibility-inlines-hidden -Wno-return-type-c-linkage -Wno-gnu-zero-variadic-macro-arguments -Wno-deprecated-declarations"
-    )
+            "${CMAKE_CXX_FLAGS} -pedantic -fvisibility-inlines-hidden -Wno-return-type-c-linkage -Wno-gnu-zero-variadic-macro-arguments -Wno-deprecated-declarations")
 else ()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-return-type")
 endif ()
@@ -49,7 +48,26 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-limit-debug-info")
 endif ()
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-include_directories(.)
+include_directories(${Hercules_SOURCE_DIR})
+########################################################
+# GPU dependencies
+########################################################
+set(GPU_LINK_LIBRARIES "")
+if (HERCULES_GPU)
+    add_compile_definitions(HERCULES_GPU)
+    find_package(CUDAToolkit REQUIRED)
+    set(GPU_LINK_LIBRARIES "CUDA::cudart_static CUDA::cuda_driver")
+endif ()
+
+########################################################
+# ASAN
+########################################################
+set(ASAN_OPTION "")
+set(ASAN_LINKS "")
+if (ASAN)
+    set(ASAN_OPTION "-fno-omit-frame-pointer" "-fsanitize=address" "-fsanitize-recover=address")
+    set(ASAN_LINKS "-fno-omit-frame-pointer" "-fsanitize=address" "-fsanitize-recover=address")
+endif ()
 
 set(APPLE_ARM OFF)
 if (APPLE AND CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
@@ -134,19 +152,10 @@ else ()
             $<TARGET_FILE:bz2> $<TARGET_FILE:liblzma> $<TARGET_FILE:re2>
             -Wl,--no-whole-archive)
 endif ()
-if (ASAN)
-    target_compile_options(
-            herculesrt PRIVATE "-fno-omit-frame-pointer" "-fsanitize=address"
-            "-fsanitize-recover=address")
-    target_link_libraries(
-            herculesrt PRIVATE "-fno-omit-frame-pointer" "-fsanitize=address"
-            "-fsanitize-recover=address")
-endif ()
-if (HERCULES_GPU)
-    add_compile_definitions(HERCULES_GPU)
-    find_package(CUDAToolkit REQUIRED)
-    target_link_libraries(herculesrt PRIVATE CUDA::cudart_static CUDA::cuda_driver)
-endif ()
+
+target_compile_options(herculesrt PRIVATE ${ASAN_OPTION})
+target_link_libraries(herculesrt PRIVATE ${ASAN_LINKS})
+target_link_libraries(herculesrt PRIVATE ${GPU_LINK_LIBRARIES})
 
 if (APPLE AND APPLE_ARM)
     add_custom_command(
@@ -371,14 +380,9 @@ set(HERCULES_CPPFILES
 )
 add_library(herculesc SHARED ${HERCULES_HPPFILES})
 target_sources(herculesc PRIVATE ${HERCULES_CPPFILES} hercules_rules.cc parallel_rules.cc)
-if (ASAN)
-    target_compile_options(
-            herculesc PRIVATE "-fno-omit-frame-pointer" "-fsanitize=address"
-            "-fsanitize-recover=address")
-    target_link_libraries(
-            herculesc PRIVATE "-fno-omit-frame-pointer" "-fsanitize=address"
-            "-fsanitize-recover=address")
-endif ()
+target_compile_options(herculesc PRIVATE ${ASAN_OPTION})
+target_link_libraries(herculesc PRIVATE ${ASAN_LINKS})
+
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     set_source_files_properties(hercules_rules.cc hercules/parser/peg/peg.cc
             PROPERTIES COMPILE_FLAGS "-O2")
