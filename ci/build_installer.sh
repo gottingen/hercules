@@ -30,7 +30,7 @@ mkdir -p "${BUILD_PATH}"
 
 # build lib
 cd "${BUILD_PATH}"
-cmake ../
+cmake ../ -DBUILD_TEST=OFF
 make -j8
 
 # install to deploy
@@ -38,11 +38,15 @@ make -j8
 cmake --install . --prefix ${BUILD_PATH}/hs-install
 cd ${BUILD_PATH}/hs-install
 tar -cjvf hs-deploy.tar.bz2 *
-
+VFILE=${ROOT_PATH}/hercules/config/config.h
+VM=`grep "HERCULES_VERSION_MAJOR" hercules/config/config.h |awk '{print $3}'`
+VN=`grep "HERCULES_VERSION_MINOR" hercules/config/config.h |awk '{print $3}'`
+VP=`grep "HERCULES_VERSION_PATCH" hercules/config/config.h |awk '{print $3}'`
+VERSION="${VM}.${VN}.${VP}"
 PLATFORM_ORG=$(uname -s)
 PLATFORM="${PLATFORM_ORG,,}"
 ARCH=$(uname -m)
-OUT_NAME="hs-${PLATFORM}-${ARCH}.sh"
+OUT_NAME="hercules_${PLATFORM}_${ARCH}_${VERSION}.sh"
 
 cat ${THIS_PATH}/installer.sh ${BUILD_PATH}/hs-install/hs-deploy.tar.bz2 > ${BUILD_PATH}/${OUT_NAME}
 chmod +x ${BUILD_PATH}/${OUT_NAME}

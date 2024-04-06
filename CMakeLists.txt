@@ -34,8 +34,7 @@ cmake_policy(SET CMP0028 NEW)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 #set_target_properties(xz PROPERTIES EXCLUDE_FROM_ALL ON)
 #set_target_properties(xzdec PROPERTIES EXCLUDE_FROM_ALL ON)
-link_directories(${CONDA_PREFIX}/lib)
-include_directories(${CONDA_PREFIX}/include)
+include_directories(${Hercules_SOURCE_DIR})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -85,7 +84,6 @@ else ()
 endif ()
 
 add_executable(peg2cc hercules/app/peg2cc.cc)
-target_include_directories(peg2cc PRIVATE ${peglib_SOURCE_DIR})
 target_link_libraries(peg2cc PRIVATE Threads::Threads)
 add_custom_command(
         OUTPUT hercules_rules.cc
@@ -119,9 +117,6 @@ add_dependencies(herculesrt zlibstatic gc backtrace bz2 liblzma re2)
 if (APPLE AND APPLE_ARM)
     add_dependencies(herculesrt unwind_shared)
 endif ()
-target_include_directories(herculesrt PRIVATE ${backtrace_SOURCE_DIR}
-        ${re2_SOURCE_DIR}
-        "${gc_SOURCE_DIR}/include" runtime)
 target_link_libraries(herculesrt PRIVATE backtrace ${STATIC_LIBCPP}
         LLVMSupport)
 if (APPLE)
@@ -261,7 +256,6 @@ file(GLOB_RECURSE HERCULES_CCAST_FILES hercules/ast/cc/*.cc)
 
 add_library(ccast OBJECT ${HERCULES_CCAST_FILES})
 set_target_properties(ccast PROPERTIES COMPILE_FLAGS "-fno-rtti")
-target_include_directories(ccast PRIVATE ${PROJECT_SOURCE_DIR})
 target_link_libraries(ccast PUBLIC libclang_static)
 add_library(hprocess OBJECT hercules/util/process.cc hercules/util/process_unix.cc hercules/util/process_win.cc)
 add_executable(cctool hercules/app/cctool.cc)
@@ -376,7 +370,6 @@ set(HERCULES_CPPFILES
         hercules/builtin/debug/trace.cc
 )
 add_library(herculesc SHARED ${HERCULES_HPPFILES})
-target_include_directories(herculesc PRIVATE ${peglib_SOURCE_DIR} ${toml_SOURCE_DIR}/include ${semver_SOURCE_DIR}/include)
 target_sources(herculesc PRIVATE ${HERCULES_CPPFILES} hercules_rules.cc parallel_rules.cc)
 if (ASAN)
     target_compile_options(

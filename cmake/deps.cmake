@@ -63,6 +63,7 @@ CPMAddPackage(
         "enable_large_config ON"
         "enable_thread_local_alloc ON"
         "enable_handle_fork ON")
+include_directories("${gc_SOURCE_DIR}/include")
 if (bdwgc_ADDED)
     set_target_properties(cord PROPERTIES EXCLUDE_FROM_ALL ON)
 endif ()
@@ -71,6 +72,7 @@ CPMAddPackage(
         NAME backtrace
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/backtrace"
 )
+include_directories(${backtrace_SOURCE_DIR})
 if (backtrace_ADDED)
     set(backtrace_SOURCES
             "${backtrace_SOURCE_DIR}/atomic.c"
@@ -121,6 +123,7 @@ CPMAddPackage(
         OPTIONS "CMAKE_POSITION_INDEPENDENT_CODE ON"
         "BUILD_SHARED_LIBS OFF"
         "RE2_BUILD_TESTING OFF")
+include_directories(${re2_SOURCE_DIR})
 
 if (APPLE AND APPLE_ARM)
     enable_language(ASM)

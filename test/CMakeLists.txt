@@ -24,11 +24,11 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 option(INSTALL_GTEST "Enable installation of googletest." OFF)
 FetchContent_MakeAvailable(googletest)
+include_directories(${googletest_SOURCE_DIR}/googletest/include)
+include_directories(${Hercules_SOURCE_DIR}/test)
 enable_testing()
 
 add_library(testing OBJECT testing.cc types.cc)
-target_include_directories(testing PRIVATE hir
-        "${gc_SOURCE_DIR}/include" "${googletest_SOURCE_DIR}/googletest/include")
 target_compile_definitions(testing
         PRIVATE TEST_DIR="${PROJECT_SOURCE_DIR}/test")
 set(TEST_FILES
@@ -40,8 +40,6 @@ set(TEST_FILES
 
 foreach (TEST_FILE ${TEST_FILES})
     add_executable(${TEST_FILE} ${TEST_FILE}.cc)
-    target_include_directories(${TEST_FILE} PRIVATE hir
-            "${gc_SOURCE_DIR}/include")
     target_link_libraries(${TEST_FILE} herculesc herculesrt
             $<TARGET_OBJECTS:testing> gtest_main)
     target_compile_definitions(${TEST_FILE}
@@ -79,8 +77,6 @@ set(HIR_TEST_CPPFILES
         hir/var.cc
         types.cc)
 add_executable(hir_test ${HIR_TEST_CPPFILES})
-target_include_directories(hir_test PRIVATE hir
-        "${gc_SOURCE_DIR}/include")
 target_link_libraries(hir_test herculesc herculesrt gtest_main)
 target_compile_definitions(hir_test
         PRIVATE TEST_DIR="${PROJECT_SOURCE_DIR}/test")

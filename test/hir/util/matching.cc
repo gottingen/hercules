@@ -1,4 +1,4 @@
-#include "test.h"
+#include "hir/test.h"
 
 #include <hercules/hir/util/matching.h>
 
