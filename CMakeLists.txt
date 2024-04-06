@@ -93,10 +93,10 @@ add_custom_command(
         -o hercules_rules.cc -n hercules
         DEPENDS peg2cc hercules/parser/peg/grammar.peg)
 add_custom_command(
-        OUTPUT omp_rules.cc
-        COMMAND peg2cc generate -g ${CMAKE_SOURCE_DIR}/hercules/parser/peg/openmp.peg -o omp_rules.cc
-        -n omp
-        DEPENDS peg2cc hercules/parser/peg/openmp.peg)
+        OUTPUT parallel_rules.cc
+        COMMAND peg2cc generate -g ${CMAKE_SOURCE_DIR}/hercules/parser/peg/parallel.peg -o parallel_rules.cc
+        -n parallel
+        DEPENDS peg2cc hercules/parser/peg/parallel.peg)
 
 # Hercules Jupyter library
 set(HERCULES_JUPYTER_FILES hercules/util/jupyter.h hercules/util/jupyter.cc)
@@ -122,7 +122,7 @@ endif ()
 target_include_directories(herculesrt PRIVATE ${backtrace_SOURCE_DIR}
         ${re2_SOURCE_DIR}
         "${gc_SOURCE_DIR}/include" runtime)
-target_link_libraries(herculesrt PRIVATE omp backtrace ${STATIC_LIBCPP}
+target_link_libraries(herculesrt PRIVATE backtrace ${STATIC_LIBCPP}
         LLVMSupport)
 if (APPLE)
     target_link_libraries(
@@ -152,11 +152,7 @@ if (HERCULES_GPU)
     find_package(CUDAToolkit REQUIRED)
     target_link_libraries(herculesrt PRIVATE CUDA::cudart_static CUDA::cuda_driver)
 endif ()
-add_custom_command(
-        TARGET herculesrt
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:omp>
-        ${CMAKE_BINARY_DIR})
+
 if (APPLE AND APPLE_ARM)
     add_custom_command(
             TARGET herculesrt
@@ -235,7 +231,7 @@ set(HERCULES_HPPFILES
         hercules/hir/transform/lowering/imperative.h
         hercules/hir/transform/lowering/pipeline.h
         hercules/hir/transform/manager.h
-        hercules/hir/transform/parallel/openmp.h
+        hercules/hir/transform/parallel/para.h
         hercules/hir/transform/parallel/schedule.h
         hercules/hir/transform/pass.h
         hercules/hir/transform/pythonic/dict.h
@@ -353,7 +349,7 @@ set(HERCULES_CPPFILES
         hercules/hir/transform/lowering/imperative.cc
         hercules/hir/transform/lowering/pipeline.cc
         hercules/hir/transform/manager.cc
-        hercules/hir/transform/parallel/openmp.cc
+        hercules/hir/transform/parallel/para.cc
         hercules/hir/transform/parallel/schedule.cc
         hercules/hir/transform/pass.cc
         hercules/hir/transform/pythonic/dict.cc
@@ -381,7 +377,7 @@ set(HERCULES_CPPFILES
 )
 add_library(herculesc SHARED ${HERCULES_HPPFILES})
 target_include_directories(herculesc PRIVATE ${peglib_SOURCE_DIR} ${toml_SOURCE_DIR}/include ${semver_SOURCE_DIR}/include)
-target_sources(herculesc PRIVATE ${HERCULES_CPPFILES} hercules_rules.cc omp_rules.cc)
+target_sources(herculesc PRIVATE ${HERCULES_CPPFILES} hercules_rules.cc parallel_rules.cc)
 if (ASAN)
     target_compile_options(
             herculesc PRIVATE "-fno-omit-frame-pointer" "-fsanitize=address"
@@ -456,10 +452,6 @@ add_custom_target(
         COMMAND
         ${CMAKE_COMMAND} -E copy
         "${CMAKE_BINARY_DIR}/libherculesrt${CMAKE_SHARED_LIBRARY_SUFFIX}"
-        "${CMAKE_BINARY_DIR}/lib/hercules"
-        COMMAND
-        ${CMAKE_COMMAND} -E copy
-        "${CMAKE_BINARY_DIR}/libomp${CMAKE_SHARED_LIBRARY_SUFFIX}"
         "${CMAKE_BINARY_DIR}/lib/hercules")
 add_dependencies(libs herculesrt herculesc)
 
@@ -490,7 +482,6 @@ if (BUILD_TEST)
     add_subdirectory(test)
 endif ()
 install(TARGETS herculesrt herculesc hercules_jupyter DESTINATION lib/hercules)
-install(FILES ${CMAKE_BINARY_DIR}/libomp${CMAKE_SHARED_LIBRARY_SUFFIX} DESTINATION lib/hercules)
 install(TARGETS hercules DESTINATION bin)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/hercules
         DESTINATION include

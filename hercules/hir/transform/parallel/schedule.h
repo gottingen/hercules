@@ -17,38 +17,37 @@
 
 #include <hercules/hir/value.h>
 
-namespace hercules {
-namespace ir {
+namespace hercules::ir {
 
-class Value;
+    class Value;
+}  // hercules::ir
 
-namespace transform {
-namespace parallel {
+namespace hercules::ir::transform::parallel {
 
-struct OMPSched {
-  int code;
-  bool dynamic;
-  Value *threads;
-  Value *chunk;
-  bool ordered;
-  int64_t collapse;
-  bool gpu;
+    struct ParaSched {
+        int code;
+        bool dynamic;
+        Value *threads;
+        Value *chunk;
+        bool ordered;
+        int64_t collapse;
+        bool gpu;
 
-  explicit OMPSched(int code = -1, bool dynamic = false, Value *threads = nullptr,
-                    Value *chunk = nullptr, bool ordered = false, int64_t collapse = 0,
-                    bool gpu = false);
-  explicit OMPSched(const std::string &code, Value *threads = nullptr,
-                    Value *chunk = nullptr, bool ordered = false, int64_t collapse = 0,
-                    bool gpu = false);
-  OMPSched(const OMPSched &s)
-      : code(s.code), dynamic(s.dynamic), threads(s.threads), chunk(s.chunk),
-        ordered(s.ordered), collapse(s.collapse), gpu(s.gpu) {}
+        explicit ParaSched(int code = -1, bool dynamic = false, Value *threads = nullptr,
+                          Value *chunk = nullptr, bool ordered = false, int64_t collapse = 0,
+                          bool gpu = false);
 
-  std::vector<Value *> getUsedValues() const;
-  int replaceUsedValue(id_t id, Value *newValue);
-};
+        explicit ParaSched(const std::string &code, Value *threads = nullptr,
+                          Value *chunk = nullptr, bool ordered = false, int64_t collapse = 0,
+                          bool gpu = false);
 
-} // namespace parallel
-} // namespace transform
-} // namespace ir
-} // namespace hercules
+        ParaSched(const ParaSched &s)
+                : code(s.code), dynamic(s.dynamic), threads(s.threads), chunk(s.chunk),
+                  ordered(s.ordered), collapse(s.collapse), gpu(s.gpu) {}
+
+        std::vector<Value *> getUsedValues() const;
+
+        int replaceUsedValue(id_t id, Value *newValue);
+    };
+
+} // namespace hercules::ir::transform::parallel

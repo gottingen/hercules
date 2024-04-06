@@ -144,10 +144,10 @@ namespace hercules::ast {
         return result;
     }
 
-    std::shared_ptr<peg::Grammar> initOpenMPParser() {
+    std::shared_ptr<peg::Grammar> initParaParser() {
         auto g = std::make_shared<peg::Grammar>();
-        init_omp_rules(*g);
-        init_omp_actions(*g);
+        init_parallel_rules(*g);
+        init_parallel_actions(*g);
         for (auto &x: *g) {
             auto v = peg::LinkReferences(*g, x.second.params);
             x.second.accept(v);
@@ -156,10 +156,10 @@ namespace hercules::ast {
         return g;
     }
 
-    std::vector<CallExpr::Arg> parseOpenMP(Cache *cache, const std::string &code,
+    std::vector<CallExpr::Arg> parsePara(Cache *cache, const std::string &code,
                                            const hercules::SrcInfo &loc) {
         if (!ompGrammar)
-            ompGrammar = initOpenMPParser();
+            ompGrammar = initParaParser();
 
         std::vector<std::tuple<size_t, size_t, std::string>> errors;
         auto log = [&](size_t line, size_t col, const std::string &msg, const std::string &) {
@@ -174,7 +174,7 @@ namespace hercules::ast {
             r.error_info.output_log(log, code.c_str(), code.size());
         exc::ParserException ex;
         if (!errors.empty()) {
-            ex.track(collie::format("openmp {}", std::get<2>(errors[0])), loc);
+            ex.track(collie::format("para {}", std::get<2>(errors[0])), loc);
             throw ex;
         }
         return result;

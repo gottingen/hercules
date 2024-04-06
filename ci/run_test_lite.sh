@@ -18,7 +18,7 @@ set -ue
 set -o pipefail
 
 if [ $# -ne 1 ]; then
-    echo "Usage: $0 [core|parse|transform|stdlib|all]"
+    echo "Usage: $0 [core|parse|transform|stdlib|numerics|hir|all]"
     exit 1
 fi
 
@@ -51,6 +51,14 @@ case $1 in
     cp ${BUILD_PATH}/test/hercules_stdlib_test ${BUILD_PATH}/
     ${BUILD_PATH}/hercules_stdlib_test
     ;;
+  numerics)
+    cp ${BUILD_PATH}/test/hercules_numerics_test ${BUILD_PATH}/
+    ${BUILD_PATH}/hercules_numerics_test
+    ;;
+  hir)
+    cp ${BUILD_PATH}/test/hir_test ${BUILD_PATH}/
+    ${BUILD_PATH}/hir_test
+    ;;
   all)
     cp ${BUILD_PATH}/test/hercules_core_test ${BUILD_PATH}/
     ${BUILD_PATH}/hercules_core_test
@@ -60,6 +68,10 @@ case $1 in
     ${BUILD_PATH}/hercules_transform_test
     cp ${BUILD_PATH}/test/hercules_stdlib_test ${BUILD_PATH}/
     ${BUILD_PATH}/hercules_stdlib_test
+    cp ${BUILD_PATH}/test/hercules_numerics_test ${BUILD_PATH}/
+    ${BUILD_PATH}/hercules_numerics_test
+    cp ${BUILD_PATH}/test/hir_test ${BUILD_PATH}/
+    ${BUILD_PATH}/hir_test
     ;;
   *)
     echo "Usage: $0 [core|parse|transform|stdlib|all]"

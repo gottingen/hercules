@@ -68,14 +68,6 @@ if (bdwgc_ADDED)
 endif ()
 
 CPMAddPackage(
-        NAME openmp
-        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/openmp"
-        EXCLUDE_FROM_ALL YES
-        OPTIONS "CMAKE_BUILD_TYPE Release"
-        "OPENMP_ENABLE_LIBOMPTARGET OFF"
-        "OPENMP_STANDALONE_BUILD ON")
-
-CPMAddPackage(
         NAME backtrace
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/backtrace"
 )

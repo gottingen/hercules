@@ -57,6 +57,6 @@ void init_hercules_rules(peg::Grammar &);
 
 void init_hercules_actions(peg::Grammar &);
 
-void init_omp_rules(peg::Grammar &);
+void init_parallel_rules(peg::Grammar &);
 
-void init_omp_actions(peg::Grammar &);
+void init_parallel_actions(peg::Grammar &);
