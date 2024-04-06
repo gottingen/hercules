@@ -12,7 +12,7 @@ hercules is a high-performance AOT compiler that compiles Python code to
 native machine code or c++ code without any runtime overhead. Typical speedups over
 Python are on the order of 100x or more.
 
-..  image:: image/flow.jpg
+..  image:: image/flow.webp
     :height: 550px
     :width: 800 px
     :scale: 80 %
