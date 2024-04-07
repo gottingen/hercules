@@ -47,3 +47,4 @@ docs/xml
 .vscode
 external
 __pycache__
+hercules_jit.egg-info
