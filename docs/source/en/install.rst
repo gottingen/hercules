@@ -6,7 +6,15 @@
 binary install
 ===============================
 
-update later
+The binary installer releases at `hercules releases <https://github.com/gottingen/hercules/tags>`_. select the version
+you want to install, and download the binary installer for your platform. Now, we only support linux binary installers for
+x86_64 platform, you can download the binary installer for linux, and run the following command to install hercules to your system:
+
+.. code-block:: bash
+
+    bash hercules_linux_x86_64_0.2.7.sh
+
+if you want to support jupyter notebook, you can refer to read :ref:`jupyter <jupyter>` for more information.
 
 source install
 ===============================
@@ -58,10 +66,13 @@ you can also run the following command to build a release version:
 
     ./ci/build_installer.sh
 
-this will generate a `hs-linux.sh` file in the `build` directory, you can
+this will generate a `hercules_linux_x86_64_0.2.7.sh` file in the `build` directory, you can
 run it to install hercules to your system, Also, you can distribute it to
 your friends or you children to install hercules on linux, so they would known that a person named Jeff
 have created a wonderful project called Hercules.
+
+export PATH
+===============================
 
 after that, don't forget to export PATH to your system, by default, hercules will be installed in `~/.hercules`,
 and export the path to your system:
