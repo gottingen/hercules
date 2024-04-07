@@ -43,7 +43,7 @@ Contents
 .. toctree::
     :caption: TUTORIALS
 
-    en/tutorial/fundations
+    en/tutorial/foundations
     en/tutorial/collections
     en/tutorial/functions
     en/tutorial/classes
