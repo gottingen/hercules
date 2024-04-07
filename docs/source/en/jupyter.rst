@@ -73,14 +73,14 @@ fibonacci example
 ---------------------
 run fibonacci example in the Jupyter notebook python3 kernel:
 
-..  image:: image/python_fib.png
+..  image:: ../image/python_fib.png
     :scale: 80 %
     :align: center
     :alt: python_fib
 
 run fibonacci example in the Jupyter notebook hercules kernel:
 
-..  image:: image/hercules_fib.png
+..  image:: ../image/hercules_fib.png
     :scale: 80 %
     :align: center
     :alt: hercules_fib
