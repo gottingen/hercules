@@ -3,8 +3,14 @@
 
 .. _installing:
 
-binary install
+Installing Hercules
 ===============================
+
+In this section, we will show you how to install Hercules to your system, we provide two ways to install Hercules,
+one is binary install, and the other is source install.
+
+binary install
+------------------------
 
 The binary installer releases at `hercules releases <https://github.com/gottingen/hercules/tags>`_. select the version
 you want to install, and download the binary installer for your platform. Now, we only support linux binary installers for
@@ -17,7 +23,7 @@ x86_64 platform, you can download the binary installer for linux, and run the fo
 if you want to support jupyter notebook, you can refer to read :ref:`jupyter <jupyter>` for more information.
 
 source install
-===============================
+-------------------------------
 
 build and install from source, almost third-party dependencies are ingested in the source code
 3rd-party directory, unfortunately, some `big` dependencies are not included in the source code,
@@ -72,7 +78,7 @@ your friends or you children to install hercules on linux, so they would known t
 have created a wonderful project called Hercules.
 
 export PATH
-===============================
+-------------------------------------
 
 after that, don't forget to export PATH to your system, by default, hercules will be installed in `~/.hercules`,
 and export the path to your system:
