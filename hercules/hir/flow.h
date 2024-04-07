@@ -149,7 +149,7 @@ namespace hercules::ir {
         /// the variable
         Var *var;
         /// parallel loop schedule, or null if none
-        std::unique_ptr<transform::parallel::OMPSched> schedule;
+        std::unique_ptr<transform::parallel::ParaSched> schedule;
 
     public:
         static const char NodeId;
@@ -160,7 +160,7 @@ namespace hercules::ir {
         /// @param var the variable
         /// @param name the flow's name
         ForFlow(Value *iter, Flow *body, Var *var,
-                std::unique_ptr<transform::parallel::OMPSched> schedule = {},
+                std::unique_ptr<transform::parallel::ParaSched> schedule = {},
                 std::string name = "")
                 : AcceptorExtend(std::move(name)), iter(iter), body(body), var(var),
                   schedule(std::move(schedule)) {}
@@ -202,20 +202,20 @@ namespace hercules::ir {
         /// @param a true if parallel
         void setParallel(bool a = true) {
             if (a)
-                schedule = std::make_unique<transform::parallel::OMPSched>();
+                schedule = std::make_unique<transform::parallel::ParaSched>();
             else
-                schedule = std::unique_ptr<transform::parallel::OMPSched>();
+                schedule = std::unique_ptr<transform::parallel::ParaSched>();
         }
 
         /// @return the parallel loop schedule, or null if none
-        transform::parallel::OMPSched *getSchedule() { return schedule.get(); }
+        transform::parallel::ParaSched *getSchedule() { return schedule.get(); }
 
         /// @return the parallel loop schedule, or null if none
-        const transform::parallel::OMPSched *getSchedule() const { return schedule.get(); }
+        const transform::parallel::ParaSched *getSchedule() const { return schedule.get(); }
 
         /// Sets the parallel loop schedule
-        /// @param s the schedule string (e.g. OpenMP pragma)
-        void setSchedule(std::unique_ptr<transform::parallel::OMPSched> s) {
+        /// @param s the schedule string (e.g. Para pragma)
+        void setSchedule(std::unique_ptr<transform::parallel::ParaSched> s) {
             schedule = std::move(s);
         }
 
@@ -243,7 +243,7 @@ namespace hercules::ir {
         /// the variable, must be integer type
         Var *var;
         /// parallel loop schedule, or null if none
-        std::unique_ptr<transform::parallel::OMPSched> schedule;
+        std::unique_ptr<transform::parallel::ParaSched> schedule;
 
     public:
         static const char NodeId;
@@ -256,7 +256,7 @@ namespace hercules::ir {
         /// @param var the end variable, must be integer
         /// @param name the flow's name
         ImperativeForFlow(Value *start, int64_t step, Value *end, Flow *body, Var *var,
-                          std::unique_ptr<transform::parallel::OMPSched> schedule = {},
+                          std::unique_ptr<transform::parallel::ParaSched> schedule = {},
                           std::string name = "")
                 : AcceptorExtend(std::move(name)), start(start), step(step), end(end), body(body),
                   var(var), schedule(std::move(schedule)) {}
@@ -309,20 +309,20 @@ namespace hercules::ir {
         /// @param a true if parallel
         void setParallel(bool a = true) {
             if (a)
-                schedule = std::make_unique<transform::parallel::OMPSched>();
+                schedule = std::make_unique<transform::parallel::ParaSched>();
             else
-                schedule = std::unique_ptr<transform::parallel::OMPSched>();
+                schedule = std::unique_ptr<transform::parallel::ParaSched>();
         }
 
         /// @return the parallel loop schedule, or null if none
-        transform::parallel::OMPSched *getSchedule() { return schedule.get(); }
+        transform::parallel::ParaSched *getSchedule() { return schedule.get(); }
 
         /// @return the parallel loop schedule, or null if none
-        const transform::parallel::OMPSched *getSchedule() const { return schedule.get(); }
+        const transform::parallel::ParaSched *getSchedule() const { return schedule.get(); }
 
         /// Sets the parallel loop schedule
-        /// @param s the schedule string (e.g. OpenMP pragma)
-        void setSchedule(std::unique_ptr<transform::parallel::OMPSched> s) {
+        /// @param s the schedule string (e.g. Para pragma)
+        void setSchedule(std::unique_ptr<transform::parallel::ParaSched> s) {
             schedule = std::move(s);
         }
 

@@ -38,8 +38,8 @@ namespace hercules::ast {
     /// Parse a hs file.
     StmtPtr parseFile(Cache *cache, const std::string &file);
 
-    /// Parse a OpenMP clause.
-    std::vector<CallExpr::Arg> parseOpenMP(Cache *cache, const std::string &code,
+    /// Parse a Para clause.
+    std::vector<CallExpr::Arg> parsePara(Cache *cache, const std::string &code,
                                            const hercules::SrcInfo &loc);
 
 } // namespace hercules::ast

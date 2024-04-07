@@ -12,12 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-//
-// Created by jeff on 24-4-2.
-//
+
 #include <hercules/app/jupyter/jupyter.h>
 #include <hercules/engine/vm.h>
-#include <hercules/util/jupyter.h>
+#include <hercules/engine/jupyter.h>
 
 namespace hercules {
 

@@ -27,7 +27,7 @@
 #include <collie/strings/format.h>
 
 using hercules::ir::cast;
-using hercules::ir::transform::parallel::OMPSched;
+using hercules::ir::transform::parallel::ParaSched;
 
 namespace hercules::ast {
 
@@ -444,13 +444,13 @@ namespace hercules::ast {
     }
 
     void TranslateVisitor::visit(ForStmt *stmt) {
-        std::unique_ptr<OMPSched> os = nullptr;
+        std::unique_ptr<ParaSched> os = nullptr;
         if (stmt->decorator) {
-            os = std::make_unique<OMPSched>();
+            os = std::make_unique<ParaSched>();
             auto c = stmt->decorator->getCall();
             seqassert(c, "for par is not a call: {}", stmt->decorator);
             auto fc = c->expr->getType()->getFunc();
-            seqassert(fc && fc->ast->name == "std.openmp.for_par:0",
+            seqassert(fc && fc->ast->name == "std.para.for_par:0",
                       "for par is not a function");
             auto schedule =
                     fc->funcGenerics[0].type->getStatic()->expr->staticValue.getString();
@@ -460,7 +460,7 @@ namespace hercules::ast {
             int64_t collapse =
                     fc->funcGenerics[2].type->getStatic()->expr->staticValue.getInt();
             bool gpu = fc->funcGenerics[3].type->getStatic()->expr->staticValue.getInt();
-            os = std::make_unique<OMPSched>(schedule, threads, chunk, ordered, collapse, gpu);
+            os = std::make_unique<ParaSched>(schedule, threads, chunk, ordered, collapse, gpu);
         }
 
         seqassert(stmt->var->getId(), "expected IdExpr, got {}", stmt->var);

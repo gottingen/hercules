@@ -1,0 +1,22 @@
+name: xeus-zmq
+channels:
+  - conda-forge
+dependencies:
+  # Build dependencies
+  - cmake
+  - cxx-compiler
+  - pkg-config
+  - ninja
+  # Host dependencies
+  - zeromq=4.3.4
+  - zeromq-static=4.3.4
+  - cppzmq=4.8.1
+  - xtl=0.7
+  - xeus>=3.0,<4.0
+  - OpenSSL=1 
+  - libopenssl-static=1
+  - nlohmann_json
+  # Test dependencies
+  - doctest >= 2.4.6
+  - pytest
+  - jupyter_kernel_test>=0.5,<0.6

@@ -147,9 +147,9 @@ namespace hercules::ast {
         ctx->getBase()->loops.pop_back();
     }
 
-    /// Transform and check for OpenMP decorator.
+    /// Transform and check for Para decorator.
     /// @example
-    ///   `@par(num_threads=2, openmp="schedule(static)")` ->
+    ///   `@par(num_threads=2, para="schedule(static)")` ->
     ///   `for_par(num_threads=2, schedule="static")`
     ExprPtr SimplifyVisitor::transformForDecorator(const ExprPtr &decorator) {
         if (!decorator)
@@ -160,13 +160,13 @@ namespace hercules::ast {
         if (!callee || !callee->isId("par"))
             E(Error::LOOP_DECORATOR, decorator);
         std::vector<CallExpr::Arg> args;
-        std::string openmp;
+        std::string para;
         std::vector<CallExpr::Arg> omp;
         if (auto c = decorator->getCall())
             for (auto &a: c->args) {
-                if (a.name == "openmp" ||
-                    (a.name.empty() && openmp.empty() && a.value->getString())) {
-                    omp = parseOpenMP(ctx->cache, a.value->getString()->getValue(),
+                if (a.name == "para" ||
+                    (a.name.empty() && para.empty() && a.value->getString())) {
+                    omp = parsePara(ctx->cache, a.value->getString()->getValue(),
                                       a.value->getSrcInfo());
                 } else {
                     args.push_back({a.name, transform(a.value)});

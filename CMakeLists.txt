@@ -1,7 +1,23 @@
+#
+# Copyright 2023 The titan-search Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 cmake_minimum_required(VERSION 3.14)
 project(
         Hercules
-        VERSION "0.2.6"
+        VERSION "0.2.7"
         HOMEPAGE_URL "https://github.com/gottingen/hercules"
         DESCRIPTION "high-performance, extensible Python compiler")
 set(HERCULES_JIT_PYTHON_VERSION "0.1.7")
@@ -12,19 +28,18 @@ configure_file("${PROJECT_SOURCE_DIR}/cmake/config.py.in"
         "${PROJECT_SOURCE_DIR}/jit/hercules/version.py")
 
 option(HERCULES_GPU "build Hercules GPU backend" OFF)
+option(BUILD_TEST "build Hercules tests" ON)
 
 cmake_policy(SET CMP0028 NEW)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 #set_target_properties(xz PROPERTIES EXCLUDE_FROM_ALL ON)
 #set_target_properties(xzdec PROPERTIES EXCLUDE_FROM_ALL ON)
-link_directories(${CONDA_PREFIX}/lib)
-include_directories(${CONDA_PREFIX}/include)
+include_directories(${Hercules_SOURCE_DIR})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS
-            "${CMAKE_CXX_FLAGS} -pedantic -fvisibility-inlines-hidden -Wno-return-type-c-linkage -Wno-gnu-zero-variadic-macro-arguments -Wno-deprecated-declarations"
-    )
+            "${CMAKE_CXX_FLAGS} -pedantic -fvisibility-inlines-hidden -Wno-return-type-c-linkage -Wno-gnu-zero-variadic-macro-arguments -Wno-deprecated-declarations")
 else ()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-return-type")
 endif ()
@@ -33,7 +48,26 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-limit-debug-info")
 endif ()
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-include_directories(.)
+include_directories(${Hercules_SOURCE_DIR})
+########################################################
+# GPU dependencies
+########################################################
+set(GPU_LINK_LIBRARIES "")
+if (HERCULES_GPU)
+    add_compile_definitions(HERCULES_GPU)
+    find_package(CUDAToolkit REQUIRED)
+    set(GPU_LINK_LIBRARIES "CUDA::cudart_static CUDA::cuda_driver")
+endif ()
+
+########################################################
+# ASAN
+########################################################
+set(ASAN_OPTION "")
+set(ASAN_LINKS "")
+if (ASAN)
+    set(ASAN_OPTION "-fno-omit-frame-pointer" "-fsanitize=address" "-fsanitize-recover=address")
+    set(ASAN_LINKS "-fno-omit-frame-pointer" "-fsanitize=address" "-fsanitize-recover=address")
+endif ()
 
 set(APPLE_ARM OFF)
 if (APPLE AND CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
@@ -68,7 +102,6 @@ else ()
 endif ()
 
 add_executable(peg2cc hercules/app/peg2cc.cc)
-target_include_directories(peg2cc PRIVATE ${peglib_SOURCE_DIR})
 target_link_libraries(peg2cc PRIVATE Threads::Threads)
 add_custom_command(
         OUTPUT hercules_rules.cc
@@ -76,14 +109,10 @@ add_custom_command(
         -o hercules_rules.cc -n hercules
         DEPENDS peg2cc hercules/parser/peg/grammar.peg)
 add_custom_command(
-        OUTPUT omp_rules.cc
-        COMMAND peg2cc generate -g ${CMAKE_SOURCE_DIR}/hercules/parser/peg/openmp.peg -o omp_rules.cc
-        -n omp
-        DEPENDS peg2cc hercules/parser/peg/openmp.peg)
-
-# Hercules Jupyter library
-set(HERCULES_JUPYTER_FILES hercules/util/jupyter.h hercules/util/jupyter.cc)
-add_library(hercules_jupyter SHARED ${HERCULES_JUPYTER_FILES})
+        OUTPUT parallel_rules.cc
+        COMMAND peg2cc generate -g ${CMAKE_SOURCE_DIR}/hercules/parser/peg/parallel.peg -o parallel_rules.cc
+        -n parallel
+        DEPENDS peg2cc hercules/parser/peg/parallel.peg)
 
 # Hercules runtime library
 set(HERCULESRT_FILES
@@ -102,10 +131,7 @@ add_dependencies(herculesrt zlibstatic gc backtrace bz2 liblzma re2)
 if (APPLE AND APPLE_ARM)
     add_dependencies(herculesrt unwind_shared)
 endif ()
-target_include_directories(herculesrt PRIVATE ${backtrace_SOURCE_DIR}
-        ${re2_SOURCE_DIR}
-        "${gc_SOURCE_DIR}/include" runtime)
-target_link_libraries(herculesrt PRIVATE omp backtrace ${STATIC_LIBCPP}
+target_link_libraries(herculesrt PRIVATE backtrace ${STATIC_LIBCPP}
         LLVMSupport)
 if (APPLE)
     target_link_libraries(
@@ -122,24 +148,11 @@ else ()
             $<TARGET_FILE:bz2> $<TARGET_FILE:liblzma> $<TARGET_FILE:re2>
             -Wl,--no-whole-archive)
 endif ()
-if (ASAN)
-    target_compile_options(
-            herculesrt PRIVATE "-fno-omit-frame-pointer" "-fsanitize=address"
-            "-fsanitize-recover=address")
-    target_link_libraries(
-            herculesrt PRIVATE "-fno-omit-frame-pointer" "-fsanitize=address"
-            "-fsanitize-recover=address")
-endif ()
-if (HERCULES_GPU)
-    add_compile_definitions(HERCULES_GPU)
-    find_package(CUDAToolkit REQUIRED)
-    target_link_libraries(herculesrt PRIVATE CUDA::cudart_static CUDA::cuda_driver)
-endif ()
-add_custom_command(
-        TARGET herculesrt
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:omp>
-        ${CMAKE_BINARY_DIR})
+
+target_compile_options(herculesrt PRIVATE ${ASAN_OPTION})
+target_link_libraries(herculesrt PRIVATE ${ASAN_LINKS})
+target_link_libraries(herculesrt PRIVATE ${GPU_LINK_LIBRARIES})
+
 if (APPLE AND APPLE_ARM)
     add_custom_command(
             TARGET herculesrt
@@ -218,7 +231,7 @@ set(HERCULES_HPPFILES
         hercules/hir/transform/lowering/imperative.h
         hercules/hir/transform/lowering/pipeline.h
         hercules/hir/transform/manager.h
-        hercules/hir/transform/parallel/openmp.h
+        hercules/hir/transform/parallel/para.h
         hercules/hir/transform/parallel/schedule.h
         hercules/hir/transform/pass.h
         hercules/hir/transform/pythonic/dict.h
@@ -248,7 +261,6 @@ file(GLOB_RECURSE HERCULES_CCAST_FILES hercules/ast/cc/*.cc)
 
 add_library(ccast OBJECT ${HERCULES_CCAST_FILES})
 set_target_properties(ccast PROPERTIES COMPILE_FLAGS "-fno-rtti")
-target_include_directories(ccast PRIVATE ${PROJECT_SOURCE_DIR})
 target_link_libraries(ccast PUBLIC libclang_static)
 add_library(hprocess OBJECT hercules/util/process.cc hercules/util/process_unix.cc hercules/util/process_win.cc)
 add_executable(cctool hercules/app/cctool.cc)
@@ -336,7 +348,7 @@ set(HERCULES_CPPFILES
         hercules/hir/transform/lowering/imperative.cc
         hercules/hir/transform/lowering/pipeline.cc
         hercules/hir/transform/manager.cc
-        hercules/hir/transform/parallel/openmp.cc
+        hercules/hir/transform/parallel/para.cc
         hercules/hir/transform/parallel/schedule.cc
         hercules/hir/transform/pass.cc
         hercules/hir/transform/pythonic/dict.cc
@@ -363,16 +375,10 @@ set(HERCULES_CPPFILES
         hercules/builtin/debug/trace.cc
 )
 add_library(herculesc SHARED ${HERCULES_HPPFILES})
-target_include_directories(herculesc PRIVATE ${peglib_SOURCE_DIR} ${toml_SOURCE_DIR}/include ${semver_SOURCE_DIR}/include)
-target_sources(herculesc PRIVATE ${HERCULES_CPPFILES} hercules_rules.cc omp_rules.cc)
-if (ASAN)
-    target_compile_options(
-            herculesc PRIVATE "-fno-omit-frame-pointer" "-fsanitize=address"
-            "-fsanitize-recover=address")
-    target_link_libraries(
-            herculesc PRIVATE "-fno-omit-frame-pointer" "-fsanitize=address"
-            "-fsanitize-recover=address")
-endif ()
+target_sources(herculesc PRIVATE ${HERCULES_CPPFILES} hercules_rules.cc parallel_rules.cc)
+target_compile_options(herculesc PRIVATE ${ASAN_OPTION})
+target_link_libraries(herculesc PRIVATE ${ASAN_LINKS})
+
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     set_source_files_properties(hercules_rules.cc hercules/parser/peg/peg.cc
             PROPERTIES COMPILE_FLAGS "-O2")
@@ -439,10 +445,6 @@ add_custom_target(
         COMMAND
         ${CMAKE_COMMAND} -E copy
         "${CMAKE_BINARY_DIR}/libherculesrt${CMAKE_SHARED_LIBRARY_SUFFIX}"
-        "${CMAKE_BINARY_DIR}/lib/hercules"
-        COMMAND
-        ${CMAKE_COMMAND} -E copy
-        "${CMAKE_BINARY_DIR}/libomp${CMAKE_SHARED_LIBRARY_SUFFIX}"
         "${CMAKE_BINARY_DIR}/lib/hercules")
 add_dependencies(libs herculesrt herculesc)
 
@@ -460,71 +462,33 @@ if (APPLE AND APPLE_ARM)
     # add_dependencies(libs_apple_arm herculesrt)
 endif ()
 
+# Hercules Jupyter library
+set(HERCULES_JUPYTER_FILES hercules/engine/jupyter.h hercules/engine/jupyter.cc)
+add_library(hercules_jupyter SHARED ${HERCULES_JUPYTER_FILES})
+add_dependencies(hercules_jupyter xeus-static xeus-zmq-static nlohmann_json)
+target_link_libraries(hercules_jupyter PRIVATE xeus-static xeus-zmq-static herculesc)
+
 # Hercules command-line tool
 set(HBIN_SRC
         hercules/app/hercules.cc
         hercules/app/jupyter/jupyter.cc
         hercules/app/verison.cc
 )
+
 add_executable(hercules ${HBIN_SRC})
 target_link_libraries(hercules PUBLIC ${STATIC_LIBCPP} herculesc hercules_jupyter Threads::Threads)
 
-# Hercules test Download and unpack googletest at configure time
-include(FetchContent)
-FetchContent_Declare(
-        googletest
-        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/googletest-release-1.12.1/googletest-release-1.12.1"
-        #URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-option(INSTALL_GTEST "Enable installation of googletest." OFF)
-FetchContent_MakeAvailable(googletest)
-enable_testing()
-set(HERCULES_TEST_CPPFILES
-        test/hercules_test.cc
-        test/types.cc)
-add_executable(hercules_test ${HERCULES_TEST_CPPFILES})
-target_include_directories(hercules_test PRIVATE test/hir
-        "${gc_SOURCE_DIR}/include")
-target_link_libraries(hercules_test herculesc herculesrt gtest_main)
-target_compile_definitions(hercules_test
-        PRIVATE TEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test")
-
-add_subdirectory(test/ast)
-
-set(HIR_TEST_CPPFILES
-        test/hir_test.cc
-        test/hir/analyze/dominator.cc
-        test/hir/analyze/reaching.cc
-        test/hir/base.cc
-        test/hir/constant.cc
-        test/hir/flow.cc
-        test/hir/func.cc
-        test/hir/instr.cc
-        test/hir/module.cc
-        test/hir/transform/manager.cc
-        test/hir/types/types.cc
-        test/hir/util/matching.cc
-        test/hir/value.cc
-        test/hir/var.cc
-        test/types.cc)
-add_executable(hir_test ${HIR_TEST_CPPFILES})
-target_include_directories(hir_test PRIVATE test/hir
-        "${gc_SOURCE_DIR}/include")
-target_link_libraries(hir_test herculesc herculesrt gtest_main)
-target_compile_definitions(hir_test
-        PRIVATE TEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test")
-
-
+if (BUILD_TEST)
+    add_subdirectory(test)
+endif ()
 install(TARGETS herculesrt herculesc hercules_jupyter DESTINATION lib/hercules)
-install(FILES ${CMAKE_BINARY_DIR}/libomp${CMAKE_SHARED_LIBRARY_SUFFIX} DESTINATION lib/hercules)
 install(TARGETS hercules DESTINATION bin)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/hercules
         DESTINATION include
         FILES_MATCHING
         PATTERN "*.h"
         PATTERN "*.hpp")
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/jupyter DESTINATION share)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/stdlib DESTINATION lib/hercules)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/jit/ DESTINATION python)

@@ -28,7 +28,6 @@
 #include <hercules/hir/transform/lowering/imperative.h>
 #include <hercules/hir/transform/lowering/pipeline.h>
 #include <hercules/hir/transform/manager.h>
-#include <hercules/hir/transform/parallel/openmp.h>
 #include <hercules/hir/transform/pass.h>
 #include <hercules/hir/transform/pythonic/dict.h>
 #include <hercules/hir/transform/pythonic/generator.h>
@@ -165,7 +164,7 @@ namespace hercules::ir::transform {
             case Init::DEBUG: {
                 registerPass(std::make_unique<lowering::PipelineLowering>());
                 registerPass(std::make_unique<lowering::ImperativeForFlowLowering>());
-                registerPass(std::make_unique<parallel::OpenMPPass>());
+                //registerPass(std::make_unique<parallel::ParaPass>());
                 break;
             }
             case Init::RELEASE:
@@ -209,8 +208,8 @@ namespace hercules::ir::transform {
                              {seKey1, rdKey, cfgKey, globalKey, capKey});
 
                 // parallel
-                registerPass(std::make_unique<parallel::OpenMPPass>(), /*insertBefore=*/"", {},
-                             {cfgKey, globalKey});
+                //registerPass(std::make_unique<parallel::ParaPass>(), /*insertBefore=*/"", {},
+                //             {cfgKey, globalKey});
 
                 if (init != Init::JIT) {
                     // Don't demote globals in JIT mode, since they might be used later

@@ -211,13 +211,13 @@ namespace hercules::ir::util {
 
     void CloneVisitor::visit(const ForFlow *v) {
         auto *loop = Nt(v, nullptr, nullptr, nullptr,
-                        std::unique_ptr<transform::parallel::OMPSched>());
+                        std::unique_ptr<transform::parallel::ParaSched>());
         forceRemap(v, loop);
         loop->setIter(clone(v->getIter()));
         loop->setBody(clone(v->getBody()));
         loop->setVar(clone(v->getVar()));
         if (auto *sched = v->getSchedule()) {
-            auto schedCloned = std::make_unique<transform::parallel::OMPSched>(*sched);
+            auto schedCloned = std::make_unique<transform::parallel::ParaSched>(*sched);
             for (auto *val: sched->getUsedValues()) {
                 schedCloned->replaceUsedValue(val->getId(), clone(val));
             }
@@ -229,14 +229,14 @@ namespace hercules::ir::util {
 
     void CloneVisitor::visit(const ImperativeForFlow *v) {
         auto *loop = Nt(v, nullptr, v->getStep(), nullptr, nullptr, nullptr,
-                        std::unique_ptr<transform::parallel::OMPSched>());
+                        std::unique_ptr<transform::parallel::ParaSched>());
         forceRemap(v, loop);
         loop->setStart(clone(v->getStart()));
         loop->setBody(clone(v->getBody()));
         loop->setVar(clone(v->getVar()));
         loop->setEnd(clone(v->getEnd()));
         if (auto *sched = v->getSchedule()) {
-            auto schedCloned = std::make_unique<transform::parallel::OMPSched>(*sched);
+            auto schedCloned = std::make_unique<transform::parallel::ParaSched>(*sched);
             for (auto *val: sched->getUsedValues()) {
                 schedCloned->replaceUsedValue(val->getId(), clone(val));
             }

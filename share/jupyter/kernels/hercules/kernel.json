@@ -1,0 +1,9 @@
+{
+    "display_name": "Hercules",
+    "argv": [
+        "hercules",
+        "jupyter",
+        "{connection_file}"
+    ],
+    "language": "python"
+}

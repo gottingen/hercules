@@ -12,6 +12,13 @@ hercules is a high-performance AOT compiler that compiles Python code to
 native machine code or c++ code without any runtime overhead. Typical speedups over
 Python are on the order of 100x or more.
 
+..  image:: image/flow.webp
+    :height: 550px
+    :width: 800 px
+    :scale: 80 %
+    :align: center
+    :alt: hercules
+
 The Hercules framework is fully modular and extensible, allowing for the
 seamless integration of new modules, compiler optimizations, domain-specific
 languages and so on. We actively work with hercules to interact with Elastic AI Search.
@@ -31,6 +38,7 @@ Contents
     en/install
     en/command_line
     en/sneak_peek
+    en/jupyter
 
 .. toctree::
     :caption: TUTORIALS

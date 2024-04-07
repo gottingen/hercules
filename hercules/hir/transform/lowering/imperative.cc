@@ -72,9 +72,9 @@ namespace hercules::ir::transform::lowering {
     void ImperativeForFlowLowering::handle(ForFlow *v) {
         auto *M = v->getModule();
         auto *iter = v->getIter();
-        std::unique_ptr<parallel::OMPSched> sched;
+        std::unique_ptr<parallel::ParaSched> sched;
         if (v->isParallel())
-            sched = std::make_unique<parallel::OMPSched>(*v->getSchedule());
+            sched = std::make_unique<parallel::ParaSched>(*v->getSchedule());
 
         if (auto *rangeCall = getRangeIter(iter)) {
             auto it = rangeCall->begin();
