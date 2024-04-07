@@ -68,3 +68,20 @@ like the following `kernel.json` example:
 
     The `--plugin` option is used to specify the plugins that you have install to hercules, especially the plugins that
     int the dirs $HERCULES_HOME/lib/hercules/plugins. more about the plugins, please refer to the `plugins` section.
+
+fibonacci example
+---------------------
+run fibonacci example in the Jupyter notebook python3 kernel:
+
+..  image:: image/python_fib.png
+    :scale: 80 %
+    :align: center
+    :alt: python_fib
+
+run fibonacci example in the Jupyter notebook hercules kernel:
+
+..  image:: image/hercules_fib.png
+    :scale: 80 %
+    :align: center
+    :alt: hercules_fib
+
