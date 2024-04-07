@@ -48,3 +48,4 @@ docs/xml
 external
 __pycache__
 hercules_jit.egg-info
+.ipynb_checkpoints
