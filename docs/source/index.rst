@@ -43,13 +43,18 @@ Contents
 .. toctree::
     :caption: TUTORIALS
 
+    en/tutorial/fundations
+    en/tutorial/collections
+    en/tutorial/functions
+    en/tutorial/classes
+    en/tutorial/plugins
 
 .. toctree::
     :caption: ADVANCED
 
 
 .. toctree::
-    :caption: TUTORIALS
+    :caption: Hercules IR
 
 
 .. toctree::
