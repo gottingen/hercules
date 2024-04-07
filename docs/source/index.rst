@@ -43,11 +43,11 @@ Contents
 .. toctree::
     :caption: TUTORIALS
 
-    en/tutorial/foundations
-    en/tutorial/collections
-    en/tutorial/functions
-    en/tutorial/classes
-    en/tutorial/plugins
+    en/tutorials/foundations
+    en/tutorials/collections
+    en/tutorials/functions
+    en/tutorials/classes
+    en/tutorials/plugins
 
 .. toctree::
     :caption: ADVANCED
