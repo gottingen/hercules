@@ -1,0 +1,11 @@
+Metadata-Version: 1.2
+Name: hercules-jit
+Version: 0.1.7
+Summary: Hercules JIT decorator
+Home-page: https://github.com/gottingen/hercules
+Author: Jeff.
+Author-email: lijippy@163.com
+License: Apache 2
+Description: Please see https://github.com/gottingen/hercules for more details.
+Platform: UNKNOWN
+Requires-Python: >=3.6

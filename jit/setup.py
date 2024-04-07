@@ -50,7 +50,7 @@ if (
 ):
     print(
         "Cannot find Hercules.",
-        'Please either install Hercules (/bin/bash -c "$(curl -fsSL https://github.com/gottingen/hercules/install.sh)"),',
+        'Please either install Hercules Releases (https://github.com/gottingen/hercules/releases),',
         "or set HERCULES_DIR if Hercules is not in PATH or installed in ~/.hercules",
         file=sys.stderr,
     )
@@ -94,11 +94,11 @@ setup(
     install_requires=["cython", "astunparse"],
     python_requires=">=3.6",
     description="Hercules JIT decorator",
-    url="https://github.com/gottingen.hercules",
-    long_description="Please see https://github.com/gottingen.hercules for more details.",
-    author="Exaloop Inc.",
-    author_email="info@exaloop.io",
-    license="Commercial",
+    url="https://github.com/gottingen/hercules",
+    long_description="Please see https://github.com/gottingen/hercules for more details.",
+    author="Jeff.",
+    author_email="lijippy@163.com",
+    license="Apache 2",
     ext_modules=[jit_extension],
     packages=["hercules"],
     include_package_data=True,
