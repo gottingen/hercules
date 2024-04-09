@@ -36,7 +36,7 @@ Lists also take an optional capacity constructor argument, which can be useful w
 
 .. note::
 
-    Standary Dictionaries and sets are unordered and are based on :ref:`klib <https://github.com/attractivechaos/klib>`_
+    Standary Dictionaries and sets are unordered and are based on `klib <https://github.com/attractivechaos/klib>`_
 
 Comprehensions
 --------------------------
