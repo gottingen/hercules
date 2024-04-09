@@ -47,10 +47,15 @@ Contents
     en/tutorials/collections
     en/tutorials/functions
     en/tutorials/classes
-    en/tutorials/plugins
+    en/tutorials/types
 
 .. toctree::
     :caption: ADVANCED
+
+    en/ad/integration
+    en/ad/export
+    en/ad/plugins
+    en/ad/ir
 
 
 .. toctree::

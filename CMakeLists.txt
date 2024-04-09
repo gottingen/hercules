@@ -30,6 +30,8 @@ configure_file("${PROJECT_SOURCE_DIR}/cmake/config.py.in"
 option(HERCULES_GPU "build Hercules GPU backend" OFF)
 option(BUILD_TEST "build Hercules tests" ON)
 
+list(APPEND CMAKE_PREFIX_PATH "/opt/ea")
+
 cmake_policy(SET CMP0028 NEW)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 #set_target_properties(xz PROPERTIES EXCLUDE_FROM_ALL ON)

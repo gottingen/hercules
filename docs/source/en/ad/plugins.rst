@@ -4,11 +4,14 @@
 .. _plugins:
 
 Plugins
-=============
+=======
 
-How to write a plugin
------------------------------
+Plugins configure
+------------------------
+
+Pure hs plugins
+------------------------
 
 
-Add plugin to the plugin registry
-----------------------------------
+C++ plugins
+------------------------

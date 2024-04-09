@@ -9,6 +9,17 @@ Installing Hercules
 In this section, we will show you how to install Hercules to your system, we provide two ways to install Hercules,
 one is binary install, and the other is source install.
 
+try with docker
+-------------------
+
+we provide a docker image to try Hercules, you can run the following command to try Hercules in docker:
+
+.. code-block:: bash
+
+    docker run -it lijippy/hs_jupyter:r0.2.7
+
+this will start a container with Hercules installed, you can run the following command to see if it works.
+
 binary install
 ------------------------
 
@@ -21,6 +32,43 @@ x86_64 platform, you can download the binary installer for linux, and run the fo
     bash hercules_linux_x86_64_0.2.7.sh
 
 if you want to support jupyter notebook, you can refer to read :ref:`jupyter <jupyter>` for more information.
+
+run a jupyter notebook server:
+---------------------------------
+
+we also provide a jupyter notebook server to run hercules in jupyter notebook, the image is available
+at `docker hub <https://hub.docker.com/r/lijippy/hs_jupyter>`_.
+when start a jupyter notebook server, you need to mount the directory to the container, so that you can access the
+files in the container.
+you can run the following command to start a jupyter notebook server:
+
+.. code-block:: bash
+
+    docker run -p 8888:8888 lijippy/hs_jupyter:r0.2.7 \
+        /usr/local/bin/jupyter notebook --allow-root --ip 0.0.0.0
+
+after that, you can access the jupyter notebook server in your browser, the password is `123456`. then you can create a new
+notebook, and select the kernel `Hercules`.
+
+build in docker
+------------------------
+
+we also provide a ubuntu 20.04 docker image to build hercules, you can run the following command to build hercules in docker:
+
+.. code-block:: bash
+
+    git clone https://github.com/gottigen/hercules.git
+    cd hercules
+    git checkout v0.2.7
+    docker run -it -v $(pwd):/hercules -w /hercules lijippy/eaubuntu:v1 bash
+    cd hercules
+    ./ci/build_installer.sh
+
+.. note::
+
+    the docker image is available at `docker hub <https://hub.docker.com/r/lijippy/eaubuntu>`_.
+    this image is more larger than the jupyter notebook image, because it contains more dependencies like llvm, mlir, etc.
+    if you only want to run hercules just use the jupyter notebook image.
 
 source install
 -------------------------------
