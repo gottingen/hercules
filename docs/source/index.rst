@@ -16,17 +16,19 @@ Python are on the order of 100x or more.
     :align: center
     :alt: hercules
 
+
+
 The Hercules framework is fully modular and extensible, allowing for the
 seamless integration of new modules, compiler optimizations, domain-specific
 languages and so on. We actively work with hercules to interact with Elastic AI Search.
 
-..  image:: image/demo_jupyter.gif
-    :align: center
-    :alt: hercules
+
 
 ..  image:: image/demo_jupyter.gif
     :align: center
     :alt: hercules
+
+
 
 hercules is a high-performance AOT compiler and jit code to run, see the benchmarks below.
 
@@ -34,9 +36,6 @@ hercules is a high-performance AOT compiler and jit code to run, see the benchma
     :align: center
     :alt: hercules
 
-..  image:: image/t027.png
-    :align: center
-    :alt: hercules
 
 Contents
 --------
