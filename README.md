@@ -6,6 +6,9 @@ aot compiler
 [docs](https://hercules-docs.readthedocs.io/en/latest/)
 
 # try jupyter in docker
+
+![](docs/source/image/demo_jupyter.gif)
+
 run the following command to start a jupyter notebook server in docker
 the password is `123456`
 

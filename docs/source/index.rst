@@ -20,6 +20,10 @@ The Hercules framework is fully modular and extensible, allowing for the
 seamless integration of new modules, compiler optimizations, domain-specific
 languages and so on. We actively work with hercules to interact with Elastic AI Search.
 
+..  image:: image/demo_jupyter.gif
+    :align: center
+    :alt: hercules
+
 Contents
 --------
 
@@ -60,7 +64,11 @@ Contents
 
 
 .. toctree::
-    :caption: TIPS
+    :caption: LLVM
+    :maxdepth: 2
+
+    en/llvm/introduction
+    en/llvm/ir
 
 
 
