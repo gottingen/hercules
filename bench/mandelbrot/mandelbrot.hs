@@ -7,7 +7,7 @@ def scale(x, a, b):
     return a + (x/N)*(b - a)
 
 t0 = time.time()
-@par(gpu=False, collapse=2)
+#@par(gpu=False, collapse=2)
 for i in range(N):
     for j in range(N):
         c = complex(scale(j, -2.00, 0.47), scale(i, -1.12, 1.12))

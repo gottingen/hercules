@@ -12,7 +12,7 @@ limit = int(argv[1])
 total = 0
 
 t0 = time()
-@par(schedule='dynamic')
+#@par(schedule='dynamic')
 for i in range(2, limit):
     if is_prime(i):
         total += 1

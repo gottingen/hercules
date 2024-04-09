@@ -22,7 +22,7 @@ n = int(argv[1])
 max_flips = 0
 
 t0 = time()
-@par(schedule='dynamic', num_threads=4)
+#@par(schedule='dynamic', num_threads=4)
 for idx in range(fact(n)):
     p = perm(n, idx)
     flips = 0

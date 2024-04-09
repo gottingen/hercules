@@ -24,6 +24,20 @@ languages and so on. We actively work with hercules to interact with Elastic AI 
     :align: center
     :alt: hercules
 
+..  image:: image/demo_jupyter.gif
+    :align: center
+    :alt: hercules
+
+hercules is a high-performance AOT compiler and jit code to run, see the benchmarks below.
+
+..  image:: image/b027.png
+    :align: center
+    :alt: hercules
+
+..  image:: image/t027.png
+    :align: center
+    :alt: hercules
+
 Contents
 --------
 
