@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(
         Hercules
-        VERSION "0.2.6"
+        VERSION "0.2.8"
         HOMEPAGE_URL "https://github.com/gottingen/hercules"
         DESCRIPTION "high-performance, extensible Python compiler")
 set(HERCULES_JIT_PYTHON_VERSION "0.1.7")

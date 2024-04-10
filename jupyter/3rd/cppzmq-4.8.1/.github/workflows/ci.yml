@@ -1,0 +1,195 @@
+name: CI
+
+on: [push, pull_request]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+        cppstd: ["98", "11", "20"]
+        cc: ["gcc-10"]
+        cxx: ["g++-10"]
+        drafts: ["ON"]
+        libzmq: ["4.3.4"]
+        libzmqbuild: ["cmake"]
+        include:
+          # older libzmq and gcc without draft
+          - os: "ubuntu-18.04"
+            cppstd: "11"
+            cc: "gcc-7"
+            cxx: "g++-7"
+            drafts: "OFF"
+            libzmq: "4.2.0"
+            libzmqbuild: "pkgconfig"
+          # gcc 4.8
+          - os: "ubuntu-18.04"
+            cppstd: "11"
+            cc: "gcc-4.8"
+            cxx: "g++-4.8"
+            drafts: "ON"
+            libzmq: "4.3.4"
+            libzmqbuild: "cmake"
+            aptinstall: "gcc-4.8 g++-4.8"
+          # gcc 5
+          - os: "ubuntu-18.04"
+            cppstd: "11"
+            cc: "gcc-5"
+            cxx: "g++-5"
+            drafts: "ON"
+            libzmq: "4.3.4"
+            libzmqbuild: "cmake"
+            aptinstall: "gcc-5 g++-5"
+          # without draft
+          - os: "ubuntu-latest"
+            cppstd: "20"
+            cc: "gcc-10"
+            cxx: "g++-10"
+            drafts: "OFF"
+            libzmq: "4.3.4"
+            libzmqbuild: "cmake"
+          # coverage (gcc version should match gcov version)
+          - os: "ubuntu-latest"
+            cppstd: "17"
+            cc: "gcc-9"
+            cxx: "g++-9"
+            drafts: "ON"
+            libzmq: "4.3.4"
+            libzmqbuild: "cmake"
+            coverage: "-DCOVERAGE=ON"
+            aptinstall: "lcov"
+          # clang
+          - os: "ubuntu-latest"
+            cppstd: "17"
+            cc: "clang-12"
+            cxx: "clang++-12"
+            drafts: "ON"
+            libzmq: "4.3.4"
+            libzmqbuild: "cmake"
+          # macos
+          - os: "macos-latest"
+            cppstd: "17"
+            cc: "clang"
+            cxx: "clang++"
+            drafts: "OFF"
+            libzmq: "4.3.4"
+            libzmqbuild: false
+            brewinstall: "zeromq"
+          # windows
+          - os: "windows-2016"
+            cppstd: "14"
+            cc: "msbuild"
+            cxx: "msbuild"
+            drafts: "ON"
+            libzmq: "4.3.4"
+            libzmqbuild: "cmake"
+            platform: "-Ax64"
+          - os: "windows-latest"
+            cppstd: "20"
+            cc: "msbuild"
+            cxx: "msbuild"
+            drafts: "ON"
+            libzmq: "4.3.4"
+            libzmqbuild: "cmake"
+            platform: "-Ax64"
+
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
+      VERBOSE: 1
+      THREADS: 2
+      BUILDTYPE: "Debug"
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: install_deps
+      run: |
+        if [ ! -z "${{ matrix.aptinstall }}" ]; then
+          sudo apt install -y ${{ matrix.aptinstall }}
+        fi
+        if [ ! -z "${{ matrix.brewinstall }}" ]; then
+          brew install ${{ matrix.brewinstall }}
+        fi
+
+    - name: get_libzmq
+      run: |
+        curl -L https://github.com/zeromq/libzmq/archive/v${{ matrix.libzmq }}.tar.gz \
+          >zeromq.tar.gz
+        tar -xvzf zeromq.tar.gz
+
+    - name: build_libzmq_cmake
+      if: ${{ matrix.libzmqbuild == 'cmake' }}
+      run: |
+        cmake -Hlibzmq-${{ matrix.libzmq }} -Blibzmq-build ${{ matrix.platform}} \
+          -DWITH_PERF_TOOL=OFF \
+          -DZMQ_BUILD_TESTS=OFF \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DENABLE_DRAFTS=${{ matrix.drafts }}
+        cmake --build libzmq-build --config ${BUILDTYPE} -j ${THREADS}
+        echo "LIBZMQ=${PWD}/libzmq-build" >> ${GITHUB_ENV}
+
+    - name: build_libzmq_pkgconfig
+      if: ${{ matrix.libzmqbuild == 'pkgconfig' }}
+      working-directory: libzmq-${{ matrix.libzmq }}
+      run: |
+        ./autogen.sh &&
+        ./configure --prefix=${PWD}/libzmq-build &&
+        make -j ${THREADS}
+        make install
+        echo "LIBZMQ=${PWD}/libzmq-build" >> ${GITHUB_ENV}
+
+    - name: build
+      env:
+        CMAKE_PREFIX_PATH: ${{ env.LIBZMQ }}
+      run: |
+        cmake -H. -Bbuild ${{ matrix.platform}} ${{ matrix.coverage }} \
+          -DCMAKE_BUILD_TYPE=${BUILDTYPE} \
+          -DENABLE_DRAFTS=${{ matrix.drafts }} \
+          -DCMAKE_CXX_STANDARD=${{ matrix.cppstd }}
+        cmake --build build --config ${BUILDTYPE} -j ${THREADS}
+        echo "CPPZMQ=${PWD}/build" >> ${GITHUB_ENV}
+
+    - name: test
+      # for unknown reason no tests are found and run on windows
+      # could be something to do with catch_discover_tests not working?
+      run: |
+        cd ${{ env.CPPZMQ }}
+        ctest -V -C ${BUILDTYPE}
+
+    - name: demo
+      # probably need to install libzmq and cppzmq for this to work on windows
+      if: ${{ matrix.os == 'ubuntu*' }}
+      env:
+        CMAKE_PREFIX_PATH: ${{ env.LIBZMQ }}:${{ env.CPPZMQ }}
+      run: |
+        cd demo
+        cmake -H. -Bbuild ${{ matrix.platform}} \
+          -DCMAKE_BUILD_TYPE=${BUILDTYPE} \
+          -DCMAKE_CXX_STANDARD=${{ matrix.cppstd }}
+        cmake --build build --config ${BUILDTYPE}
+        cd build
+        ctest -V -C ${BUILDTYPE}
+
+    - name: lcov
+      if: ${{ matrix.coverage && success() }}
+      run: |
+        lcov --capture --directory . --output-file coverage.info
+        lcov --remove coverage.info -o coverage_filtered.info \
+          '/usr/include/*' \
+          '/usr/local/include/*' \
+          ${PWD}'/tests/*' \
+          ${PWD}'/build/*'
+      # to generate local html: genhtml coverage_filtered.info --output-directory .
+
+    - name: coveralls_upload
+      if: ${{ matrix.coverage && success() }}
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./coverage_filtered.info

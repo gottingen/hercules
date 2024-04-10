@@ -36,6 +36,7 @@ go.mod
 go.sum
 
 build
+output
 cmake-build-debug
 .idea
 .DS_Store

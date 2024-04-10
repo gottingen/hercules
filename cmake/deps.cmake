@@ -1,6 +1,5 @@
-set(CPM_DOWNLOAD_VERSION 0.32.3)
-set(CPM_DOWNLOAD_LOCATION "${PROJECT_SOURCE_DIR}/cmake/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
-include(${CPM_DOWNLOAD_LOCATION})
+
+include(${PROJECT_SOURCE_DIR}/cmake/CPM_0.32.3.cmake)
 
 CPMAddPackage(
         NAME collie
