@@ -1,5 +1,0 @@
-# Vim tmp files
-*.swp
-
-# Build directory
-*build/
