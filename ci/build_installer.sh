@@ -22,8 +22,6 @@ ROOT_PATH=${THIS_PATH}/../
 OUTPUT_PATH=${ROOT_PATH}/output
 INSTALL_PATH=${ROOT_PATH}/output/hercules
 BUILD_PATH=${ROOT_PATH}/build
-JUPYTER_PATH=${ROOT_PATH}/jupyter
-JUPYTER_BUILD_PATH=${ROOT_PATH}/jupyter/build
 
 # mkdir lib
 if [ -d "${BUILD_PATH}" ]; then
@@ -33,12 +31,7 @@ if [ -d "${OUTPUT_PATH}" ]; then
   rm -rf "${OUTPUT_PATH}"
 fi
 
-if [ -d "${JUPYTER_BUILD_PATH}" ]; then
-  rm -rf "${JUPYTER_BUILD_PATH}"
-fi
-
 mkdir -p "${BUILD_PATH}"
-mkdir -p "${JUPYTER_BUILD_PATH}"
 # build lib
 cmake -S ${ROOT_PATH} -B ${BUILD_PATH} -DBUILD_TEST=OFF -DCMAKE_PREFIX_PATH=/opt/EA
 cmake --build ${BUILD_PATH} -j 4

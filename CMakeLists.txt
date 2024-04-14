@@ -13,6 +13,8 @@ configure_file("${PROJECT_SOURCE_DIR}/cmake/config.py.in"
 
 option(HERCULES_GPU "build Hercules GPU backend" OFF)
 option(BUILD_TEST "build Hercules test" ON)
+option(INSTALL_EXAMPLE "install Hercules examples" ON)
+option(INSTALL_TUTORIAL "install Hercules examples" ON)
 
 list(APPEND CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/carbin)
 include_directories(${PROJECT_SOURCE_DIR}/carbin/include)
@@ -467,6 +469,14 @@ target_link_libraries(hercules PUBLIC ${STATIC_LIBCPP} herculesc hercules_jupyte
 if (BUILD_TEST)
     enable_testing()
     add_subdirectory(test)
+endif()
+
+if(INSTALL_EXAMPLE)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples  DESTINATION share/hercules)
+endif()
+
+if(INSTALL_TUTORIAL)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/tutorial  DESTINATION share/hercules)
 endif ()
 
 install(TARGETS herculesrt herculesc hercules_jupyter DESTINATION lib/hercules)
