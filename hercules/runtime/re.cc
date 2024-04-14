@@ -218,7 +218,7 @@ HS_FUNC hs_str_t hs_re_group_index_to_name(Regex *pattern, hs_int_t index) {
     return (it != mapping.end()) ? convert(it->second) : empty;
 }
 
-HS_FUNC bool seq_re_check_rewrite_string(Regex *pattern, hs_str_t rewrite,
+HS_FUNC bool hs_re_check_rewrite_string(Regex *pattern, hs_str_t rewrite,
                                           hs_str_t *error) {
     std::string e;
     bool ans = pattern->CheckRewriteString(str2sp(rewrite), &e);

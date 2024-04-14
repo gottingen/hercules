@@ -1,0 +1,4 @@
+google/googletest@v1.13.0
+google/benchmark@v1.8.3 -DBENCHMARK_ENABLE_TESTING=OFF
+
+gottingen/collie@t_dev -DCARBIN_BUILD_TEST=OFF -DCARBIN_BUILD_EXAMPLES=OFF -DCARBIN_ENABLE_INSTALL=ON

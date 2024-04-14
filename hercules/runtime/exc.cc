@@ -14,7 +14,7 @@
 //
 
 #include <hercules/runtime/lib.h>
-#include "llvm/BinaryFormat/Dwarf.h"
+#include <llvm/BinaryFormat/Dwarf.h>
 #include <backtrace.h>
 #include <cassert>
 #include <cstdint>

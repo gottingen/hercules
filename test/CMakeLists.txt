@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+#[[
 include(FetchContent)
 FetchContent_Declare(
         googletest
@@ -24,7 +24,8 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 option(INSTALL_GTEST "Enable installation of googletest." OFF)
 FetchContent_MakeAvailable(googletest)
-include_directories(${googletest_SOURCE_DIR}/googletest/include)
+include_directories(${googletest_SOURCE_DIR}/googletest/include)]]
+find_package(GTest REQUIRED)
 include_directories(${Hercules_SOURCE_DIR}/test)
 enable_testing()
 
@@ -43,7 +44,7 @@ set(TEST_FILES
 foreach (TEST_FILE ${TEST_FILES})
     add_executable(${TEST_FILE} ${TEST_FILE}.cc)
     target_link_libraries(${TEST_FILE} herculesc herculesrt
-            $<TARGET_OBJECTS:testing> gtest_main)
+            $<TARGET_OBJECTS:testing> GTest::gtest_main)
     target_include_directories(${TEST_FILE} PRIVATE
             "${gc_SOURCE_DIR}/include")
     target_compile_definitions(${TEST_FILE}
@@ -80,7 +81,7 @@ set(HIR_TEST_CPPFILES
         hir/var.cc
         types.cc)
 add_executable(hir_test ${HIR_TEST_CPPFILES})
-target_link_libraries(hir_test herculesc herculesrt gtest_main)
+target_link_libraries(hir_test herculesc herculesrt GTest::gtest_main)
 target_include_directories(hir_test PRIVATE
         "${gc_SOURCE_DIR}/include" "${Hercules_SOURCE_DIR}/test/hir")
 target_compile_definitions(hir_test

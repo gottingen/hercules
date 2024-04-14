@@ -1,0 +1,32 @@
+#google/googletest@v1.13.0
+#google/benchmark@v1.8.3 -DBENCHMARK_ENABLE_TESTING=OFF
+
+gottingen/collie@t_dev -DCARBIN_BUILD_TEST=OFF -DCARBIN_BUILD_EXAMPLES=OFF -DCARBIN_ENABLE_INSTALL=ON
+gottingen/turbo@v0.9.86 -DCARBIN_BUILD_TEST=OFF \
+                       -DCARBIN_BUILD_EXAMPLES=OFF\
+                       -DCARBIN_BUILD_BENCHMARK=OFF \
+                       -DBUILD_STATIC_LIBRARY=ON \
+                       -DBUILD_SHARED_LIBRARY=OFF
+
+#3rd/zlibng-2.0.5  -DHAVE_OFF64_T=ON \
+#                     -DZLIB_COMPAT=ON \
+#                      -DZLIB_ENABLE_TESTS=OFF \
+#                      -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+
+./3rd/xz-5.2.5 -DBUILD_SHARED_LIBS=OFF \
+               -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+
+./3rd/bdwgc-8.0.5 -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+                    -DBUILD_SHARED_LIBS=OFF \
+                    -Denable_threads=ON  \
+                    -Denable_large_config=ON \
+                    -Denable_thread_local_alloc=ON \
+                    -Denable_handle_fork=ON
+
+./3rd/re2-2022-06-01 -DCMAKE_POSITION_INDEPENDENT_CODE=ON\
+                             -DBUILD_SHARED_LIBS=OFF\
+                             -DRE2_BUILD_TESTING=OFF
+
+./3rd/openmp -DCMAKE_BUILD_TYPE=Release \
+              -DOPENMP_ENABLE_LIBOMPTARGET=OFF\
+                     -DOPENMP_STANDALONE_BUILD=ON

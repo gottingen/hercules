@@ -1,15 +1,26 @@
 
 include(${PROJECT_SOURCE_DIR}/cmake/CPM_0.32.3.cmake)
 
-CPMAddPackage(
-        NAME collie
-        SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/collie-0.2.11"
-        OPTIONS "CARBIN_ENABLE_INSTALL OFF"
-        "CARBIN_BUILD_TEST OFF"
-        "CARBIN_BUILD_EXAMPLES OFF"
-        "CARBIN_BUILD_BENCHMARKS OFF"
-        )
-include_directories(${collie_SOURCE_DIR})
+find_package(collie REQUIRED PATHS ${PROJECT_SOURCE_DIR}/carbin)
+find_package(turbo REQUIRED PATHS ${PROJECT_SOURCE_DIR}/carbin)
+find_package(BDWgc REQUIRED PATHS ${PROJECT_SOURCE_DIR}/carbin)
+find_package(re2 REQUIRED PATHS ${PROJECT_SOURCE_DIR}/carbin)
+find_package(liblzma REQUIRED PATHS ${PROJECT_SOURCE_DIR}/carbin)
+#[[
+find_package(ZLIB REQUIRED)
+
+find_library(ZLIB NAMES z)
+
+if (NOT ZLIB)
+    message(FATAL_ERROR "zlib not found")
+endif ()
+
+message(STATUS "find zlib ${ZLIB}")
+]]
+find_library(OMP NAMES omp PATHS ${PROJECT_SOURCE_DIR}/carbin/lib)
+if (NOT OMP)
+    message(FATAL_ERROR "OMP not found")
+endif ()
 
 CPMAddPackage(
         NAME zlibng
@@ -23,6 +34,7 @@ if (zlibng_ADDED)
     set_target_properties(zlib PROPERTIES EXCLUDE_FROM_ALL ON)
 endif ()
 
+#[[
 CPMAddPackage(
         NAME xz
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/xz-5.2.5"
@@ -33,7 +45,7 @@ if (xz_ADDED)
     set_target_properties(xz PROPERTIES EXCLUDE_FROM_ALL ON)
     set_target_properties(xzdec PROPERTIES EXCLUDE_FROM_ALL ON)
 endif ()
-
+]]
 CPMAddPackage(
         NAME bz2
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/bz2-1.0.8")
@@ -51,7 +63,7 @@ if (bz2_ADDED)
             COMPILE_FLAGS "-D_FILE_OFFSET_BITS=64"
             POSITION_INDEPENDENT_CODE ON)
 endif ()
-
+#[[
 CPMAddPackage(
         NAME bdwgc
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/bdwgc-8.0.5"
@@ -64,8 +76,8 @@ CPMAddPackage(
         "enable_handle_fork ON")
 if (bdwgc_ADDED)
     set_target_properties(cord PROPERTIES EXCLUDE_FROM_ALL ON)
-endif ()
-
+endif ()]]
+#[[
 CPMAddPackage(
         NAME openmp
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/openmp"
@@ -73,6 +85,11 @@ CPMAddPackage(
         OPTIONS "CMAKE_BUILD_TYPE Release"
         "OPENMP_ENABLE_LIBOMPTARGET OFF"
         "OPENMP_STANDALONE_BUILD ON")
+]]
+
+include (CheckFunctionExists)
+include(CheckSymbolExists)
+include(CheckIncludeFile)
 
 CPMAddPackage(
         NAME backtrace
@@ -100,6 +117,11 @@ if (backtrace_ADDED)
     set(BACKTRACE_SUPPORTS_THREADS 1)
     set(BACKTRACE_SUPPORTS_DATA 1)
     set(HAVE_SYNC_FUNCTIONS 1)
+    check_symbol_exists(clock_gettime time.h HAVE_CLOCK_GETTIME)
+    check_function_exists(dl_iterate_phdr HAVE_DL_ITERATE_PHDR)
+    if (HAVE_DL_ITERATE_PHDR)
+        add_definitions("-DHAVE_DL_ITERATE_PHDR")
+    endif()
     if (APPLE)
         set(HAVE_MACH_O_DYLD_H 1)
         list(APPEND backtrace_SOURCES "${backtrace_SOURCE_DIR}/macho.c")
@@ -121,6 +143,7 @@ if (backtrace_ADDED)
             POSITION_INDEPENDENT_CODE ON)
 endif ()
 
+#[[
 CPMAddPackage(
         NAME re2
         SOURCE_DIR "${PROJECT_SOURCE_DIR}/3rd/re2-2022-06-01"
@@ -128,7 +151,7 @@ CPMAddPackage(
         OPTIONS "CMAKE_POSITION_INDEPENDENT_CODE ON"
         "BUILD_SHARED_LIBS OFF"
         "RE2_BUILD_TESTING OFF")
-
+]]
 if (APPLE AND APPLE_ARM)
     enable_language(ASM)
     CPMAddPackage(

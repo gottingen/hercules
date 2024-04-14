@@ -14,6 +14,8 @@ configure_file("${PROJECT_SOURCE_DIR}/cmake/config.py.in"
 option(HERCULES_GPU "build Hercules GPU backend" OFF)
 option(BUILD_TEST "build Hercules test" ON)
 
+set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/carbin)
+include_directories(${PROJECT_SOURCE_DIR}/carbin/include)
 cmake_policy(SET CMP0028 NEW)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 #set_target_properties(xz PROPERTIES EXCLUDE_FROM_ALL ON)
@@ -69,8 +71,9 @@ else ()
 endif ()
 
 add_executable(peg2cc hercules/app/peg2cc.cc)
-target_include_directories(peg2cc PRIVATE ${peglib_SOURCE_DIR})
-target_link_libraries(peg2cc PRIVATE Threads::Threads)
+add_dependencies(peg2cc collie::collie)
+target_link_libraries(peg2cc PRIVATE ${collie_INCLUDE_DIR})
+target_link_libraries(peg2cc PRIVATE Threads::Threads collie::collie)
 add_custom_command(
         OUTPUT hercules_rules.cc
         COMMAND peg2cc generate -g ${CMAKE_SOURCE_DIR}/hercules/parser/peg/grammar.peg
@@ -99,28 +102,31 @@ set(HERCULESRT_FILES
 )
 
 add_library(herculesrt SHARED ${HERCULESRT_FILES})
-add_dependencies(herculesrt zlibstatic gc backtrace bz2 liblzma re2)
+add_dependencies(herculesrt  BDWgc::gc backtrace bz2 liblzma::liblzma re2::re2 turbo::turbo_STATIC collie::collie)
 if (APPLE AND APPLE_ARM)
     add_dependencies(herculesrt unwind_shared)
 endif ()
 target_include_directories(herculesrt PRIVATE ${backtrace_SOURCE_DIR}
-        ${re2_SOURCE_DIR}
+        ${re2_INCLUDE_DIR}
+        ${turbo_SOURCE_DIR}
+        ${collie_INCLUDE_DIR}
         "${gc_SOURCE_DIR}/include" runtime)
-target_link_libraries(herculesrt PRIVATE omp backtrace ${STATIC_LIBCPP}
+target_link_libraries(herculesrt PRIVATE ${OMP} backtrace ${STATIC_LIBCPP}
         LLVMSupport)
 if (APPLE)
     target_link_libraries(
             herculesrt
-            PRIVATE -Wl,-force_load,$<TARGET_FILE:zlibstatic>
-            -Wl,-force_load,$<TARGET_FILE:gc>
+            PRIVATE -Wl,-force_load,zlibstatic
+            -Wl,-force_load,$<TARGET_FILE:BDWgc::gc>
+            -Wl,-force_load,$<TARGET_FILE:turbo::turbo_STATIC>
             -Wl,-force_load,$<TARGET_FILE:bz2>
-            -Wl,-force_load,$<TARGET_FILE:liblzma>
-            -Wl,-force_load,$<TARGET_FILE:re2>)
+            -Wl,-force_load,$<TARGET_FILE:liblzma::liblzma>
+            -Wl,-force_load,$<TARGET_FILE:re2::re2>)
 else ()
     target_link_libraries(
             herculesrt
-            PRIVATE -Wl,--whole-archive $<TARGET_FILE:zlibstatic> $<TARGET_FILE:gc>
-            $<TARGET_FILE:bz2> $<TARGET_FILE:liblzma> $<TARGET_FILE:re2>
+            PRIVATE -Wl,--whole-archive zlibstatic $<TARGET_FILE:BDWgc::gc>
+            $<TARGET_FILE:bz2> $<TARGET_FILE:liblzma::liblzma> $<TARGET_FILE:re2::re2> $<TARGET_FILE:turbo::turbo_STATIC>
             -Wl,--no-whole-archive)
 endif ()
 if (ASAN)
@@ -136,11 +142,11 @@ if (HERCULES_GPU)
     find_package(CUDAToolkit REQUIRED)
     target_link_libraries(herculesrt PRIVATE CUDA::cudart_static CUDA::cuda_driver)
 endif ()
+#copy openmp
 add_custom_command(
         TARGET herculesrt
         POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:omp>
-        ${CMAKE_BINARY_DIR})
+        COMMAND ${CMAKE_COMMAND} -E copy ${OMP} ${CMAKE_BINARY_DIR})
 if (APPLE AND APPLE_ARM)
     add_custom_command(
             TARGET herculesrt
@@ -348,14 +354,11 @@ set(HERCULES_CPPFILES
         hercules/hir/value.cc
         hercules/hir/var.cc
         hercules/util/common.cc
-        hercules/util/process.cc
-        hercules/util/process_unix.cc
-        hercules/util/process_win.cc
         hercules/builtin/builtin.cc
         hercules/builtin/debug/trace.cc
 )
 add_library(herculesc SHARED ${HERCULES_HPPFILES})
-target_include_directories(herculesc PRIVATE ${peglib_SOURCE_DIR} ${toml_SOURCE_DIR}/include ${semver_SOURCE_DIR}/include)
+target_include_directories(herculesc PRIVATE ${collie_INCLUDE_DIR})
 target_sources(herculesc PRIVATE ${HERCULES_CPPFILES} hercules_rules.cc omp_rules.cc)
 if (ASAN)
     target_compile_options(
