@@ -40,7 +40,7 @@ fi
 mkdir -p "${BUILD_PATH}"
 mkdir -p "${JUPYTER_BUILD_PATH}"
 # build lib
-cmake -S ${ROOT_PATH} -B ${BUILD_PATH} -DBUILD_TEST=OFF -DCMAKE_PREFIX_PATH=/opt/ea
+cmake -S ${ROOT_PATH} -B ${BUILD_PATH} -DBUILD_TEST=OFF -DCMAKE_PREFIX_PATH=/opt/EA
 cmake --build ${BUILD_PATH} -j 4
 cmake --install  ${BUILD_PATH} --prefix ${INSTALL_PATH}
 
@@ -54,20 +54,6 @@ PLATFORM_ORG=$(uname -s)
 PLATFORM="${PLATFORM_ORG,,}"
 ARCH=$(uname -m)
 OUT_NAME="hercules_${PLATFORM}_${ARCH}_${VERSION}.sh"
-
-
-cmake -S ${JUPYTER_PATH} -B $JUPYTER_BUILD_PATH \
-  -DHERCULES_PATH=${INSTALL_PATH} \
-  -DCMAKE_PREFIX_PATH=/opt/ea \
-  -DXEUS_USE_DYNAMIC_UUID=ON
-
-cmake --build ${JUPYTER_BUILD_PATH} -j 4
-cmake --install ${JUPYTER_BUILD_PATH} --prefix ${INSTALL_PATH}
-
-if [ -f ${INSTALL_PATH}/libhercules_jupyter.so ]; then
-  rm ${INSTALL_PATH}/lib/hercules/libhercules_jupyter.so
-  mv ${INSTALL_PATH}/libhercules_jupyter.so ${INSTALL_PATH}/lib/hercules/libhercules_jupyter.so
-fi
 
 cd ${INSTALL_PATH}
 tar -cjvf ${OUTPUT_PATH}/hs-deploy.tar.bz2 *

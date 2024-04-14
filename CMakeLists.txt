@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(
         Hercules
-        VERSION "0.2.8"
+        VERSION "0.2.9"
         HOMEPAGE_URL "https://github.com/gottingen/hercules"
         DESCRIPTION "high-performance, extensible Python compiler")
 set(HERCULES_JIT_PYTHON_VERSION "0.1.7")
@@ -14,7 +14,7 @@ configure_file("${PROJECT_SOURCE_DIR}/cmake/config.py.in"
 option(HERCULES_GPU "build Hercules GPU backend" OFF)
 option(BUILD_TEST "build Hercules test" ON)
 
-set(CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/carbin)
+list(APPEND CMAKE_PREFIX_PATH ${PROJECT_SOURCE_DIR}/carbin)
 include_directories(${PROJECT_SOURCE_DIR}/carbin/include)
 cmake_policy(SET CMP0028 NEW)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
