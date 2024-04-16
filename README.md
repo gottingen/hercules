@@ -26,11 +26,12 @@ Nonetheless, the current version(`0.2.x`) is very usable.
             For the purpose, we already write a small tool for project dependencies manage [`carbin`][4], ``carbin``  can
             easy create project with as less knowledge as possible, it doc at [`carbin docs`][5].
 * ``0.5.x``milestone will complete `dialect` of `Vectorization optimization` on cpu base on `simd` instructions, for `kumo` ann.
+           maybe like `halide`. `gpu` is optional, for ``HS`` functional orientation to `easy business`, not `high performance computing`
 * ``0.7.x``milestone we plan to complete `dialect` of `rpc` `networking` schedule on multi thread and fibers environments.
 * ``0.9.x``is a big milestone, at this time, we aim to get through ``HS`` call python completely,include call `python`'s
            `pyext`, `whl pakage` directly. Now, we call `python`'s third party module by calling python's run time.
 * ``1.x`` after this milestone, we will focus on the upper layer application `plugins`, for example Cluster scheduling, 
-          task of ``NLP``, infer ranking and etc.
+          rapid service deployment, solid storage, task of ``NLP``, infer ranking and etc.
 
 ## the hercule work flow
 
