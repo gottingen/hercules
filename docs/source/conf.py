@@ -27,7 +27,7 @@ project = 'hercules-docs'
 copyright = 'Copyright 2023 The EA Authors.'
 author = 'jeff.li'
 
-html_logo = 'image/ea.png'
+html_logo = 'image/H_64x64.png'
 
 exclude_patterns = []
 highlight_language = 'c++'
