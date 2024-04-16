@@ -1,14 +1,14 @@
-# <center>hercules</center>
+# <p align="center">hercules</p>
 
-<div style="text-align: center;">
+<p align="center">
     <a href="https://hercules-docs.readthedocs.io/en/latest/"><font face="黑体" color=#0099fc size=4>Documentation</font></a>|
     <a href="https://hercules-docs.readthedocs.io/en/latest/"><font face="黑体" color=#0099fc size=4>文档</font></a>|
     <a href="CONTRIBUTORS.md"><font face="黑体" color=#0099fc size=4>Contributors</font></a>|
     <a href="NEWS.md"><font face="黑体" color=#0099fc size=4>Road Map</font></a>|
-</div>
-<div style="text-align: center;">
+</p>
+<p align="center">
 <img src="docs/source/image/hercules_img.png"></img>
-</div>
+</p>
 
 
 ## the hercule work flow
