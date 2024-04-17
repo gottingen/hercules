@@ -5,21 +5,21 @@
 
 <p align="center">
     <a href="https://hercules-docs.readthedocs.io/en/latest/"><font face="黑体" color=#0099fc size=4>Documentation</font></a>
-    <a></a> <font face="黑体" color=#6628ff size=4> &nbsp.&nbsp </font></a>
+    <a></a> <font face="黑体" color=#6628ff size=4> &nbsp;.&nbsp; </font></a>
     <a href="https://hercules-docs.readthedocs.io/en/latest/"><font face="黑体" color=#0099fc size=4>文档</font></a>
-    <a></a> <font face="黑体" color=#6628ff size=4> &nbsp.&nbsp </font></a>
+    <a></a> <font face="黑体" color=#6628ff size=4> &nbsp;.&nbsp; </font></a>
     <a href="CONTRIBUTORS.md"><font face="黑体" color=#0099fc size=4>Contributors</font></a>
-    <a></a> <font face="黑体" color=#6628ff size=4> &nbsp.&nbsp </font></a>
+    <a></a> <font face="黑体" color=#6628ff size=4> &nbsp;.&nbsp; </font></a>
     <a href="NEWS.md"><font face="黑体" color=#0099fc size=4>Road Map</font></a>
 </p>
 
-<br/>
-<br/>
+<br />
 &ensp;&ensp;`Hercules`(`HS`) is parts of `EA`(elastic architecture)-`Kumo Search`. The roll of `HS` is to compile `python` and `C/C++` code to `plugin`
 library called by the upper layer of business eg. `relevance ranking` in `kumo search` or `timeliness ranking`. `HS` is drive by
 `HIR`, another form of mlir, the inputs can be `python` `hs` `c++`, they will be transformed to the `hir`'s unified `AST`. Finally,
 transform to ``llvm IR`` compile to a executable program or a `C/C++` callable shared library.
-<br/>
+
+<br />
 
 &ensp;&ensp;Now, ``HS`` is `0.2.x` milestone. The even-numbered version is the exploration version, we try some new features. 
 Nonetheless, the current version(`0.2.x`) is very usable.
@@ -40,13 +40,13 @@ Nonetheless, the current version(`0.2.x`) is very usable.
 
 ## the hercules work flow
 
-<br/>
+<br />
 
 ![pic][1]
 
 
 # try jupyter in docker
-<br/>
+<br />
 
 ![](docs/source/image/demo_jupyter.gif)
 
