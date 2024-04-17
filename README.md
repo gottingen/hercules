@@ -15,12 +15,13 @@
 
 <br/>
 <br/>
-`Hercules`(`HS`) is parts of `EA`(elastic architecture)-`Kumo Search`. The roll of `HS` is to compile `python` and `C/C++` code to `plugin`
+&ensp;&ensp;`Hercules`(`HS`) is parts of `EA`(elastic architecture)-`Kumo Search`. The roll of `HS` is to compile `python` and `C/C++` code to `plugin`
 library called by the upper layer of business eg. `relevance ranking` in `kumo search` or `timeliness ranking`. `HS` is drive by
 `HIR`, another form of mlir, the inputs can be `python` `hs` `c++`, they will be transformed to the `hir`'s unified `AST`. Finally,
 transform to ``llvm IR`` compile to a executable program or a `C/C++` callable shared library.
+<br/>
 
-Now, ``HS`` is `0.2.x` milestone. The even-numbered version is the exploration version, we try some new features. 
+&ensp;&ensp;Now, ``HS`` is `0.2.x` milestone. The even-numbered version is the exploration version, we try some new features. 
 Nonetheless, the current version(`0.2.x`) is very usable.
 
 * ``0.3.x``milestone will complete `dialect` of `c++ interpreter` and, so that ``HS`` can mixed compilation with c++ freely. 
