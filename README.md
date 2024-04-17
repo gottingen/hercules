@@ -17,8 +17,8 @@
 library called by the upper layer of business eg. `relevance ranking` in `kumo search` or `timeliness ranking`. `HS` is drive by
 `HIR`, another form of mlir, the inputs can be `python` `hs` `c++`, they will be transformed to the `hir`'s unified `AST`. Finally,
 transform to ``llvm IR`` compile to a executable program or a `C/C++` callable shared library.
-
 &nbsp;
+
 Now, ``HS`` is `0.2.x` milestone. The even-numbered version is the exploration version, we try some new features. 
 Nonetheless, the current version(`0.2.x`) is very usable.
 
