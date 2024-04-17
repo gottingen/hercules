@@ -11,9 +11,9 @@
 </p>
 
 
-`Hercules`(`HS`) is parts of `EA`(elastic architecture). The roll of `HS` is to compile `python` and `C/C++` code to `plugin`
+`Hercules`(`HS`) is parts of `EA`(elastic architecture)-`Kumo Search`. The roll of `HS` is to compile `python` and `C/C++` code to `plugin`
 library called by the upper layer of business eg. `relevance ranking` in `kumo search` or `timeliness ranking`. `HS` is drive by
-`HIR`, another form of mlir, the inputs can be `python` `hs` `c++`, they will be transfer to the `hir`'s unified `AST`. Finally,
+`HIR`, another form of mlir, the inputs can be `python` `hs` `c++`, they will be transformed to the `hir`'s unified `AST`. Finally,
 transform to ``llvm IR`` compile to a executable program or a `C/C++` callable shared library.
 
 Now, ``HS`` is `0.2.x` milestone. The even-numbered version is the exploration version, we try some new features. 
@@ -33,12 +33,11 @@ Nonetheless, the current version(`0.2.x`) is very usable.
 * ``1.x`` after this milestone, we will focus on the upper layer application `plugins`, for example Cluster scheduling, 
           rapid service deployment, solid storage, task of ``NLP``, infer ranking and etc.
 
-## the hercule work flow
+## the hercules work flow
 
 
 ![pic][1]
 
-[docs](https://hercules-docs.readthedocs.io/en/latest/)
 
 # try jupyter in docker
 
